@@ -247,7 +247,7 @@ private _civGroups = allGroups select {
 				_unit addPrimaryWeaponItem "acc_flashlight";
 				_unit assignItem "acc_flashlight";
 				_unit enableGunLights "ForceOn";
-			} 
+			} ;
 				
 			[(getMarkerPos _x), 20] execVM "Scripts\INTLitems.sqf";
 			deleteMarker _x ;	
