@@ -4,13 +4,20 @@ if (!isServer) exitWith {};
 	
 Centerposition = [worldSize / 2, worldsize / 2, 0];
 
-ServerFPS = round(diag_fps) ;
+VS_FPS insert [0,round(diag_fps),false];
+if (count VS_FPS > 30) then {VS_FPS resize 30};
 
-VSDistance = 750 ; 
-if (ServerFPS < 30) then {VSDistance = 700} ; 
-if (ServerFPS < 25) then {VSDistance = 650} ; 
-if (ServerFPS < 20) then {VSDistance = 500} ; 
-if (ServerFPS < 15) then {VSDistance = 450} ; 
+// Smooth out FPS over time (5 second delay between changes to VSDistance)
+// Also, make sure to average out any spikes or dips in server FPS
+if ((diag_tickTime - VSCurrentTime) > VSTimeDelay) then {
+	private _ServerFPS = VP_FPS call BIS_fnc_arithmeticMean;
+	if (_ServerFPS < 30) then {VSDistance = 700} ; 
+	if (_ServerFPS < 25) then {VSDistance = 650} ; 
+	if (_ServerFPS < 20) then {VSDistance = 500} ; 
+	if (_ServerFPS < 15) then {VSDistance = 450} ; 
+	VSCurrentTime = diag_tickTime;
+};
+
 
 
 private _allStaticObjs0 = allMissionObjects "NonStrategic";
