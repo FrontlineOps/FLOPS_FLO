@@ -1,84 +1,84 @@
 
 // Music Mission EventHandler////////////////////////////////////////////////////////////
 
- MusicSwitchVal = "MusicSwitch" call BIS_fnc_getParamValue;
- if (MusicSwitchVal == 1) then {
+//  MusicSwitchVal = "MusicSwitch" call BIS_fnc_getParamValue;
+//  if (MusicSwitchVal == 1) then {
 			 
-		addMusicEventHandler ["MusicStop", {
+// 		addMusicEventHandler ["MusicStop", {
 		
-  if ((dayTime > 19) or (dayTime < 7)) then {
+//   if ((dayTime > 19) or (dayTime < 7)) then {
 
-AllTracks = [ 
-		"AmbientTrack04a_F",
-		"AmbientTrack04_F",
-		"BackgroundTrack01_F",
-		"Track11_StageB_stealth",
-		"BackgroundTrack01_F_EPB",
-		"LeadTrack03_F_EPC",
-		"LeadTrack01_F_Curator",
-		"LeadTrack02_F_EXP",
-		"AmbientTrack01_F_EXP",
-		"AmbientTrack01a_F_EXP",
-		"EventTrack03_F_EPC",
-		"AmbientTrack04b_F_Tacops",
-		"LeadTrack03_F_Tank",
-		"LeadTrack04_F_Tank",
-		"AmbientTrack01_F_Tank",
-		"EventTrack03_F_EPC"
-		]; 
-  } else {	  
-		AllTracks = [ 
-		"LeadTrack01_F_EPA", 
-		"LeadTrack02_F_EPA",
-		"LeadTrack01_F",
-		"MainTheme_F_Tank",
-		"LeadTrack01_F_Mark",
-		"AmbientTrack03_F",
-		"Track02_SolarPower",
-		"Track14_MainMenu",
-		"EventTrack01a_F_EPA",
-		"EventTrack01_F_EPA",
-		"EventTrack02a_F_EPA",
-		"EventTrack03_F_EPA",
-		"EventTrack03a_F_EPA",
-		"LeadTrack01_F_EPB",
-		"LeadTrack02_F_EPC",
-		"LeadTrack04_F_EPC",
-		"LeadTrack06_F_EPC",
-		"LeadTrack06b_F_EPC",
-		"BackgroundTrack03_F_EPC",
-		"AmbientTrack02_F_EXP",
-		"LeadTrack02_F_Jets",
-		"LeadTrack01_F_Orange",
-		"LeadTrack02_F",
-		"LeadTrack05_F",
-		"Track01_Proteus",
-		"Track10_StageB_action",
-		"Track12_StageC_action",
-		"Track13_StageC_negative",
-		"EventTrack01b_F_Tacops",
-		"EventTrack01a_F_Tacops",
-		"LeadTrack01_F_Bootcamp",
-		"LeadTrack01_F_Jets",
-		"LeadTrack01_F_Tacops",
-		"LeadTrack03_F_Tacops",
-		"LeadTrack02_F_Tacops",
-		"LeadTrack04_F_Tacops",
-		"AmbientTrack03a_F_Tacops",
-		"LeadTrack01_F_Tank",
-		"LeadTrack02_F_Tank",
-		"LeadTrack05_F_Tank",
-		"LeadTrack06_F_Tank",
-		"Music_Default"
-		]; 
-  };
+// AllTracks = [ 
+// 		"AmbientTrack04a_F",
+// 		"AmbientTrack04_F",
+// 		"BackgroundTrack01_F",
+// 		"Track11_StageB_stealth",
+// 		"BackgroundTrack01_F_EPB",
+// 		"LeadTrack03_F_EPC",
+// 		"LeadTrack01_F_Curator",
+// 		"LeadTrack02_F_EXP",
+// 		"AmbientTrack01_F_EXP",
+// 		"AmbientTrack01a_F_EXP",
+// 		"EventTrack03_F_EPC",
+// 		"AmbientTrack04b_F_Tacops",
+// 		"LeadTrack03_F_Tank",
+// 		"LeadTrack04_F_Tank",
+// 		"AmbientTrack01_F_Tank",
+// 		"EventTrack03_F_EPC"
+// 		]; 
+//   } else {	  
+// 		AllTracks = [ 
+// 		"LeadTrack01_F_EPA", 
+// 		"LeadTrack02_F_EPA",
+// 		"LeadTrack01_F",
+// 		"MainTheme_F_Tank",
+// 		"LeadTrack01_F_Mark",
+// 		"AmbientTrack03_F",
+// 		"Track02_SolarPower",
+// 		"Track14_MainMenu",
+// 		"EventTrack01a_F_EPA",
+// 		"EventTrack01_F_EPA",
+// 		"EventTrack02a_F_EPA",
+// 		"EventTrack03_F_EPA",
+// 		"EventTrack03a_F_EPA",
+// 		"LeadTrack01_F_EPB",
+// 		"LeadTrack02_F_EPC",
+// 		"LeadTrack04_F_EPC",
+// 		"LeadTrack06_F_EPC",
+// 		"LeadTrack06b_F_EPC",
+// 		"BackgroundTrack03_F_EPC",
+// 		"AmbientTrack02_F_EXP",
+// 		"LeadTrack02_F_Jets",
+// 		"LeadTrack01_F_Orange",
+// 		"LeadTrack02_F",
+// 		"LeadTrack05_F",
+// 		"Track01_Proteus",
+// 		"Track10_StageB_action",
+// 		"Track12_StageC_action",
+// 		"Track13_StageC_negative",
+// 		"EventTrack01b_F_Tacops",
+// 		"EventTrack01a_F_Tacops",
+// 		"LeadTrack01_F_Bootcamp",
+// 		"LeadTrack01_F_Jets",
+// 		"LeadTrack01_F_Tacops",
+// 		"LeadTrack03_F_Tacops",
+// 		"LeadTrack02_F_Tacops",
+// 		"LeadTrack04_F_Tacops",
+// 		"AmbientTrack03a_F_Tacops",
+// 		"LeadTrack01_F_Tank",
+// 		"LeadTrack02_F_Tank",
+// 		"LeadTrack05_F_Tank",
+// 		"LeadTrack06_F_Tank",
+// 		"Music_Default"
+// 		]; 
+//   };
 
 
-		_Track = selectRandom AllTracks;
-		playMusic _Track;
+// 		_Track = selectRandom AllTracks;
+// 		playMusic _Track;
 
-		}];
- };
+// 		}];
+//  };
 
 //Server Script //////////Server Script //////////Server Script //////////Server Script //////////Server Script //////////Server Script //////////Server Script //////////Server Script //////////Server Script //////////Server Script //////////
 
