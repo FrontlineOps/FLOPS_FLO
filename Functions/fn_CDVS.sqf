@@ -104,9 +104,10 @@ _StaticObjs =  _allStaticObjs select {
 		_mrkr setMarkerAlphaLocal 0 ;  
 		_mrkr setMarkerSizeLocal [0 , 0] ;  
 		_mrkr setMarkerText str _ObjsArray ; 
-	    deleteVehicle _x;
+	    
 		sleep 0.1 ; 
 	} forEach _StaticObjs ;
+	{deleteVehicle _x;} forEach _StaticObjs ;
 	
  private _ObjMarks = allMapMarkers select { 
 		(markerType _x == "o_maint") && 
@@ -148,7 +149,9 @@ private _enemyGroups = allGroups select {
 			private _EnmUnitsArray = [] ;
 				for "_i" from 0 to _GrpUntCnt do {
 					private _Uclass = typeOf ((units _x) select _i);	
-					_EnmUnitsArray append [_Uclass] ;	
+					_EnmUnitsArray append [_Uclass] ;		
+				}; 
+				for "_i" from 0 to _GrpUntCnt do {
 					deleteVehicle ((units _x) select _i);		
 				}; 
 
@@ -188,7 +191,9 @@ private _civGroups = allGroups select {
 			private _CivUnitsArray = [] ;
 				for "_i" from 0 to _GrpUntCnt do {
 					private _Uclass = typeOf ((units _x) select _i);	
-					_CivUnitsArray append [_Uclass] ;		
+					_CivUnitsArray append [_Uclass] ;			
+				}; 
+				for "_i" from 0 to _GrpUntCnt do {		
 					deleteVehicle ((units _x) select _i);		
 				}; 
 			_mrkr = createMarkerLocal [str ( [(_pos#0 + (random 1)), (_pos#1 + (random 1))]), _pos] ;   
