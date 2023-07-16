@@ -87,7 +87,7 @@ _StaticObjs =  _allStaticObjs select {
 		private _ObjDir = [vectorDir _x,vectorUp _x] ; 
 		private _ObjsArray = [_ObjTyp,_ObjPos,_ObjDir];
  		private _mrkr = createMarkerLocal [str _x, getPos _x];   
-		private _mrkr setMarkerTypeLocal "o_maint" ;  
+		_mrkr setMarkerTypeLocal "o_maint" ;  
 		if (count (nearestobjects [_ObjPos,["Sign_Pointer_Yellow_F"],200]) > 0) then {
 			_mrkr setMarkerColorLocal "ColorBlue";
 		}else{
@@ -146,7 +146,7 @@ private _enemyGroups = allGroups select {
 				}; 
 
 
-			_mrkr = createMarkerLocal [str ( [(_pos#0 + (random 1)), (_pos#1 + (random 1))]), _pos] ;   
+			private _mrkr = createMarkerLocal [str ( [(_pos#0 + (random 1)), (_pos#1 + (random 1))]), _pos] ;   
 			_mrkr setMarkerTypeLocal "o_Ordnance" ;  
 			if (side _x == east) then { _mrkr setMarkerColorLocal "colorOPFOR"} ;
 			if (side _x == independent) then { _mrkr setMarkerColorLocal "colorIndependent"} ;
