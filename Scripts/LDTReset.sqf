@@ -6,10 +6,10 @@ _FRUNTS = [F_Officer, F_Assault_Eng, F_Assault_TL,  F_Assault_SL, F_Assault_Eod,
 
 {
 _UNTType = _x ;
-_UNTTypeName = str _UNTType ;
-_missionTag = missionName;
-_missionTag = [_missionTag] call BIS_fnc_filterString;
-private _LoadOutName = _missionTag + _UNTTypeName;
+// private _UNTTypeName = str _UNTType ;
+// private _missionTag = missionName;
+// _missionTag = [_missionTag] call BIS_fnc_filterString;
+private _LoadOutName = missionName +"_"+ _UNTType;
 
 profileNamespace setVariable [_LoadOutName, nil];
 } forEach _FRUNTS ;
