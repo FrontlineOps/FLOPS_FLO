@@ -16,18 +16,18 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=16110;
+		nextID=16187;
 	};
 	class Camera
 	{
-		pos[]={11592.076,42.157738,12186.415};
-		dir[]={-0.82452881,0.004914403,0.56579882};
-		up[]={0.0040521161,0.99998802,-0.0027805972};
-		aside[]={0.56580567,0,0.82453883};
+		pos[]={13149.827,213.97696,17756.943};
+		dir[]={-0.96892786,-0.23880278,0.064436294};
+		up[]={-0.23827645,0.97106808,0.015846021};
+		aside[]={0.066356108,0,0.997796};
 	};
 };
 binarizationWanted=0;
-sourceName="DEV_[BSP_Conventional_Operations]_Development";
+sourceName="BSP_CO";
 addons[]=
 {
 	"A3_Structures_F_EPA_Walls",

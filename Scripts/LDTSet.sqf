@@ -64,7 +64,7 @@ sleep 1 ;
 
         titleText ["New Loadout Saved", "BLACK IN",1];
 
-["ace_arsenal_displayClosed", ACEArsCls] call CBA_fnc_removeEventHandler;
+if !(isnil "ACEArsCls") then {["ace_arsenal_displayClosed", ACEArsCls] call CBA_fnc_removeEventHandler;};
 
 { [] execVM "Scripts\LDTSetChange.sqf" ; } remoteExec ["call", 2];
 
