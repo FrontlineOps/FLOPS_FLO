@@ -228,7 +228,7 @@ publicVariable "FOBB";
 						
 						_allMarks = allMapMarkers select {markerText _x == 'FOB' && markerType _x == 'b_installation'};  
 						_FOBMrk = [_allMarks,  (_this select 0)] call BIS_fnc_nearestPosition;
-						deleteMarker _FOBMrk ; 
+						if (typeName _FOBMrk == "STRING") then {deleteMarker _FOBMrk;} ; 
 
 						[] execVM 'Scripts\Failed.sqf';
 

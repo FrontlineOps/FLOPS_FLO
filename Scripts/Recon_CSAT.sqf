@@ -98,16 +98,16 @@ PRL = [_poss, East, [selectRandom East_Units, selectRandom East_Units]] call BIS
 			G deleteGroupWhenEmpty true;
 
 
-				G = [(locationPosition _MountSel) getPos [(10 +(random 5)), (0 + (random 360))] , East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-				((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
+			// 	G = [(locationPosition _MountSel) getPos [(10 +(random 5)), (0 + (random 360))] , East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+			// 	((units G) select 0) disableAI "PATH";  
+			// G deleteGroupWhenEmpty true;
 
-				G = [(locationPosition _MountSel) getPos [(10 +(random 5)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-				((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
+			// 	G = [(locationPosition _MountSel) getPos [(10 +(random 5)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+			// 	((units G) select 0) disableAI "PATH";  
+			// G deleteGroupWhenEmpty true;
 
-				G = [ (locationPosition _MountSel) getPos [(10 +(random 5)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+			// 	G = [ (locationPosition _MountSel) getPos [(10 +(random 5)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+			// G deleteGroupWhenEmpty true;
 				
 		};
 		

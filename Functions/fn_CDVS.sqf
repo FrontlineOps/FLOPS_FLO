@@ -11,10 +11,10 @@ if (count VS_FPS > 30) then {VS_FPS resize 30};
 // Also, make sure to average out any spikes or dips in server FPS
 if ((diag_tickTime - VSCurrentTime) > VSTimeDelay) then {
 	private _ServerFPS = VS_FPS call BIS_fnc_arithmeticMean;
-	if (_ServerFPS < 30) then {VSDistance = 700} ; 
-	if (_ServerFPS < 25) then {VSDistance = 650} ; 
-	if (_ServerFPS < 20) then {VSDistance = 500} ; 
-	if (_ServerFPS < 15) then {VSDistance = 450} ; 
+	if (_ServerFPS < 30) then {VSDistance = 2000} ; 
+	if (_ServerFPS < 25) then {VSDistance = 1750} ; 
+	if (_ServerFPS < 20) then {VSDistance = 1500} ; 
+	if (_ServerFPS < 15) then {VSDistance = 1000} ; 
 	VSCurrentTime = diag_tickTime;
 };
 
@@ -151,9 +151,7 @@ private _enemyGroups = allGroups select {
 					private _Uclass = typeOf ((units _x) select _i);	
 					_EnmUnitsArray append [_Uclass] ;		
 				}; 
-				for "_i" from 0 to _GrpUntCnt do {
-					deleteVehicle ((units _x) select _i);		
-				}; 
+				while {count (units _x) > 0} do {deletevehicle (units _x select 0);};
 
 
 			private _mrkr = createMarkerLocal [str ( [(_pos#0 + (random 1)), (_pos#1 + (random 1))]), _pos] ;   
@@ -193,9 +191,8 @@ private _civGroups = allGroups select {
 					private _Uclass = typeOf ((units _x) select _i);	
 					_CivUnitsArray append [_Uclass] ;			
 				}; 
-				for "_i" from 0 to _GrpUntCnt do {		
-					deleteVehicle ((units _x) select _i);		
-				}; 
+				while {count (units _x) > 0} do {deletevehicle (units _x select 0);};
+
 			_mrkr = createMarkerLocal [str ( [(_pos#0 + (random 1)), (_pos#1 + (random 1))]), _pos] ;   
 			_mrkr setMarkerTypeLocal "o_Ordnance" ;  
 			_mrkr setMarkerColorLocal "colorCivilian";

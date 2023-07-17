@@ -35,11 +35,11 @@ PRL = [(getPos _nearRoad) getPos [(10 +(random 20)), (0 + (random 360))], East, 
 [PRL, getPos _nearRoad, 50] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
 
-if (_DANSCORE > 5) then {
-PRL = [(getPos _nearRoad) getPos [(10 +(random 20)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-[PRL, getPos _nearRoad, 100] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
-};
+// if (_DANSCORE > 5) then {
+// PRL = [(getPos _nearRoad) getPos [(10 +(random 20)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
+// [PRL, getPos _nearRoad, 100] call BIS_fnc_taskPatrol;
+// 			PRL deleteGroupWhenEmpty true;
+// };
 
 sleep 5 ;
 
@@ -98,4 +98,4 @@ _WeaponsARRAY = nearestObjects [(getPos _nearRoad), ["O_G_HMG_02_high_F", "O_G_M
 
 
 _HeavGun =  nearestObjects [(getPos _nearRoad), ["O_G_Mortar_01_F", "O_G_HMG_02_high_F"], 100] select 0;
-HeavWeapGroup = createVehicleCrew _HeavGun; 
+if !(isnil "_HeavGun") then {HeavWeapGroup = createVehicleCrew _HeavGun;}; 

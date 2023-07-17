@@ -97,62 +97,62 @@ _MountsAll = nearestLocations [ TRGNew, ["Mount"], _MR];
 _MountsNeg = nearestLocations [ TRGNew, ["Mount"], 30];   
 _Mounts = _MountsAll - _MountsNeg ; 
  
-if (RADationius >= 2000) then {
-_Mount = selectRandom _Mounts; 
-_Watchpost = selectRandom _allWatchposts; 
-[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+if (count _mounts > 0) then {
+
+	if (RADationius >= 2000) then {
+		_Mount = selectRandom _Mounts; 
+		_Watchpost = selectRandom _allWatchposts; 
+		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+	};
+
+	sleep 1 ; 
+
+	if (RADationius >= 1000) then {
+		_Mount = selectRandom _Mounts; 
+		_Watchpost = selectRandom _allWatchposts; 
+		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+	};
+
+	sleep 1 ; 
+
+	if (_DANSCORE > 5) then {
+			
+		if (RADationius >= 2000) then {
+			_Mount = selectRandom _Mounts; 
+			_Watchpost = selectRandom _allWatchposts; 
+			[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+		};
+
+		sleep 1 ; 
+
+		if (RADationius >= 1000) then {
+			_Mount = selectRandom _Mounts; 
+			_Watchpost = selectRandom _allWatchposts; 
+			[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+		};
+	};
+
+	sleep 1 ; 
+
+	if (_DANSCORE > 10) then {
+			
+		if (RADationius >= 2000) then {
+			_Mount = selectRandom _Mounts; 
+			_Watchpost = selectRandom _allWatchposts; 
+			[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+
+		};
+
+		sleep 1 ; 
+
+		if (RADationius >= 1500) then {
+			_Mount = selectRandom _Mounts; 
+			_Watchpost = selectRandom _allWatchposts; 
+			[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+
+		};
+	};
 };
-
-sleep 1 ; 
-
-if (RADationius >= 1000) then {
-_Mount = selectRandom _Mounts; 
-_Watchpost = selectRandom _allWatchposts; 
-[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-};
-
-sleep 1 ; 
-
-if (_DANSCORE > 5) then {
-	
-if (RADationius >= 2000) then {
-_Mount = selectRandom _Mounts; 
-_Watchpost = selectRandom _allWatchposts; 
-[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-};
-
-sleep 1 ; 
-
-if (RADationius >= 1000) then {
-_Mount = selectRandom _Mounts; 
-_Watchpost = selectRandom _allWatchposts; 
-[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-};
-};
-
-sleep 1 ; 
-
-if (_DANSCORE > 10) then {
-	
-if (RADationius >= 2000) then {
-_Mount = selectRandom _Mounts; 
-_Watchpost = selectRandom _allWatchposts; 
-[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-
-};
-
-sleep 1 ; 
-
-if (RADationius >= 1500) then {
-_Mount = selectRandom _Mounts; 
-_Watchpost = selectRandom _allWatchposts; 
-[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-
-};
-
-
-};
-
 
 
 [TRGNew, 360] execVM "Scripts\INTLitems.sqf";
