@@ -40,7 +40,7 @@ private _LoadOutName = missionName +"_"+ _UNTType;
 
 private _LoadOutRFLNameVal = profileNamespace getVariable _LoadOutName;
 
-_UnitObj setUnitLoadout _LoadOutRFLNameVal ;
+if !(isNil "_LoadOutRFLNameVal") then {_UnitObj setUnitLoadout _LoadOutRFLNameVal} ;
 
 _UnitObj linkItem 'B_UavTerminal';
 
