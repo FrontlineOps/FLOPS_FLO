@@ -48,7 +48,7 @@ _Cargo enableSimulation true;
 playSound3D ["A3\dubbing_f\modules\supports\drop_accomplished.ogg", player];
 
 
-_SDM setMarkerPos [str (position _Cargo), position _Cargo];
+_SDM setMarkerPos (position _Cargo);
 
 sleep 300;
 
