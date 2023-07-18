@@ -4,4 +4,4 @@ private _LoadOutName = missionName +"_"+ UNTTypeClass;
 
 _LoadOutNameVal = profileNamespace getVariable _LoadOutName;
 
-TheCommander setUnitLoadout _LoadOutNameVal;
+if !(isNil "_LoadOutNameVal") then {TheCommander setUnitLoadout _LoadOutNameVal;};
