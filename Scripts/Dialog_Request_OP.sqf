@@ -771,29 +771,29 @@ CreatedVEH addMagazineCargoGlobal ["Titan_AT", 15];
 CreatedVEH addMagazineCargoGlobal ["Titan_AA", 15];
 CreatedVEH addMagazineCargoGlobal ["Titan_AP", 15];
 
-[ CreatedVEH,
-"<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>ARSENAL",
-"Screens\FOBA\mg_ca.paa",
-"Screens\FOBA\mg_ca.paa",
-	"_this distance _target < 10",			
-	"_caller distance _target < 10",	
-{},
-{},
-{
+// [ CreatedVEH,
+// "<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>ARSENAL",
+// "Screens\FOBA\mg_ca.paa",
+// "Screens\FOBA\mg_ca.paa",
+// 	"_this distance _target < 10",			
+// 	"_caller distance _target < 10",	
+// {},
+// {},
+// {
 	
-	if (isClass (configfile >> "ace_arsenal_loadoutsDisplay") == true ) then {
-		[player, player, true] call ace_arsenal_fnc_openBox;
-	} else {
-		["Open", true] spawn BIS_fnc_arsenal;
-	};
-},
-{},
-[],
-1,
-1,
-false,
-false
-] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
+// 	if (isClass (configfile >> "ace_arsenal_loadoutsDisplay") == true ) then {
+// 		[player, player, true] call ace_arsenal_fnc_openBox;
+// 	} else {
+// 		["Open", true] spawn BIS_fnc_arsenal;
+// 	};
+// },
+// {},
+// [],
+// 1,
+// 1,
+// false,
+// false
+// ] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
 
 [ CreatedVEH,
 "<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>REARM Infantry",
@@ -843,29 +843,29 @@ false
 _MOBSERName = missionNamespace getVariable "F_Truck_03";
 if (_VehName == _MOBSERName) then {
 	
-[ CreatedVEH,
-"<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>ARSENAL",
-"Screens\FOBA\mg_ca.paa",
-"Screens\FOBA\mg_ca.paa",
-	"_this distance _target < 10",			
-	"_caller distance _target < 10",	
-{},
-{},
-{
+// [ CreatedVEH,
+// "<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>ARSENAL",
+// "Screens\FOBA\mg_ca.paa",
+// "Screens\FOBA\mg_ca.paa",
+// 	"_this distance _target < 10",			
+// 	"_caller distance _target < 10",	
+// {},
+// {},
+// {
 	
-	if (isClass (configfile >> "ace_arsenal_loadoutsDisplay") == true ) then {
-		[player, player, true] call ace_arsenal_fnc_openBox;
-	} else {
-		["Open", true] spawn BIS_fnc_arsenal;
-	};
-},
-{},
-[],
-1,
-1,
-false,
-false
-] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
+// 	if (isClass (configfile >> "ace_arsenal_loadoutsDisplay") == true ) then {
+// 		[player, player, true] call ace_arsenal_fnc_openBox;
+// 	} else {
+// 		["Open", true] spawn BIS_fnc_arsenal;
+// 	};
+// },
+// {},
+// [],
+// 1,
+// 1,
+// false,
+// false
+// ] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
 
 [ CreatedVEH,
 "<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>REARM Infantry",

@@ -1,9 +1,9 @@
 /**
- * Fait déplacer un objet par le joueur. Il garde l'objet tant qu'il ne le relâche pas ou ne meurt pas.
- * L'objet est relaché quand la variable R3F_LOG_joueur_deplace_objet passe à objNull ce qui terminera le script
+ * Fait dï¿½placer un objet par le joueur. Il garde l'objet tant qu'il ne le relï¿½che pas ou ne meurt pas.
+ * L'objet est relachï¿½ quand la variable R3F_LOG_joueur_deplace_objet passe ï¿½ objNull ce qui terminera le script
  * 
- * @param 0 l'objet à déplacer
- * @param 3 true si l'objet est chargé dans un véhicule
+ * @param 0 l'objet ï¿½ dï¿½placer
+ * @param 3 true si l'objet est chargï¿½ dans un vï¿½hicule
  * 
  * Copyright (C) 2014 Team ~R3F~
  * 
@@ -62,7 +62,7 @@ else
 					) then
 					{R3F_LOG_deplace_dir_rel_objet = 90;} else {R3F_LOG_deplace_dir_rel_objet = 0;};
 					
-					// Calcul de la position relative, de sorte à éloigner l'objet suffisamment pour garder un bon champ de vision
+					// Calcul de la position relative, de sorte ï¿½ ï¿½loigner l'objet suffisamment pour garder un bon champ de vision
 					_pos_rel_objet_initial = [
 						(boundingCenter _objet select 0) * cos R3F_LOG_deplace_dir_rel_objet - (boundingCenter _objet select 1) * sin R3F_LOG_deplace_dir_rel_objet,
 						((-(boundingBoxReal _objet select 0 select 0) * sin R3F_LOG_deplace_dir_rel_objet) max (-(boundingBoxReal _objet select 1 select 0) * sin R3F_LOG_deplace_dir_rel_objet)) +
@@ -84,8 +84,8 @@ else
 					
 					_pos_rel_objet_initial = _joueur worldToModel (_objet modelToWorld [0,0,0]);
 					
-					// Calcul de la position relative de l'objet, basée sur la position initiale, et sécurisée pour ne pas que l'objet rentre dans le joueur lors de la rotation
-					// L'ajout de ce calcul a également rendu inutile le test avec la fonction R3F_LOG_FNCT_unite_marche_dessus lors de la prise de l'objet
+					// Calcul de la position relative de l'objet, basï¿½e sur la position initiale, et sï¿½curisï¿½e pour ne pas que l'objet rentre dans le joueur lors de la rotation
+					// L'ajout de ce calcul a ï¿½galement rendu inutile le test avec la fonction R3F_LOG_FNCT_unite_marche_dessus lors de la prise de l'objet
 					_pos_rel_objet_initial = [
 						_pos_rel_objet_initial select 0,
 						(_pos_rel_objet_initial select 1) max
@@ -101,11 +101,11 @@ else
 				};
 				R3F_LOG_deplace_distance_rel_objet = _pos_rel_objet_initial select 1;
 				
-				// Détermination du mode d'alignement initial en fonction du type d'objet, de ses dimensions, ...
+				// Dï¿½termination du mode d'alignement initial en fonction du type d'objet, de ses dimensions, ...
 				R3F_LOG_deplace_mode_alignement = switch (true) do
 				{
 					case !(_objet isKindOf "Static"): {"sol"};
-					// Objet statique allongé
+					// Objet statique allongï¿½
 					case (
 							((boundingBoxReal _objet select 1 select 1) - (boundingBoxReal _objet select 0 select 1)) != 0 && // Div par 0
 							{
@@ -113,11 +113,11 @@ else
 								((boundingBoxReal _objet select 1 select 1) - (boundingBoxReal _objet select 0 select 1)) > 1.75
 							}
 						): {"pente"};
-					// Objet statique carré ou peu allongé
+					// Objet statique carrï¿½ ou peu allongï¿½
 					default {"horizon"};
 				};
 				
-				// On demande à ce que l'objet soit local au joueur pour réduire les latences (setDir, attachTo périodique)
+				// On demande ï¿½ ce que l'objet soit local au joueur pour rï¿½duire les latences (setDir, attachTo pï¿½riodique)
 				if (!local _objet) then
 				{
 					private ["_time_demande_setOwner"];
@@ -126,12 +126,12 @@ else
 					waitUntil {local _objet || time > _time_demande_setOwner + 1.5};
 				};
 				
-				// On prévient tout le monde qu'un nouveau objet va être déplace pour ingorer les éventuelles blessures
+				// On prï¿½vient tout le monde qu'un nouveau objet va ï¿½tre dï¿½place pour ingorer les ï¿½ventuelles blessures
 				R3F_LOG_PV_nouvel_objet_en_deplacement = _objet;
 				publicVariable "R3F_LOG_PV_nouvel_objet_en_deplacement";
 				["R3F_LOG_PV_nouvel_objet_en_deplacement", R3F_LOG_PV_nouvel_objet_en_deplacement] call R3F_LOG_FNCT_PVEH_nouvel_objet_en_deplacement;
 				
-				// Mémorisation de l'arme courante et de son mode de tir
+				// Mï¿½morisation de l'arme courante et de son mode de tir
 				_arme_courante = currentWeapon _joueur;
 				_muzzle_courant = currentMuzzle _joueur;
 				_mode_muzzle_courant = currentWeaponMode _joueur;
@@ -158,11 +158,11 @@ else
 				
 				sleep 0.5;
 				
-				// Vérification qu'on ai bien obtenu la main (conflit d'accès simultanés)
+				// Vï¿½rification qu'on ai bien obtenu la main (conflit d'accï¿½s simultanï¿½s)
 				if (_objet getVariable "R3F_LOG_est_deplace_par" == _joueur && isNull (_objet getVariable ["R3F_LOG_est_transporte_par", objNull])) then
 				{
-					R3F_LOG_deplace_force_setVector = false; // Mettre à true pour forcer la ré-otientation de l'objet, en forçant les filtres anti-flood
-					R3F_LOG_deplace_force_attachTo = false; // Mettre à true pour forcer le repositionnement de l'objet, en forçant les filtres anti-flood
+					R3F_LOG_deplace_force_setVector = false; // Mettre ï¿½ true pour forcer la rï¿½-otientation de l'objet, en forï¿½ant les filtres anti-flood
+					R3F_LOG_deplace_force_attachTo = false; // Mettre ï¿½ true pour forcer le repositionnement de l'objet, en forï¿½ant les filtres anti-flood
 					
 					// Ajout des actions de gestion de l'orientation
 					_action_relacher = _joueur addAction [("<t color=""#ee0000"">" + format [STR_R3F_LOG_action_relacher_objet, getText (configFile >> "CfgVehicles" >> (typeOf _objet) >> "displayName")] + "</t>"), {_this call R3F_LOG_FNCT_objet_relacher}, nil, 10, true, true];
@@ -172,10 +172,10 @@ else
 					_action_tourner = _joueur addAction [("<t color=""#00eeff"">" + STR_R3F_LOG_action_tourner + "</t>"), {R3F_LOG_deplace_dir_rel_objet = R3F_LOG_deplace_dir_rel_objet + 12; R3F_LOG_deplace_force_setVector = true;}, nil, 6, false, false];
 					_action_rapprocher = _joueur addAction [("<t color=""#00eeff"">" + STR_R3F_LOG_action_rapprocher + "</t>"), {R3F_LOG_deplace_distance_rel_objet = R3F_LOG_deplace_distance_rel_objet - 0.4; R3F_LOG_deplace_force_attachTo = true;}, nil, 6, false, false];
 					
-					// Relâcher l'objet dès que le joueur tire. Le detach sert à rendre l'objet solide pour ne pas tirer au travers.
+					// Relï¿½cher l'objet dï¿½s que le joueur tire. Le detach sert ï¿½ rendre l'objet solide pour ne pas tirer au travers.
 					_idx_eh_fired = _joueur addEventHandler ["Fired", {if (!surfaceIsWater getPos player) then {detach R3F_LOG_joueur_deplace_objet; R3F_LOG_joueur_deplace_objet = objNull;};}];
 					
-					// Gestion des évènements KeyDown et KeyUp pour faire tourner l'objet avec les touches X/C
+					// Gestion des ï¿½vï¿½nements KeyDown et KeyUp pour faire tourner l'objet avec les touches X/C
 					R3F_LOG_joueur_deplace_key_rotation = "";
 					R3F_LOG_joueur_deplace_key_translation = "";
 					_time_derniere_rotation = 0;
@@ -216,18 +216,18 @@ else
 					
 					_objet attachTo [_joueur, _pos_rel_objet_initial];
 					
-					// Si échec transfert local, mode dégradé : on conserve la direction de l'objet par rapport au joueur
+					// Si ï¿½chec transfert local, mode dï¿½gradï¿½ : on conserve la direction de l'objet par rapport au joueur
 					if (!local _objet) then {[_objet, "setDir", R3F_LOG_deplace_dir_rel_objet] call R3F_LOG_FNCT_exec_commande_MP;};
 					
 					R3F_LOG_mutex_local_verrou = false;
 					
-					// Boucle de gestion des évènements et du positionnement pendant le déplacement
+					// Boucle de gestion des ï¿½vï¿½nements et du positionnement pendant le dï¿½placement
 					while {!isNull R3F_LOG_joueur_deplace_objet && _objet getVariable "R3F_LOG_est_deplace_par" == _joueur && alive _joueur} do
 					{
 						// Gestion de l'orientation de l'objet en fonction du terrain
 						if (local _objet) then
 						{
-							// En fonction de la touche appuyée (X/C), on fait pivoter l'objet
+							// En fonction de la touche appuyï¿½e (X/C), on fait pivoter l'objet
 							if (R3F_LOG_joueur_deplace_key_rotation == "X" || R3F_LOG_joueur_deplace_key_rotation == "C") then
 							{
 								// Un cycle sur deux maxi (flood) on modifie de l'angle
@@ -243,11 +243,11 @@ else
 							
 							_vec_dir_rel = [sin R3F_LOG_deplace_dir_rel_objet, cos R3F_LOG_deplace_dir_rel_objet, 0];
 							
-							// Conversion de la normale du sol dans le repère du joueur car l'objet est attachTo
+							// Conversion de la normale du sol dans le repï¿½re du joueur car l'objet est attachTo
 							_normale_surface = surfaceNormal getPos _objet;
 							_normale_surface = (player worldToModel ASLtoATL (_normale_surface vectorAdd getPosASL player)) vectorDiff (player worldToModel ASLtoATL (getPosASL player));
 							
-							// Redéfinir l'orientation en fonction du terrain et du mode d'alignement
+							// Redï¿½finir l'orientation en fonction du terrain et du mode d'alignement
 							_vec_dir_up = switch (R3F_LOG_deplace_mode_alignement) do
 							{
 								case "sol": {[[-cos R3F_LOG_deplace_dir_rel_objet, sin R3F_LOG_deplace_dir_rel_objet, 0] vectorCrossProduct _normale_surface, _normale_surface]};
@@ -255,18 +255,18 @@ else
 								default {[_vec_dir_rel, [0, 0, 1]]};
 							};
 							
-							// On ré-oriente l'objet, lorsque nécessaire (pas de flood)
+							// On rï¿½-oriente l'objet, lorsque nï¿½cessaire (pas de flood)
 							if (R3F_LOG_deplace_force_setVector ||
 								(
-									// Vecteur dir suffisamment différent du dernier
+									// Vecteur dir suffisamment diffï¿½rent du dernier
 									(_vec_dir_up select 0) vectorCos (_dernier_vec_dir_up select 0) < 0.999 &&
-									// et différent de l'avant dernier (pas d'oscillations sans fin)
+									// et diffï¿½rent de l'avant dernier (pas d'oscillations sans fin)
 									vectorMagnitude ((_vec_dir_up select 0) vectorDiff (_avant_dernier_vec_dir_up select 0)) > 1E-9
 								) ||
 								(
-									// Vecteur up suffisamment différent du dernier
+									// Vecteur up suffisamment diffï¿½rent du dernier
 									(_vec_dir_up select 1) vectorCos (_dernier_vec_dir_up select 1) < 0.999 &&
-									// et différent de l'avant dernier (pas d'oscillations sans fin)
+									// et diffï¿½rent de l'avant dernier (pas d'oscillations sans fin)
 									vectorMagnitude ((_vec_dir_up select 1) vectorDiff (_avant_dernier_vec_dir_up select 1)) > 1E-9
 								)
 							) then
@@ -282,7 +282,7 @@ else
 						
 						sleep 0.015;
 						
-						// En fonction de la touche appuyée (F/R), on fait avancer ou reculer l'objet
+						// En fonction de la touche appuyï¿½e (F/R), on fait avancer ou reculer l'objet
 						if (R3F_LOG_joueur_deplace_key_translation == "F" || R3F_LOG_joueur_deplace_key_translation == "R") then
 						{
 							// Un cycle sur deux maxi (flood) on modifie de l'angle
@@ -319,8 +319,8 @@ else
 							};
 						} else {_time_derniere_translation = 0;};
 						
-						// Calcul de la position relative de l'objet, basée sur la position initiale, et sécurisée pour ne pas que l'objet rentre dans le joueur lors de la rotation
-						// L'ajout de ce calcul a également rendu inutile le test avec la fonction R3F_LOG_FNCT_unite_marche_dessus lors de la prise de l'objet
+						// Calcul de la position relative de l'objet, basï¿½e sur la position initiale, et sï¿½curisï¿½e pour ne pas que l'objet rentre dans le joueur lors de la rotation
+						// L'ajout de ce calcul a ï¿½galement rendu inutile le test avec la fonction R3F_LOG_FNCT_unite_marche_dessus lors de la prise de l'objet
 						_pos_rel_objet = [
 							_pos_rel_objet_initial select 0,
 							R3F_LOG_deplace_distance_rel_objet max
@@ -336,20 +336,20 @@ else
 						_offset_hauteur_cam = (vectorMagnitude [_pos_rel_objet select 0, _pos_rel_objet select 1, 0]) * tan (89 min (-89 max (_elev_cam_initial - _elev_cam)));
 						_offset_bounding_center = ((_objet modelToWorld boundingCenter _objet) select 2) - ((_objet modelToWorld [0,0,0]) select 2);
 						
-						// Calcul de la hauteur de l'objet en fonction de l'élévation de la caméra et du terrain
+						// Calcul de la hauteur de l'objet en fonction de l'ï¿½lï¿½vation de la camï¿½ra et du terrain
 						if (_objet isKindOf "Static") then
 						{
-							// En mode horizontal, la plage d'offset terrain est calculée de sorte à conserver au moins un des quatre coins inférieurs en contact avec le sol
+							// En mode horizontal, la plage d'offset terrain est calculï¿½e de sorte ï¿½ conserver au moins un des quatre coins infï¿½rieurs en contact avec le sol
 							if (R3F_LOG_deplace_mode_alignement == "horizon") then
 							{
 								_hauteur_terrain_min_max_objet = [_objet] call R3F_LOG_FNCT_3D_get_hauteur_terrain_min_max_objet;
 								_offset_hauteur_terrain_min = (_hauteur_terrain_min_max_objet select 0) - (getPosASL _joueur select 2) + _offset_bounding_center;
 								_offset_hauteur_terrain_max = (_hauteur_terrain_min_max_objet select 1) - (getPosASL _joueur select 2) + _offset_bounding_center;
 								
-								// On autorise un léger enterrement jusqu'à 40% de la hauteur de l'objet
+								// On autorise un lï¿½ger enterrement jusqu'ï¿½ 40% de la hauteur de l'objet
 								_offset_hauteur_terrain_min = _offset_hauteur_terrain_min min (_offset_hauteur_terrain_max - 0.4 * ((boundingBoxReal _objet select 1 select 2) - (boundingBoxReal _objet select 0 select 2)) / (_dernier_vec_dir_up select 1 select 2));
 							}
-							// Dans les autres modes d'alignement, on autorise un léger enterrement jusqu'à 40% de la hauteur de l'objet
+							// Dans les autres modes d'alignement, on autorise un lï¿½ger enterrement jusqu'ï¿½ 40% de la hauteur de l'objet
 							else
 							{
 								_offset_hauteur_terrain_max = getTerrainHeightASL (getPos _objet) - (getPosASL _joueur select 2) + _offset_bounding_center;
@@ -371,18 +371,18 @@ else
 							_offset_hauteur = _offset_hauteur_terrain max ((-1.4 + _offset_bounding_center) max ((2.75 + _offset_bounding_center) min ((_pos_rel_objet select 2) + _offset_hauteur_cam)));
 						};
 						
-						// On repositionne l'objet par rapport au joueur, lorsque nécessaire (pas de flood)
+						// On repositionne l'objet par rapport au joueur, lorsque nï¿½cessaire (pas de flood)
 						if (R3F_LOG_deplace_force_attachTo ||
 							(
-								// Positionnement en hauteur suffisamment différent
+								// Positionnement en hauteur suffisamment diffï¿½rent
 								abs (_offset_hauteur - _dernier_offset_hauteur) > 0.025 &&
-								// et différent de l'avant dernier (pas d'oscillations sans fin)
+								// et diffï¿½rent de l'avant dernier (pas d'oscillations sans fin)
 								abs (_offset_hauteur - _avant_dernier_offset_hauteur) > 1E-9
 							) ||
 							(
-								// Position relative suffisamment différente
+								// Position relative suffisamment diffï¿½rente
 								vectorMagnitude (_pos_rel_objet vectorDiff _dernier_pos_rel_objet) > 0.025 &&
-								// et différente de l'avant dernier (pas d'oscillations sans fin)
+								// et diffï¿½rente de l'avant dernier (pas d'oscillations sans fin)
 								vectorMagnitude (_pos_rel_objet vectorDiff _avant_dernier_pos_rel_objet) > 1E-9
 							)
 						) then
@@ -402,7 +402,7 @@ else
 							R3F_LOG_deplace_force_attachTo = false;
 						};
 						
-						// On interdit de monter dans un véhicule tant que l'objet est porté
+						// On interdit de monter dans un vï¿½hicule tant que l'objet est portï¿½
 						if (vehicle _joueur != _joueur) then
 						{
 							systemChat STR_R3F_LOG_ne_pas_monter_dans_vehicule;
@@ -411,7 +411,7 @@ else
 							sleep 1;
 						};
 						
-						// Le joueur change d'arme, on stoppe le déplacement et on ne reprendra pas l'arme initiale
+						// Le joueur change d'arme, on stoppe le dï¿½placement et on ne reprendra pas l'arme initiale
 						if (currentWeapon _joueur != "" && currentWeapon _joueur != handgunWeapon _joueur && !surfaceIsWater getPos _joueur) then
 						{
 							R3F_LOG_joueur_deplace_objet = objNull;
@@ -421,10 +421,10 @@ else
 						sleep 0.015;
 					};
 					
-					// Si l'objet est relaché (et donc pas chargé dans un véhicule)
+					// Si l'objet est relachï¿½ (et donc pas chargï¿½ dans un vï¿½hicule)
 					if (isNull (_objet getVariable ["R3F_LOG_est_transporte_par", objNull])) then
 					{
-						// L'objet n'est plus porté, on le repose. Le léger setVelocity vers le haut sert à defreezer les objets qui pourraient flotter.
+						// L'objet n'est plus portï¿½, on le repose. Le lï¿½ger setVelocity vers le haut sert ï¿½ defreezer les objets qui pourraient flotter.
 						// TODO gestion collision, en particulier si le joueur meurt
 						[_objet, "detachSetVelocity", [0, 0, 0.1]] call R3F_LOG_FNCT_exec_commande_MP;
 					};
@@ -490,29 +490,29 @@ else
 				
 				if (typeOf _objet == "B_CargoNet_01_ammo_F") then {
 					removeAllActions _objet ;				
-							[ _objet,
-							"<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>ARSENAL",
-							"Screens\FOBA\mg_ca.paa",
-							"Screens\FOBA\mg_ca.paa",
-								"_this distance _target < 10",			
-								"_caller distance _target < 10",	
-							{},
-							{},
-							{
+							// [ _objet,
+							// "<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>ARSENAL",
+							// "Screens\FOBA\mg_ca.paa",
+							// "Screens\FOBA\mg_ca.paa",
+							// 	"_this distance _target < 10",			
+							// 	"_caller distance _target < 10",	
+							// {},
+							// {},
+							// {
 								
-								if (isClass (configfile >> "ace_arsenal_loadoutsDisplay") == true ) then {
-									[player, player, true] call ace_arsenal_fnc_openBox;
-								} else {
-									["Open", true] spawn BIS_fnc_arsenal;
-								};
-							},
-							{},
-							[],
-							1,
-							1,
-							false,
-							false
-							] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
+							// 	if (isClass (configfile >> "ace_arsenal_loadoutsDisplay") == true ) then {
+							// 		[player, player, true] call ace_arsenal_fnc_openBox;
+							// 	} else {
+							// 		["Open", true] spawn BIS_fnc_arsenal;
+							// 	};
+							// },
+							// {},
+							// [],
+							// 1,
+							// 1,
+							// false,
+							// false
+							// ] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
 
 							[ _objet,
 							"<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>REARM Infantry",
@@ -615,7 +615,7 @@ if ((typeOf _objet == "B_Slingload_01_Cargo_F") or (typeOf _objet == "B_Slingloa
 						};
 };
 				
-				// Reprise de l'arme et restauration de son mode de tir, si nécessaire
+				// Reprise de l'arme et restauration de son mode de tir, si nï¿½cessaire
 				if (alive _joueur && !surfaceIsWater getPos _joueur && _restaurer_arme) then
 				{
 					for [{_idx_muzzle = 0},
@@ -628,7 +628,7 @@ if ((typeOf _objet == "B_Slingload_01_Cargo_F") or (typeOf _objet == "B_Slingloa
 					};
 				};
 				
-				sleep 5; // Délai de 5 secondes pour attendre la chute/stabilisation
+				sleep 5; // Dï¿½lai de 5 secondes pour attendre la chute/stabilisation
 				if (!isNull _objet) then
 				{
 					if (isNull (_objet getVariable ["R3F_LOG_est_deplace_par", objNull]) ||
