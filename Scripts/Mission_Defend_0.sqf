@@ -9,12 +9,12 @@
 				
 	_mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 	_mrkr = _mrkrs select 0;
-	_DANSCORE = parseNumber (markerText _mrkr) ;  
+	_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 			
 			_Time = 900 ;
-			if (_DANSCORE > 3) then {_Time = 700 ;} ; 
-			if (_DANSCORE > 9) then {_Time = 500 ;} ; 
-			if (_DANSCORE > 12) then {_Time = 300 ;} ; 
+			if (_AGGRSCORE > 3) then {_Time = 700 ;} ; 
+			if (_AGGRSCORE > 9) then {_Time = 500 ;} ; 
+			if (_AGGRSCORE > 12) then {_Time = 300 ;} ; 
 			sleep _Time ;
 	
 
@@ -25,7 +25,7 @@ if (count _humanPlayers > 0) then {
 
 	_ENMChances = selectRandom [6, 7, 8, 9, 10, 11] ; 
 
-	if (_DANSCORE > 7) then {
+	if (_AGGRSCORE > 7) then {
 	_ENMChances = selectRandom [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] ; 
 	};
 	
@@ -90,7 +90,7 @@ _azimuth = (getMarkerPos _Dest) getDir (getMarkerPos _OBJ) ;
 
 
 
-		if (_DANSCORE > 5) then {
+		if (_AGGRSCORE > 5) then {
  
 _azimuth = (getMarkerPos _Dest) getDir (getMarkerPos _OBJ) ;
 
@@ -107,7 +107,7 @@ _azimuth = (getMarkerPos _Dest) getDir (getMarkerPos _OBJ) ;
 	sleep 10 ;
 
 
-		if (_DANSCORE > 10) then {
+		if (_AGGRSCORE > 10) then {
 				
 _azimuth = (getMarkerPos _Dest) getDir (getMarkerPos _OBJ) ;
 			[_CNTR] execVM "Scripts\VehiInsert_CSAT_3.sqf";
@@ -184,7 +184,7 @@ _azimuth = (getMarkerPos _Dest) getDir (getMarkerPos _OBJ) ;
 
 						_mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
 						_mrkr = _mrkrs select 0;
-						_DANSCORE = parseNumber (markerText _mrkr) ;  
+						_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 						_P1 = [ 
 						'Outpost_01',  
@@ -196,7 +196,7 @@ _azimuth = (getMarkerPos _Dest) getDir (getMarkerPos _OBJ) ;
 						'Outpost_07'   
 						]; 	
 
-						if (_DANSCORE > 8) then {
+						if (_AGGRSCORE > 8) then {
 						_P1 = [ 
 						'Outpost_08',  
 						'Outpost_09',  
@@ -328,7 +328,7 @@ _azimuth = (getMarkerPos _Dest) getDir (getMarkerPos _OBJ) ;
 
 				_mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
 				_mrkr = _mrkrs select 0;
-				_DANSCORE = parseNumber (markerText _mrkr) ;  
+				_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 				_P1 = [ 
 				'Road_Post_CSAT_01',  
@@ -355,7 +355,7 @@ _azimuth = (getMarkerPos _Dest) getDir (getMarkerPos _OBJ) ;
 				'Watchpost_10'
 				 ]; 
 
-				if (_DANSCORE > 5) then {
+				if (_AGGRSCORE > 5) then {
 				_P1 =  [ 
 				'Road_Post_CSAT_03',  
 				'Road_Post_CSAT_04',
@@ -381,7 +381,7 @@ _azimuth = (getMarkerPos _Dest) getDir (getMarkerPos _OBJ) ;
 				'Watchpost_10'
 				]; };
 
-				if (_DANSCORE > 10) then {
+				if (_AGGRSCORE > 10) then {
 				_P1 =  [ 
 				'Road_Post_CSAT_05',  
 				'Road_Post_CSAT_06',

@@ -2,10 +2,10 @@
 _thisMineFieldTrigger = _this select 0;
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 
-if (_DANSCORE < 6) then {
+if (_AGGRSCORE < 6) then {
 _Mines = [ "APERSMine", "APERSBoundingMine" ]; 
  
 _mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 100))];
@@ -20,7 +20,7 @@ _mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 +
 _mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 100))];
 };
 
-if ((_DANSCORE > 5) && (_DANSCORE < 11)) then {
+if ((_AGGRSCORE > 5) && (_AGGRSCORE < 11)) then {
 _Mines = [ "APERSMine", "APERSBoundingMine" ]; 
 _mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
 _mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
@@ -47,7 +47,7 @@ _mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 25
 _mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _Mines = [ "APERSMine", "APERSBoundingMine" ]; 
 _mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
 _mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];

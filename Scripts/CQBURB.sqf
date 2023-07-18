@@ -1,7 +1,7 @@
 
  _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 _Chance = selectRandom [1,2,3]; 
 
 
@@ -26,7 +26,7 @@ CQBG = [(selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units, sele
 
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _Buildings = nearestObjects [_thisCQBTrigger, ['HOUSE'], 100] ;  
 _allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 2}; 
 _HQ = _allPositionBuildings select 1;
@@ -35,7 +35,7 @@ CQBG = [(selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units, sele
 };
 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _Buildings = nearestObjects [_thisCQBTrigger, ['HOUSE'], 100] ;  
 _allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 2}; 
 _HQ = _allPositionBuildings select 2;

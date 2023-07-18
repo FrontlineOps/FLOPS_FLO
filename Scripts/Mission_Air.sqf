@@ -7,7 +7,7 @@ _Chance = selectRandom [1, 2, 3];
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 //////Vehicles/////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -50,7 +50,7 @@ _V setCollisionLight true;
 
 [_VC, (getPos _thisAirTrigger), 5000] call BIS_fnc_taskPatrol;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 
 _V = createVehicle [ selectRandom East_Air_Jet, (getpos _thisAirTrigger) getPos [100, 120], [], 100, "FLY"]; 
 _Group = createVehicleCrew _V; 
@@ -65,7 +65,7 @@ _V setCollisionLight true;
 [_VC, (getPos _thisAirTrigger), 3000] call BIS_fnc_taskPatrol;
 };
 	
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 
 
 _V = createVehicle [ selectRandom East_Air_Jet, (getpos _thisAirTrigger) getPos [100, 180], [], 100, "FLY"]; 

@@ -7,11 +7,6 @@ _NewMoney = _Money - _Cost;
 _mrkr setMarkerText str _NewMoney;
 
 
-_SDM = createMarker [str (position player), position player];
-_SDM setMarkerType "mil_marker_noShadow";
-_SDM setMarkerColor "colorBLUFOR" ;
-_SDM setMarkerAlpha 0.7;
-_SDM setMarkerText "SupplyDrop";
 
 			playSound3D [getMissionPath (selectRandom ["Sounds\SupportRequestRGSupplyDrop.ogg"]), player];
 

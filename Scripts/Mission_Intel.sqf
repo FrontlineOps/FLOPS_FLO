@@ -6,7 +6,7 @@ _Chance = selectRandom [1, 2, 3];
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -61,7 +61,7 @@ PRL = [_poss getPos [(20 + (random 30)),(0 + (random 360))], East, [selectRandom
 			PRL deleteGroupWhenEmpty true;
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _Mount = selectRandom nearestLocations [getPos _thisIntelTrigger, ["Mount"], 500];
 _poss = locationPosition _Mount ; 
 [ "Recon_OPF_2", _poss, [0, 0, 0],0, true ] call LARs_fnc_spawnComp;
@@ -75,7 +75,7 @@ PRL = [_poss getPos [(20 + (random 30)),(0 + (random 360))], East, [selectRandom
 
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _Mount = selectRandom nearestLocations [getPos _thisIntelTrigger, ["Mount"], 500];
 _poss = locationPosition _Mount ; 
 [ "Recon_OPF_3", _poss, [0, 0, 0],0, true ] call LARs_fnc_spawnComp;

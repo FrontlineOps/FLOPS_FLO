@@ -12,7 +12,7 @@ if !(isNull _thisCaptureEastTrigger) then {
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 if (triggerActivated _thisCaptureEastTrigger) then {
 

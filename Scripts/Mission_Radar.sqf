@@ -6,7 +6,7 @@ _Chance = selectRandom [1, 2, 3];
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 [_thisRadarTrigger] execVM "Scripts\HMGspawn.sqf" ; 
@@ -24,11 +24,11 @@ G = [selectRandom _allPositions, East,[selectRandom East_Units, selectRandom Eas
  ((units G) select 0) disableAI "PATH";
 			G deleteGroupWhenEmpty true;
 
-if (_DANSCORE> 5) then {
+if (_AGGRSCORE> 5) then {
 G = [selectRandom _allPositions, East,[selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;     
 			G deleteGroupWhenEmpty true;
 };
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 G = [selectRandom _allPositions, East,[selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;     
 ((units G) select 0) disableAI "PATH";
 			G deleteGroupWhenEmpty true;
@@ -57,7 +57,7 @@ G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_sp
 ((units G) select 0) disableAI "PATH";
 			G deleteGroupWhenEmpty true;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH";   
 			G deleteGroupWhenEmpty true;
@@ -65,7 +65,7 @@ G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_sp
 			G deleteGroupWhenEmpty true;
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH";   
 			G deleteGroupWhenEmpty true;
@@ -80,13 +80,13 @@ G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;
 ((units G) select 0) disableAI "PATH"; 
 			G deleteGroupWhenEmpty true;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _poss = [(getpos _thisRadarTrigger), 30, 50, 5, 1 , 0] call BIS_fnc_findSafePos; 
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH"; 
 			G deleteGroupWhenEmpty true;
 }; 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _poss = [(getpos _thisRadarTrigger), 30, 50, 5, 1 , 0] call BIS_fnc_findSafePos; 
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH"; 
@@ -101,7 +101,7 @@ PRL = [_poss, East, [selectRandom East_Units, selectRandom East_Units, selectRan
 [PRL, _poss, 50] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 	_poss = [(getpos _thisRadarTrigger), 30, 50, 5, 1 , 0] call BIS_fnc_findSafePos; 
 PRL = [_poss, East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, _poss, 100] call BIS_fnc_taskPatrol;

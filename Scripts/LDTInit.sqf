@@ -31,7 +31,7 @@ if ((typeOf _UnitObj == F_Diver_TL) || (typeOf _UnitObj == "B_T_Diver_F") || (ty
 if (typeOf _UnitObj == F_Diver_Rfl) then {_UNTType = F_Diver_Rfl ;} ;
 if (typeOf _UnitObj == F_Diver_Eod) then {_UNTType = F_Diver_Eod ;} ;
 
-if (_UNTType == "") exitwith {diag_log format["LDTInit: _UNTType does not match any defined types.  object given: %1",typeof _unitobj];};
+if (_UNTType == "") exitwith {diag_log format["LDTInit: _UNTType does not match any defined custom faction types.  object given: %1",typeof _unitobj];};
 
 // private _UNTTypeName = str _UNTType ;
 // private _missionTag = missionName;

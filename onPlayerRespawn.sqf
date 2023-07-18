@@ -1,7 +1,5 @@
-params ["_newUnit", "_oldUnit", "_respawn", "_respawnDelay"];
 
-private _OLDGRP = group player ;
-
+OLDGRP = group player ;
 
 [player] join grpNull ;
 
@@ -33,8 +31,6 @@ removeAllActions player;
   
  ["GetOutMan"] remoteExec ["removeAllEventHandlers", player, false];
  
-// Have to wait at mission start until all PVd variables are initialized
-waitUntil {!(isNil "F_Recon_Eod")};
 
 if ((typeOf  player == F_Recon_Eod) || (typeOf  player == F_Recon_Med) || (typeOf  player == F_Recon_Eng) ||  (typeOf  player == F_Recon_Mg) || (typeOf  player == F_Recon_AT) || (typeOf  player == F_Recon_Mrk) || (typeOf  player == F_Recon_TL) || (typeOf player == "B_G_Soldier_TL_F")) then {
 [
@@ -173,7 +169,7 @@ sleep 1 ;
 			{TheCommander hcSetGroup [_x];} forEach _GRPs;
 			};
 
-if (count ((units _OLDGRP) select {alive _x == true}) > 0) then {
+if (count ((units OLDGRP) select {alive _x == true}) > 0) then {
 		GNRT = "YES" ;
 		DVRT = "NO" ;
 		0 = [] spawn {
@@ -183,7 +179,7 @@ if (count ((units _OLDGRP) select {alive _x == true}) > 0) then {
 						} ;
 
 						if (!_result) then {
-						[player] join _OLDGRP ;	
+						[player] join OLDGRP ;	
 						group player selectLeader player;						
 						  };
 		};

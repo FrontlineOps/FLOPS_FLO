@@ -35,7 +35,7 @@ PRL = [(getPos _nearRoad) getPos [(10 +(random 20)), (0 + (random 360))], East, 
 [PRL, getPos _nearRoad, 50] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
 
-// if (_DANSCORE > 5) then {
+// if (_AGGRSCORE > 5) then {
 // PRL = [(getPos _nearRoad) getPos [(10 +(random 20)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 // [PRL, getPos _nearRoad, 100] call BIS_fnc_taskPatrol;
 // 			PRL deleteGroupWhenEmpty true;

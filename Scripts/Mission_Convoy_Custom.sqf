@@ -7,7 +7,7 @@ if (ConVLocc == 0) then {
 			
 	_mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 	_mrkr = _mrkrs select 0;
-	_DANSCORE = parseNumber (markerText _mrkr) ;  
+	_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 			
 
 			_allZoneMarks = allMapMarkers select {markerType _x == "loc_Power" || markerType _x == "o_support" || markerType _x == "o_maint" || markerType _x == "n_support" || markerType _x == "loc_Ruin" || markerType _x == "n_installation" || markerType _x == "o_installation"} ;  
@@ -106,7 +106,7 @@ V2 setUnloadInCombat [true, false];
 {[_x] join CGM} forEach units _CG; 
 
  
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _nearRoad = selectRandom ( (getpos _CNV) nearRoads 200 ) ; 
 V3 = createVehicle [ selectRandom East_Ground_Transport, (_nearRoad getRelPos [0, 0]), [], 10, "NONE"]; 
 _azimuth = (getMarkerPos "ConvoyStrt") getDir (getMarkerPos "ConvoyDest") ;
@@ -131,7 +131,7 @@ V4 setUnloadInCombat [true, false];
 };
 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _nearRoad = selectRandom ( (getpos _CNV) nearRoads 200 ) ; 
 V5 = createVehicle [ selectRandom East_Ground_Transport, (_nearRoad getRelPos [0, 0]), [], 10, "NONE"]; 
 _azimuth = (getMarkerPos "ConvoyStrt") getDir (getMarkerPos "ConvoyDest") ;

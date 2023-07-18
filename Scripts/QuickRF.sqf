@@ -6,7 +6,7 @@ RADSQRF = _this select 1;
 
 
 
-_Chance = selectRandom [1, 2, 3, 4]; 
+//_Chance = selectRandom [1, 2, 3, 4]; 
 
 /*
 _GRPs = (allGroups select {side _x == east && getPos ((units _x) select 0) distance CNTRQRF < RADSQRF});
@@ -79,14 +79,14 @@ WP_1 SetWaypointType "MOVE";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			 _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
+			 _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
 			[CNTRQRF] execVM _QRF ;
 
 sleep 30 ;
 if (RADSQRF > 1200) then {
-			 _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
+			 _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
 			[CNTRQRF] execVM _QRF ;
-[CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
+			[CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
 };
 
 sleep 30 ;
@@ -94,7 +94,7 @@ if (RADSQRF > 1700) then {
 			 _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
 			[CNTRQRF] execVM _QRF ;
 			[CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
-[CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
+			[CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
 
 };
 

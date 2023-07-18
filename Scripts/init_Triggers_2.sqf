@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 //////Resources/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -115,23 +115,23 @@ _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE',
 
 _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
-if (_DANSCORE < 6) then {
+if (_AGGRSCORE < 6) then {
 BRKC = [ 
 'B_1_CSAT',  
 'B_2_CSAT',  
 'B_3_CSAT'   
 ]; };
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 BRKC =  [ 
 'B_4_CSAT',  
 'B_5_CSAT',  
 'B_6_CSAT'   
 ]; };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 BRKC =  [ 
 'B_7_CSAT',  
 'B_8_CSAT',  
@@ -219,23 +219,23 @@ _TERR = nearestTerrainObjects [(getPos thisTrigger), [], 40];
 	
 _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
-if (_DANSCORE < 6) then {			 
+if (_AGGRSCORE < 6) then {			 
 RDRC = [ 
 'Radar_1',  
 'Radar_2',  
 'Radar_3'   
 ]; };	
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 RDRC =  [ 
 'Radar_4',  
 'Radar_5',  
 'Radar_6'   
 ]; };					   					   
 					   
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 RDRC =  [ 
 'Radar_7',  
 'Radar_8',  

@@ -14,7 +14,7 @@ if (count _humanPlayers > 0) then {
 
        _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
        _mrkr = _mrkrs select 0;
-       _DANSCORE = parseNumber (markerText _mrkr) ;  
+       _AGGRSCORE = parseNumber (markerText _mrkr) ;  
        
 	   _AssltDestMrks = allMapMarkers select {markerType _x == "b_installation" && markerText _x == "FOB"};
 	   _AssltDest = selectRandom _AssltDestMrks ; 
@@ -133,7 +133,7 @@ _V setCollisionLight true;
 
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _nearstRoad = selectRandom _nearRoadleft; 
 
 PRL = [(getMarkerPos "AssltDest") getPos [(500 + (random 1000)), (_azimuth + (random 20))] , East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
@@ -179,7 +179,7 @@ _V setCollisionLight true;
 };
 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [(getMarkerPos "AssltDest") getPos [(500 + (random 1000)), (_azimuth + (random 20))] , East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 WP_1 = PRL addWaypoint [getMarkerPos "AssltDest", 0]; 
 WP_1 SetWaypointType "MOVE"; 

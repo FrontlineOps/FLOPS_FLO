@@ -2,7 +2,7 @@
 _thisAAATrigger = _this select 0; 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 
 
@@ -28,7 +28,7 @@ PRL = [_thisAAATrigger getpos [(20 + (random 20)), (0 + (random 350))], East, [s
 			PRL deleteGroupWhenEmpty true;
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 PRL = [_thisAAATrigger getpos [(0 + (random 20)), (0 + (random 350))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, _thisAAATrigger getpos [(0 + (random 20)), (0 + (random 350))], 150] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
@@ -40,7 +40,7 @@ G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_s
 			G deleteGroupWhenEmpty true;
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [_thisAAATrigger getpos [(0 + (random 20)), (0 + (random 350))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, _thisAAATrigger getpos [(0 + (random 20)), (0 + (random 350))], 200] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
