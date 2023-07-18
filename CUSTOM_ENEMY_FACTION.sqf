@@ -28,26 +28,37 @@ East_Groups = [
 
 East_Ground_Vehicles_Ambient = ["PRACS_SLA_Tigr", "PRACS_SLA_UAZ_SPG9", "PRACS_SLA_UAZ_DSHKM"]; 
 publicVariable "East_Ground_Vehicles_Ambient";
-East_Ground_Vehicles_Light = ["PRACS_SLA_BMD2", "PRACS_SLA_BTR80", "PRACS_SLA_BTR80A", "PRACS_SLA_BMD1", "PRACS_SLA_BRDM", "PRACS_SLA_BRDM_ATGM", "PRACS_SLA_BMP1", "PRACS_SLA_BMP2", "PRACS_SLA_Tigr", "PRACS_SLA_UAZ_SPG9", "PRACS_SLA_UAZ_DSHKM", "PRACS_SLA_Type63", "PRACS_SLA_MTLB", "PRACS_SLA_SA9", "PRACS_SLA_SA13", "PRACS_SLA_BTR40_AAM", "PRACS_SLA_ZSU23", "PRACS_SLA_SA8", "PRACS_SLA_SA17", "PRACS_SLA_MTLB_ZU23"]; 
+
+East_Ground_Vehicles_Light = ["PRACS_SLA_BMD2", "PRACS_SLA_BTR80", "PRACS_SLA_BTR80A", "PRACS_SLA_BMD1", "PRACS_SLA_BRDM", "PRACS_SLA_BRDM_ATGM", "PRACS_SLA_BMP1", "PRACS_SLA_BMP2", 
+"PRACS_SLA_BMD2", "PRACS_SLA_BTR80", "PRACS_SLA_BTR80A", "PRACS_SLA_BMD1", "PRACS_SLA_BRDM", "PRACS_SLA_BRDM_ATGM", "PRACS_SLA_BMP1", "PRACS_SLA_BMP2",
+"PRACS_SLA_Tigr", "PRACS_SLA_UAZ_SPG9", "PRACS_SLA_UAZ_DSHKM", "PRACS_SLA_Type63", "PRACS_SLA_MTLB", 
+"PRACS_SLA_SA9", "PRACS_SLA_SA13", "PRACS_SLA_BTR40_AAM", "PRACS_SLA_ZSU23", "PRACS_SLA_SA8", "PRACS_SLA_SA17", "PRACS_SLA_MTLB_ZU23"]; 
 publicVariable "East_Ground_Vehicles_Light";
+
 East_Ground_Vehicles_Heavy = ["PRACS_SLA_T72BV", "PRACS_SLA_T72B", "PRACS_SLA_T80U"]; 
 publicVariable "East_Ground_Vehicles_Heavy";
-East_Ground_Transport = ["PRACS_SLA_URAL_Open", "PRACS_SLA_URAL", "PRACS_SLA_MAZ_Transport", "PRACS_SLA_BMD2", "PRACS_SLA_BTR80", "PRACS_SLA_BTR80A", "PRACS_SLA_BMD1", "PRACS_SLA_BMP1", "PRACS_SLA_BMP2", "PRACS_SLA_BTR60_BG", "PRACS_SLA_URAL_BG", "PRACS_SLA_Type63", "PRACS_SLA_MTLB"]; 
+
+East_Ground_Transport = ["PRACS_SLA_URAL_Open", "PRACS_SLA_URAL", "PRACS_SLA_MAZ_Transport", "PRACS_SLA_BMD2", "PRACS_SLA_BTR80", "PRACS_SLA_BTR80A", 
+"PRACS_SLA_BMD1", "PRACS_SLA_BMP1", "PRACS_SLA_BMP2", "PRACS_SLA_BTR60_BG", "PRACS_SLA_URAL_BG", "PRACS_SLA_Type63", "PRACS_SLA_MTLB"]; 
 publicVariable "East_Ground_Transport";
 
 East_Air_Transport = ["PRACS_SLA_Mi8amt", "PRACS_SLA_Mi17Sh"];
 publicVariable "East_Air_Transport";
+
 East_Air_Heli = ["PRACS_SLA_Mi24V_UPK", "PRACS_SLA_Mi17Sh_UPK"]; 
 publicVariable "East_Air_Heli";
+
 East_Air_Jet = ["PRACS_SLA_MiG21", "PRACS_SLA_MiG27", "PRACS_SLA_SU22", "PRACS_SLA_Su25"]; 
 publicVariable "East_Air_Jet";
 
-East_Units = ["PRACS_SLA_A_Infantry_PSG", "PRACS_SLA_A_Infantry_RKT", "PRACS_SLA_A_Infantry_AA", "PRACS_SLA_A_Infantry_MG", "PRACS_SLA_A_Infantry_TL"];
+East_Units = ["PRACS_SLA_Infantry_SL", "PRACS_SLA_A_Infantry_RKT", "PRACS_SLA_A_Infantry_AA", "PRACS_SLA_A_Infantry_MG", "PRACS_SLA_Infantry_RPG", "PRACS_SLA_Infantry_RPG_AT", "PRACS_SLA_Infantry_M", "PRACS_SLA_Infantry_Medic", "PRACS_SLA_Infantry_GRE", "PRACS_SLA_A_Infantry_TL"];
 publicVariable "East_Units";
+
 East_Units_Officers = ["PRACS_SLA_Infantry_C"];
 publicVariable "East_Units_Officers";
 
-East_Groups = (configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_guards" >> "pracs_sla_infantry_group_AT_guards"),
+East_Groups = [
+(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_guards" >> "pracs_sla_infantry_group_AT_guards"),
 (configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_guards" >> "pracs_sla_infantry_group_EOD_guards"),
 (configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_guards" >> "pracs_sla_infantry_group_FP_guards"),
 (configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_guards" >> "pracs_sla_infantry_group_guards_HMOT"),
@@ -71,5 +82,6 @@ East_Groups = (configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pra
 (configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_Naval_infantry_group_light" >> "pracs_sla_naval_infantry_group_AA"),
 (configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_Naval_infantry_group_light" >> "pracs_sla_naval_infantry_group_AT"),
 (configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_Naval_infantry_group_light" >> "pracs_sla_naval_infantry_group_platoon"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_Naval_infantry_group_light" >> "pracs_sla_naval_infantry_group_SHPS"),
+(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_Naval_infantry_group_light" >> "pracs_sla_naval_infantry_group_SHPS")
+];
 publicVariable "East_Groups";
