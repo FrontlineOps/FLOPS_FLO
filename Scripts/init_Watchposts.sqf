@@ -58,13 +58,13 @@ _Watchpost = selectRandom _allWatchposts;
 
 {
    if (((side _x) == East) && ((getMarkerpos "MB1") distance _x < 200)) then { 
-                        _x unassignItem "NVGoggles_OPFOR";
-                        _x removeItem "NVGoggles_OPFOR";
-						_x unassignItem "acc_pointer_IR";
-	                    _x removePrimaryWeaponItem "acc_pointer_IR";
-	                    _x addPrimaryWeaponItem "acc_flashlight";
-	                    _x assignItem "acc_flashlight";
-	                    _x enableGunLights "ForceOn";
+                        // _x unassignItem "NVGoggles_OPFOR";
+                        // _x removeItem "NVGoggles_OPFOR";
+						// _x unassignItem "acc_pointer_IR";
+	                    // _x removePrimaryWeaponItem "acc_pointer_IR";
+	                    // _x addPrimaryWeaponItem "acc_flashlight";
+	                    // _x assignItem "acc_flashlight";
+	                    // _x enableGunLights "ForceOn";
 	                    _x setskill ["spotDistance",(0 + random 0.2)];
 	                    _x setskill ["spotTime",(0 + random 0.2)];
                      }; 

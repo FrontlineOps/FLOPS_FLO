@@ -197,14 +197,14 @@ _trg setTriggerStatements [
 "this",  "[thisTrigger, 1000] execVM 'Scripts\ZONEs.sqf';", ""]; 
 
 
-  {
-      _nvg = hmd _x;
-      _x unassignItem _nvg;
-      _x removeItem _nvg;
-	  _x addPrimaryWeaponItem "acc_flashlight";
-	  _x assignItem "acc_flashlight";
-	  _x enableGunLights "ForceOn";
-  } foreach (allUnits select {side _x == east}); 
+//   {
+//       _nvg = hmd _x;
+//       _x unassignItem _nvg;
+//       _x removeItem _nvg;
+// 	  _x addPrimaryWeaponItem "acc_flashlight";
+// 	  _x assignItem "acc_flashlight";
+// 	  _x enableGunLights "ForceOn";
+//   } foreach (allUnits select {side _x == east}); 
 
 
 { if !((side _x) == west) then {

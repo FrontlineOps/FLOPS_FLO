@@ -248,15 +248,15 @@ private _civGroups = allGroups select {
 				((units _EnmGRP) select 0) setPos (selectRandom _allPositions) ; 
 			} ;
 	
-			for "_i" from 0 to (count (units _EnmGrp))-1 do {
-				private _unit = (units _EnmGrp) select _i;
-				_nvg = hmd _unit;
-				_unit unassignItem _nvg;
-				_unit removeItem _nvg;
-				_unit addPrimaryWeaponItem "acc_flashlight";
-				_unit assignItem "acc_flashlight";
-				_unit enableGunLights "ForceOn";
-			} ;
+			// for "_i" from 0 to (count (units _EnmGrp))-1 do {
+			// 	private _unit = (units _EnmGrp) select _i;
+			// 	_nvg = hmd _unit;
+			// 	_unit unassignItem _nvg;
+			// 	_unit removeItem _nvg;
+			// 	_unit addPrimaryWeaponItem "acc_flashlight";
+			// 	_unit assignItem "acc_flashlight";
+			// 	_unit enableGunLights "ForceOn";
+			// } ;
 				
 			[(getMarkerPos _x), 20] execVM "Scripts\INTLitems.sqf";
 			deleteMarker _x ;	

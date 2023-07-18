@@ -54,12 +54,12 @@ G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_s
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 [_thisAAATrigger, 100] execVM "Scripts\INTLitems.sqf";
 
-{
-_nvg = hmd _x;
- _x unassignItem _nvg;
- _x removeItem _nvg;
-	  _x addPrimaryWeaponItem "acc_flashlight";
-	  _x assignItem "acc_flashlight";
-	  _x enableGunLights "ForceOn";
-  } foreach (allUnits select {side _x == east}); 
+// {
+// _nvg = hmd _x;
+//  _x unassignItem _nvg;
+//  _x removeItem _nvg;
+// 	  _x addPrimaryWeaponItem "acc_flashlight";
+// 	  _x assignItem "acc_flashlight";
+// 	  _x enableGunLights "ForceOn";
+//   } foreach (allUnits select {side _x == east}); 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

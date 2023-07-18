@@ -125,15 +125,15 @@ PRL = [thisRoadPostTrigger getPos [(10 + (random 40)),(0 + (random 360))], East,
 [PRL, getPos _thisCityTrigger, (100 + (random 300))] call BIS_fnc_taskPatrol;	
 };
 	
-{
+// {
 
-_nvg = hmd _x;
- _x unassignItem _nvg;
- _x removeItem _nvg;
-	  _x addPrimaryWeaponItem "acc_flashlight";
-	  _x assignItem "acc_flashlight";
-	  _x enableGunLights "ForceOn";
-  } foreach (allUnits select {side _x == east}); 
+// _nvg = hmd _x;
+//  _x unassignItem _nvg;
+//  _x removeItem _nvg;
+// 	  _x addPrimaryWeaponItem "acc_flashlight";
+// 	  _x assignItem "acc_flashlight";
+// 	  _x enableGunLights "ForceOn";
+//   } foreach (allUnits select {side _x == east}); 
 
 sleep 10;
 
