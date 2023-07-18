@@ -4,7 +4,7 @@ thisRoadPostTrigger = _this select 0;
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ; 
+_AGGRSCORE = parseNumber (markerText _mrkr) ; 
 
 sleep 15 ; 
 
@@ -22,7 +22,7 @@ G = [thisRoadPostTrigger getPos [(0 + (random 70)),(0 + (random 360))], East,[se
 G = [thisRoadPostTrigger getPos [(0 + (random 70)),(0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 			G deleteGroupWhenEmpty true;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 G = [thisRoadPostTrigger getPos [(0 + (random 70)),(0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH"; 
 			G deleteGroupWhenEmpty true;
@@ -32,7 +32,7 @@ G = [thisRoadPostTrigger getPos [(0 + (random 70)),(0 + (random 360))], East,[se
 
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 G = [thisRoadPostTrigger getPos [(0 + (random 70)),(0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH";   
 			G deleteGroupWhenEmpty true;
@@ -90,7 +90,7 @@ G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_sp
 ((units G) select 0) disableAI "PATH";
 			G deleteGroupWhenEmpty true;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH";   
 			G deleteGroupWhenEmpty true;
@@ -101,7 +101,7 @@ G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_sp
 			G deleteGroupWhenEmpty true;
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH";   
 			G deleteGroupWhenEmpty true;
@@ -115,25 +115,25 @@ G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_sp
 PRL = [thisRoadPostTrigger getPos [(10 + (random 40)),(0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _thisCityTrigger, (100 + (random 300))] call BIS_fnc_taskPatrol;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 PRL = [thisRoadPostTrigger getPos [(10 + (random 40)),(0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _thisCityTrigger, (100 + (random 300))] call BIS_fnc_taskPatrol;	
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [thisRoadPostTrigger getPos [(10 + (random 40)),(0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _thisCityTrigger, (100 + (random 300))] call BIS_fnc_taskPatrol;	
 };
 	
-{
+// {
 
-_nvg = hmd _x;
- _x unassignItem _nvg;
- _x removeItem _nvg;
-	  _x addPrimaryWeaponItem "acc_flashlight";
-	  _x assignItem "acc_flashlight";
-	  _x enableGunLights "ForceOn";
-  } foreach (allUnits select {side _x == east}); 
+// _nvg = hmd _x;
+//  _x unassignItem _nvg;
+//  _x removeItem _nvg;
+// 	  _x addPrimaryWeaponItem "acc_flashlight";
+// 	  _x assignItem "acc_flashlight";
+// 	  _x enableGunLights "ForceOn";
+//   } foreach (allUnits select {side _x == east}); 
 
 sleep 10;
 

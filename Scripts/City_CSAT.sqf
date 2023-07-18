@@ -3,7 +3,7 @@ ThisCityTrigger = _this select 0;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 //////Resources////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 sleep 15 ; 
 
@@ -28,7 +28,7 @@ _nearRoad = selectRandom ((getPos ThisCityTrigger) nearRoads 150 ) ;
 
 sleep 1;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _nearRoad = selectRandom ((getPos ThisCityTrigger) nearRoads 150 ) ; 
 		_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
 		_dir = _nearRoad getDir _nextRoad;
@@ -36,7 +36,7 @@ _nearRoad = selectRandom ((getPos ThisCityTrigger) nearRoads 150 ) ;
 sleep 1;
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _nearRoad = selectRandom ((getPos ThisCityTrigger) nearRoads 150 ) ; 
 		_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
 		_dir = _nearRoad getDir _nextRoad;
@@ -58,7 +58,7 @@ sleep 1;
 
 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 			_AssltDestMrks = allMapMarkers select {markerType _x == "b_installation"  && (markerColor _x == "ColorYellow" or  markerColor _x == "colorBLUFOR" or markerColor _x == "colorWEST")};  
 			_StrtM = [_AssltDestMrks,  ThisCityTrigger] call BIS_fnc_nearestPosition;
 [ThisCityTrigger, _StrtM] execVM "Scripts\VehiInsert_CSAT_2.sqf";	
@@ -80,7 +80,7 @@ PRLL addEventHandler ["Killed", {
 _flare setVelocity [0,0,-0.1];
  }];
  
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 PRL = [ThisCityTrigger getPos [(10 +(random 90)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, ThisCityTrigger getPos [(10 +(random 90)), (0 + (random 360))], 100] call BIS_fnc_taskPatrol;
 PRL deleteGroupWhenEmpty true;
@@ -97,7 +97,7 @@ _flare setVelocity [0,0,-0.1];
 };
 
 
-if (_DANSCORE >10) then {
+if (_AGGRSCORE >10) then {
 PRL = [ThisCityTrigger getPos [(10 +(random 90)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, ThisCityTrigger getPos [(10 +(random 90)), (0 + (random 360))], 200] call BIS_fnc_taskPatrol;
 PRL deleteGroupWhenEmpty true;
@@ -148,7 +148,7 @@ I1_WP_1 setWaypointBehaviour "SAFE";
 I1_WP_1 setWaypointSpeed "LIMITED";
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 	
 _nearRoad = selectRandom ( (getPos ThisCityTrigger) nearRoads 150 ) ; 
 _V = createVehicle [ selectRandom EastGround_Vehicles_Light, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
@@ -181,7 +181,7 @@ I1_WP_1 setWaypointSpeed "LIMITED";
 		};
 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 
 _nearRoad = selectRandom ( (getPos ThisCityTrigger) nearRoads 150 ) ; 
 _V = createVehicle [ selectRandom EastGround_Vehicles_Light, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
@@ -247,7 +247,7 @@ G = [_PosAGL, East,[_rndSolX]] call BIS_fnc_spawnGroup;
 ((units G) select 0) disableAI "PATH";
 			G deleteGroupWhenEmpty true;
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 
 _rndSolX = selectRandom East_Units; 
 _rndBuilding = selectRandom _allBuildings;  
@@ -327,7 +327,7 @@ G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call 
 G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
 			G deleteGroupWhenEmpty true;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 	
 G = [selectRandom _allPositions, East,[selectRandom East_Units_Officers, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;     
 ((units G) select 0) disableAI "PATH";
@@ -351,7 +351,7 @@ G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call 
 
  };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 	
 G = [selectRandom _allPositions, East,[selectRandom East_Units_Officers, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;     
 ((units G) select 0) disableAI "PATH";
@@ -398,13 +398,13 @@ _V setCollisionLight true;
 
 {
 
-_nvg = hmd _x;
- _x unassignItem _nvg;
- _x removeItem _nvg;
-	  _x addPrimaryWeaponItem "acc_flashlight";
-	  _x assignItem "acc_flashlight";
-	  _x enableGunLights "ForceOn";
-  } foreach (allUnits select {side _x == east}); 
+// _nvg = hmd _x;
+//  _x unassignItem _nvg;
+//  _x removeItem _nvg;
+// 	  _x addPrimaryWeaponItem "acc_flashlight";
+// 	  _x assignItem "acc_flashlight";
+// 	  _x enableGunLights "ForceOn";
+//   } foreach (allUnits select {side _x == east}); 
 
 
 sleep 10;

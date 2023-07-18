@@ -5,7 +5,7 @@ _thisCntrPos = getPos (_this select 0);
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,7 +22,7 @@ if (count _nearHQs > 0) then {
 					{_x setUnitLoadout (selectRandom East_Units)} forEach units _Group;
 					};
 					
-		if (_DANSCORE > 10) then {					
+		if (_AGGRSCORE > 10) then {					
 			_Chance = selectRandom [5, 10, 15] ; 
 					if (_Chance > 5) then {
 				_BPos = selectRandom [6, 6] ; 
@@ -49,7 +49,7 @@ if (count _nearTowers > 0) then {
 					{_x setUnitLoadout (selectRandom East_Units)} forEach units _Group;
 					};
 					
-		if (_DANSCORE > 10) then {					
+		if (_AGGRSCORE > 10) then {					
 			_Chance = selectRandom [5, 10, 15] ; 
 					if (_Chance > 5) then {
 				_BPos = selectRandom [10, 11, 12, 13, 14, 15, 16, 17] ; 

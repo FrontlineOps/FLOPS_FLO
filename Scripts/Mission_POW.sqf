@@ -5,7 +5,7 @@ _Chance = selectRandom [1, 2, 3];
  
  _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 //////OBJECTIVE/////////////////////////////////////////////////////////////////////////////////////////
 sleep 15 ; 
 waitUntil { count (nearestobjects [thisPOWTrigger, ["Land_i_Barracks_V1_F", "Land_u_Barracks_V2_F", "Land_i_Barracks_V2_F", "Land_Barracks_01_grey_F", "Land_Barracks_01_dilapidated_F", "Land_vn_barracks_01_camo_f", "Land_Barracks_01_camo_F"], 400]) > 0};
@@ -60,7 +60,7 @@ _Pos = selectRandom (_Position buildingPos -1);
 
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _Pos = selectRandom (_Position buildingPos -1);
 G = [_Pos, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;   
  ((units G) select 0) disableAI "PATH";
@@ -72,7 +72,7 @@ G = [_Pos, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;
 
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _Pos = selectRandom (_Position buildingPos -1);
 G = [_Pos, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
 ((units G) select 0) disableAI "PATH";
@@ -106,7 +106,7 @@ G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_sp
 ((units G) select 0) disableAI "PATH";
 			G deleteGroupWhenEmpty true;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH";   
 			G deleteGroupWhenEmpty true;
@@ -114,7 +114,7 @@ G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_sp
 			G deleteGroupWhenEmpty true;
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH";   
 			G deleteGroupWhenEmpty true;
@@ -130,13 +130,13 @@ G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;
 ((units G) select 0) disableAI "PATH"; 
 			G deleteGroupWhenEmpty true;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _poss = [getpos thisPOWTrigger, 10, 30, 5, 1 , 0] call BIS_fnc_findSafePos; 
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH"; 
 			G deleteGroupWhenEmpty true;
 }; 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _poss = [getpos thisPOWTrigger, 10, 30, 5, 1 , 0] call BIS_fnc_findSafePos; 
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH"; 
@@ -155,13 +155,13 @@ PRL = [(getPos thisPOWTrigger) getPos [30, 50], East, [selectRandom East_Units, 
 			PRL deleteGroupWhenEmpty true;
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 PRL = [(getPos thisPOWTrigger) getPos [30, 180], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getpos thisPOWTrigger, 200] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [(getPos thisPOWTrigger) getPos [30, 270], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getpos thisPOWTrigger, 200] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
@@ -178,7 +178,7 @@ _dir = _nearRoad getDir _nextRoad;
 _V setDir _dir;
 	};
 
-if ((_DANSCORE > 5) && (count [(getpos thisPOWTrigger) nearRoads 70] > 0)) then {
+if ((_AGGRSCORE > 5) && (count [(getpos thisPOWTrigger) nearRoads 70] > 0)) then {
 	
 _nearRoad = selectRandom ((getpos thisPOWTrigger) nearRoads 70 ) ; 
 _V = createVehicle [ selectRandom East_Ground_Vehicles_Ambient, (_nearRoad getRelPos [0, 0]), [], 4, "NONE"]; 
@@ -197,14 +197,14 @@ _trg setTriggerStatements [
 "this",  "[thisTrigger, 1000] execVM 'Scripts\ZONEs.sqf';", ""]; 
 
 
-  {
-      _nvg = hmd _x;
-      _x unassignItem _nvg;
-      _x removeItem _nvg;
-	  _x addPrimaryWeaponItem "acc_flashlight";
-	  _x assignItem "acc_flashlight";
-	  _x enableGunLights "ForceOn";
-  } foreach (allUnits select {side _x == east}); 
+//   {
+//       _nvg = hmd _x;
+//       _x unassignItem _nvg;
+//       _x removeItem _nvg;
+// 	  _x addPrimaryWeaponItem "acc_flashlight";
+// 	  _x assignItem "acc_flashlight";
+// 	  _x enableGunLights "ForceOn";
+//   } foreach (allUnits select {side _x == east}); 
 
 
 { if !((side _x) == west) then {

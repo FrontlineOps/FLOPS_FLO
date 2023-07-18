@@ -7,6 +7,11 @@ _NewMoney = _Money - _Cost;
 _mrkr setMarkerText str _NewMoney;
 
 
+_SDM = createMarker [str (screenToWorld [0.5,0.5]), screenToWorld [0.5,0.5]];
+_SDM setMarkerType "mil_marker_noShadow";
+_SDM setMarkerColor "colorBLUFOR" ;
+_SDM setMarkerAlpha 0.7;
+_SDM setMarkerText "SupplyDrop";
 
 			playSound3D [getMissionPath (selectRandom ["Sounds\SupportRequestRGSupplyDrop.ogg"]), player];
 
@@ -43,11 +48,7 @@ _Cargo enableSimulation true;
 playSound3D ["A3\dubbing_f\modules\supports\drop_accomplished.ogg", player];
 
 
-_SDM = createMarker [str (position _Cargo), position _Cargo];
-_SDM setMarkerType "mil_marker_noShadow";
-_SDM setMarkerColor "colorBLUFOR" ;
-_SDM setMarkerAlpha 0.7;
-_SDM setMarkerText "SupplyDrop";
+_SDM setMarkerPos (position _Cargo);
 
 sleep 300;
 

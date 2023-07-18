@@ -2,10 +2,11 @@
 
 
 
-_UNTTypeName = str UNTTypeClass ;
-_missionTag = missionName;
-_missionTag = [_missionTag] call BIS_fnc_filterString;
-private _LoadOutName = _missionTag + _UNTTypeName;
+// _UNTTypeName = str UNTTypeClass ;
+// _missionTag = missionName;
+// _missionTag = [_missionTag] call BIS_fnc_filterString;
+// private _LoadOutName = _missionTag + _UNTTypeName;
+private _LoadOutName = missionName +"_"+ UNTTypeClass;
 
 TheCommander setVariable ["_NEW_Saved_Loadout",getUnitLoadout TheCommander];
 

@@ -4,14 +4,14 @@ _Watchpost = _this select 1;
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 _TERR = nearestTerrainObjects [locationPosition MountSel, ["House", "TREE", "SMALL TREE", "BUSH", "ROCK", "ROCKS"], 15]; 
 {[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
 
 WPdir = 0 + (random 360);
 if (count (nearestObjects [(locationPosition MountSel), ["House"], 200]) != 0) then {
-WPdir = getDirVisual ((nearestObjects [(getMarkerpos _x), ["House"], 200]) select 0);
+WPdir = getDirVisual ((nearestObjects [(getMarkerpos _mrkr), ["House"], 200]) select 0);
 };
 _COM = [ _Watchpost, locationPosition MountSel, [0,0,0], WPdir, true ] call LARs_fnc_spawnComp;	
 
@@ -20,7 +20,7 @@ PRL = [(locationPosition MountSel) getPos [(10 +(random 10)), (0 + (random 360))
 [PRL, locationPosition MountSel, 50] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 PRL = [(locationPosition MountSel) getPos [(10 +(random 10)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, locationPosition MountSel, 100] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
@@ -45,7 +45,7 @@ G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_s
 G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
 			G deleteGroupWhenEmpty true;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 G = [(locationPosition MountSel) getPos [(10 +(random 10)), (0 + (random 360))] , East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
 ((units G) select 0) disableAI "PATH";  
 			G deleteGroupWhenEmpty true;
@@ -59,29 +59,30 @@ G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_s
 			G deleteGroupWhenEmpty true;
 };
 
-if (_DANSCORE > 10) then {
-G = [(locationPosition MountSel) getPos [(10 +(random 10)), (0 + (random 360))] , East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
+//TODO : Is this ok?
+// if (_AGGRSCORE > 10) then {
+// G = [(locationPosition MountSel) getPos [(10 +(random 10)), (0 + (random 360))] , East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+// ((units G) select 0) disableAI "PATH";  
+// 			G deleteGroupWhenEmpty true;
 
-G = [(locationPosition MountSel) getPos [(10 +(random 10)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
+// G = [(locationPosition MountSel) getPos [(10 +(random 10)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+// ((units G) select 0) disableAI "PATH";  
+// 			G deleteGroupWhenEmpty true;
 
 
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
-};
+// G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+// 			G deleteGroupWhenEmpty true;
+// };
 
-{
+// {
 
-_nvg = hmd _x;
- _x unassignItem _nvg;
- _x removeItem _nvg;
-	  _x addPrimaryWeaponItem "acc_flashlight";
-	  _x assignItem "acc_flashlight";
-	  _x enableGunLights "ForceOn";
-  } foreach (allUnits select {side _x == east}); 
+// _nvg = hmd _x;
+//  _x unassignItem _nvg;
+//  _x removeItem _nvg;
+// 	  _x addPrimaryWeaponItem "acc_flashlight";
+// 	  _x assignItem "acc_flashlight";
+// 	  _x enableGunLights "ForceOn";
+//   } foreach (allUnits select {side _x == east}); 
 
 
 sleep 1 ;

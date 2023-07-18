@@ -1,7 +1,6 @@
 //inital composition position as asked for by users
 
 params[ "_compCfg", "_compPos", "_compRot" ];
-
 private _asPlaced = false;
 
 switch ( true ) do {
@@ -26,6 +25,7 @@ switch ( true ) do {
 		if ( _compRot isEqualType true ) then {
 			_compRot = markerDir _compPos;
 		};
+		if (count _compPos == 2) then {_compPos set [2,0];};
 		_compPos = ATLToASL getMarkerPos _compPos;
 	};
 
@@ -38,6 +38,7 @@ switch ( true ) do {
 	};
 
 	default {
+		if (count _compPos == 2) then {_compPos set [2,0];};
 		_compPos = ATLToASL _compPos;
 	};
 };

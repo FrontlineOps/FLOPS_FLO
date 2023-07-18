@@ -49,229 +49,230 @@ FOBB = nearestObjects [Centerposition, ["Land_Cargo_HQ_V3_F", "Land_Cargo_HQ_V1_
 publicVariable "FOBB";
 
 
-{ if (count (nearestObjects [ _x, [F_HQ_C_01], 20]) > 0) then {     
+{ 
+	if (count (nearestObjects [ _x, [F_HQ_C_01], 20]) > 0) then {     
 
-{ null = [_x, -1, west, "LIGHT"] execVM "R3F_LOG\USER_FUNCT\init_creation_factory.sqf" } remoteExec ["call", 0]; 
-
-
-[ _x,
-"<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>ARSENAL",
-"Screens\FOBA\mg_ca.paa",
-"Screens\FOBA\mg_ca.paa",
-	"_this distance _target < 10",			
-	"_caller distance _target < 10",	
-{},
-{},
-{
-	
-	if (isClass (configfile >> "ace_arsenal_loadoutsDisplay") == true ) then {
-		[player, player, true] call ace_arsenal_fnc_openBox;
-	} else {
-		["Open", true] spawn BIS_fnc_arsenal;
-	};
-},
-{},
-[],
-1,
-9999999,
-false,
-false
-] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
+		{ null = [_x, -1, west, "LIGHT"] execVM "R3F_LOG\USER_FUNCT\init_creation_factory.sqf" } remoteExec ["call", 0]; 
 
 
-
-[ _x,
-"<img size=2 color='#7CC2FF' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#7CC2FF'>Pack FOB",
-"Screens\FOBA\b_hq.paa",
-"Screens\FOBA\b_hq.paa",
-"player == TheCommander",       
-"_caller distance _target < 40",  
-{},
-{},
-{execVM 'Scripts\FOBPACK.sqf';},
-{},
-[],
-5,
-2,
-false,
-false
-] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
-
-[ _x,
-"<img size=2 color='#59ff58' image='Screens\FOBA\iconParachute_ca.paa'/><t font='PuristaBold' color='#59ff58'>H.A.L.O (250)",
-"Screens\FOBA\b_hq.paa",
-"Screens\FOBA\b_hq.paa",
-"true",       
-"_caller distance _target < 40",  
-{},
-{},
-{
-	
-[player] execVM "Scripts\HALO1.sqf"; 
-
-},
-{},
-[],
-5,
-2,
-false,
-false
-] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
-
-[_x,[
-	"<img size=2 color='#7CC2FF' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#7CC2FF'>REQUEST MENU",
-	"Scripts\Dialog_Request.sqf",
-	nil,
-	99999,
-	true,
-	true,
-	"",
-	"", // _target, _this, _originalTarget
-	40,
-	false,
-	"",
-	""
-]] remoteExec ["addAction",0,true];
-
-
-_TFOBH = createTrigger ["EmptyDetector", getPos _x];  
-_TFOBH setTriggerArea [5, 5, 0, false, 7];  
-_TFOBH setTriggerTimeout [3, 3, 3, true];
-_TFOBH setTriggerActivation ["NONE", "PRESENT", true];  
-_TFOBH setTriggerStatements [  
-"count (nearestobjects [thisTrigger,East_Units_Officers,5]) > 0 ",  
-"  
-_HOS = nearestobjects [thisTrigger,East_Units_Officers,10] select 0 ;    
-deleteVehicle _HOS ; 
-	[] execVM 'Scripts\INTL.sqf';	
-[125] execVM 'Scripts\Reward.sqf';
-	[125, 'ENEMY OFFICER'] execVM 'Scripts\NOtification.sqf' ;
-
- ", ""]; 
-
-_TFOBH attachTo [_x, [0, 0, 0]]; 
-
-_TFOBH = createTrigger ["EmptyDetector", getPos _x];  
-_TFOBH setTriggerArea [5, 5, 0, false, 7];  
-_TFOBH setTriggerTimeout [3, 3, 3, true];
-_TFOBH setTriggerActivation ["NONE", "PRESENT", true];  
-_TFOBH setTriggerStatements [  
-"count (nearestobjects [thisTrigger,East_Units,5]) > 0 ",  
-"  
-_HOS = nearestobjects [thisTrigger,East_Units,10] select 0 ;    
-deleteVehicle _HOS ; 
-	[] execVM 'Scripts\INTL.sqf';	
-[50] execVM 'Scripts\Reward.sqf';
-	[50, 'ENEMY SOLDIER'] execVM 'Scripts\NOtification.sqf' ;
-
- ", ""]; 
-
-_TFOBH attachTo [_x, [0, 0, 0]]; 
-
-
-
-_CIVTRG = createTrigger ["EmptyDetector", getPos _x];  
-_CIVTRG setTriggerArea [5, 5, 0, false, 7];  
-_CIVTRG setTriggerTimeout [3, 3, 3, true];
-_CIVTRG setTriggerActivation ["NONE", "PRESENT", true];  
-_CIVTRG setTriggerStatements [  
-"{(alive  _x) && (side _x == civilian)} count (thisTrigger nearEntities [['Man'], 5]) > 0",  
-"
-_CIVIL = (nearestObjects [thisTrigger ,['Man'], 7] select {(alive _x) && ((side _x) == civilian)}) select 0 ;
-  
-if ( _CIVIL getUnitTrait 'engineer' == true) then {
-	[50, 'INSURGENT'] execVM 'Scripts\NOtification.sqf' ;
-	[50] execVM 'Scripts\Reward.sqf';
-	deleteVehicle _CIVIL ; 
-	[] execVM 'Scripts\INTL_Civ.sqf';	
-	[] execVM 'Scripts\ReputationPlus.sqf';
-}else{
-	[0, 'CIVILIAN'] execVM 'Scripts\NOtification.sqf' ;
-	deleteVehicle _CIVIL ; 
-	[] execVM 'Scripts\ReputationMinus.sqf';
-};
- ", ""]; 
-
-_CIVTRG attachTo [_x, [0, 0, 0]]; 
-
-
-
-_TFOBA = createTrigger ["EmptyDetector", getPos _x];  
-_TFOBA setTriggerArea [5, 5, 0, false, 7];  
-_TFOBA setTriggerTimeout [3, 3, 3, true];
-_TFOBA setTriggerActivation ["NONE", "PRESENT", true];  
-_TFOBA setTriggerStatements [  
-"count (nearestobjects [thisTrigger,['CargoNet_01_box_F'],4]) > 0 ",  
-"  
-_RES = nearestobjects [thisTrigger,['CargoNet_01_box_F'],10] select 0 ;    
-deleteVehicle _RES ; 
-	[100, 'RESOURCE'] execVM 'Scripts\NOtification.sqf' ;
-
-[100, thisTrigger] execVM 'Scripts\Reward_Supplies.sqf';
- ", ""]; 
-
-_TFOBA attachTo [_x, [0, 0, 0]]; 
-
-
-
-
-			_x addEventHandler ["Killed", {
-								
-				[playerSide, 'HQ'] commandChat 'all Forces Fall Back. We Lost the FOB,...';
-				_FOBC = nearestObjects [ (_this select 0), ['B_Slingload_01_Cargo_F'], 1000] select 0;
-				_FOBB = nearestObjects [ (_this select 0), [F_HQ_01], 1000] select 0;
-				_FOBT = nearestObjects [(_this select 0), [F_HQ_C_01], 1000]  select 0;
-				deleteVehicle _FOBC;
-				_FOBB setDammage 1;
-				deleteVehicle _FOBT;
-				
-				_allMarks = allMapMarkers select {markerText _x == 'FOB' && markerType _x == 'b_installation'};  
-				_FOBMrk = [_allMarks,  (_this select 0)] call BIS_fnc_nearestPosition;
-				deleteMarker _FOBMrk ; 
-
-				[] execVM 'Scripts\Failed.sqf';
-
-				_alltriggers = allMissionObjects "EmptyDetector";
-				_triggers = _alltriggers select {position _x distance (_this select 0) < 20};
-				{deleteVehicle _x;}forEach _triggers;
-								
-							}]; 
-
-
-
-
-
-_TFOBB = createTrigger ["EmptyDetector", getPos _x];
-_TFOBB setTriggerArea [100, 100, 0, false, 20];
-_TFOBB setTriggerInterval 2;
-_TFOBB setTriggerActivation ["EAST SEIZED", "PRESENT", false];
-_TFOBB setTriggerStatements [
-"this && {(alive _x) && ((side _x) == WEST) && (position _x inArea thisTrigger)} count allUnits < 5","
-
-
-			[playerSide, 'HQ'] commandChat 'all Forces Fall Back. We Lost the FOB,...';
-			_FOBC = nearestObjects [ thisTrigger, ['B_Slingload_01_Cargo_F'], 1000] select 0;
-			_FOBB = nearestObjects [ thisTrigger, [F_HQ_01], 1000] select 0;
-			_FOBT = nearestObjects [thisTrigger, [F_HQ_C_01], 1000]  select 0;
-			deleteVehicle _FOBC;
-			_FOBB setDammage 1;
-			deleteVehicle _FOBT;
+		[ _x,
+		"<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>ARSENAL",
+		"Screens\FOBA\mg_ca.paa",
+		"Screens\FOBA\mg_ca.paa",
+			"_this distance _target < 10",			
+			"_caller distance _target < 10",	
+		{},
+		{},
+		{
 			
-			_allMarks = allMapMarkers select {markerText _x == 'FOB' && markerType _x == 'b_installation'};  
-			_FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
-			deleteMarker _FOBMrk ; 
+			if (isClass (configfile >> "ace_arsenal_loadoutsDisplay") == true ) then {
+				[player, player, true] call ace_arsenal_fnc_openBox;
+			} else {
+				["Open", true] spawn BIS_fnc_arsenal;
+			};
+		},
+		{},
+		[],
+		1,
+		9999999,
+		false,
+		false
+		] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
+
+
+
+		[ _x,
+		"<img size=2 color='#7CC2FF' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#7CC2FF'>Pack FOB",
+		"Screens\FOBA\b_hq.paa",
+		"Screens\FOBA\b_hq.paa",
+		"player == TheCommander",       
+		"_caller distance _target < 40",  
+		{},
+		{},
+		{execVM 'Scripts\FOBPACK.sqf';},
+		{},
+		[],
+		5,
+		2,
+		false,
+		false
+		] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
+
+		[ _x,
+		"<img size=2 color='#59ff58' image='Screens\FOBA\iconParachute_ca.paa'/><t font='PuristaBold' color='#59ff58'>H.A.L.O (250)",
+		"Screens\FOBA\b_hq.paa",
+		"Screens\FOBA\b_hq.paa",
+		"true",       
+		"_caller distance _target < 40",  
+		{},
+		{},
+		{
 			
-			[] execVM 'Scripts\Failed.sqf';
+		[player] execVM "Scripts\HALO1.sqf"; 
 
-			_alltriggers = allMissionObjects ""EmptyDetector"";
-			_triggers = _alltriggers select {position _x inArea thisTrigger};
-			{deleteVehicle _x;}forEach _triggers;
+		},
+		{},
+		[],
+		5,
+		2,
+		false,
+		false
+		] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
 
-", ""];
+		[_x,[
+			"<img size=2 color='#7CC2FF' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#7CC2FF'>REQUEST MENU",
+			"Scripts\Dialog_Request.sqf",
+			nil,
+			99999,
+			true,
+			true,
+			"",
+			"", // _target, _this, _originalTarget
+			40,
+			false,
+			"",
+			""
+		]] remoteExec ["addAction",0,true];
 
-_TFOBB attachTo [_x, [0, 0, 0]]; 
 
- }
+		_TFOBH = createTrigger ["EmptyDetector", getPos _x];  
+		_TFOBH setTriggerArea [5, 5, 0, false, 7];  
+		_TFOBH setTriggerTimeout [3, 3, 3, true];
+		_TFOBH setTriggerActivation ["NONE", "PRESENT", true];  
+		_TFOBH setTriggerStatements [  
+		"count (nearestobjects [thisTrigger,East_Units_Officers,5]) > 0 ",  
+		"  
+		_HOS = nearestobjects [thisTrigger,East_Units_Officers,10] select 0 ;    
+		deleteVehicle _HOS ; 
+			[] execVM 'Scripts\INTL.sqf';	
+		[125] execVM 'Scripts\Reward.sqf';
+			[125, 'ENEMY OFFICER'] execVM 'Scripts\NOtification.sqf' ;
+
+		", ""]; 
+
+		_TFOBH attachTo [_x, [0, 0, 0]]; 
+
+		_TFOBH = createTrigger ["EmptyDetector", getPos _x];  
+		_TFOBH setTriggerArea [5, 5, 0, false, 7];  
+		_TFOBH setTriggerTimeout [3, 3, 3, true];
+		_TFOBH setTriggerActivation ["NONE", "PRESENT", true];  
+		_TFOBH setTriggerStatements [  
+		"count (nearestobjects [thisTrigger,East_Units,5]) > 0 ",  
+		"  
+		_HOS = nearestobjects [thisTrigger,East_Units,10] select 0 ;    
+		deleteVehicle _HOS ; 
+			[] execVM 'Scripts\INTL.sqf';	
+		[50] execVM 'Scripts\Reward.sqf';
+			[50, 'ENEMY SOLDIER'] execVM 'Scripts\NOtification.sqf' ;
+
+		", ""]; 
+
+		_TFOBH attachTo [_x, [0, 0, 0]]; 
+
+
+
+		_CIVTRG = createTrigger ["EmptyDetector", getPos _x];  
+		_CIVTRG setTriggerArea [5, 5, 0, false, 7];  
+		_CIVTRG setTriggerTimeout [3, 3, 3, true];
+		_CIVTRG setTriggerActivation ["NONE", "PRESENT", true];  
+		_CIVTRG setTriggerStatements [  
+		"{(alive  _x) && (side _x == civilian)} count (thisTrigger nearEntities [['Man'], 5]) > 0",  
+		"
+		_CIVIL = (nearestObjects [thisTrigger ,['Man'], 7] select {(alive _x) && ((side _x) == civilian)}) select 0 ;
+		
+		if ( _CIVIL getUnitTrait 'engineer' == true) then {
+			[50, 'INSURGENT'] execVM 'Scripts\NOtification.sqf' ;
+			[50] execVM 'Scripts\Reward.sqf';
+			deleteVehicle _CIVIL ; 
+			[] execVM 'Scripts\INTL_Civ.sqf';	
+			[] execVM 'Scripts\ReputationPlus.sqf';
+		}else{
+			[0, 'CIVILIAN'] execVM 'Scripts\NOtification.sqf' ;
+			deleteVehicle _CIVIL ; 
+			[] execVM 'Scripts\ReputationMinus.sqf';
+		};
+		", ""]; 
+
+		_CIVTRG attachTo [_x, [0, 0, 0]]; 
+
+
+
+		_TFOBA = createTrigger ["EmptyDetector", getPos _x];  
+		_TFOBA setTriggerArea [5, 5, 0, false, 7];  
+		_TFOBA setTriggerTimeout [3, 3, 3, true];
+		_TFOBA setTriggerActivation ["NONE", "PRESENT", true];  
+		_TFOBA setTriggerStatements [  
+		"count (nearestobjects [thisTrigger,['CargoNet_01_box_F'],4]) > 0 ",  
+		"  
+		_RES = nearestobjects [thisTrigger,['CargoNet_01_box_F'],10] select 0 ;    
+		deleteVehicle _RES ; 
+			[100, 'RESOURCE'] execVM 'Scripts\NOtification.sqf' ;
+
+		[100, thisTrigger] execVM 'Scripts\Reward_Supplies.sqf';
+		", ""]; 
+
+		_TFOBA attachTo [_x, [0, 0, 0]]; 
+
+
+
+
+					_x addEventHandler ["Killed", {
+										
+						[playerSide, 'HQ'] commandChat 'all Forces Fall Back. We Lost the FOB,...';
+						_FOBC = nearestObjects [ (_this select 0), ['B_Slingload_01_Cargo_F'], 1000] select 0;
+						_FOBB = nearestObjects [ (_this select 0), [F_HQ_01], 1000] select 0;
+						_FOBT = nearestObjects [(_this select 0), [F_HQ_C_01], 1000]  select 0;
+						deleteVehicle _FOBC;
+						_FOBB setDammage 1;
+						deleteVehicle _FOBT;
+						
+						_allMarks = allMapMarkers select {markerText _x == 'FOB' && markerType _x == 'b_installation'};  
+						_FOBMrk = [_allMarks,  (_this select 0)] call BIS_fnc_nearestPosition;
+						if (typeName _FOBMrk == "STRING") then {deleteMarker _FOBMrk;} ; 
+
+						[] execVM 'Scripts\Failed.sqf';
+
+						_alltriggers = allMissionObjects "EmptyDetector";
+						_triggers = _alltriggers select {position _x distance (_this select 0) < 20};
+						{deleteVehicle _x;}forEach _triggers;
+										
+									}]; 
+
+
+
+
+
+		_TFOBB = createTrigger ["EmptyDetector", getPos _x];
+		_TFOBB setTriggerArea [100, 100, 0, false, 20];
+		_TFOBB setTriggerInterval 2;
+		_TFOBB setTriggerActivation ["EAST SEIZED", "PRESENT", false];
+		_TFOBB setTriggerStatements [
+		"this && {(alive _x) && ((side _x) == WEST) && (position _x inArea thisTrigger)} count allUnits < 5","
+
+
+					[playerSide, 'HQ'] commandChat 'all Forces Fall Back. We Lost the FOB,...';
+					_FOBC = nearestObjects [ thisTrigger, ['B_Slingload_01_Cargo_F'], 1000] select 0;
+					_FOBB = nearestObjects [ thisTrigger, [F_HQ_01], 1000] select 0;
+					_FOBT = nearestObjects [thisTrigger, [F_HQ_C_01], 1000]  select 0;
+					deleteVehicle _FOBC;
+					_FOBB setDammage 1;
+					deleteVehicle _FOBT;
+					
+					_allMarks = allMapMarkers select {markerText _x == 'FOB' && markerType _x == 'b_installation'};  
+					_FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
+					deleteMarker _FOBMrk ; 
+					
+					[] execVM 'Scripts\Failed.sqf';
+
+					_alltriggers = allMissionObjects ""EmptyDetector"";
+					_triggers = _alltriggers select {position _x inArea thisTrigger};
+					{deleteVehicle _x;}forEach _triggers;
+
+		", ""];
+
+		_TFOBB attachTo [_x, [0, 0, 0]]; 
+
+		}
  } foreach FOBB;
 
  ///////////////////////////////////////////////////////
@@ -1132,65 +1133,65 @@ if (((markerText "Friendly_Handle" == "United States Armed Forces _ Woodland _ C
   {createVehicleCrew _x; } forEach _AAAs ; 
 
 
-{
-[_x,[
-	"<img size=2 color='#f37c00' image='\a3\ui_f_oldman\data\IGUI\Cfg\holdactions\repair_ca.paa'/><t font='PuristaBold' color='#f37c00'>REPAIR Vehicles",
-{
-(_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
-[(_this select 0)] execVM "Scripts\REPAIRVEH.sqf" ;
-},
-	nil,
-	9999,
-	true,
-	true,
-	"",
-	"_this distance _target < 5", // _target, _this, _originalTarget
-	5,
-	false,
-	"",
-	""
-]] remoteExec ["addAction",0,true];
-} forEach (allUnits select { (side _x == west) && ((typeOf _x == F_Assault_Eng)  || (typeOf _x == "B_G_engineer_F") || (typeOf _x == F_Recon_Eng)  || (typeOf _x == "B_CTRG_soldier_engineer_exp_F")) } ) ;
+// {
+// [_x,[
+// 	"<img size=2 color='#f37c00' image='\a3\ui_f_oldman\data\IGUI\Cfg\holdactions\repair_ca.paa'/><t font='PuristaBold' color='#f37c00'>REPAIR Vehicles",
+// {
+// (_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
+// [(_this select 0)] execVM "Scripts\REPAIRVEH.sqf" ;
+// },
+// 	nil,
+// 	9999,
+// 	true,
+// 	true,
+// 	"",
+// 	"_this distance _target < 5", // _target, _this, _originalTarget
+// 	5,
+// 	false,
+// 	"",
+// 	""
+// ]] remoteExec ["addAction",0,true];
+// } forEach (allUnits select { (side _x == west) && ((typeOf _x == F_Assault_Eng)  || (typeOf _x == "B_G_engineer_F") || (typeOf _x == F_Recon_Eng)  || (typeOf _x == "B_CTRG_soldier_engineer_exp_F")) } ) ;
 
-{
-[_x,[
-	"<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>REARM Infantry",
-{
-(_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
-[(_this select 0)] execVM "Scripts\REARM.sqf" ;
-},
-	nil,
-	9999,
-	true,
-	true,
-	"",
-	"_this distance _target < 5", // _target, _this, _originalTarget
-	5,
-	false,
-	"",
-	""
-]] remoteExec ["addAction",0,true];
-} forEach (allUnits select { (side _x == west) && ((typeOf _x == F_Assault_Amm)  || (typeOf _x == "B_G_Soldier_A_F")) } ) ;
+// {
+// [_x,[
+// 	"<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>REARM Infantry",
+// {
+// (_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
+// [(_this select 0)] execVM "Scripts\REARM.sqf" ;
+// },
+// 	nil,
+// 	9999,
+// 	true,
+// 	true,
+// 	"",
+// 	"_this distance _target < 5", // _target, _this, _originalTarget
+// 	5,
+// 	false,
+// 	"",
+// 	""
+// ]] remoteExec ["addAction",0,true];
+// } forEach (allUnits select { (side _x == west) && ((typeOf _x == F_Assault_Amm)  || (typeOf _x == "B_G_Soldier_A_F")) } ) ;
 
-{
-[_x,[
-	"<img size=2 color='#0bff00' image='\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_revive_ca.paa'/><t font='PuristaBold' color='#0bff00'>HEAL Infantry",
-{
-(_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
-[(_this select 0)] execVM "Scripts\HEAL.sqf" ;
-},
-	nil,
-	9999,
-	true,
-	true,
-	"",
-	"_this distance _target < 5", // _target, _this, _originalTarget
-	5,
-	false,
-	"",
-	""
-]] remoteExec ["addAction",0,true];
-} forEach (allUnits select { (side _x == west) && ((typeOf _x == F_Recon_Med)  || (typeOf _x == F_Assault_Med)  || (typeOf _x == "B_G_medic_F")  || (typeOf _x == "B_CTRG_soldier_M_medic_F")) } ) ;
+// {
+// [_x,[
+// 	"<img size=2 color='#0bff00' image='\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_revive_ca.paa'/><t font='PuristaBold' color='#0bff00'>HEAL Infantry",
+// {
+// (_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
+// [(_this select 0)] execVM "Scripts\HEAL.sqf" ;
+// },
+// 	nil,
+// 	9999,
+// 	true,
+// 	true,
+// 	"",
+// 	"_this distance _target < 5", // _target, _this, _originalTarget
+// 	5,
+// 	false,
+// 	"",
+// 	""
+// ]] remoteExec ["addAction",0,true];
+// } forEach (allUnits select { (side _x == west) && ((typeOf _x == F_Recon_Med)  || (typeOf _x == F_Assault_Med)  || (typeOf _x == "B_G_medic_F")  || (typeOf _x == "B_CTRG_soldier_M_medic_F")) } ) ;
 
 {
 	

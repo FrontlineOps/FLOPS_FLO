@@ -16,7 +16,7 @@ trgARM = 0;
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 //////Vehicles/////////////////////////////////////////////////////////////////////////////////////////
 	
 
@@ -58,7 +58,7 @@ _V1 setPilotLight true;
 {[_x] join _VC0} forEach units _VC1; 
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _nearRoad = selectRandom ( (getpos ARMLC) nearRoads 140 ) ; 
 _V1 = createVehicle [ selectRandom East_Ground_Vehicles_Heavy, (ARMLC getRelPos [(70 +(random 30)), (0 + (random 360))]), [], 4, "NONE"]; 
 _nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
@@ -81,7 +81,7 @@ _V1 setPilotLight true;
 	
 	};
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 	
 _nearRoad = selectRandom ( (getpos ARMLC) nearRoads 70 ) ; 
 _V2= createVehicle [ selectRandom East_Ground_Vehicles_Heavy, (ARMLC getRelPos [(70 +(random 30)), (0 + (random 360))]), [], 4, "NONE"]; 
@@ -112,14 +112,14 @@ _V2 setPilotLight true;
 sleep 3;
 
 
-  {
-      _nvg = hmd _x;
-      _x unassignItem _nvg;
-      _x removeItem _nvg;
-	  _x addPrimaryWeaponItem "acc_flashlight";
-	  _x assignItem "acc_flashlight";
-	  _x enableGunLights "ForceOn";
-  } foreach (allUnits select {side _x == east}); 
+//   {
+//       _nvg = hmd _x;
+//       _x unassignItem _nvg;
+//       _x removeItem _nvg;
+// 	  _x addPrimaryWeaponItem "acc_flashlight";
+// 	  _x assignItem "acc_flashlight";
+// 	  _x enableGunLights "ForceOn";
+//   } foreach (allUnits select {side _x == east}); 
 
   
   

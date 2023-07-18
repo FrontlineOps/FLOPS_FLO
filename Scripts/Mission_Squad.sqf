@@ -3,7 +3,7 @@ _thisSquadTrigger = _this select 0;
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 _CRT = [
 "Box_IND_WpsSpecial_F",
@@ -59,11 +59,11 @@ G = [_HQB getPos [(20 +(random 200)), (0 + (random 360))], East,[selectRandom Ea
 
 G = [_HQB getPos [(20 +(random 200)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 G = [_HQB getPos [(20 +(random 200)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 }; 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 G = [_HQB getPos [(20 +(random 200)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 }; 
 
@@ -73,7 +73,7 @@ PRL = [_HQB getPos [(100 +(random 700)), (0 + (random 360))], East, [selectRando
 [PRL, getPos _HQB, 500] call BIS_fnc_taskPatrol;
 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [_HQB getPos [(100 +(random 700)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 1000] call BIS_fnc_taskPatrol;
 };

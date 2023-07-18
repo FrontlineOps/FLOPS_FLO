@@ -4,7 +4,7 @@ _thisIntelItem = _this select 0;
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 _anim =  selectRandom [
 "Acts_AidlPsitMstpSsurWnonDnon01",
@@ -37,7 +37,7 @@ _CRT = [
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-if ((typeOf _thisIntelItem == "Land_File2_F") && (_DANSCORE > 5)) then {
+if ((typeOf _thisIntelItem == "Land_File2_F") && (_AGGRSCORE > 5)) then {
 
 _MMarks = allMapMarkers select { markerType _x == "mil_unknown"};
 _M = [_MMarks,  _thisIntelItem] call BIS_fnc_nearestPosition;
@@ -73,7 +73,7 @@ _G = [ (selectRandom (_HQB buildingPos -1)), East,[selectRandom East_Units]] cal
 PRL = [_HQB getPos [(50 +(random 50)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 300] call BIS_fnc_taskPatrol;
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [getPos _HQB, East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 300] call BIS_fnc_taskPatrol;
 };
@@ -98,13 +98,13 @@ _poss = [(getpos _HQB), 30, 50, 5, 1 , 0] call BIS_fnc_findSafePos;
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _poss = [(getpos _HQB), 30, 50, 5, 1 , 0] call BIS_fnc_findSafePos; 
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH"; 
 }; 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _poss = [(getpos _HQB), 30, 50, 5, 1 , 0] call BIS_fnc_findSafePos; 
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 
@@ -112,12 +112,12 @@ G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;
 
 //////GROUPS/////////////////////////////////////////////////////////////////////////////////////////
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 PRL = [_HQB getPos [(50 +(random 200)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 300] call BIS_fnc_taskPatrol;
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [_HQB getPos [(50 +(random 200)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 1000] call BIS_fnc_taskPatrol;
 };
@@ -139,7 +139,7 @@ _QRF = selectRandom [ 'Scripts\HeliInsert_CSAT.sqf', 'Scripts\VehiInsert_CSAT.sq
 } ;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-if ((typeOf _thisIntelItem == "Land_Document_01_F") && (_DANSCORE > 10)) then {
+if ((typeOf _thisIntelItem == "Land_Document_01_F") && (_AGGRSCORE > 10)) then {
 	
 _MMarks = allMapMarkers select { markerType _x == "mil_unknown"};
 _M = [_MMarks,  _thisIntelItem] call BIS_fnc_nearestPosition;
@@ -177,7 +177,7 @@ _G = [ (selectRandom (_HQB buildingPos -1)), East,[selectRandom East_Units]] cal
 PRL = [_HQB getPos [(50 +(random 50)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 300] call BIS_fnc_taskPatrol;
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [getPos _HQB, East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 300] call BIS_fnc_taskPatrol;
 };
@@ -202,13 +202,13 @@ _poss = [(getpos _HQB), 30, 50, 5, 1 , 0] call BIS_fnc_findSafePos;
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _poss = [(getpos _HQB), 30, 50, 5, 1 , 0] call BIS_fnc_findSafePos; 
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH"; 
 }; 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _poss = [(getpos _HQB), 30, 50, 5, 1 , 0] call BIS_fnc_findSafePos; 
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 
@@ -216,12 +216,12 @@ G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;
 
 //////GROUPS/////////////////////////////////////////////////////////////////////////////////////////
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 PRL = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 300] call BIS_fnc_taskPatrol;
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 1000] call BIS_fnc_taskPatrol;
 };
@@ -244,7 +244,7 @@ _QRF = selectRandom [ 'Scripts\HeliInsert_CSAT.sqf', 'Scripts\VehiInsert_CSAT.sq
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-if ((typeOf _thisIntelItem == "Land_Map_Malden_F") || ((typeOf _thisIntelItem == "Land_Document_01_F") && (_DANSCORE < 11)) || ((typeOf _thisIntelItem == "Land_File2_F") && (_DANSCORE < 6))) then {
+if ((typeOf _thisIntelItem == "Land_Map_Malden_F") || ((typeOf _thisIntelItem == "Land_Document_01_F") && (_AGGRSCORE < 11)) || ((typeOf _thisIntelItem == "Land_File2_F") && (_AGGRSCORE < 6))) then {
 
 _MMarks = allMapMarkers select { markerType _x == "mil_unknown"};
 _M = [_MMarks,  _thisIntelItem] call BIS_fnc_nearestPosition;
@@ -323,7 +323,7 @@ PRL = [_HQB getPos [(50 +(random 100)), (0 + (random 360))], East, [selectRandom
 [PRL, getPos _HQB, 500] call BIS_fnc_taskPatrol;
 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 1000] call BIS_fnc_taskPatrol;
 
@@ -404,13 +404,13 @@ _poss = [(getpos _HQB), 30, 50, 5, 1 , 0] call BIS_fnc_findSafePos;
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _poss = [(getpos _HQB), 30, 50, 5, 1 , 0] call BIS_fnc_findSafePos; 
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH"; 
 }; 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _poss = [(getpos _HQB), 30, 50, 5, 1 , 0] call BIS_fnc_findSafePos; 
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 
@@ -418,12 +418,12 @@ G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;
 
 //////GROUPS/////////////////////////////////////////////////////////////////////////////////////////
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 PRL = [_HQB getPos [(50 +(random 200)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 300] call BIS_fnc_taskPatrol;
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [_HQB getPos [(50 +(random 200)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 1000] call BIS_fnc_taskPatrol;
 };

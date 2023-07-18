@@ -4,7 +4,7 @@ _Chance = selectRandom [1, 2, 3];
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 VEH = createVehicle ["Land_Destroyer_01_base_F", (getPos _thisShipTrigger), [], 2, "NONE"]; 
 VEH setPosWorld (getPos _thisShipTrigger); 
@@ -39,7 +39,7 @@ _CVEH = [(getpos VEH), east, 4] call BIS_fnc_spawnGroup;
 {_x moveInAny _V} foreach units _CVEH;  
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 VP = selectRandom [ 
  "O_Boat_Armed_01_hmg_F",
  "O_Boat_Transport_01_F"
@@ -52,7 +52,7 @@ _CVEH = [(getpos VEH), east, 4] call BIS_fnc_spawnGroup;
 {_x moveInAny _V} foreach units _CVEH;  
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 VP = selectRandom [ 
  "O_Boat_Armed_01_hmg_F",
  "O_Boat_Transport_01_F"
@@ -65,14 +65,14 @@ _CVEH = [(getpos VEH), east, 4] call BIS_fnc_spawnGroup;
 {_x moveInAny _V} foreach units _CVEH;  
 };
 
-  {
-      _nvg = hmd _x;
-      _x unassignItem _nvg;
-      _x removeItem _nvg;
-	  _x addPrimaryWeaponItem "acc_flashlight";
-	  _x assignItem "acc_flashlight";
-	  _x enableGunLights "ForceOn";
-  } foreach (allUnits select {side _x == east}); 
+  // {
+  //     _nvg = hmd _x;
+  //     _x unassignItem _nvg;
+  //     _x removeItem _nvg;
+	//   _x addPrimaryWeaponItem "acc_flashlight";
+	//   _x assignItem "acc_flashlight";
+	//   _x enableGunLights "ForceOn";
+  // } foreach (allUnits select {side _x == east}); 
 
  
 sleep 10;

@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 //////Resources/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -213,11 +213,11 @@ _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE',
 
 _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 
 
-if (_DANSCORE < 6) then {
+if (_AGGRSCORE < 6) then {
 OUTC = [ 
 'Outpost_01',  
 'Outpost_02',  
@@ -230,7 +230,7 @@ OUTC = [
 'Factory_2'  
 ]; };
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 OUTC = [ 
 'Outpost_08',  
 'Outpost_09',  
@@ -242,7 +242,7 @@ OUTC = [
 'Factory_4'
 ]; };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 OUTC = [ 
 'Outpost_14',  
 'Outpost_15',  
@@ -343,9 +343,9 @@ _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE',
 
 _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
-if (_DANSCORE < 6) then {
+if (_AGGRSCORE < 6) then {
 RDPC = [ 
 'Road_Post_CSAT_01',  
 'Road_Post_CSAT_02',
@@ -366,7 +366,7 @@ RDPC = [
 'Watchpost_10'
 ]; };
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 RDPC =  [ 
 'Road_Post_CSAT_03',  
 'Road_Post_CSAT_04',
@@ -395,7 +395,7 @@ RDPC =  [
 'Watchpost_10'
 ]; };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 RDPC =  [ 
 'Road_Post_CSAT_05',  
 'Road_Post_CSAT_06',

@@ -7,7 +7,7 @@ publicVariable "HQLOCC";
         titleText ["B.S.P Group Presents...", "BLACK IN",9999];
 		5 fadeSound 0;
 
-sleep 10;
+sleep 5;
  ////////////////////////////////////////////////Mission Loading - Variables // Server & HC
 
 

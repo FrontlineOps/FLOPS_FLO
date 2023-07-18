@@ -73,14 +73,14 @@ Centerposition = [worldSize / 2, worldsize / 2, 0];
 				((units _EnmGRP) select 0) setPos (selectRandom _allPositions) ; 
 				} ;
 		
-					{
-					_nvg = hmd _x;
-					 _x unassignItem _nvg;
-					 _x removeItem _nvg;
-						  _x addPrimaryWeaponItem "acc_flashlight";
-						  _x assignItem "acc_flashlight";
-						  _x enableGunLights "ForceOn";
-					  } foreach (allUnits select {side _x == east or side _x == independent}); 
+					// {
+					// _nvg = hmd _x;
+					//  _x unassignItem _nvg;
+					//  _x removeItem _nvg;
+					// 	  _x addPrimaryWeaponItem "acc_flashlight";
+					// 	  _x assignItem "acc_flashlight";
+					// 	  _x enableGunLights "ForceOn";
+					//   } foreach (allUnits select {side _x == east or side _x == independent}); 
 		
 		};	
 			[(getMarkerPos _x), 20] execVM "Scripts\INTLitems.sqf";
@@ -115,14 +115,14 @@ Centerposition = [worldSize / 2, worldsize / 2, 0];
 				((units _CivGRP) select 0) setUnitTrait ["engineer", true]; 	
 				};
 				
-					{
-					_nvg = hmd _x;
-					 _x unassignItem _nvg;
-					 _x removeItem _nvg;
-						  _x addPrimaryWeaponItem "acc_flashlight";
-						  _x assignItem "acc_flashlight";
-						  _x enableGunLights "ForceOn";
-					  } foreach (allUnits select {side _x == east or side _x == independent}); 
+					// {
+					// _nvg = hmd _x;
+					//  _x unassignItem _nvg;
+					//  _x removeItem _nvg;
+					// 	  _x addPrimaryWeaponItem "acc_flashlight";
+					// 	  _x assignItem "acc_flashlight";
+					// 	  _x enableGunLights "ForceOn";
+					//   } foreach (allUnits select {side _x == east or side _x == independent}); 
 		
 		[(getMarkerPos _x), 20] execVM "Scripts\INTLitems.sqf";
 

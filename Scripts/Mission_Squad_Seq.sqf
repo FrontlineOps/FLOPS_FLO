@@ -3,7 +3,7 @@ _thisIntelItem = _this select 0;
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 				[50, 'INTEL'] execVM 'Scripts\NOtification.sqf' ;
 				[50] execVM 'Scripts\Reward.sqf';
@@ -27,7 +27,7 @@ _CRT = [
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-if ((typeOf _thisIntelItem == "Land_File2_F") && (_DANSCORE > 5)) then {
+if ((typeOf _thisIntelItem == "Land_File2_F") && (_AGGRSCORE > 5)) then {
 
 _MMarks = allMapMarkers select { markerType _x == "mil_warning"};
 _M = [_MMarks,  _thisIntelItem] call BIS_fnc_nearestPosition;
@@ -81,11 +81,11 @@ G = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East,[selectRandom Ea
 
 G = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 G = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 }; 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 G = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 }; 
 
@@ -96,7 +96,7 @@ PRL = [_HQB getPos [(50 +(random 200)), (0 + (random 360))], East, [selectRandom
 [PRL, getPos _HQB, 500] call BIS_fnc_taskPatrol;
 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [_HQB getPos [(50 +(random 200)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 1000] call BIS_fnc_taskPatrol;
 };
@@ -119,7 +119,7 @@ _QRF = selectRandom [ 'Scripts\HeliInsert_CSAT.sqf', 'Scripts\VehiInsert_CSAT.sq
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-if ((typeOf _thisIntelItem == "Land_Document_01_F") && (_DANSCORE > 10)) then {
+if ((typeOf _thisIntelItem == "Land_Document_01_F") && (_AGGRSCORE > 10)) then {
 
 _MMarks = allMapMarkers select { markerType _x == "mil_warning"};
 _M = [_MMarks,  _thisIntelItem] call BIS_fnc_nearestPosition;
@@ -174,11 +174,11 @@ G = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East,[selectRandom Ea
 
 G = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 G = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 }; 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 G = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 }; 
 
@@ -189,7 +189,7 @@ PRL = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East, [selectRandom
 [PRL, getPos _HQB, 500] call BIS_fnc_taskPatrol;
 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 1000] call BIS_fnc_taskPatrol;
 };
@@ -213,7 +213,7 @@ _QRF = selectRandom [ 'Scripts\HeliInsert_CSAT.sqf', 'Scripts\VehiInsert_CSAT.sq
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-if ((typeOf _thisIntelItem == "Land_Map_Malden_F") || ((typeOf _thisIntelItem == "Land_Document_01_F") && (_DANSCORE < 11)) || ((typeOf _thisIntelItem == "Land_File2_F") && (_DANSCORE < 6))) then {
+if ((typeOf _thisIntelItem == "Land_Map_Malden_F") || ((typeOf _thisIntelItem == "Land_Document_01_F") && (_AGGRSCORE < 11)) || ((typeOf _thisIntelItem == "Land_File2_F") && (_AGGRSCORE < 6))) then {
 
 
 _MMarks = allMapMarkers select { markerType _x == "mil_warning"};
@@ -255,7 +255,7 @@ PRL = [_HQB getPos [(50 +(random 100)), (0 + (random 360))], East, [selectRandom
 [PRL, getPos _HQB, 500] call BIS_fnc_taskPatrol;
 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 PRL = [_HQB getPos [(50 +(random 250)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos _HQB, 1000] call BIS_fnc_taskPatrol;
 

@@ -5,7 +5,7 @@ RADationius = _this select 1;
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 _Chance = selectRandom [1, 2, 3]; 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ _flare setVelocity [0,0,-0.1];
 };
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 	
 if (RADationius >= 2000) then {
 PRL = [TRGNew getPos [(70 +(random 30)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
@@ -56,7 +56,7 @@ _flare setVelocity [0,0,-0.1];
 
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 if (RADationius >= 2000) then {
 PRL = [TRGNew getPos [(70 +(random 30)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
 [PRL, getPos TRGNew, 2000] call BIS_fnc_taskPatrol;
@@ -97,62 +97,63 @@ _MountsAll = nearestLocations [ TRGNew, ["Mount"], _MR];
 _MountsNeg = nearestLocations [ TRGNew, ["Mount"], 30];   
 _Mounts = _MountsAll - _MountsNeg ; 
  
-if (RADationius >= 2000) then {
-_Mount = selectRandom _Mounts; 
-_Watchpost = selectRandom _allWatchposts; 
-[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+if (count _mounts > 0) then {
+
+	if (RADationius >= 2000) then {
+		_Mount = selectRandom _Mounts; 
+		_Watchpost = selectRandom _allWatchposts; 
+		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+	};
+
+	sleep 1 ; 
+
+	if (RADationius >= 1000) then {
+		_Mount = selectRandom _Mounts; 
+		_Watchpost = selectRandom _allWatchposts; 
+		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+	};
+
+	sleep 1 ; 
+
+	//TODO ; Make sure this is ok
+	// if (_AGGRSCORE > 5) then {
+			
+	// 	if (RADationius >= 2000) then {
+	// 		_Mount = selectRandom _Mounts; 
+	// 		_Watchpost = selectRandom _allWatchposts; 
+	// 		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+	// 	};
+
+	// 	sleep 1 ; 
+
+	// 	if (RADationius >= 1000) then {
+	// 		_Mount = selectRandom _Mounts; 
+	// 		_Watchpost = selectRandom _allWatchposts; 
+	// 		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+	// 	};
+	// };
+
+	// sleep 1 ; 
+
+	// if (_AGGRSCORE > 10) then {
+			
+	// 	if (RADationius >= 2000) then {
+	// 		_Mount = selectRandom _Mounts; 
+	// 		_Watchpost = selectRandom _allWatchposts; 
+	// 		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+
+	// 	};
+
+	// 	sleep 1 ; 
+
+	// 	if (RADationius >= 1500) then {
+	// 		_Mount = selectRandom _Mounts; 
+	// 		_Watchpost = selectRandom _allWatchposts; 
+	// 		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
+
+	// 	};
+	// };
 };
-
-sleep 1 ; 
-
-if (RADationius >= 1000) then {
-_Mount = selectRandom _Mounts; 
-_Watchpost = selectRandom _allWatchposts; 
-[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-};
-
-sleep 1 ; 
-
-if (_DANSCORE > 5) then {
-	
-if (RADationius >= 2000) then {
-_Mount = selectRandom _Mounts; 
-_Watchpost = selectRandom _allWatchposts; 
-[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-};
-
-sleep 1 ; 
-
-if (RADationius >= 1000) then {
-_Mount = selectRandom _Mounts; 
-_Watchpost = selectRandom _allWatchposts; 
-[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-};
-};
-
-sleep 1 ; 
-
-if (_DANSCORE > 10) then {
-	
-if (RADationius >= 2000) then {
-_Mount = selectRandom _Mounts; 
-_Watchpost = selectRandom _allWatchposts; 
-[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-
-};
-
-sleep 1 ; 
-
-if (RADationius >= 1500) then {
-_Mount = selectRandom _Mounts; 
-_Watchpost = selectRandom _allWatchposts; 
-[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-
-};
-
-
-};
-
 
 
 [TRGNew, 360] execVM "Scripts\INTLitems.sqf";

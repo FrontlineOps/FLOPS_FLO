@@ -4,7 +4,7 @@ thisOutpostTrigger = _this select 0;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 _Chance = selectRandom [1, 2, 3]; 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ I1_WP_1 setWaypointBehaviour "SAFE";
 I1_WP_1 setWaypointSpeed "LIMITED";
 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _nearRoad = selectRandom ( (getPos thisOutpostTrigger) nearRoads 150 ) ; 
 _V = createVehicle [ selectRandom East_Ground_Vehicles_Heavy, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
 
@@ -130,14 +130,14 @@ I1_WP_1 setWaypointSpeed "LIMITED";
 
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 			_AssltDestMrks = allMapMarkers select {markerType _x == "b_installation"  && (markerColor _x == "ColorYellow" or  markerColor _x == "colorBLUFOR" or markerColor _x == "colorWEST")};  
 			_AssltDest = [_AssltDestMrks,  thisOutpostTrigger] call BIS_fnc_nearestPosition;
 [thisOutpostTrigger, _AssltDest] execVM "Scripts\VehiInsert_CSAT_2.sqf";			
 
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 			_AssltDestMrks = allMapMarkers select {markerType _x == "b_installation"  && (markerColor _x == "ColorYellow" or  markerColor _x == "colorBLUFOR" or markerColor _x == "colorWEST")};  
 			_StrtM = [_AssltDestMrks,  thisOutpostTrigger] call BIS_fnc_nearestPosition;
 [thisOutpostTrigger, _StrtM] execVM "Scripts\VehiInsert_CSAT_2.sqf";	
@@ -158,7 +158,7 @@ G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;
 			G deleteGroupWhenEmpty true;
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
 			G deleteGroupWhenEmpty true;
@@ -174,7 +174,7 @@ G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;
 };
 
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
 G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
 			G deleteGroupWhenEmpty true;
@@ -255,13 +255,13 @@ _V = createVehicle [(selectRandom _CRT), (selectRandom (HQBLDNG buildingPos -1))
 _V = createVehicle [(selectRandom _CRT), (selectRandom (HQBLDNG buildingPos -1)), [], 0, "NONE"]; 
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 	HQBLDNG = selectRandom _allBuildings;
 _dir = getDirVisual HQBLDNG;
 [ "Intel_01", (selectRandom (HQBLDNG buildingPos -1)), [0,0,0], _dir, false, false, true ] call LARs_fnc_spawnComp; 
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 HQBLDNG = selectRandom _allBuildings;
 _dir = getDirVisual HQBLDNG;
 [ "Intel_01", (selectRandom (HQBLDNG buildingPos -1)), [0,0,0], _dir, false, false, true ] call LARs_fnc_spawnComp; 
@@ -275,13 +275,13 @@ G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_sp
 			G deleteGroupWhenEmpty true;
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
 			G deleteGroupWhenEmpty true;
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;         
 			G deleteGroupWhenEmpty true;
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 			G deleteGroupWhenEmpty true;
 };
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;         
 			G deleteGroupWhenEmpty true;
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
@@ -317,7 +317,7 @@ _V = createVehicle [(selectRandom _CRT), selectRandom _allPositions, [], 0, "NON
 _V = createVehicle [(selectRandom _CRT), selectRandom _allPositions, [], 0, "NONE"]; 
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
 ((units G) select 0) disableAI "PATH";   
 			G deleteGroupWhenEmpty true;
@@ -328,7 +328,7 @@ G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_sp
 
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
 ((units G) select 0) disableAI "PATH";
 			G deleteGroupWhenEmpty true;
@@ -337,14 +337,14 @@ G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_sp
 };
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-{
-_nvg = hmd _x;
- _x unassignItem _nvg;
- _x removeItem _nvg;
-	  _x addPrimaryWeaponItem "acc_flashlight";
-	  _x assignItem "acc_flashlight";
-	  _x enableGunLights "ForceOn";
-  } foreach (allUnits select {side _x == east}); 
+// {
+// _nvg = hmd _x;
+//  _x unassignItem _nvg;
+//  _x removeItem _nvg;
+// 	  _x addPrimaryWeaponItem "acc_flashlight";
+// 	  _x assignItem "acc_flashlight";
+// 	  _x enableGunLights "ForceOn";
+//   } foreach (allUnits select {side _x == east}); 
  
 
  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

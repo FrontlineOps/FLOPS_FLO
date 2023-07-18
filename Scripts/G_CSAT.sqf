@@ -4,7 +4,7 @@ _thisTownTrigger = _this select 0;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ; 
+_AGGRSCORE = parseNumber (markerText _mrkr) ; 
 
 
 _Chance = selectRandom [0,1,2,3,4]; 
@@ -106,7 +106,7 @@ _Pos = _thisTownTrigger getPos [(5 +(random 10)), (0 + (random 360))];
  G = [_Pos, East,[selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
 [G, getPos _thisTownTrigger, 30] call BIS_fnc_taskPatrol;
  
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 	
 _Pos = selectRandom (_Position buildingPos -1);
  G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
@@ -117,7 +117,7 @@ _Pos = _thisTownTrigger getPos [(5 +(random 10)), (0 + (random 360))];
 [G, getPos _thisTownTrigger, 50] call BIS_fnc_taskPatrol;
  };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 	
 _Pos = selectRandom (_Position buildingPos -1);
  G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
@@ -135,15 +135,15 @@ _Pos = _thisTownTrigger getPos [(5 +(random 10)), (0 + (random 360))];
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-{
+// {
 
-_nvg = hmd _x;
- _x unassignItem _nvg;
- _x removeItem _nvg;
-	  _x addPrimaryWeaponItem "acc_flashlight";
-	  _x assignItem "acc_flashlight";
-	  _x enableGunLights "ForceOn";
-  } foreach (allUnits select {side _x == east}); 
+// _nvg = hmd _x;
+//  _x unassignItem _nvg;
+//  _x removeItem _nvg;
+// 	  _x addPrimaryWeaponItem "acc_flashlight";
+// 	  _x assignItem "acc_flashlight";
+// 	  _x enableGunLights "ForceOn";
+//   } foreach (allUnits select {side _x == east}); 
 
 
 sleep 10;

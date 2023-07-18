@@ -3,7 +3,7 @@ _thisPatrolTrigger = _this select 0;
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 _Chance = selectRandom [1, 2, 3]; 
  
@@ -97,7 +97,7 @@ _x forceAddUniform _uniform;
 
 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 2}; 
 _Position = selectRandom _allPositionBuildings ;
 _Pos = selectRandom (_Position buildingPos -1);
@@ -128,7 +128,7 @@ _x forceAddUniform _uniform;
 
 };
 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 2}; 
 _Position = selectRandom _allPositionBuildings ;
 _Pos = selectRandom (_Position buildingPos -1);
@@ -171,7 +171,7 @@ _x forceAddUniform _uniform;
 } foreach Units G;  
 ((units G) select 0) disableAI "PATH"; 
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 _poss = [getpos _Position, 10, 30, 5, 1 , 0] call BIS_fnc_findSafePos; 
 G = [_poss, East,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;  
 {_uniform = uniform _x;
@@ -181,7 +181,7 @@ _x forceAddUniform _uniform;
 } foreach Units G;  
 ((units G) select 0) disableAI "PATH"; 
 }; 
-if (_DANSCORE > 10) then {
+if (_AGGRSCORE > 10) then {
 _poss = [getpos _Position, 10, 30, 5, 1 , 0] call BIS_fnc_findSafePos; 
 G = [_poss, East,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;  
 {_uniform = uniform _x;
@@ -203,7 +203,7 @@ _x forceAddUniform _uniform;
 } foreach Units PRL;  
 [PRL, getpos _Position, 20] call BIS_fnc_taskPatrol;
 
-if (_DANSCORE > 5) then {
+if (_AGGRSCORE > 5) then {
 PRL = [(getPos _Position) getPos [30, 180], East, [selectRandom CivMenArray, selectRandom CivMenArray]] call BIS_fnc_spawnGroup;
 {_uniform = uniform _x;
 _x setUnitLoadout (selectRandom GuerMenArray);
@@ -216,7 +216,7 @@ _x forceAddUniform _uniform;
 //////Vehicles/////////////////////////////////////////////////////////////////////////////////////////
 
 
-if ((_DANSCORE > 5) && (count [(getpos _Position) nearRoads 70] > 0))then {
+if ((_AGGRSCORE > 5) && (count [(getpos _Position) nearRoads 70] > 0))then {
 	
 _nearRoad = selectRandom ( (getpos _Position) nearRoads 70 ) ; 
 _V = createVehicle [ selectRandom CivVehArray, (_nearRoad getRelPos [0, 0]), [], 4, "NONE"]; 
@@ -225,7 +225,7 @@ _dir = _nearRoad getDir _nextRoad;
 _V setDir _dir;
 	};
 
-if ((_DANSCORE > 10) && (count [(getpos _Position) nearRoads 70] > 0)) then {
+if ((_AGGRSCORE > 10) && (count [(getpos _Position) nearRoads 70] > 0)) then {
 	
 _nearRoad = selectRandom ((getpos _Position) nearRoads 70 ) ; 
 _V = createVehicle [ selectRandom CivVehArray, (_nearRoad getRelPos [0, 0]), [], 4, "NONE"]; 
@@ -234,14 +234,14 @@ _dir = _nearRoad getDir _nextRoad;
 _V setDir _dir;
 	};
 
-  {
-      _nvg = hmd _x;
-      _x unassignItem _nvg;
-      _x removeItem _nvg;
-	  _x addPrimaryWeaponItem "acc_flashlight";
-	  _x assignItem "acc_flashlight";
-	  _x enableGunLights "ForceOn";
-  } foreach (allUnits select {side _x == east}); 
+  // {
+  //     _nvg = hmd _x;
+  //     _x unassignItem _nvg;
+  //     _x removeItem _nvg;
+	//   _x addPrimaryWeaponItem "acc_flashlight";
+	//   _x assignItem "acc_flashlight";
+	//   _x enableGunLights "ForceOn";
+  // } foreach (allUnits select {side _x == east}); 
 
 
 { if !((side _x) == west) then {

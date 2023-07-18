@@ -14,7 +14,7 @@ if !(isNull _thisCaptureWestTrigger) then {
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 _mrkr = _mrkrs select 0;
-_DANSCORE = parseNumber (markerText _mrkr) ;  
+_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 if (triggerActivated _thisCaptureWestTrigger) then {
 	
@@ -122,14 +122,14 @@ if (triggerActivated _thisCaptureWestTrigger) then {
 				_mrkr setMarkerType 'loc_Bunker';
 				_mrkr setMarkerAlpha 0.003;
 	
-			if (_DANSCORE > 7) then {
+			if (_AGGRSCORE > 7) then {
 				_markerName = 'AssaultMark' + (str [(0 + (random 1000)), (0 + (random 1000)), 0]);  
 				_mrkr = createMarker [_markerName, [(0 + (random 1000)), (0 + (random 1000)), 0]]; 
 				_mrkr setMarkerType 'loc_Bunker';
 				_mrkr setMarkerAlpha 0.003;
 			};
 			
-			if (_DANSCORE > 12) then {
+			if (_AGGRSCORE > 12) then {
 				_markerName = 'AssaultMark' + (str [(0 + (random 1000)), (0 + (random 1000)), 0]);  
 				_mrkr = createMarker [_markerName, [(0 + (random 1000)), (0 + (random 1000)), 0]]; 
 				_mrkr setMarkerType 'loc_Bunker';

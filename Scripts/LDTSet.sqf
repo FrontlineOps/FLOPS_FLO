@@ -1,6 +1,6 @@
 
 
-_UNTTypeClass = _this Select 0 ;
+private _UNTTypeClass = _this Select 0 ;
 UNTTypeClass = _this Select 0 ;
 publicVariable "UNTTypeClass";
 ACEArsClsPar = 0;
@@ -43,10 +43,11 @@ waitUntil { ACEArsClsPar == 1;  };
 	
         titleText ["New Loadout Saved", "BLACK IN",9999];
 		
-_UNTTypeName = str _UNTTypeClass ;
-_missionTag = missionName;
-_missionTag = [_missionTag] call BIS_fnc_filterString;
-private _LoadOutName = _missionTag + _UNTTypeName;
+// _UNTTypeName = str _UNTTypeClass ;
+// _missionTag = missionName;
+// _missionTag = [_missionTag] call BIS_fnc_filterString;
+// private _LoadOutName = _missionTag + _UNTTypeName;
+private _LoadOutName = missionName +"_"+ _UNTTypeClass;
 
 TheCommander setVariable ["_NEW_Saved_Loadout",getUnitLoadout TheCommander];
 

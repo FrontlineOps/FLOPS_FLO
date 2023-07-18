@@ -1,6 +1,6 @@
 
 sleep 0.1 ;
-_UnitObj = _this select 0 ;
+private _UnitObj = _this select 0 ;
 private _UNTType = "";
 
 
@@ -33,14 +33,14 @@ if (typeOf _UnitObj == F_Diver_Eod) then {_UNTType = F_Diver_Eod ;} ;
 
 if (_UNTType == "") exitwith {diag_log format["LDTInit: _UNTType does not match any defined custom faction types.  object given: %1",typeof _unitobj];};
 
-__UNTTypeName = str _UNTType ;
-_missionTag = missionName;
-_missionTag = [_missionTag] call BIS_fnc_filterString;
-private _LoadOutName = _missionTag + __UNTTypeName;
+// private _UNTTypeName = str _UNTType ;
+// private _missionTag = missionName;
+// _missionTag = [_missionTag] call BIS_fnc_filterString;
+private _LoadOutName = missionName +"_"+ _UNTType;
 
 private _LoadOutRFLNameVal = profileNamespace getVariable _LoadOutName;
 
-_UnitObj setUnitLoadout _LoadOutRFLNameVal ;
+if !(isNil "_LoadOutRFLNameVal") then {_UnitObj setUnitLoadout _LoadOutRFLNameVal} ;
 
 _UnitObj linkItem 'B_UavTerminal';
 

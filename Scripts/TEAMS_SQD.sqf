@@ -87,65 +87,65 @@ player setVariable ["ACE_isEOD", true];
 if ((typeOf player == F_Assault_Eng)  || (typeOf player == "B_G_engineer_F")  || (typeOf player == F_Recon_Eng)) then {
 	player setUnitTrait ["engineer", true];
 player setVariable ["ACE_isEngineer", true];
-[player,[
-	"<img size=2 color='#f37c00' image='\a3\ui_f_oldman\data\IGUI\Cfg\holdactions\repair_ca.paa'/><t font='PuristaBold' color='#f37c00'>REPAIR Vehicles",
-{
-(_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
-[(_this select 0)] execVM "Scripts\REPAIRVEH.sqf" ;
-},
-	nil,
-	9999,
-	true,
-	true,
-	"",
-	"_this distance _target < 5", // _target, _this, _originalTarget
-	5,
-	false,
-	"",
-	""
-]] remoteExec ["addAction",0,true];
+// [player,[
+// 	"<img size=2 color='#f37c00' image='\a3\ui_f_oldman\data\IGUI\Cfg\holdactions\repair_ca.paa'/><t font='PuristaBold' color='#f37c00'>REPAIR Vehicles",
+// {
+// (_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
+// [(_this select 0)] execVM "Scripts\REPAIRVEH.sqf" ;
+// },
+// 	nil,
+// 	9999,
+// 	true,
+// 	true,
+// 	"",
+// 	"_this distance _target < 5", // _target, _this, _originalTarget
+// 	5,
+// 	false,
+// 	"",
+// 	""
+// ]] remoteExec ["addAction",0,true];
 };
 
-if ((typeOf player == F_Assault_Amm)  || (typeOf player == "B_G_Soldier_A_F")) then {
-[player,[
-	"<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>REARM Infantry",
-{
-(_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
-[(_this select 0)] execVM "Scripts\REARM.sqf" ;
-},
-	nil,
-	9999,
-	true,
-	true,
-	"",
-	"_this distance _target < 5", // _target, _this, _originalTarget
-	5,
-	false,
-	"",
-	""
-]] remoteExec ["addAction",0,true];
-} ;
+// if ((typeOf player == F_Assault_Amm)  || (typeOf player == "B_G_Soldier_A_F")) then {
+// [player,[
+// 	"<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>REARM Infantry",
+// {
+// (_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
+// [(_this select 0)] execVM "Scripts\REARM.sqf" ;
+// },
+// 	nil,
+// 	9999,
+// 	true,
+// 	true,
+// 	"",
+// 	"_this distance _target < 5", // _target, _this, _originalTarget
+// 	5,
+// 	false,
+// 	"",
+// 	""
+// ]] remoteExec ["addAction",0,true];
+// } ;
 
 if ((typeOf player == F_Recon_Med)  || (typeOf player == F_Assault_Med)  || (typeOf player == "B_G_medic_F")  || (typeOf player == "B_CTRG_soldier_M_medic_F")) then {
 	player setUnitTrait ["medic", true];
 player setVariable ["ace_medical_medicclass",2, true];
-[player,[
-	"<img size=2 color='#0bff00' image='\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_revive_ca.paa'/><t font='PuristaBold' color='#0bff00'>HEAL Infantry",
-{
-(_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
-[(_this select 0)] execVM "Scripts\HEAL.sqf" ;
-},
-	nil,
-	9999,
-	true,
-	true,
-	"",
-	"_this distance _target < 5", // _target, _this, _originalTarget
-	5,
-	false,
-	"",
-	""
-]] remoteExec ["addAction",0,true];
+// [player,[
+// 	"<img size=2 color='#0bff00' image='\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_revive_ca.paa'/><t font='PuristaBold' color='#0bff00'>HEAL Infantry",
+// {
+// (_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
+// [(_this select 0)] execVM "Scripts\HEAL.sqf" ;
+// },
+// 	nil,
+// 	9999,
+// 	true,
+// 	true,
+// 	"",
+// 	"_this distance _target < 5", // _target, _this, _originalTarget
+// 	5,
+// 	false,
+// 	"",
+// 	""
+// ]] remoteExec ["addAction",0,true];
 } ;
 
 

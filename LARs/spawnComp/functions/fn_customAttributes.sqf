@@ -28,5 +28,5 @@ params[ "_obj", "_cfg" ];
 		};
 	};
 	_header = "params[ '_this', '_value' ];";
-	[ _obj, _value ] call compile format[ "%1%2", _header, _expression ];
+	if !(isnil "_value") then {[ _obj, _value ] call compile format[ "%1%2", _header, _expression ];};
 }forEach ( "true" configClasses ( _cfg >> 'CustomAttributes' ) );
