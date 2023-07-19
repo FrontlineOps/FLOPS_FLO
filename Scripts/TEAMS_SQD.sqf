@@ -71,7 +71,7 @@ false
 ] call BIS_fnc_holdActionAdd;	
 
 
-{_x linkItem 'NVGoggles_OPFOR'; } forEach Units LoadGroup;
+//{_x linkItem 'NVGoggles_OPFOR'; } forEach Units LoadGroup;
 
 };
 

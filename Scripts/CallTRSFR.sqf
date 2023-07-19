@@ -258,7 +258,7 @@ _L addItem 'B_IR_Grenade';
 _L addItem 'B_IR_Grenade';
 _L linkItem 'B_UavTerminal';
 {_x linkItem 'NVGogglesB_blk_F'; } forEach Units AsltGrp;
-   if (markerText 'Revive_Handle' == 'Activate') then {{[_x] call AIS_System_fnc_loadAIS;} forEach Units _GRP;};
+   if (markerText 'Revive_Handle' == 'Activate') then {{[_x] call AIS_System_fnc_loadAIS;} forEach Units AsltGrp;};
    
    {     	{
 [_x,'MENU_COMMS_UAV_RECON',nil,nil,''] call BIS_fnc_addCommMenuItem;	
@@ -316,7 +316,7 @@ _x setVariable ["ACE_isEngineer", true];
 // 	"",
 // 	""
 // ]] remoteExec ["addAction",0,true];
-} forEach (Units AsltGrp select { (typeOf _x == F_Assault_Eng)  || (typeOf _x == "B_G_engineer_F")  || (typeOf _x == F_Recon_Eng)   || (typeOf _x == B_CTRG_soldier_engineer_exp_F)} ) ;
+} forEach (Units AsltGrp select { (typeOf _x == F_Assault_Eng)  || (typeOf _x == "B_G_engineer_F")  || (typeOf _x == F_Recon_Eng)   || (typeOf _x == "B_CTRG_soldier_engineer_exp_F")} ) ;
 
 // {
 // [_x,[

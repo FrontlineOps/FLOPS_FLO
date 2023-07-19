@@ -145,48 +145,48 @@ if (_AGGRSCORE > 10) then {
 ///////Garrisons//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+_G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+			_G deleteGroupWhenEmpty true;
 
 _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
+_G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+((units _G) select 0) disableAI "PATH";
+			_G deleteGroupWhenEmpty true;
 
 _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+_G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+			_G deleteGroupWhenEmpty true;
 
 
 if (_AGGRSCORE > 5) then {
 _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+_G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+			_G deleteGroupWhenEmpty true;
 
 _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
+_G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+((units _G) select 0) disableAI "PATH";
+			_G deleteGroupWhenEmpty true;
 
 _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+_G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+			_G deleteGroupWhenEmpty true;
 };
 
 
 if (_AGGRSCORE > 10) then {
 _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+_G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+			_G deleteGroupWhenEmpty true;
 
 _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
+_G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+((units _G) select 0) disableAI "PATH";
+			_G deleteGroupWhenEmpty true;
 
 _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+_G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
+			_G deleteGroupWhenEmpty true;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -271,21 +271,21 @@ _allPositions = [];
 _allBuildings apply {_allPositions append (_x buildingPos -1)};  
  
 
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;         
-			G deleteGroupWhenEmpty true;
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-			G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;         
+			_G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
+			_G deleteGroupWhenEmpty true;
 if (_AGGRSCORE > 5) then {
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;         
-			G deleteGroupWhenEmpty true;
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
-			G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;         
+			_G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
+			_G deleteGroupWhenEmpty true;
 };
 if (_AGGRSCORE > 10) then {
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;         
-			G deleteGroupWhenEmpty true;
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
-			G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;         
+			_G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
+			_G deleteGroupWhenEmpty true;
 };
 
 
@@ -304,13 +304,13 @@ _allBuildings = nearestObjects [(getpos thisOutpostTrigger), ["Land_BagBunker_La
 _allPositions = [];  
 _allBuildings apply {_allPositions append (_x buildingPos -1)}; 
  
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
-((units G) select 0) disableAI "PATH";   
-			G deleteGroupWhenEmpty true;
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-			G deleteGroupWhenEmpty true;
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-			G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
+((units _G) select 0) disableAI "PATH";   
+			_G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
+			_G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
+			_G deleteGroupWhenEmpty true;
 
 _V = createVehicle [(selectRandom _CRT), selectRandom _allPositions, [], 0, "NONE"]; 
 _V = createVehicle [(selectRandom _CRT), selectRandom _allPositions, [], 0, "NONE"]; 
@@ -318,22 +318,22 @@ _V = createVehicle [(selectRandom _CRT), selectRandom _allPositions, [], 0, "NON
 
 
 if (_AGGRSCORE > 5) then {
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
-((units G) select 0) disableAI "PATH";   
-			G deleteGroupWhenEmpty true;
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-			G deleteGroupWhenEmpty true;
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-			G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;  
+((units _G) select 0) disableAI "PATH";   
+			_G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
+			_G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
+			_G deleteGroupWhenEmpty true;
 
 };
 
 if (_AGGRSCORE > 10) then {
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
-G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-			G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
+((units _G) select 0) disableAI "PATH";
+			_G deleteGroupWhenEmpty true;
+_G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
+			_G deleteGroupWhenEmpty true;
 };
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
