@@ -14,7 +14,7 @@ _thisINSURGTrigger = _this select 0;
 			_dir = _nearRoad getDir _nextRoad;
 			_V setDir _dir;
 			_G = [_pos, east,[selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;
-					  [ ((units G) select 1),            
+					  [ ((units _G) select 1),            
  "<img size=2 color='#FFE496' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#FFE496'>Search Insurgent",           
  "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa",  
  "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa",  
@@ -79,7 +79,7 @@ _thisINSURGTrigger = _this select 0;
 			sleep 2 ;
 			[_G,(getpos _thisINSURGTrigger), 20] call BIS_fnc_taskPatrol;
 			{_x setUnitPos "MIDDLE";} forEach Units _G ;
-					  [ ((units G) select 1),            
+					  [ ((units _G) select 1),            
  "<img size=2 color='#FFE496' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#FFE496'>Search Insurgent",           
  "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa",  
  "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa",  
@@ -104,7 +104,7 @@ _thisINSURGTrigger = _this select 0;
  true,             
  false             
 ] remoteExec ["BIS_fnc_holdActionAdd",0,true];  			
-					  [ ((units G) select 2),            
+					  [ ((units _G) select 2),            
  "<img size=2 color='#FFE496' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#FFE496'>Search Insurgent",           
  "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa",  
  "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa",  
@@ -144,7 +144,7 @@ _thisINSURGTrigger = _this select 0;
 			_G = [_pos, east,[selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;     
 			MortarRoad = createVehicle ['O_Mortar_01_F', _pos, [], 0, 'CAN_COLLIDE']; 			
 			((units _G) select 2) moveInGunner MortarRoad ;
-					  [ ((units G) select 1),            
+					  [ ((units _G) select 1),            
  'Search Insurgent',           
  '\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa',  
  '\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa',  
@@ -185,7 +185,7 @@ _thisINSURGTrigger = _this select 0;
 			_V = createVehicle [selectRandom ["I_G_Offroad_01_AT_F", "I_C_Offroad_02_LMG_F", "I_G_Offroad_01_armed_F", "I_C_Offroad_02_AT_F"], [_pos select 0, _pos select 1, (_pos select 2) + 5], [], 0, "CAN_COLLIDE"]; 
 			sleep 2 ;			
 			_G = [_pos, east,[selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;   
-					  [ ((units G) select 1),            
+					  [ ((units _G) select 1),            
  "<img size=2 color='#FFE496' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#FFE496'>Search Insurgent",           
  "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa",  
  "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa",  
@@ -253,7 +253,7 @@ _thisINSURGTrigger = _this select 0;
 			_pos = player getPos [(250 +(random 50)), (0 + (random 360))] ;
 			_G = [_pos, east,[selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;     
 			MortarMount = createVehicle ['O_Mortar_01_F', _pos, [], 0, 'CAN_COLLIDE']; 	
-					  [ ((units G) select 1),            
+					  [ ((units _G) select 1),            
   'Search Insurgent',           
  '\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa',  
  '\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa',  
@@ -288,7 +288,7 @@ _thisINSURGTrigger = _this select 0;
 			_G = [(getpos _thisINSURGTrigger), east,[selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;     
 			[_G,(getpos _thisINSURGTrigger), 20] call BIS_fnc_taskPatrol;
 			{_x setUnitPos "MIDDLE";} forEach Units _G ;
-					  [ ((units G) select 1),            
+					  [ ((units _G) select 1),            
  "<img size=2 color='#FFE496' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#FFE496'>Search Insurgent",           
  "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa",  
  "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa",  
@@ -313,7 +313,7 @@ _thisINSURGTrigger = _this select 0;
  true,             
  false             
 ] remoteExec ["BIS_fnc_holdActionAdd",0,true];  			
-					  [ ((units G) select 2),            
+					  [ ((units _G) select 2),            
  "<img size=2 color='#FFE496' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#FFE496'>Search Insurgent",           
  "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa",  
  "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_search_ca.paa",  
