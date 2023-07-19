@@ -11,7 +11,7 @@ _TERR = nearestTerrainObjects [locationPosition MountSel, ["House", "TREE", "SMA
 
 WPdir = 0 + (random 360);
 if (count (nearestObjects [(locationPosition MountSel), ["House"], 200]) != 0) then {
-WPdir = getDirVisual ((nearestObjects [(getMarkerpos _mrkr), ["House"], 200]) select 0);
+WPdir = getDirVisual ((nearestObjects [(locationPosition MountSel), ["House"], 200]) select 0);
 };
 _COM = [ _Watchpost, locationPosition MountSel, [0,0,0], WPdir, true ] call LARs_fnc_spawnComp;	
 
