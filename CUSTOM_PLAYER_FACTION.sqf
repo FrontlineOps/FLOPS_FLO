@@ -156,11 +156,11 @@ publicVariable "F_TNK_03";
 F_TNK_04= "B_AMF_TANK_CE_02_F";
 publicVariable "F_TNK_04";
 
-F_Art_00 = "RHS_M252_WD";      // Mortar   //For COMBAT SUPPORT ISSUES, PREFER THESE CLASSES,  Use "B_T_Mortar_01_F" for Woodland Camo   // "B_Mortar_01_F" for Desert Camo
+F_Art_00 = "itc_land_rhsusf_m252_wd";      // Mortar   //For COMBAT SUPPORT ISSUES, PREFER THESE CLASSES,  Use "B_T_Mortar_01_F" for Woodland Camo   // "B_Mortar_01_F" for Desert Camo
 publicVariable "F_Art_00";
-F_Art_01 = "RHS_M119_WD";      // Heavy Artillery   //For COMBAT SUPPORT ISSUES, PREFER THESE CLASSES,  Use "B_T_MBT_01_arty_F" for Woodland Camo   // "B_MBT_01_arty_F" for Desert Camo
+F_Art_01 = "itc_land_rhsusf_m119_wd";      // Heavy Artillery   //For COMBAT SUPPORT ISSUES, PREFER THESE CLASSES,  Use "B_T_MBT_01_arty_F" for Woodland Camo   // "B_MBT_01_arty_F" for Desert Camo
 publicVariable "F_Art_01";
-F_Art_02 = "rhsusf_m109_usarmy";      // Heavy Artillery   // For COMBAT SUPPORT ISSUES, PREFER THESE CLASSES,  Use "B_T_MBT_01_mlrs_F" for Woodland Camo   // "B_MBT_01_mlrs_F" for Desert Camo
+F_Art_02 = "itc_land_rhsusf_m109_usarmy";      // Heavy Artillery   // For COMBAT SUPPORT ISSUES, PREFER THESE CLASSES,  Use "B_T_MBT_01_mlrs_F" for Woodland Camo   // "B_MBT_01_mlrs_F" for Desert Camo
 publicVariable "F_Art_02";
 
 F_Heli_01 = "AMF_gazelle_afte_f";
