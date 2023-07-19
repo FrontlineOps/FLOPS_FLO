@@ -1781,11 +1781,6 @@ F_Plane_05 = "B_T_VTOL_01_armed_F";
 F_Plane_06 = "";
 
 };
-
- 
- 
- 
- sleep 5 ;
  
  
  
@@ -1793,32 +1788,32 @@ F_Plane_06 = "";
 
 
 F_ASSLT_ENG = [F_Assault_Eng, F_Assault_AT, F_Assault_Eod, F_Assault_Mg];
-publicVariable "F_ASSLT_ENG";
+//publicVariable "F_ASSLT_ENG";
 
 F_ASSLT_TEAM = [F_Assault_TL, F_Assault_Amm, F_Assault_AT, F_Assault_Mg, F_Assault_Med, F_Assault_Eng];
-publicVariable "F_ASSLT_TEAM";
+//publicVariable "F_ASSLT_TEAM";
 
 F_ASSLT_SQD = [F_Assault_SL, F_Assault_Eod, F_Assault_AT, F_Assault_Mg, F_Assault_Med, F_Assault_Amm, F_Assault_Eng, F_Assault_Mrk, F_Assault_AT, F_Assault_Mg, F_Assault_Med, F_Assault_Uav];
-publicVariable "F_ASSLT_SQD";
+//publicVariable "F_ASSLT_SQD";
 
 F_SNP_TEAM = [F_Recon_Snp, F_Recon_Sct];
-publicVariable "F_SNP_TEAM";
+//publicVariable "F_SNP_TEAM";
 
 F_RCN_TEAM = [F_Recon_TL, F_Recon_AT, F_Recon_Med, F_Recon_Mg, F_Recon_Eod];
-publicVariable "F_RCN_TEAM";
+//publicVariable "F_RCN_TEAM";
 
 F_RCN_SQD = [F_Recon_TL, F_Recon_AT, F_Recon_Eod, F_Recon_Mg, F_Recon_Eng, F_Recon_Mrk, F_Recon_Med];
-publicVariable "F_RCN_SQD";
+//publicVariable "F_RCN_SQD";
 
 F_DVR_TEAM = [F_Diver_TL, F_Diver_Eod, F_Diver_Rfl, F_Diver_Eod];
-publicVariable "F_DVR_TEAM";
+//publicVariable "F_DVR_TEAM";
 
 F_OFFICER_TEAM = [F_Officer, F_Assault_Amm];
-publicVariable "F_OFFICER_TEAM";
+//publicVariable "F_OFFICER_TEAM";
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-sleep 3;
+
 
 
 F_Init = "Done";

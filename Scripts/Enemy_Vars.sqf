@@ -386,9 +386,4 @@ East_Groups = [
 ];
 }; 
 
-
-
-
-sleep 3;
-
 E_Init = "Done";

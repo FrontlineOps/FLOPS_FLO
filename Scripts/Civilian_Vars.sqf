@@ -277,10 +277,6 @@ GuerMenArray = ("(configname _x iskindOf 'CAManBase') && (gettext (_x >> 'factio
 GuerVehArray = ("(configname _x iskindOf 'car') && (gettext (_x >> 'faction') == 'IND_C_F')" configClasses (configfile >> "CfgVehicles")) apply {configName _x};
 };
 
-
-
-sleep 3;
-
 C_Init = "Done";
 
 

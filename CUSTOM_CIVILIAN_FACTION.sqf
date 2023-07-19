@@ -12,12 +12,12 @@
 
 //Civilian classnames
 CivVehArray = ("(configname _x iskindOf 'car') && (gettext (_x >> 'faction') == 'UK3CB_CHC_C')" configClasses (configfile >> "CfgVehicles")) apply {configName _x};
-publicVariable "CivVehArray";
+//publicVariable "CivVehArray";
 CivMenArray = ("(configname _x iskindOf 'CAManBase') && (gettext (_x >> 'faction') == 'UK3CB_CHC_C')" configClasses (configfile >> "CfgVehicles")) apply {configName _x};
-publicVariable "CivMenArray";
+//publicVariable "CivMenArray";
 
 //Guerilla classnames
 GuerMenArray = ("(configname _x iskindOf 'CAManBase') && (gettext (_x >> 'faction') == 'UK3CB_LSM_I')" configClasses (configfile >> "CfgVehicles")) apply {configName _x};
-publicVariable "GuerMenArray";
+//publicVariable "GuerMenArray";
 GuerVehArray = ("(configname _x iskindOf 'car') && (gettext (_x >> 'faction') == 'UK3CB_LSM_I')" configClasses (configfile >> "CfgVehicles")) apply {configName _x};
-publicVariable "GuerVehArray";
+//publicVariable "GuerVehArray";

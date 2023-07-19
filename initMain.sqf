@@ -82,30 +82,28 @@
 
 //Server Script //////////Server Script //////////Server Script //////////Server Script //////////Server Script //////////Server Script //////////Server Script //////////Server Script //////////Server Script //////////Server Script //////////
 
-if (isServer) then {
+// if (isServer) then {
 	
- if (markerText "Friendly_Handle" == "CUSTOM_PLAYER_FACTION") then {  null = execVM "CUSTOM_PLAYER_FACTION.sqf" };
- if (markerText "Enemy_Handle" == "CUSTOM_ENEMY_FACTION") then {  null = execVM "CUSTOM_ENEMY_FACTION.sqf" };
- if (markerText "Civilian_Handle" == "CUSTOM_CIVILIAN_FACTION") then {  null = execVM "CUSTOM_CIVILIAN_FACTION.sqf" };
+//  if (markerText "Friendly_Handle" == "CUSTOM_PLAYER_FACTION") then {  null = execVM "CUSTOM_PLAYER_FACTION.sqf" };
+//  if (markerText "Enemy_Handle" == "CUSTOM_ENEMY_FACTION") then {  null = execVM "CUSTOM_ENEMY_FACTION.sqf" };
+//  if (markerText "Civilian_Handle" == "CUSTOM_CIVILIAN_FACTION") then {  null = execVM "CUSTOM_CIVILIAN_FACTION.sqf" };
 
-};
+// };
 
 
 //All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script ////////
 
 sleep 3 ; 
 
-
-
 _Enemy = execVM "Scripts\Enemy_Vars.sqf"; 
-waitUntil { scriptDone _Enemy };
-
 _Friendly = execVM "Scripts\Friendly_Vars.sqf"; 
-waitUntil { scriptDone _Friendly };
-
 _Civilian = execVM "Scripts\Civilian_Vars.sqf"; 
-waitUntil { scriptDone _Civilian };
 
+ if (markerText "Friendly_Handle" == "CUSTOM_PLAYER_FACTION") then {  _Friendly = execVM "CUSTOM_PLAYER_FACTION.sqf" };
+ if (markerText "Enemy_Handle" == "CUSTOM_ENEMY_FACTION") then {  _Enemy = execVM "CUSTOM_ENEMY_FACTION.sqf" };
+ if (markerText "Civilian_Handle" == "CUSTOM_CIVILIAN_FACTION") then {  _Civilian = execVM "CUSTOM_CIVILIAN_FACTION.sqf" };
+
+waitUntil { scriptDone _Friendly && scriptDone _Enemy && scriptDone _Civilian };
 sleep 3 ; 
 
 if (isServer) then {
