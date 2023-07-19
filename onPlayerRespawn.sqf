@@ -1,4 +1,6 @@
 
+OLDGRP = group player ;
+
 removeAllActions player;
 
  player setDamage 0; 
@@ -148,7 +150,6 @@ if ((typeOf player == F_Diver_Eod) || (typeOf player == F_Diver_Rfl) || (typeOf 
 // ]] remoteExec ["addAction",0,true]; 
 // } ;
 
-sleep 1 ;
 
 			private _headlessClients = entities "HeadlessClient_F";
 			private _humanPlayers = allPlayers - _headlessClients;
@@ -211,14 +212,13 @@ BIS_DeathBlur ppEffectAdjust [0.0];
 BIS_DeathBlur ppEffectCommit 0.0;
 
 
-if (isNil "RESPAWN_IS_FORCED" || RESPAWN_IS_FORCED == false) then {
-	private _OLDGRP = group player ;
+if !(isNil "RESPAWN_IS_FORCED" || {RESPAWN_IS_FORCED == true}) then {
 
 	[player] join grpNull ;
 
 	player setUnitLoadout (player getVariable ["Respawn_Saved_Loadout",[]]);
 
-	if (count ((units _OLDGRP) select {alive _x == true}) > 0) then {
+	if (count ((units OLDGRP) select {alive _x == true}) > 0) then {
 			GNRT = "YES" ;
 			DVRT = "NO" ;
 			0 = [] spawn {
@@ -228,13 +228,13 @@ if (isNil "RESPAWN_IS_FORCED" || RESPAWN_IS_FORCED == false) then {
 							} ;
 
 							if (!_result) then {
-							[player] join _OLDGRP ;	
+							[player] join OLDGRP ;	
 							group player selectLeader player;						
 							};
 			};
 	};
 } else {
 	RESPAWN_IS_FORCED = false;
-}
+};
 
 if (markerText "Revive_Handle" == "Activate") then {  {[_x] call AIS_System_fnc_loadAIS;} forEach Units group player; };
