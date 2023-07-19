@@ -29,7 +29,7 @@ group player selectLeader player;
 [{player in units (_this select 0)}, {closeDialog 0;}, [_grp]] call CBA_fnc_waitUntilAndExecute;
 [{!dialog}, {call KPPLM_fnc_openDialog;}] call CBA_fnc_waitUntilAndExecute;
 
-sleep 2 ;
+//sleep 2 ;
 
 group player selectLeader player;
 

@@ -1,5 +1,5 @@
 
-sleep 0.1 ;
+sleep 0.5 ;
 private _UnitObj = _this select 0 ;
 private _UNTType = "";
 
