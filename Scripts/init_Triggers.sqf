@@ -65,7 +65,8 @@ player enableSimulationGlobal true;
 player allowDammage true;
 
 if (isMultiplayer) then {
-forceRespawn player;
+	RESPAWN_IS_FORCED = true;
+	forceRespawn player;
 };
 
 player linkItem "B_UavTerminal";
