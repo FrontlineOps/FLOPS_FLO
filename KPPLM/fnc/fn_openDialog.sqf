@@ -30,7 +30,7 @@ private _ctrlScore = _dialog displayCtrl 758034;
 private _ctrlLabelPlaytime = _dialog displayCtrl 758035;
 private _ctrlPlaytime = _dialog displayCtrl 758036;
 private _ctrlNoRanks = _dialog displayCtrl 758037;
-private _ctrlGroupList = _dialog displayCtrl 758038;
+//private _ctrlGroupList = _dialog displayCtrl 758038;
 private _ctrlViewFoot = _dialog displayCtrl 7580310;
 private _ctrlViewVeh = _dialog displayCtrl 7580311;
 private _ctrlViewAir = _dialog displayCtrl 7580312;
@@ -46,14 +46,14 @@ private _ctrlSliderSound = _dialog displayCtrl 7580317;
 
 
 // Fill group list with all groups leaded by players
-{
-    if (player in units _x) then {
-        _ctrlGroupList lbSetCurSel (_ctrlGroupList lbAdd format [">> %1 - %2 (%3)", groupId _x, name leader _x, count units _x]);
-    } else {
-        _ctrlGroupList lbAdd format ["%1 - %2 (%3)", groupId _x, name leader _x, count units _x];
-    };
+// {
+//     if (player in units _x) then {
+//         _ctrlGroupList lbSetCurSel (_ctrlGroupList lbAdd format [">> %1 - %2 (%3)", groupId _x, name leader _x, count units _x]);
+//     } else {
+//         _ctrlGroupList lbAdd format ["%1 - %2 (%3)", groupId _x, name leader _x, count units _x];
+//     };
 
-} forEach KPPLM_groups;
+// } forEach KPPLM_groups;
 
 // Set initial values for view distances
 _ctrlViewFoot ctrlSetText str KPPLM_viewFoot;
