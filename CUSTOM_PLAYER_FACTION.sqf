@@ -176,7 +176,7 @@ F_Heli_05 = "amf_nh90_tth_transport";
 
 F_Heli_06_G = "AMF_TIGRE_01";       // Gunship Chopper
 //publicVariable "F_Heli_06_G";
-F_Heli_07_G = "AMF_gazelle_minigun_f";       // Gunship Chopper
+F_Heli_07_G = "fza_ah64d_b2e";       // Gunship Chopper
 //publicVariable "F_Heli_07_G";
 
 F_Plane_01_CAS = "B_AMF_PLANE_FIGHTER_02_F";
