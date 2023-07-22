@@ -1105,7 +1105,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -1238,7 +1238,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -1371,7 +1371,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -1504,7 +1504,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -1637,7 +1637,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -1771,7 +1771,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -1905,7 +1905,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -2039,7 +2039,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -2172,7 +2172,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -2306,7 +2306,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -2439,7 +2439,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -2572,7 +2572,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -2705,7 +2705,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -2838,7 +2838,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -2971,7 +2971,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -3104,7 +3104,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -3237,7 +3237,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -3370,7 +3370,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -3504,7 +3504,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -3638,7 +3638,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -3771,7 +3771,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -3904,7 +3904,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -4037,7 +4037,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -4171,7 +4171,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -4305,7 +4305,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -4438,7 +4438,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -4572,7 +4572,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -4705,7 +4705,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -4839,7 +4839,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -4972,7 +4972,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -5105,7 +5105,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -5238,7 +5238,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -5371,7 +5371,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -5504,7 +5504,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -5637,7 +5637,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -5771,7 +5771,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -5904,7 +5904,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -6037,7 +6037,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -6170,7 +6170,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -6304,7 +6304,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -6437,7 +6437,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -6570,7 +6570,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
@@ -6703,7 +6703,7 @@ class Mission
 								class data
 								{
 									singleType="STRING";
-									value="_this setDammage 1;";
+									value="_this setDamage 1;";
 								};
 							};
 						};
