@@ -33,7 +33,7 @@ if ((typeOf  player == F_Recon_Eod) || (typeOf  player == F_Recon_Med) || (typeO
 {_x setPos ((getPos (vehicle player)) vectorAdd [(0 + (random 10)),(0 + (random 10)),(0 - (random 10))])} forEach units group player;
 _Height = Position player select 2 ;
 {[_x,_Height]  spawn BIS_fnc_halo} forEach units group player;
-playMusic 'LeadTrack02_F_Mark';
+//playMusic 'LeadTrack02_F_Mark';
 [player] execVM "Scripts\HALO.sqf"; 
 	},				
 	{},													

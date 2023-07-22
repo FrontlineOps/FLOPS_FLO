@@ -64,13 +64,13 @@ class KPPLM_dialog {
             sizeEx = KP_TEXT_L;
         };
 
-        class KP_LabelGroups: KP_LabelPlayer {
-            text = "$STR_KPPLM_LABELGROUPS";
-            x = KP_GETCX(KP_X_VAL_C,KP_WIDTH_VAL_C,0,1);
-            y = KP_GETCY(KP_Y_VAL_C,KP_HEIGHT_VAL_C,3,16);
-            w = KP_GETW(KP_WIDTH_VAL_C,1);
-            h = KP_GETH(KP_HEIGHT_VAL_C,16);
-        };
+        // class KP_LabelGroups: KP_LabelPlayer {
+        //     text = "$STR_KPPLM_LABELGROUPS";
+        //     x = KP_GETCX(KP_X_VAL_C,KP_WIDTH_VAL_C,0,1);
+        //     y = KP_GETCY(KP_Y_VAL_C,KP_HEIGHT_VAL_C,3,16);
+        //     w = KP_GETW(KP_WIDTH_VAL_C,1);
+        //     h = KP_GETH(KP_HEIGHT_VAL_C,16);
+        // };
 
         class KP_LabelView: KP_LabelPlayer {
             text = "$STR_KPPLM_LABELVIEW";
@@ -149,44 +149,44 @@ class KPPLM_dialog {
             y = KP_GETCY(KP_Y_VAL_C,KP_HEIGHT_VAL_C,7,48);
         };
 
-        class KP_GroupList: KPGUI_PRE_ListBox {
-            idc = 758038;
-            x = KP_GETCX(KP_X_VAL_C,KP_WIDTH_VAL_C,0,1);
-            y = KP_GETCY(KP_Y_VAL_C,KP_HEIGHT_VAL_C,4,16);
-            w = KP_GETW(KP_WIDTH_VAL_C,(4/3));
-            h = KP_GETH(KP_HEIGHT_VAL_C,(24/5));
-            onLBSelChanged = "ctrlSetText [758039, groupId (KPPLM_groups select (lbCurSel 758038))]";
-        };
+        // class KP_GroupList: KPGUI_PRE_ListBox {
+        //     idc = 758038;
+        //     x = KP_GETCX(KP_X_VAL_C,KP_WIDTH_VAL_C,0,1);
+        //     y = KP_GETCY(KP_Y_VAL_C,KP_HEIGHT_VAL_C,4,16);
+        //     w = KP_GETW(KP_WIDTH_VAL_C,(4/3));
+        //     h = KP_GETH(KP_HEIGHT_VAL_C,(24/5));
+        //     onLBSelChanged = "ctrlSetText [758039, groupId (KPPLM_groups select (lbCurSel 758038))]";
+        // };
 
-        class KP_ButtonCreate: KPGUI_PRE_InlineButton {
-            text = "$STR_KPPLM_CREATE";
-            x = KP_GETCX(KP_X_VAL_C,KP_WIDTH_VAL_C,3,4);
-            y = KP_GETCY(KP_Y_VAL_C,KP_HEIGHT_VAL_C,4,16);
-            w = KP_GETW(KP_WIDTH_VAL_C,4);
-            h = KP_GETH(KP_HEIGHT_VAL_C,(48/5));
-            onButtonClick = "[] call KPPLM_fnc_create";
-        };
+        // class KP_ButtonCreate: KPGUI_PRE_InlineButton {
+        //     text = "$STR_KPPLM_CREATE";
+        //     x = KP_GETCX(KP_X_VAL_C,KP_WIDTH_VAL_C,3,4);
+        //     y = KP_GETCY(KP_Y_VAL_C,KP_HEIGHT_VAL_C,4,16);
+        //     w = KP_GETW(KP_WIDTH_VAL_C,4);
+        //     h = KP_GETH(KP_HEIGHT_VAL_C,(48/5));
+        //     onButtonClick = "[] call KPPLM_fnc_create";
+        // };
 
-        class KP_ButtonJoin: KP_ButtonCreate {
-            text = "$STR_KPPLM_JOIN";
-            y = KP_GETCY(KP_Y_VAL_C,KP_HEIGHT_VAL_C,17,48);
-            onButtonClick = "[] call KPPLM_fnc_join";
-        };
+        // class KP_ButtonJoin: KP_ButtonCreate {
+        //     text = "$STR_KPPLM_JOIN";
+        //     y = KP_GETCY(KP_Y_VAL_C,KP_HEIGHT_VAL_C,17,48);
+        //     onButtonClick = "[] call KPPLM_fnc_join";
+        // };
 
-        class KP_RenameEdit: KPGUI_PRE_EditBox {
-            idc = 758039;
-            x = KP_GETCX(KP_X_VAL_C,KP_WIDTH_VAL_C,0,1);
-            y = KP_GETCY(KP_Y_VAL_C,KP_HEIGHT_VAL_C,11,24);
-            w = KP_GETW(KP_WIDTH_VAL_C,(4/3));
-            h = KP_GETH(KP_HEIGHT_VAL_C,24);
-        }
+        // class KP_RenameEdit: KPGUI_PRE_EditBox {
+        //     idc = 758039;
+        //     x = KP_GETCX(KP_X_VAL_C,KP_WIDTH_VAL_C,0,1);
+        //     y = KP_GETCY(KP_Y_VAL_C,KP_HEIGHT_VAL_C,11,24);
+        //     w = KP_GETW(KP_WIDTH_VAL_C,(4/3));
+        //     h = KP_GETH(KP_HEIGHT_VAL_C,24);
+        // }
 
-        class KP_ButtonRename: KP_ButtonCreate {
-            text = "$STR_KPPLM_RENAME";
-            y = KP_GETCY(KP_Y_VAL_C,KP_HEIGHT_VAL_C,11,24);
-            h = KP_GETH(KP_HEIGHT_VAL_C,24);
-            onButtonClick = "[] call KPPLM_fnc_rename";
-        };
+        // class KP_ButtonRename: KP_ButtonCreate {
+        //     text = "$STR_KPPLM_RENAME";
+        //     y = KP_GETCY(KP_Y_VAL_C,KP_HEIGHT_VAL_C,11,24);
+        //     h = KP_GETH(KP_HEIGHT_VAL_C,24);
+        //     onButtonClick = "[] call KPPLM_fnc_rename";
+        // };
 
         class KP_BoxViewFoot: KPGUI_PRE_EditBox {
             idc = 7580310;

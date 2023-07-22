@@ -115,16 +115,18 @@ _StaticObjs =  _allStaticObjs select {
 	};
  
  {
-	private _ObjData = parseSimpleArray (markerText _x) ; 
-	private _ObjTyp = _ObjData select 0 ;
-	private _ObjPos = _ObjData select 1 ; 
-	private _ObjDir = _ObjData select 2 ; 
- 
-	private _NewObj = createVehicle [_ObjTyp, [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"] ;
-	_NewObj setVectorDirAndUp _ObjDir;
-	_NewObj setPosATL _ObjPos;
+	try {
+		private _ObjData = parseSimpleArray (markerText _x) ; 
+		private _ObjTyp = _ObjData select 0 ;
+		private _ObjPos = _ObjData select 1 ; 
+		private _ObjDir = _ObjData select 2 ; 
 	
-	deleteMarker _x ;
+		private _NewObj = createVehicle [_ObjTyp, [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"] ;
+		_NewObj setVectorDirAndUp _ObjDir;
+		_NewObj setPosATL _ObjPos;
+		
+		deleteMarker _x ;
+	} catch {diag_log _exception; diag_log format["Parse value: %1",markerText _x];};
 		
  } forEach _ObjMarks;  
 	  
@@ -219,22 +221,24 @@ private _civGroups = allGroups select {
 
 	{
 		private _EnmGRP = grpNull;
-		private _array = parseSimpleArray (markerText _x);
+		try {
+			private _array = parseSimpleArray (markerText _x);
 
-		if (markerColor _x == "colorOPFOR") then { _EnmGRP = [(getMarkerPos _x), EAST, _array] call BIS_fnc_spawnGroup ; 
-			_EnmGRP deleteGroupWhenEmpty true;
-
-
-		} ;
-		
-		if (markerColor _x == "colorIndependent") then { _EnmGRP = [(getMarkerPos _x), independent, _array] call BIS_fnc_spawnGroup ; 
-			_EnmGRP deleteGroupWhenEmpty true;
-				[_EnmGRP] execVM "Scripts\Civ_Relations_Ind.sqf" ;	
+			if (markerColor _x == "colorOPFOR") then { _EnmGRP = [(getMarkerPos _x), EAST, _array] call BIS_fnc_spawnGroup ; 
+				_EnmGRP deleteGroupWhenEmpty true;
 
 
-		} ;
+			} ;
+			
+			if (markerColor _x == "colorIndependent") then { _EnmGRP = [(getMarkerPos _x), independent, _array] call BIS_fnc_spawnGroup ; 
+				_EnmGRP deleteGroupWhenEmpty true;
+					[_EnmGRP] execVM "Scripts\Civ_Relations_Ind.sqf" ;	
 
-				sleep 0.3 ; 
+
+			} ;
+		} catch {diag_log _exception; diag_log format["Parse value: %1",markerText _x];};
+
+		sleep 0.3 ; 
 
 		if !(isNull _EnmGRP) then {
 			if (count (_array) > 1) then { 
@@ -276,13 +280,15 @@ private _CivvGroupMarks = allMapMarkers select {
 
 	{
 		private _CivGRP = grpNull;
-		private _array = parseSimpleArray (markerText _x);
+		try {
+			private _array = parseSimpleArray (markerText _x);
 		
-		if (markerColor _x == "colorCivilian") then { _CivGRP = [(getMarkerPos _x), civilian, _array] call BIS_fnc_spawnGroup ; 
-					_CivGRP deleteGroupWhenEmpty true;
-		
-				[_CivGRP] execVM "Scripts\Civ_Relations_Civ.sqf" ;	
-		} ;
+			if (markerColor _x == "colorCivilian") then { _CivGRP = [(getMarkerPos _x), civilian, _array] call BIS_fnc_spawnGroup ; 
+						_CivGRP deleteGroupWhenEmpty true;
+			
+					[_CivGRP] execVM "Scripts\Civ_Relations_Civ.sqf" ;	
+			} ;
+		} catch {diag_log _exception; diag_log format["Parse value: %1",markerText _x];};
 
 		if !(isNull _CivGRP) then {
 				_Chance = selectRandom [0,1,2,3,4]; 
