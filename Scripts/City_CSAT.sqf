@@ -396,7 +396,7 @@ _V setCollisionLight true;
   };
 };
 
-{
+//{
 
 // _nvg = hmd _x;
 //  _x unassignItem _nvg;
