@@ -793,7 +793,7 @@ player linkItem 'NVGogglesB_blk_F';
 _Height = Position player select 2 ;
 {[_x,_Height] spawn BIS_fnc_halo} forEach units group player;
 	{ unassignvehicle _x;} forEach units group player;
-playMusic 'LeadTrack02_F_Mark';
+//playMusic 'LeadTrack02_F_Mark';
 [player] execVM "Scripts\HALO.sqf"; 
 
 	},				
@@ -838,7 +838,7 @@ if (isClass (configfile >> 'CfgVehicles' >> 'Box_cTab_items') == true ) then { p
 _Height = Position player select 2 ;
 {[_x,_Height] spawn BIS_fnc_halo} forEach units group player;
 	{ unassignvehicle _x;} forEach units group player;
-playMusic 'LeadTrack02_F_Mark';
+//playMusic 'LeadTrack02_F_Mark';
 [player] execVM "Scripts\HALO.sqf"; 
 
 	},				
@@ -882,7 +882,7 @@ if (isClass (configfile >> 'CfgVehicles' >> 'Box_cTab_items') == true ) then { p
 _Height = Position player select 2 ;
 {[_x,_Height] spawn BIS_fnc_halo} forEach units group player;
 	{ unassignvehicle _x;} forEach units group player;
-playMusic 'LeadTrack02_F_Mark';
+//playMusic 'LeadTrack02_F_Mark';
 [player] execVM "Scripts\HALO.sqf"; 
 
 	},				
@@ -927,7 +927,7 @@ if (isClass (configfile >> 'CfgVehicles' >> 'Box_cTab_items') == true ) then { p
 _Height = Position player select 2 ;
 {[_x,_Height] spawn BIS_fnc_halo} forEach units group player;
 	{ unassignvehicle _x;} forEach units group player;
-playMusic 'LeadTrack02_F_Mark';
+//playMusic 'LeadTrack02_F_Mark';
 [player] execVM "Scripts\HALO.sqf"; 
 
 	},				
@@ -977,7 +977,7 @@ if (isClass (configfile >> 'CfgVehicles' >> 'Box_cTab_items') == true ) then { p
 _Height = Position player select 2 ;
 {[_x,_Height] spawn BIS_fnc_halo} forEach units group player;
 	{ unassignvehicle _x;} forEach units group player;
-playMusic 'LeadTrack02_F_Mark';
+//playMusic 'LeadTrack02_F_Mark';
 [player] execVM "Scripts\HALO.sqf"; 
 
 	},				
@@ -1020,7 +1020,7 @@ if (isClass (configfile >> 'CfgVehicles' >> 'Box_cTab_items') == true ) then { p
 _Height = Position player select 2 ;
 {[_x,_Height] spawn BIS_fnc_halo} forEach units group player;
 	{ unassignvehicle _x;} forEach units group player;
-playMusic 'LeadTrack02_F_Mark';
+//playMusic 'LeadTrack02_F_Mark';
 [player] execVM "Scripts\HALO.sqf"; 
 
 	},				

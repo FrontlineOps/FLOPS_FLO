@@ -42,7 +42,7 @@ _InitMain = execVM "initMain.sqf"; waitUntil { scriptDone _InitMain };
 
 
 
-playMusic "LeadTrack01_F_EPA";
+//playMusic "LeadTrack01_F_EPA";
 
 hintSilent "LOADING . . . "; 
 
