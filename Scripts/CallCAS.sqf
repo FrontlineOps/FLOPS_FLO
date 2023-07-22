@@ -42,7 +42,7 @@ _GSHPGroup setBehaviourStrong "SAFE";
 _GSHPGroup setCombatMode "YELLOW";
 _GSHP = vehicle ((units _GSHPGroup) select 0);
 _GSHP engineOn true ;
-_GSHP setDammage 0;
+_GSHP setdamage 0;
 _GSHP setVehicleAmmo 1;
 _GSHP flyInHeight 70;
 _GSHP forceSpeed 100;

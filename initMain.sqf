@@ -451,7 +451,7 @@ _NewMoney = _Money - _Cost;
 _mrkr setMarkerText str _NewMoney;
 
 _nearVeh = nearestObjects [Player,['Air','Ship','LandVehicle'],10] select 0; 
-_nearVeh setDammage 0;
+_nearVeh setdamage 0;
 _nearVeh setFuel 1;
 _nearVeh setVehicleAmmo 1;
 }else{hint 'Not Enough Recources';};

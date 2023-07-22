@@ -25,7 +25,7 @@ _V = createVehicle [ VP,getpos _nearRoad, [], 4, "NONE"];
 _nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
 _dir = _nearRoad getDir _nextRoad;
 _V setDir _dir;
-_V setDammage 0.7;
+_V setdamage 0.7;
 
 
 _Mine = selectRandom [ 

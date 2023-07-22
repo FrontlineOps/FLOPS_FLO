@@ -28,7 +28,7 @@ _V = createVehicle [ selectRandom CivVehArray, getpos _nearRoad, [], 4, "NONE"];
 _nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
 _dir = _nearRoad getDir _nextRoad;
 _V setDir _dir;
-_V setDammage 0.7;
+_V setdamage 0.7;
 
 _V addEventHandler ["Killed", {
 
@@ -58,7 +58,7 @@ _MMarks = allMapMarkers select { markerText _x == "Repair Vehicle"};
 _M = [_MMarks,  (_this select 0)] call BIS_fnc_nearestPosition;
 deleteMarker _M ; 
 
-(_this select 0) setDammage 0;
+(_this select 0) setdamage 0;
 
 HCIV = 0;
 

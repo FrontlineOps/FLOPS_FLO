@@ -33,7 +33,7 @@ Lightsss = nearestObjects [thisGenerator, [
 publicVariable "Lightsss";
 
 
-{ {_x setDammage 0.9 ;} forEach Lightsss; } remoteExec ["call", 0];
+{ {_x setdamage 0.9 ;} forEach Lightsss; } remoteExec ["call", 0];
 
 
 
@@ -73,7 +73,7 @@ _ENMs = {(side _x != west) && (alive _x == true)} count nearestObjects [thisGene
 sleep 3600;
 
 {
-_x setDammage 0 ;
+_x setdamage 0 ;
 } forEach _LightLoc;
 
 

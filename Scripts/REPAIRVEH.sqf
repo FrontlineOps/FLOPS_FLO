@@ -5,5 +5,5 @@ _VEHSs = nearestObjects [_AMMBX,["Car","Tank", "Air", "Ship", "LandVehicle"], 70
 
 
 	{
-_x setDammage 0.2 ;
+_x setdamage 0.2 ;
 	} forEach _VEHSs ; 

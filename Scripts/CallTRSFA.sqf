@@ -44,7 +44,7 @@ _GSHPGroup setBehaviourStrong "CARELESS";
 _GSHPGroup setCombatMode "YELLOW";
 _GSHP = vehicle ((units _GSHPGroup) select 0);
 _poss0 = position _GSHP ;
-_GSHP setDammage 0;
+_GSHP setdamage 0;
 _GSHP setVehicleAmmo 1;
 _GSHP engineOn true ;
 _GSHP flyInHeight 10;

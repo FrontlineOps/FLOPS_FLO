@@ -174,7 +174,7 @@ _TFOBA attachTo [FOBB, [0, 0, 0]];
 				_FOBB = nearestObjects [ (_this select 0), [F_HQ_01], 1000] select 0;
 				_FOBT = nearestObjects [(_this select 0), [F_HQ_C_01], 1000]  select 0;
 				deleteVehicle _FOBC;
-				_FOBB setDammage 1;
+				_FOBB setdamage 1;
 				deleteVehicle _FOBT;
 			
 			_allMarks = allMapMarkers select {markerText _x == 'FOB' && markerType _x == 'b_installation'};  
@@ -204,7 +204,7 @@ _FOBC = nearestObjects [ thisTrigger, ['B_Slingload_01_Cargo_F'], 1000] select 0
 _FOBB = nearestObjects [ thisTrigger, [F_HQ_01], 1000] select 0;
 _FOBT = nearestObjects [thisTrigger, [F_HQ_C_01], 1000]  select 0;
 deleteVehicle _FOBC;
-_FOBB setDammage 1;
+_FOBB setdamage 1;
 deleteVehicle _FOBT;
 			
 			_allMarks = allMapMarkers select {markerText _x == 'FOB' && markerType _x == 'b_installation'};  

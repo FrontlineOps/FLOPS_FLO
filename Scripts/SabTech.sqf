@@ -28,7 +28,7 @@ sleep 1 ;
 
 [_CRVEH, "Sh_82mm_AMOS", 0, 1, 1] spawn BIS_fnc_fireSupportVirtual;
 sleep 1.5 ;
-_CRVEH setDammage 1;
+_CRVEH setdamage 1;
 
 				[30, "TECHNOLOGY"] execVM "Scripts\NOtification.sqf" ;
 

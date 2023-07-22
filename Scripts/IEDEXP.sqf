@@ -7,4 +7,4 @@ _EXPpos = _this select 0 ;
 sleep 0.1 ; 
 _Nearmen = _EXPpos nearEntities [["Man"], 10] ; 
 
-{_x setDammage 1 ;} forEach _Nearmen ; 
+{_x setdamage 1 ;} forEach _Nearmen ; 
