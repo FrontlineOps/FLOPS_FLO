@@ -1,4 +1,3 @@
-
 if (!isServer) exitWith {};
 
 	
@@ -135,44 +134,45 @@ _StaticObjs =  _allStaticObjs select {
 
 ///// Virtualize Enemy Units /////
 private _enemyGroups = allGroups select {
-		(typeOf (vehicle (leader _x)) != "B_Pilot_F") && 
-		( isNull objectParent (leader _x) ) && 
-		((side _x == independent) or (side _x == east)) && 
-		({(side _x == west) && (alive _x) } count ((leader _x) nearEntities [["Man","Car","Tank", "Ship", "LandVehicle"], VSDistance]) == 0)
-	};	
+    private _leader = leader _x;
+    private _vehicle = vehicle _leader;
+    (typeOf _vehicle != "B_Pilot_F") &&
+    (isNull objectParent _leader) &&
+    ((side _x == independent) || (side _x == east)) &&
+    ({(side _x == west) && (alive _x)} count (_leader nearEntities [["Man","Car","Tank", "Ship", "LandVehicle"], VSDistance]) == 0);
+};
 
-	{
-		if (count (units _x) > 0) then { 
+{
+    private _units = units _x;
+    private _unitCount = count _units;
+    if (_unitCount > 0) then {
+        private _pos = getPos (_units select 0);
+        private _unitTypes = _units apply {typeOf _x};
+        {
+            deleteVehicle _x;
+        } forEach _units;
 
-			private _pos = getPos (units _x select 0);
-			private _GrpUntCnt = (count (units _x)) -1 ; 
-			private _EnmUnitsArray = [] ;
-				for "_i" from 0 to _GrpUntCnt do {
-					private _Uclass = typeOf ((units _x) select _i);	
-					_EnmUnitsArray append [_Uclass] ;		
-				}; 
-				while {count (units _x) > 0} do {deletevehicle (units _x select 0);};
+        private _mrkr = createMarkerLocal [str [(_pos select 0) + (random 1), (_pos select 1) + (random 1)], _pos];
+        _mrkr setMarkerTypeLocal "o_Ordnance";
+        private _markerColor = switch (side _x) do {
+            case east: {"colorOPFOR"};
+            case independent: {"colorIndependent"};
+            default {"colorCivilian"};
+        };
+        _mrkr setMarkerColorLocal _markerColor;
+        _mrkr setMarkerAlphaLocal 0;
+        _mrkr setMarkerSizeLocal [0, 0];
+        _mrkr setMarkerText str _unitTypes;
+
+        sleep 0.1;
+        deleteGroup _x;
+    } else {
+        diag_log format ["fn_CDVS: Came across empty group : %1", _x];
+        deleteGroup _x;
+    };
+} forEach _enemyGroups ;
 
 
-			private _mrkr = createMarkerLocal [str ( [(_pos#0 + (random 1)), (_pos#1 + (random 1))]), _pos] ;   
-			_mrkr setMarkerTypeLocal "o_Ordnance" ;  
-			if (side _x == east) then { _mrkr setMarkerColorLocal "colorOPFOR"} ;
-			if (side _x == independent) then { _mrkr setMarkerColorLocal "colorIndependent"} ;
-			if (side _x == civilian) then { _mrkr setMarkerColorLocal "colorCivilian"} ;
-			_mrkr setMarkerAlphaLocal 0 ;  
-			_mrkr setMarkerSizeLocal [0 , 0] ;  
-			_mrkr setMarkerText str _EnmUnitsArray ; 
-					
-					sleep 0.1 ; 
-					
-			deleteGroup _x;
-
-		} else {diag_log format["fn_CDVS: Came across empty group : %1",_x]; deleteGroup _x};
-		
-	 } foreach _enemyGroups ;
-
-
-	
 ///// Virtualize CIV-Friendly Units /////
 private _civGroups = allGroups select {
 	(typeOf (vehicle (leader _x)) != "B_Pilot_F" ) && 
@@ -308,100 +308,8 @@ private _CivvGroupMarks = allMapMarkers select {
 				
 				sleep 0.1 ; 
 	} foreach _CivvGroupMarks;
-				
 
-				
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////Vehicles Virtualization///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-_ALLFACVEHs = [
-"B_SAM_System_01_F",
-"B_AAA_System_01_F",
-"B_SAM_System_02_F",
-"B_SAM_System_03_F",
-"B_GMG_01_A_F",
-"B_HMG_01_A_F",
-"B_W_Static_Designator_01_F",
-"B_UGV_02_Demining_F",
-"B_UAV_02_lxWS",
-"B_UAV_01_F",
-"B_SDV_01_F",
-"B_Boat_Transport_01_F",
-"USAF_A10",
-"USAF_F22",
-"USAF_F22_Heavy",
-"USAF_F35A_STEALTH",
-"USAF_F35A",
-"USAF_AC130U",
-"USAF_C130J",
-"USAF_C130J_Cargo",
-"usaf_kc135",
-"USAF_C17",
-F_RADAR,
-F_Bike_01,
-F_ABT_01,
-F_UAV_01,
-F_UAV_02,
-F_UAV_03,
-F_UGV_01,
-F_turret_01,
-F_turret_02,
-F_turret_03,
-F_Car_01,
-F_Car_02,
-F_Car_03,
-F_Car_04,
-F_Car_05,
-F_Car_06,
-F_MRAP_01,
-F_MRAP_02,
-F_MRAP_03,
-F_MRAP_04,
-F_MRAP_05,
-F_MRAP_06,
-F_Truck_01,
-F_Truck_02,
-F_Truck_03,
-F_Truck_04,
-F_Truck_05,
-F_Truck_06,
-F_APC_01,
-F_APC_02,
-F_APC_03,
-F_APC_04,
-F_APC_05,
-F_APC_06,
-F_TNK_01,
-F_TNK_02,
-F_TNK_03,
-F_TNK_04,
-F_Art_00,
-F_Art_01,
-F_Art_02,
-F_Heli_01,
-F_Heli_02,
-F_Heli_03,
-F_Heli_04,
-F_Heli_05,
-F_Heli_06_G,
-F_Heli_07_G,
-F_Plane_01_CAS,
-F_Plane_02_CAS,
-F_Plane_03,
-F_Plane_04,
-F_Plane_05,
-F_Plane_06
-];
-
-				
-	{ _x hideObjectGlobal true; _x enableSimulationGlobal false; } foreach (vehicles select {!((typeOf _x) in _ALLFACVEHs) && !((typeOf _x) in GuerVehArray) && !((typeOf _x) in East_Ground_Vehicles_Heavy) && !((typeOf _x) in East_Ground_Vehicles_Light) && !((typeOf _x) in East_Ground_Transport) && (typeOf _x != "O_G_Mortar_01_F" && typeOf _x != "vn_o_nva_navy_static_v11m"  && typeOf _x != "vn_o_pl_static_zpu4" && typeOf _x != "O_G_HMG_02_high_F" && typeOf _x != "O_SAM_System_04_F" && typeOf _x != "O_Radar_System_02_F") && (((side (driver  _x) != west) && ((driver  _x) checkAIFeature "LIGHTS" == true)) or ({alive _x} count crew _x == 0)) && !(_x isKindOf "Air")  && ({(side _x == west) && (alive _x == true) && (isPlayer _x)} count (_x nearEntities [["Man","Car","Tank", "Ship", "LandVehicle"], VSDistance]) == 0)}) ;
-	
-	{_x hideObjectGlobal false; _x enableSimulationGlobal true; } foreach (vehicles select {!((typeOf _x) in _ALLFACVEHs) && !((typeOf _x) in GuerVehArray) && !((typeOf _x) in East_Ground_Vehicles_Heavy) && !((typeOf _x) in East_Ground_Vehicles_Light) && !((typeOf _x) in East_Ground_Transport) && (typeOf _x != "O_G_Mortar_01_F" && typeOf _x != "vn_o_nva_navy_static_v11m"  && typeOf _x != "vn_o_pl_static_zpu4" && typeOf _x != "O_G_HMG_02_high_F" && typeOf _x != "O_SAM_System_04_F" && typeOf _x != "O_Radar_System_02_F") && (((side (driver  _x) != west) && ((driver  _x) checkAIFeature "LIGHTS" == true)) or ({alive _x} count crew _x == 0)) && !(_x isKindOf "Air")  && ({(side _x == west) && (alive _x == true) && (isPlayer _x)} count (_x nearEntities [["Man","Car","Tank", "Ship", "LandVehicle"], VSDistance]) != 0)}) ;
-*/
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////Triggers Virtualization///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////Triggers Virtualization/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 _alltriggers = allMissionObjects 'EmptyDetector';
 _triggers = _alltriggers select {(triggerInterval _x != 2 ) && ({(side _x == west) && (alive _x)} count (_x nearEntities [["Man","Car","Tank", "Ship", "LandVehicle", "Air"], 3000]) == 0)};
@@ -414,4 +322,3 @@ _triggers = _alltriggers select {(triggerInterval _x != 2 ) &&  ({(side _x == we
  {_x hideObjectGlobal false; _x enableSimulationGlobal true; } foreach _triggers ;
  
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
