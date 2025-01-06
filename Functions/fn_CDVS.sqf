@@ -10,18 +10,16 @@ if (count VS_FPS > 30) then {VS_FPS resize 30};
 // Also, make sure to average out any spikes or dips in server FPS
 if ((diag_tickTime - VSCurrentTime) > VSTimeDelay) then {
 	private _ServerFPS = VS_FPS call BIS_fnc_arithmeticMean;
-	if (_ServerFPS < 30) then {VSDistance = 2000} ; 
-	if (_ServerFPS < 25) then {VSDistance = 1750} ; 
-	if (_ServerFPS < 20) then {VSDistance = 1500} ; 
-	if (_ServerFPS < 15) then {VSDistance = 1000} ; 
+	if (_ServerFPS < 30) then {VSDistance = 2000}; 
+	if (_ServerFPS < 25) then {VSDistance = 1750}; 
+	if (_ServerFPS < 20) then {VSDistance = 1500}; 
+	if (_ServerFPS < 15) then {VSDistance = 1000}; 
 	VSCurrentTime = diag_tickTime;
 };
 
 /////////////////////////////////////////////Static Object Virtualization///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-private _allStaticObjs = allMissionObjects select {
-    (_x isKindOf "NonStrategic") || (_x isKindOf "Static") || (_x isKindOf "Thing");
-};
+private _allStaticObjs = (allMissionObjects "NonStrategic") + (allMissionObjects "Static") + (allMissionObjects "Thing");
 
 private _excludedTypes = [
     "Sign_Pointer_Cyan_F", "Land_Garbage_square3_F", "Land_Garbage_line_F",
@@ -42,9 +40,13 @@ private _excludedTypes = [
     "Land_Cargo_HQ_V1_F", "B_Slingload_01_Cargo_F", "B_Slingload_01_Repair_F"
 ];
 
+private _allStaticObjs = _allStaticObjs select {
+    private _objClass = typeOf _x;
+    count (_excludedTypes select { _objClass isKindOf _x }) == 0;
+};
+
 private _StaticObjs = _allStaticObjs select {
-    !(_x isKindOf _excludedTypes) &&
-    ({(side _x == west) && (alive _x)} count (_x nearEntities [["Man","Car","Tank", "Ship", "LandVehicle"], 1600]) == 0);
+    {(side _x == west) && (alive _x)} count (_x nearEntities [["Man","Car","Tank", "Ship", "LandVehicle"], 1600]) == 0;
 };
 
 private _BLUMs = allMapMarkers select { markerType _x == "b_installation" };
@@ -124,7 +126,7 @@ private _enemyGroups = allGroups select {
         diag_log format ["fn_CDVS: Came across empty group : %1", _x];
         deleteGroup _x;
     };
-} forEach _enemyGroups ;
+} forEach _enemyGroups;
 
 
 ///// Virtualize CIV-Friendly Units /////
@@ -160,7 +162,7 @@ private _civGroups = allGroups select {
         diag_log format ["fn_CDVS: Came across empty group : %1", _x];
         deleteGroup _x;
     };
-} forEach _civGroups ;
+} forEach _civGroups;
 
 
 ///// Un-Virtualize Enemy Units /////
