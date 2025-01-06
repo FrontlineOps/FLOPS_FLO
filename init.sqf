@@ -96,7 +96,7 @@ HC3Present = if ( isNil "HC_3" ) then { False } else {True } ;
 
 waitUntil {(DIALOCC == 1) || (MarLOCC == 1) || (count (allMapMarkers select {markerType _x == "b_installation"}) > 0) || (count (allMapMarkers select {markerType _x == "b_unknown"}) > 0)};
 
-// Directly assign triggers to headless clients without using an array
+// Directly assign triggers to headless clients
 if (HC1Present) then {
     if (player == HC_1) then {
         ["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf"] call _executeAndWait;
