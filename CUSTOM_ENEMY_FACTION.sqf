@@ -26,62 +26,47 @@ East_Groups = [
 // Fill the Lines with your Desired Classnames in the Manners Shown Above,
 // Where are Classnames ? Right click on any Unit or Vehicle in the Editor and Select find in CFG viewer, Last Name in the [path] tab is the Classname,
 
-East_Ground_Vehicles_Ambient = ["PRACS_SLA_Tigr", "PRACS_SLA_UAZ_SPG9", "PRACS_SLA_UAZ_DSHKM"]; 
+East_Ground_Vehicles_Ambient = ["I_MRAP_03_F"]; 
 //publicVariable "East_Ground_Vehicles_Ambient";
 
-East_Ground_Vehicles_Light = ["PRACS_SLA_BMD2", "PRACS_SLA_BTR80", "PRACS_SLA_BTR80A", "PRACS_SLA_BMD1", "PRACS_SLA_BRDM", "PRACS_SLA_BRDM_ATGM", "PRACS_SLA_BMP1", "PRACS_SLA_BMP2", 
-"PRACS_SLA_BMD2", "PRACS_SLA_BTR80", "PRACS_SLA_BTR80A", "PRACS_SLA_BMD1", "PRACS_SLA_BRDM", "PRACS_SLA_BRDM_ATGM", "PRACS_SLA_BMP1", "PRACS_SLA_BMP2",
-"PRACS_SLA_Tigr", "PRACS_SLA_UAZ_SPG9", "PRACS_SLA_UAZ_DSHKM", "PRACS_SLA_Type63", "PRACS_SLA_MTLB", 
-"PRACS_SLA_SA9", "PRACS_SLA_SA13", "PRACS_SLA_BTR40_AAM", "PRACS_SLA_ZSU23", "PRACS_SLA_SA8", "PRACS_SLA_SA17", "PRACS_SLA_MTLB_ZU23"]; 
+East_Ground_Vehicles_Light = ["I_MRAP_03_F", "I_MRAP_03_gmg_F", "I_MRAP_03_hmg_F", "I_A_Truck_02_aa_lxWS", "I_APC_Wheeled_03_cannon_F", "Aegis_I_Raven_APC_Wheeled_04_export_F", "I_Raven_MRAP_02_HMG_F", "I_Raven_MRAP_02_GMG_F"]; 
 //publicVariable "East_Ground_Vehicles_Light";
 
-East_Ground_Vehicles_Heavy = ["PRACS_SLA_T72BV", "PRACS_SLA_T72B", "PRACS_SLA_T80U"]; 
+East_Ground_Vehicles_Heavy = ["I_MBT_03_cannon_F", "I_LT_01_cannon_F", "I_LT_01_AT_F", "I_LT_01_AA_F", "I_APC_tracked_03_cannon_v2_F"]; 
 //publicVariable "East_Ground_Vehicles_Heavy";
 
-East_Ground_Transport = ["PRACS_SLA_URAL_Open", "PRACS_SLA_URAL", "PRACS_SLA_MAZ_Transport", "PRACS_SLA_BMD2", "PRACS_SLA_BTR80", "PRACS_SLA_BTR80A", 
-"PRACS_SLA_BMD1", "PRACS_SLA_BMP1", "PRACS_SLA_BMP2", "PRACS_SLA_BTR60_BG", "PRACS_SLA_URAL_BG", "PRACS_SLA_Type63", "PRACS_SLA_MTLB"]; 
+East_Ground_Transport = ["I_MRAP_03_F", "I_Truck_02_transport_F", "I_Truck_02_covered_F", "Aegis_I_Raven_Truck_02_F"]; 
 //publicVariable "East_Ground_Transport";
 
-East_Air_Transport = ["PRACS_SLA_Mi8amt", "PRACS_SLA_Mi17Sh"];
+East_Air_Transport = ["I_Heli_Transport_02_F", "Aegis_I_Heli_Transport_02_Heavy_F", "I_Heli_Light_01_F", "I_Heli_light_03_unarmed_F"];
 //publicVariable "East_Air_Transport";
 
-East_Air_Heli = ["PRACS_SLA_Mi24V_UPK", "PRACS_SLA_Mi17Sh_UPK"]; 
+East_Air_Heli = ["I_Heli_Attack_03_F", "I_Heli_Light_01_dynamicLoadout_F", "I_Heli_light_03_dynamicLoadout_F", "Aegis_I_Raven_Heli_Attack_04_F"]; 
 //publicVariable "East_Air_Heli";
 
-East_Air_Jet = ["PRACS_SLA_MiG21", "PRACS_SLA_MiG27", "PRACS_SLA_SU22", "PRACS_SLA_Su25"]; 
+East_Air_Jet = ["I_Plane_Fighter_04_F", "I_Plane_Fighter_03_dynamicLoadout_F"]; 
 //publicVariable "East_Air_Jet";
 
-East_Units = ["PRACS_SLA_Infantry_SL", "PRACS_SLA_A_Infantry_RKT", "PRACS_SLA_A_Infantry_AA", "PRACS_SLA_A_Infantry_MG", "PRACS_SLA_Infantry_RPG", "PRACS_SLA_Infantry_RPG_AT", "PRACS_SLA_Infantry_M", "PRACS_SLA_Infantry_Medic", "PRACS_SLA_Infantry_GRE", "PRACS_SLA_A_Infantry_TL"];
+East_Units = ["I_soldier_F", "I_Soldier_LAT_F", "I_Soldier_LAT2_F", "I_Soldier_lite_F", "I_Soldier_CQ_F", "I_Soldier_AT_F", "I_Soldier_AA_F", "I_Soldier_M_F", "Aegis_I_Soldier_MG_F", "I_Soldier_A_F", "Aegis_I_HeavyGunner_F", "I_medic_F"];
 //publicVariable "East_Units";
 
-East_Units_Officers = ["PRACS_SLA_Infantry_C"];
+East_Units_Officers = ["I_officer_F"];
 //publicVariable "East_Units_Officers";
 
 East_Groups = [
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_guards" >> "pracs_sla_infantry_group_AT_guards"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_guards" >> "pracs_sla_infantry_group_EOD_guards"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_guards" >> "pracs_sla_infantry_group_FP_guards"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_guards" >> "pracs_sla_infantry_group_guards_HMOT"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_guards" >> "pracs_sla_infantry_group_LMG_guards"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_guards" >> "pracs_sla_infantry_group_rifle_team_guards"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_guards" >> "pracs_sla_infantry_group_SHPS_guards"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_light" >> "pracs_sla_infantry_group_squad"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_light" >> "pracs_sla_infantry_group_AA"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_light" >> "pracs_sla_infantry_group_AT"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_infantry_group_light" >> "pracs_sla_infantry_group_LMG"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_Paratroopers_group" >> "pracs_sla_paratrooper_group_SHPS"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_Paratroopers_group" >> "pracs_sla_paratrooper_group_AA"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_Paratroopers_group" >> "pracs_sla_paratrooper_group_AT"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_Paratroopers_group" >> "pracs_sla_paratrooper_group_LMG"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_especas_group_light" >> "pracs_sla_especas_group_rifle_team"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_especas_group_light" >> "pracs_sla_especas_group_SF_TEAM"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_especas_group_light" >> "pracs_sla_especas_group_SHPS"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_especas_group_light" >> "pracs_sla_especas_group_squad"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_especas_group_light" >> "pracs_sla_especas_group_CTU_TEAM"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_especas_group_light" >> "pracs_sla_especas_group_FAC_TEAM"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_Naval_infantry_group_light" >> "pracs_sla_naval_infantry_group_AA"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_Naval_infantry_group_light" >> "pracs_sla_naval_infantry_group_AT"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_Naval_infantry_group_light" >> "pracs_sla_naval_infantry_group_platoon"),
-(configfile >> "CfgGroups" >> "East" >> "pracs_sla_groups" >> "pracs_sla_Naval_infantry_group_light" >> "pracs_sla_naval_infantry_group_SHPS")
+(configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Infantry" >> "HAF_InfSquad"),
+(configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Infantry" >> "HAF_InfSquad_Weapons"),
+(configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Infantry" >> "HAF_InfTeam"),
+(configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Infantry" >> "HAF_InfTeam_AA"),
+(configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Infantry" >> "HAF_InfTeam_AT"),
+(configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Infantry" >> "I_InfTeam_Light"),
+(configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "SpecOps" >> "HAF_SniperTeam"),
+(configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Support" >> "HAF_Support_EOD"),
+(configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Support" >> "HAF_Support_GMG"),
+(configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Support" >> "HAF_Support_MG"),
+(configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Support" >> "HAF_Support_Mort"),
+(configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Support" >> "HAF_Support_ENG"),
+(configFile >> "CfgGroups" >> "Indep" >> "IND_Raven_F" >> "Infantry" >> "I_Raven_InfSquad"),
+(configFile >> "CfgGroups" >> "Indep" >> "IND_Raven_F" >> "Infantry" >> "I_Raven_InfTeam")
 ];
 //publicVariable "East_Groups";

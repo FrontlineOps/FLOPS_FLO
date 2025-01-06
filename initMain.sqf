@@ -1,4 +1,3 @@
-
 // Music Mission EventHandler////////////////////////////////////////////////////////////
 
 //  MusicSwitchVal = "MusicSwitch" call BIS_fnc_getParamValue;

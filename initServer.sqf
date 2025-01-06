@@ -1,4 +1,3 @@
-
 HQLOCC = 0 ;
 publicVariable "HQLOCC";
 
