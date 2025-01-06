@@ -9,12 +9,9 @@ sleep 5;
 ////////////////////////////////////////////////Mission Loading - Variables // Server & HC
 sleep 2;
 
-
-
 if !(didJIP) then {
 waitUntil {MissionLoadedLitterally == 1};
 }; 
-
 
 ////////////////////////////////////////////// //Mission Parameters   // TheCommander ////////////////////////////////////////////////
 
@@ -49,8 +46,6 @@ enableSaving [false, false] ;
 setViewDistance 1000;
 setobjectViewDistance [1000, 200];
 
-
-
 ////////////////////////////////////////////// // Custom Factions Init   // SERVER ////////////////////////////////////////////////
 
 
@@ -58,6 +53,10 @@ waitUntil {F_Init == "Done"};
 waitUntil {E_Init == "Done"}; 
 waitUntil {C_Init == "Done"};
 
+if (hasInterface) then {
+    _Triggers0 = execVM "Scripts\init_Triggers.sqf";
+    waitUntil { scriptDone _Triggers0 };
+};
 
 waitUntil {(count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) == 7)};
 
@@ -82,9 +81,14 @@ waitUntil {!isNil "EtVInitialized"};
 
 ////////////////////////////////////////////// // Exec Vcom AI function ////////////////////////////////////////////////
 
+// Helper function to execute and wait for a script
+private _executeAndWait = {
+    params ["_script"];
+    private _handle = execVM _script;
+    waitUntil { scriptDone _handle };
+};
 
 sleep 2;
-
 
 HC1Present = if ( isNil "HC_1" ) then { False } else {True } ; 
 HC2Present = if ( isNil "HC_2" ) then { False } else {True } ; 
@@ -92,94 +96,35 @@ HC3Present = if ( isNil "HC_3" ) then { False } else {True } ;
 
 waitUntil {(DIALOCC == 1) || (MarLOCC == 1) || (count (allMapMarkers select {markerType _x == "b_installation"}) > 0) || (count (allMapMarkers select {markerType _x == "b_unknown"}) > 0)};
 
+// Directly assign triggers to headless clients without using an array
+if (HC1Present) then {
+    if (player == HC_1) then {
+        ["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf"] call _executeAndWait;
+    };
+};
+
+if (HC2Present) then {
+    if (player == HC_2) then {
+        ["Scripts\init_Triggers_3.sqf"] call _executeAndWait;
+    };
+};
+
+if (HC3Present) then {
+    if (player == HC_3) then {
+        ["Scripts\init_Triggers_3.sqf"] call _executeAndWait;
+    };
+};
+
+// Handle the case where no headless clients are present
 if (!HC1Present && !HC2Present && !HC3Present) then {
-	if  (isServer)  then {
-	_Triggers1 = execVM "Scripts\init_Triggers_1.sqf";
-					waitUntil { scriptDone _Triggers1 };
-	_Triggers2 = execVM "Scripts\init_Triggers_2.sqf";
-					waitUntil { scriptDone _Triggers2 };
-	_Triggers3 = execVM "Scripts\init_Triggers_3.sqf";
-					waitUntil { scriptDone _Triggers3 };
-		};
-	}else{ 
-		if ((HC1Present && !HC2Present && !HC3Present) or (!HC1Present && HC2Present && !HC3Present) or (!HC1Present && !HC2Present && HC3Present)) then {
-				if (!(isServer) && !(hasInterface)) then {				
-				_Triggers1 = execVM "Scripts\init_Triggers_1.sqf";
-				waitUntil { scriptDone _Triggers1 };
-				};
-				if  (isServer)  then {				
-				_Triggers2 = execVM "Scripts\init_Triggers_2.sqf";
-				waitUntil { scriptDone _Triggers2 };				
-				_Triggers3 = execVM "Scripts\init_Triggers_3.sqf";
-				waitUntil { scriptDone _Triggers3 };				
-					};
-		};
-
-		if (HC1Present && HC2Present && !HC3Present) then {
-				if	(player == HC_1) then { 
-				_Triggers1 = execVM "Scripts\init_Triggers_1.sqf";
-				waitUntil { scriptDone _Triggers1 };
-				_Triggers2 = execVM "Scripts\init_Triggers_2.sqf";
-				waitUntil { scriptDone _Triggers2 };			
-					};
-				if	(player == HC_2) then { 
-				_Triggers3 = execVM "Scripts\init_Triggers_3.sqf";
-				waitUntil { scriptDone _Triggers3 };			
-					};
-		};
-		if (!HC1Present && HC2Present && HC3Present) then {		
-				if	(player == HC_2) then { 
-				_Triggers1 = execVM "Scripts\init_Triggers_1.sqf";
-				waitUntil { scriptDone _Triggers1 };
-				_Triggers2 = execVM "Scripts\init_Triggers_2.sqf";
-				waitUntil { scriptDone _Triggers2 };			
-					};
-				if	(player == HC_3) then { 
-				_Triggers3 = execVM "Scripts\init_Triggers_3.sqf";
-				waitUntil { scriptDone _Triggers3 };			
-					};
-		};
-		if (HC1Present && !HC2Present && HC3Present) then {
-				if	(player == HC_1) then { 		
-				_Triggers1 = execVM "Scripts\init_Triggers_1.sqf";
-				waitUntil { scriptDone _Triggers1 };
-				_Triggers2 = execVM "Scripts\init_Triggers_2.sqf";
-				waitUntil { scriptDone _Triggers2 };			
-					};
-				if	(player == HC_3) then { 
-				_Triggers3 = execVM "Scripts\init_Triggers_3.sqf";
-				waitUntil { scriptDone _Triggers3 };			
-					};
-		};
-
-		if (HC1Present && HC2Present && HC3Present) then {	
-				if	(player == HC_1) then { 
-				_Triggers1 = execVM "Scripts\init_Triggers_1.sqf";
-				waitUntil { scriptDone _Triggers1 };
-					};
-				if	(player == HC_2) then { 
-				_Triggers2 = execVM "Scripts\init_Triggers_2.sqf";
-				waitUntil { scriptDone _Triggers2 };			
-					};					
-				if	(player == HC_3) then { 
-				_Triggers3 = execVM "Scripts\init_Triggers_3.sqf";
-				waitUntil { scriptDone _Triggers3 };			
-					};
-		};		
-	};
+    if (isServer) then {
+        ["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"] call _executeAndWait;
+    };
+};
 
 waitUntil {(didJIP) or (TRG1LOCC == 1)};
 waitUntil {(didJIP) or (TRG2LOCC == 1)};
 waitUntil {(didJIP) or (TRG3LOCC == 1)};
 
-
-sleep 1;
-
-				if (hasInterface) then {
-				_Triggers0 = execVM "Scripts\init_Triggers.sqf";
-				waitUntil { scriptDone _Triggers0 };		
-				};
-
 ///////////////////////////////////////////////////////////////////////////////////
 if (isClass (configfile >> "CfgVehicles" >> "Box_cTab_items") == true ) then { player addItem "ItemAndroid"; player addItem "ItemcTab"; };
-
