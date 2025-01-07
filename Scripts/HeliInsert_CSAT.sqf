@@ -16,21 +16,21 @@ if (COMMSDIS == 0) then {
             private _poss1 = [_thisHeliInsertTrigger, 50, 200, 1, 0, 1, 0] call BIS_fnc_findSafePos;
             private _Heli_1 = createVehicle [selectRandom East_Air_Transport, _poss, [], 100, "FLY"];
             private _Group = createGroup East;
-            private Heli_1_crew = createVehicleCrew _Heli_1;
-            {[_x] join _Group} forEach units Heli_1_crew;
+            private _Heli_1_crew = createVehicleCrew _Heli_1;
+            {[_x] join _Group} forEach units _Heli_1_crew;
 
-            private GroupQRF = createGroup East;
+            private _GroupQRF = createGroup East;
             private _SCount = [(typeOf _Heli_1), true] call BIS_fnc_crewCount;
             private _CREWC = _SCount - (count (units _Group)) - 1;
 
             for "_x" from 0 to _CREWC do {
-                private _unit = GroupQRF createUnit [selectRandom East_Units, _poss, [], 0, "None"];
-                [_unit] joinSilent GroupQRF;
+                private _unit = _GroupQRF createUnit [selectRandom East_Units, _poss, [], 0, "None"];
+                [_unit] joinSilent _GroupQRF;
             };
 
             // Intelligence items distribution
             private _INTSTF = ["FlashDisk", "FilesSecret", "SmartPhone", "MobilePhone", "DocumentsSecret"];
-            private _INTENMALL = units GroupQRF;
+            private _INTENMALL = units _GroupQRF;
             private _INTENMCNT = count _INTENMALL;
             private _INTENMCNTNEW = round (_INTENMCNT / 2);
             private _INTENMALLNEW = _INTENMALL call BIS_fnc_arrayShuffle;
@@ -50,16 +50,16 @@ if (COMMSDIS == 0) then {
             _WPAB_2 setWaypointSpeed "FULL";
 
             // Waypoints for the QRF
-            private _WPS_1 = GroupQRF addWaypoint [_poss1, 0];
+            private _WPS_1 = _GroupQRF addWaypoint [_poss1, 0];
             _WPS_1 setWaypointType "GETOUT";
             _WPS_1 setWaypointBehaviour "COMBAT";
             _WPS_1 setWaypointCompletionRadius 100;
 
-            private _WPS_2 = GroupQRF addWaypoint [getPos _thisHeliInsertTrigger, 0];
+            private _WPS_2 = _GroupQRF addWaypoint [getPos _thisHeliInsertTrigger, 0];
             _WPS_2 setWaypointType "SAD";
             _WPS_2 setWaypointBehaviour "COMBAT";
 
-            {_x moveInCargo _Heli_1} foreach units GroupQRF;
+            {_x moveInCargo _Heli_1} foreach units _GroupQRF;
 
             (driver _Heli_1) disableAI "LIGHTS";
             _Heli_1 setPilotLight true;
