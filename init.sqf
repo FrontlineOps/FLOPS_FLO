@@ -1,4 +1,4 @@
-////////////////////////////////////////////////Intro
+// Intro Title for the Mission
 HQLOCC = 0 ;
 publicVariable "HQLOCC";
 
@@ -6,19 +6,28 @@ titleText ["B.S.P Group Presents...", "BLACK IN",9999];
 5 fadeSound 0;
 
 sleep 5;
-////////////////////////////////////////////////Mission Loading - Variables // Server & HC
+// Wait till the Mission is Loaded
 sleep 2;
 
 if !(didJIP) then {
 waitUntil {MissionLoadedLitterally == 1};
 }; 
 
-////////////////////////////////////////////// //Mission Parameters   // TheCommander ////////////////////////////////////////////////
-
 sleep 2;
-
+// This is for when the mission is first ever created. 
 if ((count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) != 7) && (player == TheCommander) && (not didJIP)) then { execVM "Scripts\Dialog_Faction.sqf"; };
-waitUntil {((count (allMapMarkers select {markerType _x == "b_installation"}) > 0) or (HQLOCC == 1)) && (count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) == 7)};
+
+// This is for when the mission is being loaded from a saved game.
+// After the Else statement is when the mission is first ever created and the creation of the initial Dialog_Faction.sqf is done and we have generated the safety zones around the Starting Point.
+waitUntil {
+    private _installationCount = count (allMapMarkers select {markerType _x == "b_installation"});
+    if (_installationCount == 0 && HQLOCC != 1) then {
+        [["HQ"], "You have been defeated. Please reset the mission and restart."] remoteExec ["sideChat", 0];
+        false // Exit the waitUntil loop
+    } else {
+        ((_installationCount > 0) || (HQLOCC == 1)) && (count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) == 7)
+    };
+};
 
 Hints = true ;
 [] spawn {  
