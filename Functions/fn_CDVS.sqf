@@ -249,8 +249,6 @@ private _CivvGroupMarks = allMapMarkers select {
 	sleep 0.1;
 } forEach _CivvGroupMarks;
 
-///// Virtualize All Vehicles (Enemy, Civilian or Empty) OPFOR AIR DEFENSE SYSTEMS (AAA) /////
-
 /////////////////////////////////////////////Triggers Virtualization/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 _alltriggers = allMissionObjects 'EmptyDetector';
