@@ -16,7 +16,7 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=16229;
+		nextID=16257;
 	};
 	class Camera
 	{
@@ -155,7 +155,7 @@ dlcs[]=
 randomSeed=2939810;
 class ScenarioData
 {
-	author="neman.ekd";
+	author="FOG Team";
 	class Header
 	{
 		gameType="CTI";
