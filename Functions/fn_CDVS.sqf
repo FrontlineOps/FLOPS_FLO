@@ -59,7 +59,8 @@ private _BLUMs = allMapMarkers select { markerType _x == "b_installation" };
     private _ObjsArray = [_ObjTyp, _ObjPos, _ObjDir];
     private _mrkr = createMarkerLocal [str _x, getPos _x];
     _mrkr setMarkerTypeLocal "o_maint";
-    _mrkr setMarkerColorLocal if (count (nearestObjects [_ObjPos, ["Sign_Pointer_Yellow_F"], 200]) > 0) then {"ColorBlue"} else {"colorOPFOR"};
+    private _markerColor = if (count (nearestObjects [_ObjPos, ["Sign_Pointer_Yellow_F"], 200]) > 0) then {"ColorBlue"} else {"colorOPFOR"};
+    _mrkr setMarkerColorLocal _markerColor;
     _mrkr setMarkerAlphaLocal 0;
     _mrkr setMarkerSizeLocal [0, 0];
     _mrkr setMarkerText str _ObjsArray;
@@ -247,6 +248,8 @@ private _CivvGroupMarks = allMapMarkers select {
 
 	sleep 0.1;
 } forEach _CivvGroupMarks;
+
+///// Virtualize All Vehicles (Enemy, Civilian or Empty) OPFOR AIR DEFENSE SYSTEMS (AAA) /////
 
 /////////////////////////////////////////////Triggers Virtualization/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
