@@ -22,7 +22,7 @@ if ((count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) != 7) && (
 waitUntil {
     private _installationCount = count (allMapMarkers select {markerType _x == "b_installation"});
     if (_installationCount == 0 && HQLOCC != 1) then {
-        [["HQ"], "You have been defeated. Please reset the mission and restart."] remoteExec ["sideChat", 0];
+        [[west, "HQ"], "You have been defeated. Please reset the mission and restart."] remoteExec ["sideChat", 0];
         false // Exit the waitUntil loop
     } else {
         ((_installationCount > 0) || (HQLOCC == 1)) && (count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) == 7)
