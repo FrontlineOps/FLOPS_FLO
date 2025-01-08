@@ -143,9 +143,12 @@ TSAT setPos (position player);
 
 remoteExec ["BSPCO_fnc_MissionStartup", 2] ;
 [] spawn {
+	[[west,"HQ"], "Mission FrontLines System Activated ..."] remoteExec ["sideChat", 0];
 	while {true} do {
-		remoteExec ["BSPCO_fnc_MissionFrontline", 2];
-		sleep 300; // Loop every 5 minutes (this is plus the extra time wait inside MissionFrontline)
+		frontLineComplete = false;
+		call BSPCO_fnc_MissionFrontline;
+		waitUntil(frontLineComplete); // wait until function has completed
+        sleep 300; // Loop every 5 minutes (this is plus the extra time wait inside MissionFrontline)
 	};
 };
 
