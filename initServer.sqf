@@ -124,12 +124,10 @@ _BluezoneMarks = allMapMarkers select { markerType _x == "b_installation" && (ma
  //  Dynamic Virtualization System/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 [] spawn {  
-while { sleep 20 ; time > 0  } do{  
-
-			remoteExec ["BSPCO_fnc_CDVS", 2] ;
-
-	  };  
-	};
+while { sleep 20 ; time > 0  } do {  
+		remoteExec ["BSPCO_fnc_CDVS", 2] ;
+	};  
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -143,26 +141,28 @@ TSAT setPos (position player);
 "SATELLITE_V" setPiPEffect [0];
 "SATELLITE" setPiPEffect [0];	
 
-			remoteExec ["BSPCO_fnc_MissionStartup", 2] ;
-			remoteExec ["BSPCO_fnc_MissionFrontline", 2] ;
+remoteExec ["BSPCO_fnc_MissionStartup", 2] ;
+[] spawn {
+	while {true} do {
+		remoteExec ["BSPCO_fnc_MissionFrontline", 2];
+		sleep 300; // Loop every 5 minutes
+	};
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
- AutoSaveSwitchVal = "AutoSaveSwitch" call BIS_fnc_getParamValue	;
- AutoSaveIntervalVal = "AutoSaveInterval" call BIS_fnc_getParamValue	;
+ AutoSaveSwitchVal = "AutoSaveSwitch" call BIS_fnc_getParamValue;
+ AutoSaveIntervalVal = "AutoSaveInterval" call BIS_fnc_getParamValue;
 
-	if (AutoSaveSwitchVal == 1) then {
-		
-			[] spawn {  
-			while { true } do{  
-			
-			remoteExec ["BSPCO_fnc_MissionSave", 2] ;
-			remoteExec ["BSPCO_fnc_MissionSaveGroups", 2] ; 
+if (AutoSaveSwitchVal == 1) then {
+	[] spawn {  
+		while { true } do {  
+			remoteExec ["BSPCO_fnc_MissionSave", 2];
+			remoteExec ["BSPCO_fnc_MissionSaveGroups", 2]; 
 
 			sleep AutoSaveIntervalVal;  
-			};  
-			};
-
+		};  
 	};
+};
 
 

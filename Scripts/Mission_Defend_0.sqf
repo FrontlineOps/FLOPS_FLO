@@ -1,5 +1,4 @@
-	
-	waitUntil {sleep 120 ; (count (allMapMarkers select {markerType _x == "loc_Bunker" && markerAlpha _x == 0.003}) > 0)} ; 
+waitUntil {sleep 120 ; (count (allMapMarkers select {markerType _x == "loc_Bunker" && markerAlpha _x == 0.003}) > 0)} ; 
 	
 	sleep 10 ;	
 
@@ -445,7 +444,7 @@ _azimuth = (getMarkerPos _Dest) getDir (getMarkerPos _OBJ) ;
 				_AssMarks = allMapMarkers select {markerType _x == "mil_marker_noShadow" && markerAlpha _x == 0.5 };  
 				{deleteMarker _x ;} forEach _AssMarks ;
 	
-[] execVM "Scripts\Mission_Defend_0.sqf";
+//[] execVM "Scripts\Mission_Defend_0.sqf";
 
 
 
