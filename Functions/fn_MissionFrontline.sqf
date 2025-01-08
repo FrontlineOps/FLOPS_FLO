@@ -202,9 +202,91 @@ if (count _humanPlayers > 0) then {
         _trg setTriggerTimeout [1, 1, 1, true];
         _trg setTriggerActivation ["WEST", "PRESENT", false];
         _trg setTriggerStatements [
-            "this",
-            "[thisTrigger] execVM 'Scripts\Insurgents_Init.sqf'; if (count (nearestObjects [thisTrigger, ['Land_Cargo_Tower_V3_F', 'Land_Cargo_Tower_V2_F', 'Land_Cargo_Tower_V1_F', 'Land_Cargo_HQ_V3_F', 'Land_Cargo_HQ_V2_F', 'Land_Cargo_HQ_V1_F'], 100]) == 0) then { private _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40]; {[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR; private _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'}; private _mrkr = _mrkrs select 0; _AGGRSCORE = parseNumber (markerText _mrkr); private P1 = ['Outpost_01', 'Outpost_02', 'Outpost_03', 'Outpost_04', 'Outpost_05', 'Outpost_06', 'Outpost_07']; if (_AGGRSCORE > 8) then {P1 = ['Outpost_08', 'Outpost_09', 'Outpost_10', 'Outpost_11', 'Outpost_12', 'Outpost_13'];}; private _dir = 0 + (random 360); if (count (nearestObjects [(getPos thisTrigger), ['House'], 200]) != 0) then {_dir = getDirVisual ((nearestObjects [(getPos thisTrigger), ['House'], 200]) select 0);}; private _compReference = [selectRandom P1, (getPos thisTrigger), [0,0,0], _dir, true] call LARs_fnc_spawnComp; private _ARRAY = [_compReference] call LARs_fnc_getCompObjects; {_x setVectorUp [0,0,1];} forEach _ARRAY; private _trgA = createTrigger ['EmptyDetector', (getPos thisTrigger), false]; _trgA setTriggerArea [1000, 1000, 0, false, 100]; _trgA setTriggerInterval 3; _trgA setTriggerTimeout [11,11, 11, true]; _trgA setTriggerActivation ['WEST', 'PRESENT', false]; _trgA setTriggerStatements ['this', '[thisTrigger] execVM ''Scripts\Outpost_CSAT.sqf'';', '']; _trgA = createTrigger ['EmptyDetector', (getPos thisTrigger), false]; _trgA setTriggerArea [500, 500, 0, false, 60]; _trgA setTriggerInterval 3; _trgA setTriggerTimeout [1, 1, 1, true]; _trgA setTriggerActivation ['WEST', 'PRESENT', false]; _trgA setTriggerStatements ['this', '[thisTrigger] execVM ''Scripts\HeliInsert_CSAT.sqf'';', '']; _trgA = createTrigger ['EmptyDetector', (getPos thisTrigger), false]; _trgA setTriggerArea [500, 500, 0, false, 60]; _trgA setTriggerInterval 3; _trgA setTriggerTimeout [1, 1, 1, true]; _trgA setTriggerActivation ['WEST', 'PRESENT', false]; _trgA setTriggerStatements ['this', '[thisTrigger] execVM ''Scripts\VehiInsert_CSAT.sqf'';', ''];",
-            ""
+            "this","	
+
+			[thisTrigger] execVM 'Scripts\Insurgents_Init.sqf';
+							
+			if ( count (nearestObjects [thisTrigger, ['Land_Cargo_Tower_V3_F', 'Land_Cargo_Tower_V2_F', 'Land_Cargo_Tower_V1_F', 'Land_Cargo_HQ_V3_F', 'Land_Cargo_HQ_V2_F', 'Land_Cargo_HQ_V1_F'], 100] ) == 0) then {
+
+			private _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40]; 
+			{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+
+			private _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
+			private _mrkr = _mrkrs select 0;
+			_AGGRSCORE = markerText _mrkr call BIS_fnc_parseNumber;  
+
+			private _P1 = [ 
+			'Outpost_01',  
+			'Outpost_02',  
+			'Outpost_03',  
+			'Outpost_04',  
+			'Outpost_05',  
+			'Outpost_06',  
+			'Outpost_07'   
+			]; 	
+
+			if (_AGGRSCORE > 8) then {
+			_P1 = [ 
+			'Outpost_08',  
+			'Outpost_09',  
+			'Outpost_10',  
+			'Outpost_11',  
+			'Outpost_12',  
+			'Outpost_13'
+			]; };
+
+
+
+			_dir = 0 + (random 360);
+			if (count (nearestObjects [(getPos thisTrigger), ['House'], 200]) != 0) then {
+			_dir = getDirVisual ((nearestObjects [(getPos thisTrigger), ['House'], 200]) select 0);
+			};
+
+
+			private _compReference = [ selectRandom _P1, (getPos thisTrigger), [0,0,0], _dir, true ] call LARs_fnc_spawnComp;
+
+			private _ARRAY = [ _compReference ] call LARs_fnc_getCompObjects;
+			{_x setVectorUp [0,0,1];} forEach _ARRAY; 
+			};
+
+			private _trgA = createTrigger ['EmptyDetector', (getPos thisTrigger), false];
+			_trgA setTriggerArea [1000, 1000, 0, false, 100];
+			_trgA setTriggerInterval 3;
+			_trgA setTriggerTimeout [11,11, 11, true];
+			_trgA setTriggerActivation ['WEST', 'PRESENT', false];
+			_trgA setTriggerStatements [
+			""this"",""
+
+			[thisTrigger] execVM 'Scripts\Outpost_CSAT.sqf';
+
+			"",""""];
+
+			_trgA = createTrigger ['EmptyDetector', (getPos thisTrigger), false];
+			_trgA setTriggerArea [500, 500, 0, false, 60];
+			_trgA setTriggerInterval 3;
+			_trgA setTriggerTimeout [1, 1, 1, true];
+			_trgA setTriggerActivation ['WEST', 'PRESENT', false];
+			_trgA setTriggerStatements [
+			""this"", ""
+
+			[thisTrigger] execVM 'Scripts\HeliInsert_CSAT.sqf';
+
+			"",""""];
+
+			_trgA = createTrigger ['EmptyDetector', (getPos thisTrigger), false];
+			_trgA setTriggerArea [500, 500, 0, false, 60];
+			_trgA setTriggerInterval 3;
+			_trgA setTriggerTimeout [1, 1, 1, true];
+			_trgA setTriggerActivation ['WEST', 'PRESENT', false];
+			_trgA setTriggerStatements [
+			""this"", ""
+
+			[thisTrigger] execVM 'Scripts\VehiInsert_CSAT.sqf';
+
+			"",""""];
+
+
+			", ""
         ];
         [parseText "<t color='#FF3619' font='PuristaBold' align = 'right' shadow = '1' size='2'>! WARNING !</t><br /><t  color='#FF3619'  align = 'right' shadow = '1' size='1'>Enemy Deployed New Military Installation</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
         _attackingAtGrid = mapGridPosition getMarkerPos _ENMASSmarkerName;
@@ -276,9 +358,111 @@ if (count _humanPlayers > 0) then {
         _trg setTriggerTimeout [1, 1, 1, true];
         _trg setTriggerActivation ["WEST", "PRESENT", false];
         _trg setTriggerStatements [
-            "this",
-            "private _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40]; {[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR; private _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'}; private _mrkr = _mrkrs select 0; _AGGRSCORE = parseNumber (markerText _mrkr); private P1 = ['Road_Post_CSAT_01', 'Road_Post_CSAT_02', 'Road_Post_CSAT_01', 'Road_Post_CSAT_02', 'Road_Post_CSAT_01', 'Road_Post_CSAT_02', 'Road_Post_CSAT_01', 'Road_Post_CSAT_02', 'Road_Post_CSAT_01', 'Road_Post_CSAT_02', 'Road_Post_CSAT_01', 'Road_Post_CSAT_02', 'Watchpost_1', 'Watchpost_2', 'Watchpost_3', 'Watchpost_4', 'Watchpost_5', 'Watchpost_6', 'Watchpost_7', 'Watchpost_8', 'Watchpost_9', 'Watchpost_10']; if (_AGGRSCORE > 5) then {P1 = ['Road_Post_CSAT_03', 'Road_Post_CSAT_04', 'Road_Post_CSAT_03', 'Road_Post_CSAT_04', 'Road_Post_CSAT_03', 'Road_Post_CSAT_04', 'Road_Post_CSAT_03', 'Road_Post_CSAT_04', 'Road_Post_CSAT_03', 'Road_Post_CSAT_04', 'Road_Post_CSAT_03', 'Road_Post_CSAT_04', 'Watchpost_1', 'Watchpost_2', 'Watchpost_3', 'Watchpost_4', 'Watchpost_5', 'Watchpost_6', 'Watchpost_7', 'Watchpost_8', 'Watchpost_9', 'Watchpost_10'];}; if (_AGGRSCORE > 10) then {P1 = ['Road_Post_CSAT_05', 'Road_Post_CSAT_06', 'Road_Post_CSAT_05', 'Road_Post_CSAT_06', 'Road_Post_CSAT_05', 'Road_Post_CSAT_06', 'Road_Post_CSAT_05', 'Road_Post_CSAT_06', 'Road_Post_CSAT_05', 'Road_Post_CSAT_06', 'Road_Post_CSAT_05', 'Road_Post_CSAT_06', 'Watchpost_1', 'Watchpost_2', 'Watchpost_3', 'Watchpost_4', 'Watchpost_5', 'Watchpost_6', 'Watchpost_7', 'Watchpost_8', 'Watchpost_9', 'Watchpost_10'];}; private _COM = [selectRandom P1, getPosATL _MountFinal, [0, 0, 0], _dir, true] call LARs_fnc_spawnComp; private _ARRAY = [_COM] call LARs_fnc_getCompObjects; {_x setVectorUp [0, 0, 1]} forEach _ARRAY; private _trgA = createTrigger ['EmptyDetector', (getPosATL _MountFinal), false]; _trgA setTriggerArea [1000, 1000, 0, false, 100]; _trgA setTriggerInterval 3; _trgA setTriggerTimeout [3, 3, 3, true]; _trgA setTriggerActivation ['WEST', 'PRESENT', false]; _trgA setTriggerStatements ['this', '[thisTrigger] execVM ''Scripts\RoadBlock_CSAT.sqf'';', ''];",
-            ""
+            "this","	
+
+				private _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40]; 
+				{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+
+				private _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
+				private _mrkr = _mrkrs select 0;
+				_AGGRSCORE = markerText _mrkr call BIS_fnc_parseNumber;  
+
+				private _P1 = [ 
+				'Road_Post_CSAT_01',  
+				'Road_Post_CSAT_02',
+				'Road_Post_CSAT_01',  
+				'Road_Post_CSAT_02',
+				'Road_Post_CSAT_01',  
+				'Road_Post_CSAT_02',
+				'Road_Post_CSAT_01',  
+				'Road_Post_CSAT_02',
+				'Road_Post_CSAT_01',  
+				'Road_Post_CSAT_02',
+				'Road_Post_CSAT_01',  
+				'Road_Post_CSAT_02',
+				'Watchpost_1', 
+				'Watchpost_2', 
+				'Watchpost_3', 
+				'Watchpost_4', 
+				'Watchpost_5', 
+				'Watchpost_6',
+				'Watchpost_7',
+				'Watchpost_8',
+				'Watchpost_9',
+				'Watchpost_10'
+				 ]; 
+
+				if (_AGGRSCORE > 5) then {
+				_P1 =  [ 
+				'Road_Post_CSAT_03',  
+				'Road_Post_CSAT_04',
+				'Road_Post_CSAT_03',  
+				'Road_Post_CSAT_04',
+				'Road_Post_CSAT_03',  
+				'Road_Post_CSAT_04',
+				'Road_Post_CSAT_03',  
+				'Road_Post_CSAT_04',
+				'Road_Post_CSAT_03',  
+				'Road_Post_CSAT_04',
+				'Road_Post_CSAT_03',  
+				'Road_Post_CSAT_04',
+				'Watchpost_1', 
+				'Watchpost_2', 
+				'Watchpost_3', 
+				'Watchpost_4', 
+				'Watchpost_5', 
+				'Watchpost_6',
+				'Watchpost_7',
+				'Watchpost_8',
+				'Watchpost_9',
+				'Watchpost_10'
+				]; };
+
+				if (_AGGRSCORE > 10) then {
+				_P1 =  [ 
+				'Road_Post_CSAT_05',  
+				'Road_Post_CSAT_06',
+				'Road_Post_CSAT_05',  
+				'Road_Post_CSAT_06',
+				'Road_Post_CSAT_05',  
+				'Road_Post_CSAT_06',
+				'Road_Post_CSAT_05',  
+				'Road_Post_CSAT_06',
+				'Road_Post_CSAT_05',  
+				'Road_Post_CSAT_06',
+				'Road_Post_CSAT_05',  
+				'Road_Post_CSAT_06',
+				'Watchpost_1', 
+				'Watchpost_2', 
+				'Watchpost_3', 
+				'Watchpost_4', 
+				'Watchpost_5', 
+				'Watchpost_6',
+				'Watchpost_7',
+				'Watchpost_8',
+				'Watchpost_9',
+				'Watchpost_10'
+				]; };
+
+						
+				private _COM = [ selectRandom _P1, getPosATL _MountFinal, [0,0,0], _dir, true ] call LARs_fnc_spawnComp;	
+				private _ARRAY = [ _COM ] call LARs_fnc_getCompObjects;
+				{_x setVectorUp [0,0,1]} forEach _ARRAY;
+
+
+				_trgA = createTrigger ['EmptyDetector', (getPosATL _MountFinal), false];
+				_trgA setTriggerArea [1000, 1000, 0, false, 100];
+				_trgA setTriggerInterval 3;
+				_trgA setTriggerTimeout [3, 3, 3, true];
+				_trgA setTriggerActivation ['WEST', 'PRESENT', false];
+				_trgA setTriggerStatements [
+				""this"",""
+
+				[thisTrigger] execVM 'Scripts\RoadBlock_CSAT.sqf';
+
+				"",""""];
+
+				", ""
         ];
 
         [parseText "<t color='#FF3619' font='PuristaBold' align = 'right' shadow = '1' size='2'>! WARNING !</t><br /><t  color='#FF3619'  align = 'right' shadow = '1' size='1'>Enemy Deployed New Military Installation</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
