@@ -206,7 +206,7 @@ if (count _humanPlayers > 0) then {
         _trg setTriggerStatements [
             "this",
             "[thisTrigger] execVM 'Scripts\Insurgents_Init.sqf';\nif (count (nearestObjects [thisTrigger, ['Land_Cargo_Tower_V3_F', 'Land_Cargo_Tower_V2_F', 'Land_Cargo_Tower_V1_F', 'Land_Cargo_HQ_V3_F', 'Land_Cargo_HQ_V2_F', 'Land_Cargo_HQ_V1_F'], 100]) == 0) then {\nprivate _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40];\n{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR;\nprivate _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};\nprivate _mrkr = _mrkrs select 0;\n_AGGRSCORE = markerText _mrkr call BIS_fnc_parseNumber;\nprivate P1 = ['Outpost_01', 'Outpost_02', 'Outpost_03', 'Outpost_04', 'Outpost_05', 'Outpost_06', 'Outpost_07'];\nif (_AGGRSCORE > 8) then {P1 = ['Outpost_08', 'Outpost_09', 'Outpost_10', 'Outpost_11', 'Outpost_12', 'Outpost_13'];};\nprivate _dir = 0 + (random 360);\nif (count (nearestObjects [(getPos thisTrigger), ['House'], 200]) != 0) then {_dir = getDirVisual ((nearestObjects [(getPos thisTrigger), ['House'], 200]) select 0);};\nprivate _compReference = [selectRandom P1, (getPos thisTrigger), [0, 0, 0], _dir, true] call LARs_fnc_spawnComp;\nprivate _ARRAY = [_compReference] call LARs_fnc_getCompObjects;\n{_x setVectorUp [0, 0, 1];} forEach _ARRAY;};",
-            "deleteVehicle thisTrigger;"
+            "private _triggerPos = getPos thisTrigger; deleteVehicle thisTrigger;"
         ];
 
         private _trgA = createTrigger ['EmptyDetector', (getPos thisTrigger), false];
@@ -217,7 +217,7 @@ if (count _humanPlayers > 0) then {
         _trgA setTriggerStatements [
             "this",
             "[thisTrigger] execVM 'Scripts\Outpost_CSAT.sqf';",
-            "deleteVehicle thisTrigger;"
+            "private _triggerPos = getPos thisTrigger; deleteVehicle thisTrigger;"
         ];
 
         _trgA = createTrigger ['EmptyDetector', (getPos thisTrigger), false];
@@ -228,7 +228,7 @@ if (count _humanPlayers > 0) then {
         _trgA setTriggerStatements [
             "this",
             "[thisTrigger] execVM 'Scripts\HeliInsert_CSAT.sqf';",
-            "deleteVehicle thisTrigger;"
+            "private _triggerPos = getPos thisTrigger; deleteVehicle thisTrigger;"
         ];
 
         _trgA = createTrigger ['EmptyDetector', (getPos thisTrigger), false];
@@ -239,7 +239,7 @@ if (count _humanPlayers > 0) then {
         _trgA setTriggerStatements [
             "this",
             "[thisTrigger] execVM 'Scripts\VehiInsert_CSAT.sqf';",
-            "deleteVehicle thisTrigger;"
+            "private _triggerPos = getPos thisTrigger; deleteVehicle thisTrigger;"
         ];
 
         [parseText "<t color='#FF3619' font='PuristaBold' align = 'right' shadow = '1' size='2'>! WARNING !</t><br /><t  color='#FF3619'  align = 'right' shadow = '1' size='1'>Enemy Deployed New Military Installation</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];

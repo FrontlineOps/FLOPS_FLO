@@ -145,7 +145,7 @@ remoteExec ["BSPCO_fnc_MissionStartup", 2] ;
 [] spawn {
 	while {true} do {
 		remoteExec ["BSPCO_fnc_MissionFrontline", 2];
-		sleep 300; // Loop every 5 minutes
+		sleep 300; // Loop every 5 minutes (this is plus the extra time wait inside MissionFrontline)
 	};
 };
 
