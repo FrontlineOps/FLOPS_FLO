@@ -1,35 +1,28 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 thisOutpostTrigger = _this select 0;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-_mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
-_mrkr = _mrkrs select 0;
-_AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
-_Chance = selectRandom [1, 2, 3]; 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+private _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
+private _mrkr = _mrkrs select 0;
+private _AGGRSCORE = parseNumber (markerText _mrkr) ;  
+
 
 // Initialize configuration hashmap
 private _config = createHashMapFromArray [
     ["helipads", ["Land_HelipadCircle_F","Land_HelipadCivil_F","Heli_H_rescue","Land_HelipadRescue_F","Land_HelipadSquare_F","HeliHRescue","Heli_H_civil","HeliHCivil","HeliH"]],
     ["tyres", ["Land_Tyre_F"]],
-    ["vehicles", [[East_Air_Heli], [East_Ground_Transport], [East_Ground_Vehicles_Light], [East_Ground_Vehicles_Heavy]]],
-    ["units", [East_Units]],
-    ["crates", [
-        "Box_IND_WpsSpecial_F", "Box_East_WpsSpecial_F", "Box_IND_Support_F", "Box_East_Support_F",
-        "Box_CSAT_Equip_F", "Box_AAF_Equip_F", "Box_East_WpsLaunch_F", "Box_IND_WpsLaunch_F",
-        "Box_East_AmmoOrd_F", "Box_East_Ammo_F", "Box_IND_Ammo_F", "Box_IND_AmmoOrd_F", "Box_East_Wps_F", "Box_IND_Wps_F"
-    ]]
+    ["vehicles", [[East_Air_Heli], [East_Ground_Transport], [East_Ground_Vehicles_Light], [East_Ground_Vehicles_Heavy], [East_Ground_Vehicles_Ambient]]],
+    ["units", East_Units],
+    ["buildings", ["House", "Land_MilOffices_V1_F", "Land_Cargo_Tower_V3_F", "Land_Cargo_Tower_V2_F", "Land_Cargo_Tower_V1_F", "Land_Cargo_HQ_V3_F", "Land_Cargo_HQ_V2_F", "Land_Cargo_HQ_V1_F", "Land_Cargo_House_V3_F", "Land_Cargo_House_V1_F"]],
+    ["bunkers", ["Land_BagBunker_Large_F", "Land_BagBunker_Small_F", "Land_Cargo_House_V3_F", "Land_Cargo_House_V1_F", "Land_Cargo_Patrol_V3_F", "Land_Cargo_Patrol_V2_F", "Land_Cargo_Patrol_V1_F"]]
 ];
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 [thisOutpostTrigger] execVM "Scripts\HMGspawn.sqf" ; 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Create Static Helicopter in Outpost
 if (count (nearestObjects [getPos thisOutpostTrigger, _config get "helipads", 100]) > 0) then {
+    private _vehicleArray = _config get "vehicles" select 1; 
+    private _vehicleClass = selectRandom _vehicleArray;
     _HPAD = nearestObjects [getPos thisOutpostTrigger, _config get "helipads", 100] select 0;
-    _V = createVehicle [selectRandom (_config get "vehicles" select 1), getPos _HPAD, [], 0, "NONE"];
+    _V = createVehicle [_vehicleClass, getPos _HPAD, [], 0, "NONE"];
     _V setVehicleLock "LOCKED";
     _dir = getDir _HPAD;
     _V setDir _dir;
@@ -42,7 +35,10 @@ if (count (nearestObjects [getPos thisOutpostTrigger, _config get "helipads", 10
     }];
 };
 
+// Create Static Armor in Outpost
 if (count (nearestObjects [getPos thisOutpostTrigger, _config get "tyres", 100]) > 0) then {
+    private _vehicleArray = _config get "vehicles" select 4; 
+    private _vehicleClass = selectRandom _vehicleArray;
     _objectLoc = nearestObjects [getPos thisOutpostTrigger, _config get "tyres", 100];
 
     {
@@ -52,7 +48,7 @@ if (count (nearestObjects [getPos thisOutpostTrigger, _config get "tyres", 100])
         _dir = getDirVisual _x;
         _pos = position _x;
 
-        _NewVeh = createVehicle [selectRandom (_config get "vehicles" select 1), [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"];
+        _NewVeh = createVehicle [_vehicleClass, [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"];
         _NewVeh setDir _dir;
         _NewVeh setVehicleLock "LOCKED";
 
@@ -70,13 +66,13 @@ if (count (nearestObjects [getPos thisOutpostTrigger, _config get "tyres", 100])
     } forEach _objectLoc;
 };
 
-//////GROUPS//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//////////Veicle////////////////////////////////////////////////////////////////////////
-
+// Enemy Garrison Creation //
+// Create Enemy Operational Vehicles if Roads are near
 if (count ((getPos thisOutpostTrigger) nearRoads 200) > 0) then {
+    private _vehicleArray = _config get "vehicles" select 2; 
+    private _vehicleClass = selectRandom _vehicleArray;
     private _nearRoad = selectRandom ((getPos thisOutpostTrigger) nearRoads 200);
-    private _V = createVehicle [selectRandom (_config get "vehicles" select 2), (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
+    private _V = createVehicle [_vehicleClass, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
 
     CrewGroup = createVehicleCrew _V;
     _VC = createGroup East;
@@ -104,8 +100,10 @@ if (count ((getPos thisOutpostTrigger) nearRoads 200) > 0) then {
 };
 
 if (_AGGRSCORE > 10) then {
+    private _vehicleArray = _config get "vehicles" select 3; 
+    private _vehicleClass = selectRandom _vehicleArray;
     private _nearRoad = selectRandom ((getPos thisOutpostTrigger) nearRoads 150);
-    private _V = createVehicle [selectRandom (_config get "vehicles" select 3), (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
+    private _V = createVehicle [_vehicleClass, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
 
     CrewGroup = createVehicleCrew _V;
     _VC = createGroup East;
@@ -132,10 +130,7 @@ if (_AGGRSCORE > 10) then {
     I1_WP_1 setWaypointSpeed "LIMITED";
 };
 
-//////Assault////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
+// If AGGRSCORE > 5, Create Enemy Assault Vehicles and assault nearest BLUFOR Outpost
 if (_AGGRSCORE > 5) then {
     _AssltDestMrks = allMapMarkers select {markerType _x == "b_installation"  && (markerColor _x == "ColorYellow" or  markerColor _x == "colorBLUFOR" or markerColor _x == "colorWEST")};  
     _AssltDest = [_AssltDestMrks,  thisOutpostTrigger] call BIS_fnc_nearestPosition;
@@ -149,8 +144,7 @@ if (_AGGRSCORE > 10) then {
     [thisOutpostTrigger, _StrtM] execVM "Scripts\VehiInsert_CSAT_2.sqf";    
 };
 
-///////Garrisons//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+// Create Enemy Garrison
 _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
 _G = [_poss, East,(_config get "units")] call BIS_fnc_spawnGroup; 
     _G deleteGroupWhenEmpty true;
@@ -194,29 +188,33 @@ if (_AGGRSCORE > 10) then {
     _G deleteGroupWhenEmpty true;
 };
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-private _CRT = (_config get "crates");
 
+// Create Ambient Enemy Vehicle
 _poss = [(getpos thisOutpostTrigger), 10, 20, 4, 0.1 , 0] call BIS_fnc_findSafePos;
 _VLAMP = createVehicle [ "Land_LampAirport_F", _poss, [], 5, "NONE"];
 
 
-if (count [(getpos thisOutpostTrigger) nearRoads 70] > 0) then {
-    private _nearRoad = selectRandom ((getPos thisOutpostTrigger) nearRoads 70);
-    private _V = createVehicle [selectRandom (_config get "vehicles" select 2), (_nearRoad getRelPos [0, 0]), [], 4, "NONE"];
-    private _nextRoad = (roadsConnectedTo _nearRoad) select 0;
-    private _dir = _nearRoad getDir _nextRoad;
+private _nearRoads = (getPos thisOutpostTrigger) nearRoads 150;
+private _nearRoad = selectRandom _nearRoads;
+
+if (!isNil "_nearRoad") then {
+    private _vehicleArray = _config get "vehicles" select 5; 
+    private _vehicleClass = selectRandom _vehicleArray;
+    
+    _V = createVehicle [_vehicleClass, (_nearRoad getRelPos [0, 0]), [], 4, "NONE"];
+    _nextRoad = (roadsConnectedTo _nearRoad) select 0;
+    _dir = _nearRoad getDir _nextRoad;
     _V setDir _dir;
 
-    _nearRoad = selectRandom ((getPos thisOutpostTrigger) nearRoads 70);
-    _V = createVehicle [selectRandom (_config get "vehicles" select 2), (_nearRoad getRelPos [0, 0]), [], 4, "NONE"];
+    _V = createVehicle [_vehicleClass, (_nearRoad getRelPos [0, 0]), [], 4, "NONE"];
     _nextRoad = (roadsConnectedTo _nearRoad) select 0;
     _dir = _nearRoad getDir _nextRoad;
     _V setDir _dir;
 };
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-_allBuildings = nearestObjects [(getpos thisOutpostTrigger), ["House", "Land_MilOffices_V1_F", "Land_Cargo_Tower_V3_F", "Land_Cargo_Tower_V2_F", "Land_Cargo_Tower_V1_F", "Land_Cargo_HQ_V3_F", "Land_Cargo_HQ_V2_F", "Land_Cargo_HQ_V1_F", "Land_Cargo_House_V3_F", "Land_Cargo_House_V1_F"], 300];  
+// Create Intel
+// Reason it's like this is because we want intel to be in different buildings
+_allBuildings = nearestObjects [(getpos thisOutpostTrigger), (_config get "buildings"), 300];  
 
 HQBLDNG = selectRandom _allBuildings;
 _dir = getDirVisual HQBLDNG;
@@ -228,13 +226,7 @@ _dir = getDirVisual HQBLDNG;
 
 HQBLDNG = selectRandom _allBuildings;
 _dir = getDirVisual HQBLDNG;
-[ "Intel_01", (selectRandom (HQBLDNG buildingPos -1)), [0,0,0], _dir, false, false, true ] call LARs_fnc_spawnComp; 
-
-_V = createVehicle [(selectRandom _CRT), (selectRandom (HQBLDNG buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (HQBLDNG buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (HQBLDNG buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (HQBLDNG buildingPos -1)), [], 0, "NONE"]; 
-
+[ "Intel_01", (selectRandom (HQBLDNG buildingPos -1)), [0,0,0], _dir, false, false, true ] call LARs_fnc_spawnComp;
 
 if (_AGGRSCORE > 5) then {
     HQBLDNG = selectRandom _allBuildings;
@@ -278,9 +270,9 @@ _HeavGuns =  nearestObjects [(getpos thisOutpostTrigger), ["O_G_HMG_02_high_F", 
 } forEach _HeavGuns;
 
 
-if (count nearestObjects [(getpos thisOutpostTrigger), ["Land_BagBunker_Large_F", "Land_BagBunker_Small_F", "Land_Cargo_House_V3_F", "Land_Cargo_House_V1_F", "Land_Cargo_Patrol_V3_F", "Land_Cargo_Patrol_V2_F", "Land_Cargo_Patrol_V1_F"], 200] > 0) then {
+if (count nearestObjects [(getpos thisOutpostTrigger), (_config get "bunkers"), 200] > 0) then {
 
-    _allBuildings = nearestObjects [(getpos thisOutpostTrigger), ["Land_BagBunker_Large_F", "Land_BagBunker_Small_F", "Land_Cargo_House_V3_F", "Land_Cargo_House_V1_F", "Land_Cargo_Patrol_V3_F", "Land_Cargo_Patrol_V2_F", "Land_Cargo_Patrol_V1_F"], 200];  
+    _allBuildings = nearestObjects [(getpos thisOutpostTrigger), (_config get "bunkers"), 200];  
     _allPositions = [];  
     _allBuildings apply {_allPositions append (_x buildingPos -1)}; 
  
@@ -291,11 +283,6 @@ if (count nearestObjects [(getpos thisOutpostTrigger), ["Land_BagBunker_Large_F"
     _G deleteGroupWhenEmpty true;
     _G = [selectRandom _allPositions, East,(_config get "units")] call BIS_fnc_spawnGroup;     
     _G deleteGroupWhenEmpty true;
-
-    _V = createVehicle [(selectRandom (_config get "crates")), selectRandom _allPositions, [], 0, "NONE"]; 
-    _V = createVehicle [(selectRandom (_config get "crates")), selectRandom _allPositions, [], 0, "NONE"]; 
-    _V = createVehicle [(selectRandom (_config get "crates")), selectRandom _allPositions, [], 0, "NONE"]; 
-
 
     if (_AGGRSCORE > 5) then {
         _G = [selectRandom _allPositions, East,(_config get "units")] call BIS_fnc_spawnGroup;  
@@ -317,20 +304,7 @@ if (count nearestObjects [(getpos thisOutpostTrigger), ["Land_BagBunker_Large_F"
     };
 };
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// {
-// _nvg = hmd _x;
-//  _x unassignItem _nvg;
-//  _x removeItem _nvg;
-//      _x addPrimaryWeaponItem "acc_flashlight";
-//      _x assignItem "acc_flashlight";
-//      _x enableGunLights "ForceOn";
-//   } foreach (allUnits select {side _x == east}); 
- 
-
- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- 
- 
+// Create Triggers for Capture Zone
 _trg = createTrigger ["EmptyDetector", getPos thisOutpostTrigger, false];  
 _trg setTriggerArea [1000, 1000, 0, false, 200];  
 _trg setTriggerTimeout [2, 2, 2, true];
@@ -364,9 +338,7 @@ _FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
 
 "]; 
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+// Create Intel
 [thisOutpostTrigger, 200] execVM "Scripts\INTLitems.sqf";
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Sleep
 sleep 2 ;
