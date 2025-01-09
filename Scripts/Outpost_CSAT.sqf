@@ -14,7 +14,7 @@ private _config = createHashMapFromArray [
     ["helipads", ["Land_HelipadCircle_F","Land_HelipadCivil_F","Heli_H_rescue","Land_HelipadRescue_F","Land_HelipadSquare_F","HeliHRescue","Heli_H_civil","HeliHCivil","HeliH"]],
     ["tyres", ["Land_Tyre_F"]],
     ["vehicles", [[East_Air_Heli], [East_Ground_Transport], [East_Ground_Vehicles_Light], [East_Ground_Vehicles_Heavy]]],
-    ["units", East_Units],
+    ["units", [East_Units]],
     ["crates", [
         "Box_IND_WpsSpecial_F", "Box_East_WpsSpecial_F", "Box_IND_Support_F", "Box_East_Support_F",
         "Box_CSAT_Equip_F", "Box_AAF_Equip_F", "Box_East_WpsLaunch_F", "Box_IND_WpsLaunch_F",
