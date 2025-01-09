@@ -140,10 +140,6 @@ if (_AGGRSCORE > 10) then {
 // Create Enemy Garrison
 _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
 _G = [_poss, East,(_config get "units")] call BIS_fnc_spawnGroup; 
-    _G deleteGroupWhenEmpty true;
-
-_poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-_G = [_poss, East,(_config get "units")] call BIS_fnc_spawnGroup; 
 ((units _G) select 0) disableAI "PATH";
     _G deleteGroupWhenEmpty true;
 
@@ -152,10 +148,6 @@ _G = [_poss, East,(_config get "units")] call BIS_fnc_spawnGroup;
     _G deleteGroupWhenEmpty true;
 
 if (_AGGRSCORE > 5) then {
-    _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-    _G = [_poss, East,(_config get "units")] call BIS_fnc_spawnGroup; 
-    _G deleteGroupWhenEmpty true;
-
     _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
     _G = [_poss, East,(_config get "units")] call BIS_fnc_spawnGroup; 
     ((units _G) select 0) disableAI "PATH";
@@ -167,10 +159,6 @@ if (_AGGRSCORE > 5) then {
 };
 
 if (_AGGRSCORE > 10) then {
-    _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-    _G = [_poss, East,(_config get "units")] call BIS_fnc_spawnGroup; 
-    _G deleteGroupWhenEmpty true;
-
     _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
     _G = [_poss, East,(_config get "units")] call BIS_fnc_spawnGroup; 
     ((units _G) select 0) disableAI "PATH";
@@ -270,19 +258,14 @@ if (count nearestObjects [(getpos thisOutpostTrigger), (_config get "bunkers"), 
     ((units _G) select 0) disableAI "PATH";   
     _G deleteGroupWhenEmpty true;
     _G = [selectRandom _allPositions, East,(_config get "units")] call BIS_fnc_spawnGroup;     
-    _G deleteGroupWhenEmpty true;
-    _G = [selectRandom _allPositions, East,(_config get "units")] call BIS_fnc_spawnGroup;     
-    _G deleteGroupWhenEmpty true;
+    _G deleteGroupWhenEmpty true;     
 
     if (_AGGRSCORE > 5) then {
         _G = [selectRandom _allPositions, East,(_config get "units")] call BIS_fnc_spawnGroup;  
         ((units _G) select 0) disableAI "PATH";   
         _G deleteGroupWhenEmpty true;
         _G = [selectRandom _allPositions, East,(_config get "units")] call BIS_fnc_spawnGroup;     
-        _G deleteGroupWhenEmpty true;
-        _G = [selectRandom _allPositions, East,(_config get "units")] call BIS_fnc_spawnGroup;     
-        _G deleteGroupWhenEmpty true;
-
+        _G deleteGroupWhenEmpty true;     
     };
 
     if (_AGGRSCORE > 10) then {
