@@ -195,7 +195,7 @@ if (_AGGRSCORE > 10) then {
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-_CRT = (_config get "crates");
+private _CRT = (_config get "crates");
 
 _poss = [(getpos thisOutpostTrigger), 10, 20, 4, 0.1 , 0] call BIS_fnc_findSafePos;
 _VLAMP = createVehicle [ "Land_LampAirport_F", _poss, [], 5, "NONE"];
@@ -230,10 +230,10 @@ HQBLDNG = selectRandom _allBuildings;
 _dir = getDirVisual HQBLDNG;
 [ "Intel_01", (selectRandom (HQBLDNG buildingPos -1)), [0,0,0], _dir, false, false, true ] call LARs_fnc_spawnComp; 
 
-_V = createVehicle [(selectRandom (_config get "crates")), (selectRandom (HQBLDNG buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom (_config get "crates")), (selectRandom (HQBLDNG buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom (_config get "crates")), (selectRandom (HQBLDNG buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom (_config get "crates")), (selectRandom (HQBLDNG buildingPos -1)), [], 0, "NONE"]; 
+_V = createVehicle [(selectRandom _CRT), (selectRandom (HQBLDNG buildingPos -1)), [], 0, "NONE"]; 
+_V = createVehicle [(selectRandom _CRT), (selectRandom (HQBLDNG buildingPos -1)), [], 0, "NONE"]; 
+_V = createVehicle [(selectRandom _CRT), (selectRandom (HQBLDNG buildingPos -1)), [], 0, "NONE"]; 
+_V = createVehicle [(selectRandom _CRT), (selectRandom (HQBLDNG buildingPos -1)), [], 0, "NONE"]; 
 
 
 if (_AGGRSCORE > 5) then {
