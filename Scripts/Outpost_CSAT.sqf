@@ -9,7 +9,8 @@ private _AGGRSCORE = parseNumber (markerText _mrkr) ;
 private _config = createHashMapFromArray [
     ["helipads", ["Land_HelipadCircle_F","Land_HelipadCivil_F","Heli_H_rescue","Land_HelipadRescue_F","Land_HelipadSquare_F","HeliHRescue","Heli_H_civil","HeliHCivil","HeliH"]],
     ["tyres", ["Land_Tyre_F"]],
-    ["vehicles", [[East_Air_Heli], [East_Ground_Transport], [East_Ground_Vehicles_Light], [East_Ground_Vehicles_Heavy], [East_Ground_Vehicles_Ambient]]],
+    // Array of Vehicles doesn't work with createVehicle
+    //["vehicles", [[East_Air_Heli], [East_Ground_Transport], [East_Ground_Vehicles_Light], [East_Ground_Vehicles_Heavy], [East_Ground_Vehicles_Ambient]]],
     ["units", East_Units],
     ["buildings", ["House", "Land_MilOffices_V1_F", "Land_Cargo_Tower_V3_F", "Land_Cargo_Tower_V2_F", "Land_Cargo_Tower_V1_F", "Land_Cargo_HQ_V3_F", "Land_Cargo_HQ_V2_F", "Land_Cargo_HQ_V1_F", "Land_Cargo_House_V3_F", "Land_Cargo_House_V1_F"]],
     ["bunkers", ["Land_BagBunker_Large_F", "Land_BagBunker_Small_F", "Land_Cargo_House_V3_F", "Land_Cargo_House_V1_F", "Land_Cargo_Patrol_V3_F", "Land_Cargo_Patrol_V2_F", "Land_Cargo_Patrol_V1_F"]]
@@ -19,10 +20,8 @@ private _config = createHashMapFromArray [
 
 // Create Static Helicopter in Outpost
 if (count (nearestObjects [getPos thisOutpostTrigger, _config get "helipads", 100]) > 0) then {
-    private _vehicleArray = _config get "vehicles" select 1; 
-    private _vehicleClass = selectRandom _vehicleArray;
     _HPAD = nearestObjects [getPos thisOutpostTrigger, _config get "helipads", 100] select 0;
-    _V = createVehicle [_vehicleClass, getPos _HPAD, [], 0, "NONE"];
+    _V = createVehicle [selectRandom East_Air_Heli, getPos _HPAD, [], 0, "NONE"];
     _V setVehicleLock "LOCKED";
     _dir = getDir _HPAD;
     _V setDir _dir;
@@ -35,10 +34,8 @@ if (count (nearestObjects [getPos thisOutpostTrigger, _config get "helipads", 10
     }];
 };
 
-// Create Static Armor in Outpost
+// Create Transport in Outpost
 if (count (nearestObjects [getPos thisOutpostTrigger, _config get "tyres", 100]) > 0) then {
-    private _vehicleArray = _config get "vehicles" select 4; 
-    private _vehicleClass = selectRandom _vehicleArray;
     _objectLoc = nearestObjects [getPos thisOutpostTrigger, _config get "tyres", 100];
 
     {
@@ -48,7 +45,7 @@ if (count (nearestObjects [getPos thisOutpostTrigger, _config get "tyres", 100])
         _dir = getDirVisual _x;
         _pos = position _x;
 
-        _NewVeh = createVehicle [_vehicleClass, [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"];
+        _NewVeh = createVehicle [selectRandom East_Ground_Transport, [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"];
         _NewVeh setDir _dir;
         _NewVeh setVehicleLock "LOCKED";
 
@@ -69,10 +66,8 @@ if (count (nearestObjects [getPos thisOutpostTrigger, _config get "tyres", 100])
 // Enemy Garrison Creation //
 // Create Enemy Operational Vehicles if Roads are near
 if (count ((getPos thisOutpostTrigger) nearRoads 200) > 0) then {
-    private _vehicleArray = _config get "vehicles" select 2; 
-    private _vehicleClass = selectRandom _vehicleArray;
     private _nearRoad = selectRandom ((getPos thisOutpostTrigger) nearRoads 200);
-    private _V = createVehicle [_vehicleClass, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
+    private _V = createVehicle [selectRandom East_Ground_Vehicles_Light, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
 
     CrewGroup = createVehicleCrew _V;
     _VC = createGroup East;
@@ -100,10 +95,8 @@ if (count ((getPos thisOutpostTrigger) nearRoads 200) > 0) then {
 };
 
 if (_AGGRSCORE > 10) then {
-    private _vehicleArray = _config get "vehicles" select 3; 
-    private _vehicleClass = selectRandom _vehicleArray;
     private _nearRoad = selectRandom ((getPos thisOutpostTrigger) nearRoads 150);
-    private _V = createVehicle [_vehicleClass, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
+    private _V = createVehicle [selectRandom East_Ground_Vehicles_Heavy, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
 
     CrewGroup = createVehicleCrew _V;
     _VC = createGroup East;
@@ -198,15 +191,12 @@ private _nearRoads = (getPos thisOutpostTrigger) nearRoads 150;
 private _nearRoad = selectRandom _nearRoads;
 
 if (!isNil "_nearRoad") then {
-    private _vehicleArray = _config get "vehicles" select 5; 
-    private _vehicleClass = selectRandom _vehicleArray;
-    
-    _V = createVehicle [_vehicleClass, (_nearRoad getRelPos [0, 0]), [], 4, "NONE"];
+    _V = createVehicle [selectRandom East_Ground_Vehicles_Ambient, (_nearRoad getRelPos [0, 0]), [], 4, "NONE"];
     _nextRoad = (roadsConnectedTo _nearRoad) select 0;
     _dir = _nearRoad getDir _nextRoad;
     _V setDir _dir;
 
-    _V = createVehicle [_vehicleClass, (_nearRoad getRelPos [0, 0]), [], 4, "NONE"];
+    _V = createVehicle [selectRandom East_Ground_Vehicles_Ambient, (_nearRoad getRelPos [0, 0]), [], 4, "NONE"];
     _nextRoad = (roadsConnectedTo _nearRoad) select 0;
     _dir = _nearRoad getDir _nextRoad;
     _V setDir _dir;
