@@ -1,20 +1,29 @@
+// TODO: Introduce System that depletes spawning ability if the outpost found does indeed send QRF
+// TODO: Selected Outpost can deny sending QRF in certain situations
 if ( COMMSDIS == 0 ) then {
 
 	private _CNTRQRF = _this select 0;
 	private _RADSQRF = _this select 1;
 
-	//_allZoneMarks = allMapMarkers select {markerType _x == "n_installation" || markerType _x == "o_installation" || markerType _x == "o_antiair" || markerType _x == "o_service" || markerType _x == "loc_Power" || markerType _x == "o_support" || markerType _x == "n_support" || markerType _x == "loc_Ruin" } ;  
-	//_M = [_allZoneMarks,  _CNTRQRF] call BIS_fnc_nearestPosition ;
-
-	//_azimuth = (getPos _CNTRQRF) getDir (getMarkerPos _M);
-
 	// Define the markers for OPFOR outposts
-	private _opforOutpostMarkers = allMapMarkers select {markerType _x == "o_installation"};
+	private _opforOutpostMarkers = allMapMarkers select {markerType _x == "o_installation" || markerType _x == "o_service" || markerType _x == "o_support"};
 	// Find the nearest OPFOR outpost to the center of the QRF
-	private _nearestOutpost = [_opforOutpostMarkers, _CNTRQRF] call BIS_fnc_nearestPosition;
+	// Initialize variables to track the nearest marker
+	private _nearestOutpost = "";
+	private _nearestDistance = 1e10; // Start with a very large distance because we want to make sure we can find an outpost
+
+	// Iterate over each marker to find the nearest (janky but works)
+	{
+		private _markerPos = getMarkerPos _x;
+		private _distance = _markerPos distance _CNTRQRF;
+		if (_distance < _nearestDistance) then {
+			_nearestDistance = _distance;
+			_nearestOutpost = _x;
+		};
+	} forEach _opforOutpostMarkers;
 
 	// Check if a valid outpost was found
-	if (!isNil "_nearestOutpost" && {_nearestOutpost isEqualType ""}) then {
+	if (_nearestOutpost != "") then {
 		// Use the position of the nearest outpost for spawning
 		private _spawnPos = getMarkerPos _nearestOutpost;
 		// Send Immediate QRF if BLUFOR has captured an objective of OPFOR
