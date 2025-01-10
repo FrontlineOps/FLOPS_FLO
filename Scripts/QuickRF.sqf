@@ -1,135 +1,73 @@
-
 if ( COMMSDIS == 0 ) then {
 
-CNTRQRF = _this select 0;
-RADSQRF = _this select 1;
+	private _CNTRQRF = _this select 0;
+	private _RADSQRF = _this select 1;
 
+	//_allZoneMarks = allMapMarkers select {markerType _x == "n_installation" || markerType _x == "o_installation" || markerType _x == "o_antiair" || markerType _x == "o_service" || markerType _x == "loc_Power" || markerType _x == "o_support" || markerType _x == "n_support" || markerType _x == "loc_Ruin" } ;  
+	//_M = [_allZoneMarks,  _CNTRQRF] call BIS_fnc_nearestPosition ;
 
+	//_azimuth = (getPos _CNTRQRF) getDir (getMarkerPos _M);
 
-//_Chance = selectRandom [1, 2, 3, 4]; 
+	// Define the markers for OPFOR outposts
+	private _opforOutpostMarkers = allMapMarkers select {markerType _x == "o_installation"};
+	// Find the nearest OPFOR outpost to the center of the QRF
+	private _nearestOutpost = [_opforOutpostMarkers, _CNTRQRF] call BIS_fnc_nearestPosition;
 
-/*
-_GRPs = (allGroups select {side _x == east && getPos ((units _x) select 0) distance CNTRQRF < RADSQRF});
-_GRPCNT = count _GRPs;
-_GRPCNTNEW = round ( _GRPCNT / 2 );
-_GRPsALLNEW = _GRPs call BIS_fnc_arrayShuffle;
-_GRPsSEL = _GRPsALLNEW select [0, _GRPCNTNEW];
-_AllWs = {waypoints _x } foreach _GRPsSEL; 
+	// Check if a valid outpost was found
+	if (!isNil "_nearestOutpost" && {_nearestOutpost isEqualType ""}) then {
+		// Use the position of the nearest outpost for spawning
+		private _spawnPos = getMarkerPos _nearestOutpost;
+		// Send Immediate QRF if BLUFOR has captured an objective of OPFOR
+		PRL = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+		WP_1 = PRL addWaypoint [(getPos _CNTRQRF), 0]; 
+		WP_1 SetWaypointType "SAD"; 
+		PRL deleteGroupWhenEmpty true;
 
-{
-for "_i" from count waypoints _x - 1 to 0 step -1 do
-{deleteWaypoint [_x, _i];};
-} foreach _GRPsSEL;
-
-sleep 2 ;
-
-{_x addWaypoint [position CNTRQRF, 0]; } foreach _GRPsSEL;
-
-*/
-
-
-_GRPs = (allGroups select {side _x == east && getPos ((units _x) select 0) distance CNTRQRF < RADSQRF});
-_GRPCNT = count _GRPs;
-_GRPCNTNEW = round ( _GRPCNT / 2 );
-_GRPsALLNEW = _GRPs call BIS_fnc_arrayShuffle;
-_GRPsSEL = _GRPsALLNEW select [0, _GRPCNTNEW];
-
-
-{
-_Gcount = count units _x ;
-PRLCLWNGRP = [(getPos ((units _x) select 0)), East, _Gcount] call BIS_fnc_spawnGroup;
-{_x setUnitLoadout selectRandom East_Units;} forEach (units PRLCLWNGRP) ;
-PRLCLWNGRP addWaypoint [position CNTRQRF, 0];
-			PRLCLWNGRP deleteGroupWhenEmpty true;
-
-} foreach _GRPsSEL;
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
- 	   _allZoneMarks = allMapMarkers select {markerType _x == "n_installation" || markerType _x == "o_installation" || markerType _x == "o_antiair" || markerType _x == "o_service" || markerType _x == "loc_Power" || markerType _x == "o_support" || markerType _x == "n_support" || markerType _x == "loc_Ruin" } ;  
-       _M = [_allZoneMarks,  CNTRQRF] call BIS_fnc_nearestPosition ;
-
-_azimuth = (getPos CNTRQRF) getDir (getMarkerPos _M);
-
-
-PRL = [(getPos CNTRQRF) getPos [(400 + (random 200)), (_azimuth + (random 20))] , East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-WP_1 = PRL addWaypoint [(getPos CNTRQRF), 0]; 
-WP_1 SetWaypointType "MOVE"; 
+		if (_RADSQRF > 1200) then {
+			PRL = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+			WP_1 = PRL addWaypoint [(getPos _CNTRQRF), 0]; 
+			WP_1 SetWaypointType "SAD"; 
 			PRL deleteGroupWhenEmpty true;
+		};
 
-
-if (RADSQRF > 1200) then {
-PRL = [(getPos CNTRQRF) getPos [(400 + (random 200)), (_azimuth + (random 20))] , East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-WP_1 = PRL addWaypoint [(getPos CNTRQRF), 0]; 
-WP_1 SetWaypointType "MOVE"; 
+		if (_RADSQRF > 1700) then {
+			PRL = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+			WP_1 = PRL addWaypoint [(getPos _CNTRQRF), 0]; 
+			WP_1 SetWaypointType "SAD"; 
 			PRL deleteGroupWhenEmpty true;
-};
+		};
+	} else {
+		diag_log "No valid OPFOR outpost found for QRF deployment.";
+	};
 
-if (RADSQRF > 1700) then {
-PRL = [(getPos CNTRQRF) getPos [(400 + (random 200)), (_azimuth - (random 20))] , East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-WP_1 = PRL addWaypoint [(getPos CNTRQRF), 0]; 
-WP_1 SetWaypointType "MOVE"; 
-			PRL deleteGroupWhenEmpty true;
-};
+	_QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
+	[_CNTRQRF] execVM _QRF;
 
+	sleep 30 ;
+	if (_RADSQRF > 1200) then {
+		_QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
+		[_CNTRQRF] execVM _QRF;
+		[_CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
+	};
 
+	sleep 30 ;
+	if (_RADSQRF > 1700) then {
+		_QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
+		[_CNTRQRF] execVM _QRF;
+		[_CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
+		[_CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
+	};
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	if (_RADSQRF > 1700) then {
+		[_CNTRQRF] execVM "Scripts\VehiInsert_CSAT_3.sqf";
+	};
 
-			 _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
-			[CNTRQRF] execVM _QRF ;
-
-sleep 30 ;
-if (RADSQRF > 1200) then {
-			 _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
-			[CNTRQRF] execVM _QRF ;
-			[CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
-};
-
-sleep 30 ;
-if (RADSQRF > 1700) then {
-			 _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
-			[CNTRQRF] execVM _QRF ;
-			[CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
-			[CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
-
-};
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-if (RADSQRF > 1700) then {
-[CNTRQRF] execVM "Scripts\VehiInsert_CSAT_3.sqf";
-};
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 };
 
-sleep 30 ;
-
-	{ removeFromRemainsCollector [_x]; } foreach (allUnits select { side _x != west }) ;
-	{ removeFromRemainsCollector [_x]; } foreach (vehicles select { side (driver  _x) != west }) ; 
-
-
-sleep 3 ; 
-
-	{ addToRemainsCollector [_x]; } foreach (allUnits select { side _x != west }) ;
-	{ addToRemainsCollector [_x]; } foreach (vehicles select { side (driver  _x) != west }) ; 
-
-
-
-
-
-
-
-
-
-
-
-
+sleep 30;
+{ removeFromRemainsCollector [_x]; } foreach (allUnits select { side _x != west });
+{ removeFromRemainsCollector [_x]; } foreach (vehicles select { side (driver  _x) != west }); 
+sleep 3; 
+{ addToRemainsCollector [_x]; } foreach (allUnits select { side _x != west });
+{ addToRemainsCollector [_x]; } foreach (vehicles select { side (driver  _x) != west }); 
