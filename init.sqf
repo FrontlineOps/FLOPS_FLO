@@ -32,15 +32,15 @@ waitUntil {
 Hints = true ;
 [] spawn {  
   while {Hints == true} do{  
-_HMS = selectRandom ["Hints0"];
-titleRsc [_HMS, "BLACK"];
+HMS = selectRandom ["Hints0"];
+titleRsc [HMS, "BLACK"];
  sleep 10;  
   }  
 };
 
 ////////////////////////////////////////////// // MAIN Init   // Everyone ////////////////////////////////////////////////
 
-_InitMain = execVM "initMain.sqf"; waitUntil { scriptDone _InitMain }; 
+InitMain = execVM "initMain.sqf"; waitUntil { scriptDone InitMain }; 
 
 
 
@@ -63,8 +63,8 @@ waitUntil {E_Init == "Done"};
 waitUntil {C_Init == "Done"};
 
 if (hasInterface) then {
-    _Triggers0 = execVM "Scripts\init_Triggers.sqf";
-    waitUntil { scriptDone _Triggers0 };
+    Triggers0 = execVM "Scripts\init_Triggers.sqf";
+    waitUntil { scriptDone Triggers0 };
 };
 
 waitUntil {(count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) == 7)};
@@ -108,19 +108,19 @@ waitUntil {(DIALOCC == 1) || (MarLOCC == 1) || (count (allMapMarkers select {mar
 // Directly assign triggers to headless clients
 if (HC1Present) then {
     if (player == HC_1) then {
-        ["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf"] call _executeAndWait;
+        ["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"] call _executeAndWait;
     };
 };
 
 if (HC2Present) then {
     if (player == HC_2) then {
-        ["Scripts\init_Triggers_3.sqf"] call _executeAndWait;
+        ["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"] call _executeAndWait;
     };
 };
 
 if (HC3Present) then {
     if (player == HC_3) then {
-        ["Scripts\init_Triggers_3.sqf"] call _executeAndWait;
+        ["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"] call _executeAndWait;
     };
 };
 
