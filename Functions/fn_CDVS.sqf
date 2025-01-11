@@ -179,10 +179,10 @@ private _EnmGroupMarks = allMapMarkers select {
     private _spawnSide = switch (markerColor _x) do {
         case "colorOPFOR": {EAST};
         case "colorIndependent": {independent};
-        default {objNull};
+        default {grpNull};
     };
 
-    if (_spawnSide != objNull) then {
+    if (_spawnSide != grpNull) then {
         _EnmGRP = [(getMarkerPos _x), _spawnSide, _array] call BIS_fnc_spawnGroup;
         _EnmGRP deleteGroupWhenEmpty true;
 
