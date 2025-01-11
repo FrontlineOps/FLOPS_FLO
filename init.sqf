@@ -2,7 +2,7 @@
 HQLOCC = 0 ;
 publicVariable "HQLOCC";
 
-titleText ["B.S.P Group Presents...", "BLACK IN",9999];
+titleText ["Frontline Operations Group Presents...", "BLACK IN",9999];
 5 fadeSound 0;
 
 sleep 5;
@@ -29,22 +29,8 @@ waitUntil {
     };
 };
 
-Hints = true ;
-[] spawn {  
-  while {Hints == true} do{  
-HMS = selectRandom ["Hints0"];
-titleRsc [HMS, "BLACK"];
- sleep 10;  
-  }  
-};
-
-////////////////////////////////////////////// // MAIN Init   // Everyone ////////////////////////////////////////////////
-
+// Init Main
 InitMain = execVM "initMain.sqf"; waitUntil { scriptDone InitMain }; 
-
-
-
-//playMusic "LeadTrack01_F_EPA";
 
 hintSilent "LOADING . . . "; 
 
@@ -55,9 +41,7 @@ enableSaving [false, false] ;
 setViewDistance 1000;
 setobjectViewDistance [1000, 200];
 
-////////////////////////////////////////////// // Custom Factions Init   // SERVER ////////////////////////////////////////////////
-
-
+// Init Custom Factions if they are selected
 waitUntil {F_Init == "Done"};
 waitUntil {E_Init == "Done"}; 
 waitUntil {C_Init == "Done"};
@@ -72,23 +56,20 @@ waitUntil {(count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) == 
 if ((isServer)  && !(didJIP)) then {SYSINT = 0} else {SYSINT = 1} ;
 
 
-////////////////////////////////////////////// // SYSTEMs Init   // Everyone ////////////////////////////////////////////////
-
+// Init UI Elements
 (findDisplay 46) displayAddEventHandler ["MouseButtonDown", "params ['_displayOrControl', '_button', '_xPos', '_yPos', '_shift', '_ctrl', '_alt'];  if ((_ctrl) && (_button == 1) && ((ctrlMapMouseOver (findDisplay 12 displayCtrl 51)) select 0 == 'marker')) then {[(ctrlMapMouseOver (findDisplay 12 displayCtrl 51)) select 1] execVM 'Scripts\MarkerIntro.sqf';}"]; 
 (findDisplay 46) displayAddEventHandler ["KeyDown", {params ["_displayorcontrol", "_key", "_shift", "_ctrl", "_alt"]; if ((_ctrl) && (_key == 24) && (!dialog)) then { createDialog "Satellite_Control_Tablet"; HCAM_0 cameraEffect ["Internal", "Back", "HCAM_S"]; }; }];
 (findDisplay 46) displayAddEventHandler ["KeyDown", {params ["_displayorcontrol", "_key", "_shift", "_ctrl", "_alt"]; if (_key == 24) then { titleFadeOut 0.01;}; }];
 (findDisplay 46) displayAddEventHandler ["KeyDown", {params ["_displayorcontrol", "_key", "_shift", "_ctrl", "_alt"]; if ((_ctrl) && (_key == 37) && (!dialog) && ((player getVariable ["AIS_unconscious", false]) != true)) then {execVM "Scripts\TEAMS.sqf" ;};}];
 
-////////////////////////////////////////////// // R3F Init   // Everyone ////////////////////////////////////////////////
-
+// Init R3F_LOG
 execVM "R3F_LOG\init.sqf";
 
-////////////////////////////////////////////// // ETV Init   // Everyone ////////////////////////////////////////////////
-
+// Init EtV
 execVM "Scripts\EtV.sqf";
 waitUntil {!isNil "EtVInitialized"};
 
-////////////////////////////////////////////// // Exec Vcom AI function ////////////////////////////////////////////////
+// Init VCOM AI
 
 // Helper function to execute and wait for a script
 private _executeAndWait = {

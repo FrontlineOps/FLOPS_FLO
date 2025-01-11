@@ -525,33 +525,4 @@ class intro
 
 };
 
-class Hints0
-{
-  	idd=96891516359;
-  	onLoad = "";
-	movingEnable=0;
-  	duration=15;
-  	fadein=0;
-  	fadeout=0;
-  	name="Hints0";
-  	controls[]={"title1"};
-	  	class title1
-	{
-		type=0;
-		idc=968915;
-		size=5;
-		colorBackground[]={0,0,0,0};
-		colorText[]={1,1,1,1};
-		font="PuristaMedium";
-  	  	text= "Screens\FOBA\BSP_Poster222.jpg";
-        style=48;
-  	  	sizeEx=0.15;
-         x = safeZoneX + 0.05 * safeZoneW;
-         y = safeZoneY + 0.05 * safeZoneH;
-         w = safeZoneW * 0.9;
-         h = safeZoneH * 0.9;
-	};
-};
-
-
 };
