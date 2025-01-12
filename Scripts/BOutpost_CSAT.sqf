@@ -7,7 +7,7 @@ _mrkr = _mrkrs select 0;
 _AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-sleep 15 ; 
+sleep 15; 
 
 [thisBaseTrigger] execVM "Scripts\HMGspawn.sqf" ; 
 
@@ -692,7 +692,7 @@ G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_sp
 //   } foreach (allUnits select {side _x == east}); 
   
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- sleep 10 ;
+ sleep 10;
  
 _trg = createTrigger ["EmptyDetector", getPos thisBaseTrigger, false];  
 _trg setTriggerArea [1000, 1000, 0, false, 200];  
@@ -738,4 +738,4 @@ _FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
 [thisBaseTrigger, 300] execVM "Scripts\INTLitems.sqf";
 
 
-sleep 2 ;
+sleep 2;

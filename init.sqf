@@ -44,7 +44,7 @@ waitUntil {C_Init == "Done"};
 
 if (hasInterface) then {
     Triggers0 = execVM "Scripts\init_Triggers.sqf";
-    waitUntil { sleep 1; scriptDone Triggers0 };
+    waitUntil {sleep 1; scriptDone Triggers0 };
 };
 
 waitUntil {sleep 1; (count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) == 7)};
@@ -73,11 +73,9 @@ private _executeAndWait = {
     // Loop over the _script array and execute each script
     {
         private _handle = execVM _x;
-        waitUntil { scriptDone _handle };
+        waitUntil {sleep 1; scriptDone _handle };
     } forEach _script;
 };
-
-sleep 2;
 
 HC1Present = if ( isNil "HC_1" ) then { False } else {True } ; 
 HC2Present = if ( isNil "HC_2" ) then { False } else {True } ; 
