@@ -31,7 +31,7 @@ _trgMine setTriggerActivation ["WEST", "PRESENT", false];
 _trgMine setTriggerStatements [
 "this && (({_x isKindOf 'Man'} count thisList >0) or ({_x isKindOf 'LandVehicle'} count thisList >0) or ({_x isKindOf 'Tank'} count thisList >0) or ({_x isKindOf 'Car'} count thisList >0))","[thisTrigger] execVM 'Scripts\Minefield.sqf';", ""];
 
-sleep 0.1 ;
+sleep 0.1;
 
 } forEach _objectLocT;
 
@@ -75,7 +75,7 @@ _TERR = nearestTerrainObjects [(getMarkerpos _x), ['FOREST', 'House', 'TREE', 'S
 
 _compReference = [ selectRandom _P1, (getMarkerpos _x), [0,0,0], _dir, true ] call LARs_fnc_spawnComp;
 
-sleep 0.1 ;
+sleep 0.1;
 
 _ARRAY = [ _compReference ] call LARs_fnc_getCompObjects;
 {_x setVectorUp [0,0,1];} forEach _ARRAY; 
@@ -477,7 +477,7 @@ _trgA setTriggerStatements [
 
 ", ""];
 
-sleep 0.2 ;
+sleep 0.2;
 
 } forEach _objectLocT;
 

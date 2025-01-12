@@ -52,14 +52,14 @@ if ( COMMSDIS == 0 ) then {
 	private _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
 	[_CNTRQRF] execVM _QRF;
 
-	sleep 30 ;
+	sleep 30;
 	if (_RADSQRF > 1200) then {
 		private _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
 		[_CNTRQRF] execVM _QRF;
 		[_CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
 	};
 
-	sleep 30 ;
+	sleep 30;
 	if (_RADSQRF > 1700) then {
 		private _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
 		[_CNTRQRF] execVM _QRF;
