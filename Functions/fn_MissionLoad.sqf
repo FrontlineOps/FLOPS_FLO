@@ -132,49 +132,6 @@ for "_x" from 0 to _CrewSelCnt do { _unit = _Group createunit [_crewType,[0,0,0]
 		_mrkr setMarkerText "DeActivate"; 
 		_mrkr setMarkerAlpha 0.005;	 
 		 };
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-_GroupMarks = allMapMarkers select {markerType _x == "b_unknown" && markerColor _x == "Color6_FD_F"};
-	{
-_GRP = [(getMarkerpos _x), WEST, (parseSimpleArray (markerText _x))] call BIS_fnc_spawnGroup ; 
-LoadGroup = createGroup West;
-publicVariable "LoadGroup";
-
-{[_x] join LoadGroup} forEach units _GRP;
-_L = (units LoadGroup) select 0;
-
- 
-
-
-
-
-	{[_x] execVM "Scripts\LDTInit.sqf" ;} forEach Units LoadGroup ;  
-
-_localityChanged = LoadGroup setGroupOwner (owner TheCommander);
-
-
-   if (markerText "Revive_Handle" == "Activate") then {{ [_x] call AIS_System_fnc_loadAIS;} forEach Units LoadGroup; }; 
-
-TheCommander hcSetGroup [LoadGroup];
-}forEach _GroupMarks;
-
-
-{deleteMarker _x; } forEach _GroupMarks;
-
-
-	{[_x] execVM "Scripts\LDTInit.sqf" ;} forEach (allUnits select {side _x == west}) ; 
-
-   if (markerText "Revive_Handle" == "Activate") then { 
-   
-	   {
-		   
-			{ [_x] call AIS_System_fnc_loadAIS;} forEach Units _x ; 
-			
-		} forEach (allGroups select {(side _x == (side player))}) ; 
-   
-   
-   };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
