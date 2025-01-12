@@ -37,7 +37,7 @@ VSCurrentTime = diag_tickTime;
 
 //  Mission Settings Loading//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-waitUntil {((count (allMapMarkers select {markerType _x == "b_installation"}) > 0) or (HQLOCC == 1)) && (count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) == 7)};
+waitUntil { sleep 1; ((count (allMapMarkers select {markerType _x == "b_installation"}) > 0) or (HQLOCC == 1)) && (count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) == 7)};
 
 	
  if (markerText "Friendly_Handle" == "CUSTOM_PLAYER_FACTION") then {  null = execVM "CUSTOM_PLAYER_FACTION.sqf" };
@@ -47,13 +47,13 @@ waitUntil {((count (allMapMarkers select {markerType _x == "b_installation"}) > 
 //All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script //////////All Script ////////
 
 _Enemy = execVM "Scripts\Enemy_Vars.sqf"; 
-waitUntil { scriptDone _Enemy };
+waitUntil { sleep 1; scriptDone _Enemy };
 
 _Friendly = execVM "Scripts\Friendly_Vars.sqf"; 
-waitUntil { scriptDone _Friendly };
+waitUntil { sleep 1; scriptDone _Friendly };
 
 _Civilian = execVM "Scripts\Civilian_Vars.sqf"; 
-waitUntil { scriptDone _Civilian };
+waitUntil { sleep 1; scriptDone _Civilian };
 
 //  Resource Loops////  Convoy Loops////  Radio Tower Loops/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

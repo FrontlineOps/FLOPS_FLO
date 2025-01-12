@@ -1,5 +1,3 @@
-sleep 3 ; 
-
 _Enemy = execVM "Scripts\Enemy_Vars.sqf"; 
 _Friendly = execVM "Scripts\Friendly_Vars.sqf"; 
 _Civilian = execVM "Scripts\Civilian_Vars.sqf"; 
@@ -8,8 +6,7 @@ _Civilian = execVM "Scripts\Civilian_Vars.sqf";
  if (markerText "Enemy_Handle" == "CUSTOM_ENEMY_FACTION") then {  _Enemy = execVM "CUSTOM_ENEMY_FACTION.sqf" };
  if (markerText "Civilian_Handle" == "CUSTOM_CIVILIAN_FACTION") then {  _Civilian = execVM "CUSTOM_CIVILIAN_FACTION.sqf" };
 
-waitUntil { scriptDone _Friendly && scriptDone _Enemy && scriptDone _Civilian };
-sleep 3 ; 
+waitUntil {sleep 1; scriptDone _Friendly && scriptDone _Enemy && scriptDone _Civilian }; 
 
 if (isServer) then {
 _Centerposition = [worldSize / 2, worldsize / 2, 0];
