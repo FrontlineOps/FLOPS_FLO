@@ -74,8 +74,10 @@ waitUntil {!isNil "EtVInitialized"};
 // Helper function to execute and wait for a script
 private _executeAndWait = {
     params ["_script"];
-    private _handle = execVM _script;
-    waitUntil { scriptDone _handle };
+    {
+        private _handle = execVM _x;
+        waitUntil { scriptDone _handle };
+    } forEach _script;
 };
 
 sleep 2;
@@ -87,34 +89,35 @@ HC3Present = if ( isNil "HC_3" ) then { False } else {True } ;
 waitUntil {(DIALOCC == 1) || (MarLOCC == 1) || (count (allMapMarkers select {markerType _x == "b_installation"}) > 0) || (count (allMapMarkers select {markerType _x == "b_unknown"}) > 0)};
 
 // Directly assign triggers to headless clients
-if (HC1Present) then {
-    if (player == HC_1) then {
-        ["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"] call _executeAndWait;
-    };
-};
+// TODO: If we have performance issues in the future we can do this
+// if (HC1Present) then {
+//     if (player == HC_1) then {
+//        [["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"]] call _executeAndWait;
+//     };
+// };
 
-if (HC2Present) then {
-    if (player == HC_2) then {
-        ["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"] call _executeAndWait;
-    };
-};
+// if (HC2Present) then {
+//     if (player == HC_2) then {
+//        [["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"]] call _executeAndWait;
+//     };
+// };
 
-if (HC3Present) then {
-    if (player == HC_3) then {
-        ["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"] call _executeAndWait;
-    };
-};
+// if (HC3Present) then {
+//     if (player == HC_3) then {
+//        [["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"]] call _executeAndWait;
+//     };
+// };
 
 // Handle the case where no headless clients are present
 if (!HC1Present && !HC2Present && !HC3Present) then {
     if (isServer) then {
-        ["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"] call _executeAndWait;
+        [["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"]] call _executeAndWait;
     };
 };
 
 waitUntil {(didJIP) or (TRG1LOCC == 1)};
 waitUntil {(didJIP) or (TRG2LOCC == 1)};
-waitUntil {(didJIP) or (TRG3LOCC == 1)};
+waitUntil {(didJIP) or (TRG3LOCC == 1)};    
 
 ///////////////////////////////////////////////////////////////////////////////////
 if (isClass (configfile >> "CfgVehicles" >> "Box_cTab_items") == true ) then { player addItem "ItemAndroid"; player addItem "ItemcTab"; };
