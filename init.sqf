@@ -1,3 +1,6 @@
+#include ".\config.sqf"
+private _is_debug = call is_debug;
+
 // Intro Title for the Mission
 HQLOCC = 0 ;
 publicVariable "HQLOCC";
@@ -9,8 +12,23 @@ if !(didJIP) then {
     waitUntil { sleep 1; MissionLoadedLitterally == 1};
 }; 
 
-// This is for when the mission is first ever created. 
-if ((count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) != 7) && (player == TheCommander) && (not didJIP)) then { execVM "Scripts\Dialog_Faction.sqf"; };
+// If NOT a debug mission setted in defines.hpp than show new game selection menu
+if !_is_debug then
+{
+    // This is for when the mission is first ever created. 
+    if ((count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) != 7) && (player == TheCommander) && (not didJIP)) then
+    {
+        execVM "Scripts\Dialog_Faction.sqf";
+    };
+}
+else
+{
+    // Else just give us map to choice position and fuckoff :D
+    if ((count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) != 7) && (player == TheCommander) && (not didJIP)) then
+    {
+        [true] execVM "Scripts\Dialog_Faction_Done.sqf";
+    };
+};
 
 // This is for when the mission is being loaded from a saved game.
 // After the Else statement is when the mission is first ever created and the creation of the initial Dialog_Faction.sqf is done and we have generated the safety zones around the Starting Point.
@@ -28,6 +46,7 @@ waitUntil {
 // Init Main
 InitMain = execVM "initMain.sqf"; waitUntil { scriptDone InitMain }; 
 
+// Hint start of init
 hintSilent "LOADING . . . "; 
 
 HCIV = 0;
@@ -116,3 +135,6 @@ waitUntil {(didJIP) or (TRG3LOCC == 1)};
 
 ///////////////////////////////////////////////////////////////////////////////////
 if (isClass (configfile >> "CfgVehicles" >> "Box_cTab_items") == true ) then { player addItem "ItemAndroid"; player addItem "ItemcTab"; };
+
+// Hint end of init
+hintSilent "LOADED!"; 
