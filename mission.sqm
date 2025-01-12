@@ -16,7 +16,7 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=16537;
+		nextID=16544;
 	};
 	class Camera
 	{
@@ -8278,7 +8278,6 @@ class Mission
 					};
 					id=123578;
 					type="LocationCity_F";
-					atlOffset=0.29646683;
 				};
 				class Item8
 				{

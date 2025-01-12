@@ -9,7 +9,7 @@ private _AGGRSCORE = parseNumber (markerText _mrkr) ;
 // Create Static Helicopter in Outpost
 if (count (nearestObjects [getPos thisOutpostTrigger, FLO_configCache get "helipads", 100]) > 0) then {
     _HPAD = nearestObjects [getPos thisOutpostTrigger, FLO_configCache get "helipads", 100] select 0;
-    _V = createVehicle [selectRandom (FLO_configCache get "vehicles" select 0), getPos _HPAD, [], 0, "NONE"];
+    _V = createVehicle [selectRandom (FLO_configCache get "vehicles" select 5), getPos _HPAD, [], 0, "NONE"];
     _V setVehicleLock "LOCKED";
     _dir = getDir _HPAD;
     _V setDir _dir;

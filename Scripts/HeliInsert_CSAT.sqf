@@ -15,7 +15,7 @@ if (COMMSDIS == 0) then {
 
             private _poss1 = [_thisHeliInsertTrigger, 50, 200, 1, 0, 1, 0] call BIS_fnc_findSafePos;
 
-            private _Heli_1 = createVehicle [selectRandom East_Air_Transport, _poss, [], 100, "FLY"];
+            private _Heli_1 = createVehicle [selectRandom (FLO_configCache get "vehicles" select 5), _poss, [], 100, "FLY"];
 
             private _Group = createGroup East;
             private _Heli_1_crew = createVehicleCrew _Heli_1;
@@ -27,7 +27,7 @@ if (COMMSDIS == 0) then {
             private _CREWC = _SCount - (count (units _Group)) - 1;
 
             for "_x" from 0 to _CREWC do {
-                private _unit = _GroupQRF createunit [selectRandom East_Units, _poss, [], 0, "None"];
+                private _unit = _GroupQRF createunit [selectRandom (FLO_configCache get "units"), _poss, [], 0, "None"];
                 [_unit] JoinSilent _GroupQRF;
             };
 
@@ -60,15 +60,15 @@ if (COMMSDIS == 0) then {
             _WPAB_2 SetWaypointType "MOVE";
             _WPAB_2 setWaypointSpeed "FULL";
 
-            private _WPS_1 = GroupQRF addWaypoint [_poss1, 0];
+            private _WPS_1 = _GroupQRF addWaypoint [_poss1, 0];
             _WPS_1 SetWaypointType "GETOUT";
             _WPS_1 setWaypointBehaviour "COMBAT";
             _WPS_1 setWaypointCompletionRadius 100;
-            private _WPS_2 = GroupQRF addWaypoint [getPos _thisHeliInsertTrigger, 0];
+            private _WPS_2 = _GroupQRF addWaypoint [getPos _thisHeliInsertTrigger, 0];
             _WPS_2 SetWaypointType "SAD";
             _WPS_2 setWaypointBehaviour "COMBAT";
 
-            {_x moveInCargo _Heli_1} foreach units GroupQRF;
+            {_x moveInCargo _Heli_1} foreach units _GroupQRF;
 
             (driver _Heli_1) disableAI "LIGHTS";
             _Heli_1 setPilotLight true;
@@ -83,7 +83,7 @@ if (COMMSDIS == 0) then {
         } else {
 
 			// If the Chance isn't 2 then we create an Attack Helicopter
-            private _Heli_1 = createVehicle [selectRandom East_Air_Heli, _poss, [], 100, "FLY"];
+            private _Heli_1 = createVehicle [selectRandom (FLO_configCache get "vehicles" select 0), _poss, [], 100, "FLY"];
             private _Group = createVehicleCrew _Heli_1;
             private _VC = createGroup East;
             {[_x] join _VC} forEach units _Group;
