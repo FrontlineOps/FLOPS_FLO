@@ -1,8 +1,6 @@
 disableSerialization;
 
-
 sleep 0.5;
-
 
 HQLOCC = 0;
 publicVariable "HQLOCC";
