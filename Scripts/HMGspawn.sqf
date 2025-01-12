@@ -16,8 +16,9 @@ if (count _nearHQs > 0) then {
 			_Chance = selectRandom [5, 10, 15] ; 
 					if (_Chance > 5) then {
 				_BPos = selectRandom [5, 7] ; 
-					_V = createVehicle ["O_G_HMG_02_high_F", [0,0,50], [], 0, "NONE"]; 
-					_V setPosATL (_x buildingPos _BPos);
+				    private _actualBpodPosition = (_x buildingPos _BPos) vectorAdd [0,0,1];
+					sleep 5;
+					_V = createVehicle ["O_G_HMG_02_high_F", _actualBpodPosition, [], 0, "NONE"]; 
 					_Group = createVehicleCrew _V; 
 					{_x setUnitLoadout (selectRandom East_Units)} forEach units _Group;
 					};
@@ -26,8 +27,9 @@ if (count _nearHQs > 0) then {
 			_Chance = selectRandom [5, 10, 15] ; 
 					if (_Chance > 5) then {
 				_BPos = selectRandom [6, 6] ; 
-					_V = createVehicle ["O_G_HMG_02_high_F", [0,0,50], [], 0, "NONE"]; 
-					_V setPosATL (_x buildingPos _BPos);
+					private _actualBpodPosition = (_x buildingPos _BPos) vectorAdd [0,0,1];
+					sleep 5;
+					_V = createVehicle ["O_G_HMG_02_high_F", _actualBpodPosition, [], 0, "NONE"]; 
 					_Group = createVehicleCrew _V; 
 					{_x setUnitLoadout (selectRandom East_Units)} forEach units _Group;
 					};
@@ -43,8 +45,9 @@ if (count _nearTowers > 0) then {
 			_Chance = selectRandom [5, 10, 15] ; 
 					if (_Chance > 5) then {
 				_BPos = selectRandom [10, 11, 12, 13, 14, 15, 16, 17] ; 
-					_V = createVehicle ["O_G_HMG_02_high_F", [0,0,50], [], 0, "NONE"]; 
-					_V setPosATL (_x buildingPos _BPos);
+					private _actualBpodPosition = (_x buildingPos _BPos) vectorAdd [0,0,1];
+					sleep 5;
+					_V = createVehicle ["O_G_HMG_02_high_F", _actualBpodPosition, [], 0, "NONE"]; 
 					_Group = createVehicleCrew _V; 
 					{_x setUnitLoadout (selectRandom East_Units)} forEach units _Group;
 					};
@@ -53,8 +56,9 @@ if (count _nearTowers > 0) then {
 			_Chance = selectRandom [5, 10, 15] ; 
 					if (_Chance > 5) then {
 				_BPos = selectRandom [10, 11, 12, 13, 14, 15, 16, 17] ; 
-					_V = createVehicle ["O_G_HMG_02_high_F", [0,0,50], [], 0, "NONE"]; 
-					_V setPosATL (_x buildingPos _BPos);
+					private _actualBpodPosition = (_x buildingPos _BPos) vectorAdd [0,0,1];
+					sleep 5;
+					_V = createVehicle ["O_G_HMG_02_high_F", _actualBpodPosition, [], 0, "NONE"]; 
 					_Group = createVehicleCrew _V; 
 					{_x setUnitLoadout (selectRandom East_Units)} forEach units _Group;
 					};
@@ -70,8 +74,9 @@ if (count _nearTrenches > 0) then {
 			_Chance = selectRandom [5, 10, 15] ; 
 					if (_Chance > 5) then {
 				_BPos = selectRandom [17, 15] ; 
-					_V = createVehicle ["O_G_HMG_02_high_F", [0,0,50], [], 0, "NONE"]; 
-					_V setPosATL (_x buildingPos _BPos);
+					private _actualBpodPosition = (_x buildingPos _BPos) vectorAdd [0,0,1];
+					sleep 5;
+					_V = createVehicle ["O_G_HMG_02_high_F", _actualBpodPosition, [], 0, "NONE"]; 
 					_Group = createVehicleCrew _V; 
 					{_x setUnitLoadout (selectRandom East_Units)} forEach units _Group;
 					};
