@@ -27,41 +27,41 @@ if ( COMMSDIS == 0 ) then {
 		// Use the position of the nearest outpost for spawning
 		private _spawnPos = getMarkerPos _nearestOutpost;
 		// Send Immediate QRF if BLUFOR has captured an objective of OPFOR
-		PRL = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
-		WP_1 = PRL addWaypoint [(getPos _CNTRQRF), 0]; 
-		WP_1 SetWaypointType "SAD"; 
-		PRL deleteGroupWhenEmpty true;
+		private _PRL = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+		private _WP_1 = _PRL addWaypoint [(getPos _CNTRQRF), 0]; 
+		_WP_1 SetWaypointType "SAD"; 
+		_PRL deleteGroupWhenEmpty true;
 
 		if (_RADSQRF > 1200) then {
-			PRL = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
-			WP_1 = PRL addWaypoint [(getPos _CNTRQRF), 0]; 
-			WP_1 SetWaypointType "SAD"; 
-			PRL deleteGroupWhenEmpty true;
+			private _PRL = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+			private _WP_1 = _PRL addWaypoint [(getPos _CNTRQRF), 0]; 
+			_WP_1 SetWaypointType "SAD"; 
+			_PRL deleteGroupWhenEmpty true;
 		};
 
 		if (_RADSQRF > 1700) then {
-			PRL = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
-			WP_1 = PRL addWaypoint [(getPos _CNTRQRF), 0]; 
-			WP_1 SetWaypointType "SAD"; 
-			PRL deleteGroupWhenEmpty true;
+			private _PRL = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+			private _WP_1 = _PRL addWaypoint [(getPos _CNTRQRF), 0]; 
+			_WP_1 SetWaypointType "SAD"; 
+			_PRL deleteGroupWhenEmpty true;
 		};
 	} else {
 		diag_log "No valid OPFOR outpost found for QRF deployment.";
 	};
 
-	_QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
+	private _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
 	[_CNTRQRF] execVM _QRF;
 
 	sleep 30 ;
 	if (_RADSQRF > 1200) then {
-		_QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
+		private _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
 		[_CNTRQRF] execVM _QRF;
 		[_CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
 	};
 
 	sleep 30 ;
 	if (_RADSQRF > 1700) then {
-		_QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
+		private _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
 		[_CNTRQRF] execVM _QRF;
 		[_CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
 		[_CNTRQRF] execVM "Scripts\VehiInsert_CSAT_1.sqf";
