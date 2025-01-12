@@ -15,6 +15,8 @@ private _mrkr = _mrkrs select 0;
 
 private _AGGRSCORE = markerText _mrkr call BIS_fnc_parseNumber;
 
+// OPFOR Frontline Becomes More Aggressive as Aggression Increases 
+// Setting up more Outpost FOBs pushing BLUFOR Installations
 private _Time = 900;
 if (_AGGRSCORE > 3) then {_Time = 700;};
 if (_AGGRSCORE > 9) then {_Time = 500;};
@@ -32,6 +34,8 @@ if (count _humanPlayers > 0) then {
         _ENMChances = selectRandom [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
     };
 
+    // This chance rolls then we do a full scale assault using vehicles & helicopters
+    // This does not create a new OPFOR FOB
     if (_ENMChances > 7) then {
         private _allZoneMarks = allMapMarkers select {
             markerType _x == "loc_Power" ||
@@ -75,11 +79,7 @@ if (count _humanPlayers > 0) then {
 
         private _CNTR = (nearestObjects [
             (getMarkerPos _Destmrk),
-            [
-                "Land_Cargo_HQ_V3_F", "Land_Cargo_HQ_V1_F", "Land_Cargo_House_V1_F", "Land_Cargo_House_V3_F",
-                "Land_Cargo_HQ_V3_ruins_F", "Land_Cargo_HQ_V1_ruins_F", "Land_Cargo_House_V1_ruins_F",
-                "Land_Cargo_House_V3_ruins_F", "House"
-            ],
+            FLO_configCache get "HQbuildings",
             300
         ]) select 0;
 
@@ -102,8 +102,8 @@ if (count _humanPlayers > 0) then {
         private _QRF = selectRandom ["Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"];
         [_CNTR] execVM _QRF;
         private _PRL = [(getMarkerPos _Destmrk) getPos [(500 + (random 100)), (_Assaultazimuth + (random 20))], East, [
-            selectRandom East_Units, selectRandom East_Units, selectRandom East_Units,
-            selectRandom East_Units, selectRandom East_Units, selectRandom East_Units
+            selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"),
+            selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")
         ]] call BIS_fnc_spawnGroup;
         private _WP_1 = _PRL addWaypoint [getMarkerPos _Destmrk, 0];
         _WP_1 SetWaypointType "MOVE";
@@ -116,8 +116,8 @@ if (count _humanPlayers > 0) then {
             _QRF = selectRandom ["Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"];
             [_CNTR] execVM _QRF;
             _PRL = [(getMarkerPos _Destmrk) getPos [(500 + (random 100)), (_Assaultazimuth + (random 20))], East, [
-                selectRandom East_Units, selectRandom East_Units, selectRandom East_Units,
-                selectRandom East_Units, selectRandom East_Units, selectRandom East_Units
+                selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"),
+                selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")
             ]] call BIS_fnc_spawnGroup;
             _WP_1 = _PRL addWaypoint [getMarkerPos _Destmrk, 0];
             _WP_1 SetWaypointType "MOVE";
@@ -129,14 +129,16 @@ if (count _humanPlayers > 0) then {
             _Assaultazimuth = (getMarkerPos _Destmrk) getDir (getMarkerPos _OBJmrk);
             [_CNTR] execVM "Scripts\VehiInsert_CSAT_3.sqf";
             _PRL = [(getMarkerPos _Destmrk) getPos [(500 + (random 100)), (_Assaultazimuth - (random 20))], East, [
-                selectRandom East_Units, selectRandom East_Units, selectRandom East_Units,
-                selectRandom East_Units, selectRandom East_Units, selectRandom East_Units
+                selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"),
+                selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")
             ]] call BIS_fnc_spawnGroup;
             _WP_1 = _PRL addWaypoint [getMarkerPos _Destmrk, 0];
             _WP_1 SetWaypointType "MOVE";
         };
     };
 
+    // This chance rolls then we do not perform an assault
+    // but this time we create a new OPFOR FOB 
     if ((_ENMChances > 4) && (_ENMChances < 8)) then {
         private _allZoneMarks = allMapMarkers select {
             markerType _x == "loc_Power" ||
@@ -267,7 +269,7 @@ if (count _humanPlayers > 0) then {
 			_trgA setTriggerTimeout [1, 1, 1, true];
 			_trgA setTriggerActivation ['WEST', 'PRESENT', false];
 			_trgA setTriggerStatements [
-			""this"", ""
+			""this"",""
 
 			[thisTrigger] execVM 'Scripts\HeliInsert_CSAT.sqf';
 
@@ -279,7 +281,7 @@ if (count _humanPlayers > 0) then {
 			_trgA setTriggerTimeout [1, 1, 1, true];
 			_trgA setTriggerActivation ['WEST', 'PRESENT', false];
 			_trgA setTriggerStatements [
-			""this"", ""
+			""this"",""
 
 			[thisTrigger] execVM 'Scripts\VehiInsert_CSAT.sqf';
 
@@ -293,6 +295,8 @@ if (count _humanPlayers > 0) then {
         [[west,"HQ"], "Enemy Deployed New Military Installation at grid " + _attackingAtGrid] remoteExec ["sideChat", 0];
     };
 
+    // This chance rolls then we do not perform an assault
+    // We just setup a new roadblock
     if (_ENMChances < 5) then {
         private _allZoneMarks = allMapMarkers select {
             markerType _x == "loc_Power" ||
