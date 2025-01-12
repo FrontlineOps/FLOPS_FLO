@@ -22,7 +22,7 @@ private _Group = createVehicleCrew _V;
 private _VC = createGroup East;
 {[_x] join _VC} forEach units _Group;
 
-_V flyInHeight 100; 
+_V flyInHeight 700; 
 _V disableAI "LIGHTS"; 
 _V setPilotLight true;
 _V setCollisionLight true; 
@@ -34,7 +34,7 @@ private _Group = createVehicleCrew _V;
 private _VC = createGroup East;
 {[_x] join _VC} forEach units _Group;
 
-_V flyInHeight 100; 
+_V flyInHeight 700; 
 _V disableAI "LIGHTS"; 
 _V setPilotLight true;
 _V setCollisionLight true; 
@@ -47,7 +47,7 @@ if (_AGGRSCORE > 5) then {
 	private _VC = createGroup East;
 	{[_x] join _VC} forEach units _Group;
 
-	_V flyInHeight 100; 
+	_V flyInHeight 700; 
 	_V disableAI "LIGHTS"; 
 	_V setPilotLight true;
 	_V setCollisionLight true; 
@@ -61,7 +61,7 @@ if (_AGGRSCORE > 10) then {
 	private _VC = createGroup East;
 	{[_x] join _VC} forEach units _Group;
 
-	_V flyInHeight 100; 
+	_V flyInHeight 700; 
 	_V disableAI "LIGHTS"; 
 	_V setPilotLight true;
 	_V setCollisionLight true; 
