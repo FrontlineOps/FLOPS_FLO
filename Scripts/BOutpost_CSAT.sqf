@@ -489,30 +489,6 @@ G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-_CRT = [
-"Box_IND_WpsSpecial_F",
-"Box_IND_WpsSpecial_F",
-"Box_East_WpsSpecial_F",
-"Box_East_WpsSpecial_F",
-"Box_IND_Support_F",
-"Box_IND_Support_F",
-"Box_IND_Support_F",
-"Box_East_Support_F",
-"Box_East_Support_F",
-"Box_East_Support_F",
-"Box_CSAT_Equip_F",
-"Box_AAF_Equip_F",
-"Box_East_WpsLaunch_F",
-"Box_East_WpsLaunch_F",
-"Box_IND_WpsLaunch_F",
-"Box_IND_WpsLaunch_F",
-"Box_East_AmmoOrd_F",
-"Box_East_Ammo_F",
-"Box_IND_Ammo_F",
-"Box_IND_AmmoOrd_F",
-"Box_East_Wps_F",
-"Box_IND_Wps_F"
-];
 
 _poss = [(getpos thisBaseTrigger), 10, 20, 4, 0.1 , 0] call BIS_fnc_findSafePos;
 _VLAMP = createVehicle [ "Land_LampAirport_F", _poss, [], 5, "NONE"];
@@ -521,7 +497,7 @@ _VLAMP = createVehicle [ "Land_LampAirport_F", _poss, [], 5, "NONE"];
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-_allBuildings = nearestObjects [(getpos thisBaseTrigger), ["House", "Land_MilOffices_V1_F", "Land_Cargo_Tower_V3_F", "Land_Cargo_Tower_V2_F", "Land_Cargo_Tower_V1_F", "Land_Cargo_HQ_V3_F", "Land_Cargo_HQ_V2_F", "Land_Cargo_HQ_V1_F"], 300];  
+_allBuildings = nearestObjects [(getpos thisBaseTrigger), (FLO_configCache get "buildings"), 300];  
 
 _HQ = selectRandom _allBuildings;
 _dir = getDirVisual _HQ;
@@ -546,15 +522,6 @@ _dir = getDirVisual _HQ;
 _HQ = selectRandom _allBuildings;
 _dir = getDirVisual _HQ;
 [ "Intel_01", (selectRandom (_HQ buildingPos -1)), [0,0,0], _dir, false, false, true ] call LARs_fnc_spawnComp; 
-
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
 
 if (_AGGRSCORE > 5) then {
 	_HQ = selectRandom _allBuildings;
@@ -655,18 +622,11 @@ _VC = createGroup East;
 } forEach _HeavGuns;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-if (count nearestObjects [(getpos thisBaseTrigger), ["Land_BagBunker_Large_F", "Land_BagBunker_Small_F", "Land_Cargo_House_V3_F", "Land_Cargo_House_V1_F", "Land_Cargo_Patrol_V3_F", "Land_Cargo_Patrol_V2_F", "Land_Cargo_Patrol_V1_F"], 300] > 0) then {
+if (count nearestObjects [(getpos thisBaseTrigger), (FLO_configCache get "bunkers"), 300] > 0) then {
 
-_allBuildings = nearestObjects [(getpos thisBaseTrigger), ["Land_BagBunker_Large_F", "Land_BagBunker_Small_F", "Land_Cargo_House_V3_F", "Land_Cargo_House_V1_F", "Land_Cargo_Patrol_V3_F", "Land_Cargo_Patrol_V2_F", "Land_Cargo_Patrol_V1_F"], 300];  
+_allBuildings = nearestObjects [(getpos thisBaseTrigger), (FLO_configCache get "bunkers"), 300];  
 _allPositions = [];  
 _allBuildings apply {_allPositions append (_x buildingPos -1)}; 
-
-_V = createVehicle [(selectRandom _CRT), selectRandom _allPositions, [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), selectRandom _allPositions, [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), selectRandom _allPositions, [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), selectRandom _allPositions, [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), selectRandom _allPositions, [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), selectRandom _allPositions, [], 0, "NONE"]; 
 
 
 G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
@@ -734,7 +694,7 @@ G = [selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_sp
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  sleep 10 ;
  
- _trg = createTrigger ["EmptyDetector", getPos thisBaseTrigger, false];  
+_trg = createTrigger ["EmptyDetector", getPos thisBaseTrigger, false];  
 _trg setTriggerArea [1000, 1000, 0, false, 200];  
 _trgA setTriggerTimeout [2, 2, 2, true];
 _trg setTriggerActivation ["WEST", "PRESENT", false];  
