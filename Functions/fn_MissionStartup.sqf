@@ -326,7 +326,6 @@ false
 {
 	
 			remoteExec ["BSPCO_fnc_MissionSave", 2] ;
-			remoteExec ["BSPCO_fnc_MissionSaveGroups", 2] ; 
 	
 	},
 {},
@@ -404,41 +403,6 @@ false
 false,
 false
 ] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
-
-[ _x,
-	"<img size=2 color='#ffa10d' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#ffa10d'>SELECT Unit Loadouts",
-'Screens\FOBA\b_hq.paa',
-'Screens\FOBA\b_hq.paa',
-"((player == TheCommander) && (serverCommandAvailable '#kick') && (serverCommandAvailable '#debug')) || ((player == TheCommander) && (isServer)) || ((player == TheCommander) && (isServer))",       
-'_caller distance _target < 40',  
-{},
-{},
-{ execVM "Scripts\init_LoadOuts.sqf" ;},
-{},
-[],
-2,
-1,
-false,
-false
-] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
-
-[ _x,
-	"<img size=2 color='#ffa10d' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#ffa10d'>RESET Unit Loadouts",
-'Screens\FOBA\b_hq.paa',
-'Screens\FOBA\b_hq.paa',
-"((player == TheCommander) && (serverCommandAvailable '#kick') && (serverCommandAvailable '#debug')) || ((player == TheCommander) && (isServer)) || ((player == TheCommander) && (isServer))",       
-'_caller distance _target < 40',  
-{},
-{},
-{ execVM "Scripts\LDTReset.sqf" ;},
-{},
-[],
-2,
-1,
-false,
-false
-] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
- 
  
  } foreach _FOBT;
  
@@ -1132,67 +1096,6 @@ if (((markerText "Friendly_Handle" == "United States Armed Forces _ Woodland _ C
   _AAAs = nearestObjects [Centerposition, ["O_Radar_System_02_F","O_SAM_System_04_F","vn_o_nva_navy_static_v11m", "vn_o_pl_static_zpu4"], 40000];
   {createVehicleCrew _x; } forEach _AAAs ; 
 
-
-// {
-// [_x,[
-// 	"<img size=2 color='#f37c00' image='\a3\ui_f_oldman\data\IGUI\Cfg\holdactions\repair_ca.paa'/><t font='PuristaBold' color='#f37c00'>REPAIR Vehicles",
-// {
-// (_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
-// [(_this select 0)] execVM "Scripts\REPAIRVEH.sqf" ;
-// },
-// 	nil,
-// 	9999,
-// 	true,
-// 	true,
-// 	"",
-// 	"_this distance _target < 5", // _target, _this, _originalTarget
-// 	5,
-// 	false,
-// 	"",
-// 	""
-// ]] remoteExec ["addAction",0,true];
-// } forEach (allUnits select { (side _x == west) && ((typeOf _x == F_Assault_Eng)  || (typeOf _x == "B_G_engineer_F") || (typeOf _x == F_Recon_Eng)  || (typeOf _x == "B_CTRG_soldier_engineer_exp_F")) } ) ;
-
-// {
-// [_x,[
-// 	"<img size=2 color='#FFE258' image='Screens\FOBA\mg_ca.paa'/><t font='PuristaBold' color='#FFE258'>REARM Infantry",
-// {
-// (_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
-// [(_this select 0)] execVM "Scripts\REARM.sqf" ;
-// },
-// 	nil,
-// 	9999,
-// 	true,
-// 	true,
-// 	"",
-// 	"_this distance _target < 5", // _target, _this, _originalTarget
-// 	5,
-// 	false,
-// 	"",
-// 	""
-// ]] remoteExec ["addAction",0,true];
-// } forEach (allUnits select { (side _x == west) && ((typeOf _x == F_Assault_Amm)  || (typeOf _x == "B_G_Soldier_A_F")) } ) ;
-
-// {
-// [_x,[
-// 	"<img size=2 color='#0bff00' image='\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_revive_ca.paa'/><t font='PuristaBold' color='#0bff00'>HEAL Infantry",
-// {
-// (_this select 0) playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; 
-// [(_this select 0)] execVM "Scripts\HEAL.sqf" ;
-// },
-// 	nil,
-// 	9999,
-// 	true,
-// 	true,
-// 	"",
-// 	"_this distance _target < 5", // _target, _this, _originalTarget
-// 	5,
-// 	false,
-// 	"",
-// 	""
-// ]] remoteExec ["addAction",0,true];
-// } forEach (allUnits select { (side _x == west) && ((typeOf _x == F_Recon_Med)  || (typeOf _x == F_Assault_Med)  || (typeOf _x == "B_G_medic_F")  || (typeOf _x == "B_CTRG_soldier_M_medic_F")) } ) ;
-
 {
 	
 	_x setUnitTrait ["explosiveSpecialist", true];
@@ -1209,7 +1112,7 @@ _x setVariable ["ACE_isEOD", true];
 
 } forEach (allUnits select {side _x == west}) ;  } remoteExec ["call", 0];
 
-	{[_x] execVM "Scripts\LDTInit.sqf" ;} forEach (allUnits select {side _x == west}) ; 
+	//{[_x] execVM "Scripts\LDTInit.sqf" ;} forEach (allUnits select {side _x == west}) ; 
 
 [[west,"HQ"], "Mission StartUp Initialized Successfully ..."] remoteExec ["sideChat", 0];
 

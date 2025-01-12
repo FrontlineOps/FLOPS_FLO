@@ -10,7 +10,7 @@ sleep 5;
 sleep 2;
 
 if !(didJIP) then {
-waitUntil {MissionLoadedLitterally == 1};
+    waitUntil {MissionLoadedLitterally == 1};
 }; 
 
 sleep 2;

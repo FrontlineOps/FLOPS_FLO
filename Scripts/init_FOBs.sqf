@@ -380,41 +380,6 @@ false
 false,
 false
 ] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
-
-[ _x,
-	"<img size=2 color='#ffa10d' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#ffa10d'>SELECT Unit Loadouts",
-'Screens\FOBA\b_hq.paa',
-'Screens\FOBA\b_hq.paa',
-"((player == TheCommander) && (serverCommandAvailable '#kick') && (serverCommandAvailable '#debug')) || ((player == TheCommander) && (isServer)) || ((player == TheCommander) && (isServer))",       
-'_caller distance _target < 40',  
-{},
-{},
-{ execVM "Scripts\init_LoadOuts.sqf" ;},
-{},
-[],
-2,
-1,
-false,
-false
-] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
-
-[ _x,
-	"<img size=2 color='#ffa10d' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#ffa10d'>RESET Unit Loadouts",
-'Screens\FOBA\b_hq.paa',
-'Screens\FOBA\b_hq.paa',
-"((player == TheCommander) && (serverCommandAvailable '#kick') && (serverCommandAvailable '#debug')) || ((player == TheCommander) && (isServer)) || ((player == TheCommander) && (isServer))",       
-'_caller distance _target < 40',  
-{},
-{},
-{ execVM "Scripts\LDTReset.sqf" ;},
-{},
-[],
-2,
-1,
-false,
-false
-] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
- 
  
  } foreach _FOBT;
  

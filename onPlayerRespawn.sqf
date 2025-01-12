@@ -211,30 +211,4 @@ ShowHUD [true, true, true, true, true, true, true, true, true, true];
 BIS_DeathBlur ppEffectAdjust [0.0]; 
 BIS_DeathBlur ppEffectCommit 0.0;
 
-
-// if !(isNil "RESPAWN_IS_FORCED" || {RESPAWN_IS_FORCED == true}) then {
-
-// 	[player] join grpNull ;
-
-// 	player setUnitLoadout (player getVariable ["Respawn_Saved_Loadout",[]]);
-
-// 	if (count ((units OLDGRP) select {alive _x == true}) > 0) then {
-// 			GNRT = "YES" ;
-// 			DVRT = "NO" ;
-// 			0 = [] spawn {
-// 				_result = ["REJOIN YOUR TEAM ?", "", DVRT, GNRT,nil, false, false] call BIS_fnc_guiMessage;
-
-// 							if (_result) then {
-// 							} ;
-
-// 							if (!_result) then {
-// 							[player] join OLDGRP ;	
-// 							group player selectLeader player;						
-// 							};
-// 			};
-// 	};
-// } else {
-// 	RESPAWN_IS_FORCED = false;
-// };
-
 if (markerText "Revive_Handle" == "Activate") then {  {[_x] call AIS_System_fnc_loadAIS;} forEach Units group player; };

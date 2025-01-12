@@ -16,11 +16,11 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=16523;
+		nextID=16537;
 	};
 	class Camera
 	{
-		pos[]={8326.459,129.59805,7135.835};
+		pos[]={8329.418,134.24727,7131.2251};
 		dir[]={0.011546974,-0.68661606,0.72692853};
 		up[]={0.010905251,0.7270202,0.68652946};
 		aside[]={0.99987388,0,-0.015882604};
@@ -8278,6 +8278,7 @@ class Mission
 					};
 					id=123578;
 					type="LocationCity_F";
+					atlOffset=0.29646683;
 				};
 				class Item8
 				{
