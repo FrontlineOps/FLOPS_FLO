@@ -1,128 +1,53 @@
+private _thisMineFieldTrigger = _this select 0;
+private _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
+private _mrkr = _mrkrs select 0;
+private _AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
-_thisMineFieldTrigger = _this select 0;
-_mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
-_mrkr = _mrkrs select 0;
-_AGGRSCORE = parseNumber (markerText _mrkr) ;  
-
+private _mines = [];
+private _mineCount = 10; // Default mine count
 
 if (_AGGRSCORE < 6) then {
-_Mines = [ "APERSMine", "APERSBoundingMine" ]; 
- 
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 100))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 100))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 100))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 100))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 100))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 100))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 100))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 100))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 100))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 100))];
-};
-
-if ((_AGGRSCORE > 5) && (_AGGRSCORE < 11)) then {
-_Mines = [ "APERSMine", "APERSBoundingMine" ]; 
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 250))];
+    _mineCount = 10;
+} else {
+    _mineCount = 20;
 };
 
 if (_AGGRSCORE > 10) then {
-_Mines = [ "APERSMine", "APERSBoundingMine" ]; 
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine [selectRandom _Mines,  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-_mine = createMine ["ATMine",  getpos _thisMineFieldTrigger, [], (0 + (random 450))];
-
+    _mineCount = 40;
 };
 
+private _minesToCreate = [];
+if (_AGGRSCORE > 5) then {
+    _minesToCreate = ["APERSMine", "APERSBoundingMine", "ATMine"];
+} else {
+    _minesToCreate = ["APERSMine", "APERSBoundingMine"];
+};
 
-_TFOBA = createTrigger ["EmptyDetector", getpos _thisMineFieldTrigger];  
-_TFOBA setTriggerArea [350, 350, 0, false, 50];  
-_TFOBA setTriggerInterval 2;  
-_TFOBA setTriggerActivation ["ANYPLAYER", "PRESENT", false];  
-_TFOBA setTriggerStatements [  
-"count (allMines select {position _x inArea thisTrigger}) == 0",  
-"
-_MMarks = allMapMarkers select { markerType _x == 'loc_mine'};
-_M = [_MMarks,  thisTrigger] call BIS_fnc_nearestPosition;
+for "_i" from 1 to _mineCount do {
+    private _mineType = selectRandom _minesToCreate;
+    private _distance = 0 + (random (if (_AGGRSCORE < 6) then {100} else {if (_AGGRSCORE < 11) then {250} else {450}}));
+    _mine = createMine [_mineType, getPos _thisMineFieldTrigger, [], _distance];
+    _mines pushBack _mine;
+};
 
-deleteMarker _M ; 
+[] spawn {
+    while {true} do {
+        sleep 10; // Check every 10 seconds
 
-				[100, 'MINEFIELD'] execVM 'Scripts\NOtification.sqf' ;
+        if (count (allMines select {position _x inArea _thisMineFieldTrigger}) == 0) then {
+            private _MMarks = allMapMarkers select {markerType _x == "loc_mine"};
+            private _M = [_MMarks, _thisMineFieldTrigger] call BIS_fnc_nearestPosition;
 
-[100] execVM 'Scripts\Reward.sqf';
-[] execVM 'Scripts\ReputationPlus.sqf';
-[] execVM 'Scripts\ReputationPlus.sqf';
-execVM 'Scripts\Civ_Relations.sqf';
+            if (!isNil "_M") then {
+                deleteMarker _M;
+            };
 
-", ""];
+            [100, "MINEFIELD"] execVM "Scripts\\NOtification.sqf";
+            [100] execVM "Scripts\\Reward.sqf";
+            [] execVM "Scripts\\ReputationPlus.sqf";
+            execVM "Scripts\\Civ_Relations.sqf";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            break; // Exit the loop once the condition is met
+        };
+    };
+};
