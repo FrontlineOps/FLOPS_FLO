@@ -1,72 +1,24 @@
+private _mineTypesAP = ["APERSMine", "APERSBoundingMine"];
+private _mineTypesAT = ["ATMine"];
 
- _allAPMineMarks = allMapMarkers select {markerType _x == "mil_triangle" && markerColor _x == "colorBLUFOR" && markerText _x == "AP MineField"};  
+private _createMines = {
+    params ["_mineTypes", "_markers"];
+    {
+        for "_i" from 1 to 28 do {
+            private _mineType = selectRandom _mineTypes;
+            createMine [_mineType, getMarkerPos _x, [], 200];
+        };
+    } forEach _markers;
+};
 
-	 {
-_Mines = [ "APERSMine", "APERSBoundingMine" ]; 
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
-_mine = createMine [selectRandom _Mines,  getMarkerpos _x, [],200];
+// Create AP mines
+private _allAPMineMarks = allMapMarkers select {
+    markerType _x == "mil_triangle" && markerColor _x == "colorBLUFOR" && markerText _x == "AP MineField"
+};
+[_mineTypesAP, _allAPMineMarks] call _createMines;
 
-
-
-} forEach _allAPMineMarks ;
-
- _allATMineMarks = allMapMarkers select {markerType _x == "mil_triangle" && markerColor _x == "colorBLUFOR" && markerText _x == "AT MineField"};  
-
-	 {
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-_mine = createMine ["ATMine",  getMarkerpos _x, [], 200];
-
-
-} forEach _allATMineMarks ;
+// Create AT mines
+private _allATMineMarks = allMapMarkers select {
+    markerType _x == "mil_triangle" && markerColor _x == "colorBLUFOR" && markerText _x == "AT MineField"
+};
+[_mineTypesAT, _allATMineMarks] call _createMines;
