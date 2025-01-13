@@ -42,10 +42,10 @@ for "_i" from 1 to _mineCount do {
                 deleteMarker _M;
             };
 
-            [100, "MINEFIELD"] execVM "Scripts\\NOtification.sqf";
-            [100] execVM "Scripts\\Reward.sqf";
-            [] execVM "Scripts\\ReputationPlus.sqf";
-            execVM "Scripts\\Civ_Relations.sqf";
+            [100, "MINEFIELD"] execVM "Scripts\NOtification.sqf";
+            [100] execVM "Scripts\Reward.sqf";
+            [] execVM "Scripts\ReputationPlus.sqf";
+            execVM "Scripts\Civ_Relations.sqf";
 
             break; // Exit the loop once the condition is met
         };
