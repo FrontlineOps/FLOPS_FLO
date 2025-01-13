@@ -71,8 +71,6 @@ sleep 1;
 titleText ["<t color='#674ea7' size='2' font='PuristaBold'>FLO  |  FRONTLINE OPERATIONS</t>", "BLACK IN",7, true, true];
 
 //Initialize the player
-hintSilent "";
-
 player hideObjectGlobal false;
 player enableSimulationGlobal true;
 player allowDamage true;
@@ -83,5 +81,3 @@ if (isMultiplayer) then {
 };
 
 player linkItem "B_UavTerminal";
-
-hintSilent
