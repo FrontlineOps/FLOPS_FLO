@@ -1,24 +1,30 @@
+private _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
+private _mrkr = _mrkrs select 0;
+private _AGGRSCORE = parseNumber (markerText _mrkr);  
 
+// Function to hide terrain objects near specified markers
+private _hideTerrainObjectsNearMarkers = {
+    params ["_markers", "_types", "_radius"];
 
+    {
+        private _terrainObjects = nearestTerrainObjects [(getMarkerPos _x), _types, _radius];
+        {
+            [_x, true] remoteExec ["hideObjectGlobal", 2];
+        } forEach _terrainObjects;
+    } forEach _markers;
+};
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-_mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
-_mrkr = _mrkrs select 0;
-_AGGRSCORE = parseNumber (markerText _mrkr) ;  
-//////Resources/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Define marker types and radius
+private _markerTypes = ["b_installation"];
+private _markerColor = "colorBLUFOR";
+private _terrainTypes = ["FOREST", "TREE", "SMALL TREE", "BUSH", "ROCK", "ROCKS"];
+private _radius = 40;
 
-
-_objectLocT = allMapMarkers select {markerType _x == "b_installation"  && markerColor _x == "colorBLUFOR"};
-
-{
-_TERR = nearestTerrainObjects [(getMarkerpos _x), ["FOREST", "TREE", "SMALL TREE", "BUSH", "ROCK", "ROCKS"], 40]; 
-{[_x, true] remoteExec ["hideObjectGlobal", 2];} forEach _TERR ;
-} forEach _objectLocT;
-	
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Select markers and hide terrain objects
+private _objectLocT = allMapMarkers select {markerType _x in _markerTypes && markerColor _x == _markerColor};
+[_objectLocT, _terrainTypes, _radius] call _hideTerrainObjectsNearMarkers;
 
 sleep 1;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 _objectLocT = allMapMarkers select { markerType _x == 'loc_mine' };
 
@@ -35,50 +41,46 @@ sleep 0.1;
 
 } forEach _objectLocT;
 
-//////////////////////////////////////////////////////////////////////////////////////////////
 sleep 1;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-_objectLocT = allMapMarkers select { markerType _x == "o_antiair"};
-
+// Create AAA sites & Set Trigger for Defenders to spawn if player is in AAA area
+private _objectLocT = allMapMarkers select { markerType _x == "o_antiair"};
 {
+    private _P1 =  [ 
+        "AAA_01",  
+        "AAA_02",  
+        "AAA_03"    
+    ]; 
 
-_trg = createTrigger ["EmptyDetector", getMarkerpos _x, false];
-_trg setTriggerArea [1000, 1000, 0, false, 300];
-_trg setTriggerTimeout [1, 1, 1, true];
+    _dir = 0 + (random 360);
+    if (count (nearestObjects [(getMarkerpos _x), ["House"], 200]) != 0) then {
+        _dir = getDirVisual ((nearestObjects [(getMarkerpos _x), ["House"], 200]) select 0);
+    };
 
-_trg setTriggerActivation ["WEST", "PRESENT", false];
-_trg setTriggerStatements [
-"this && (({_x isKindOf 'Man'} count thisList >0) or ({_x isKindOf 'LandVehicle'} count thisList >0) or ({_x isKindOf 'Tank'} count thisList >0) or ({_x isKindOf 'Car'} count thisList >0))","
+    private _TERR = nearestTerrainObjects [(getMarkerpos _x), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40]; 
+    {[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
 
-[thisTrigger] execVM 'Scripts\Insurgents_Init.sqf';
+    private _compReference = [ selectRandom _P1, (getMarkerpos _x), [0,0,0], _dir, true ] call LARs_fnc_spawnComp;
 
-[thisTrigger] execVM 'Scripts\AAA_CSAT.sqf';
+    sleep 0.1;
 
-", ""];
+    private _ARRAY = [ _compReference ] call LARs_fnc_getCompObjects;
+    {_x setVectorUp [0,0,1];} forEach _ARRAY; 
 
+    [_x] spawn {
+        params ["_marker"];
 
-_P1 =  [ 
- "AAA_01",  
- "AAA_02",  
- "AAA_03"    
-]; 	
+        private _trg = createTrigger ["EmptyDetector", getMarkerpos _marker, false];
+        _trg setTriggerArea [1000, 1000, 0, false, 300];
+        _trg setTriggerTimeout [1, 1, 1, true];
 
-_dir = 0 + (random 360);
-if (count (nearestObjects [(getMarkerpos _x), ["House"], 200]) != 0) then {
-_dir = getDirVisual ((nearestObjects [(getMarkerpos _x), ["House"], 200]) select 0);
-};
-
-
-_TERR = nearestTerrainObjects [(getMarkerpos _x), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40]; 
-{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
-
-_compReference = [ selectRandom _P1, (getMarkerpos _x), [0,0,0], _dir, true ] call LARs_fnc_spawnComp;
-
-sleep 0.1;
-
-_ARRAY = [ _compReference ] call LARs_fnc_getCompObjects;
-{_x setVectorUp [0,0,1];} forEach _ARRAY; 
+        _trg setTriggerActivation ["WEST", "PRESENT", false];
+        _trg setTriggerStatements [
+            "this && (({_x isKindOf 'Man'} count thisList >0) or ({_x isKindOf 'LandVehicle'} count thisList >0) or ({_x isKindOf 'Tank'} count thisList >0) or ({_x isKindOf 'Car'} count thisList >0))",
+            "[thisTrigger] execVM 'Scripts\Insurgents_Init.sqf'; [thisTrigger] execVM 'Scripts\AAA_CSAT.sqf';",
+            ""
+        ];
+    };
 
 } forEach _objectLocT;
 
@@ -517,10 +519,6 @@ _mrkr setMarkerAlpha 0.003;
 }];
 
  } foreach _AA;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 TRG1LOCC = 1;
 publicVariable "TRG1LOCC";
