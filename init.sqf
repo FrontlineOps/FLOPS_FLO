@@ -127,7 +127,6 @@ waitUntil {!isNil "EtVInitialized"};
 */
 private _executeAndWait= {
     params ["_script"];
-    // Loop over the _script array and execute each script
     {
         private _handle = execVM _x;
         waitUntil {sleep 1; scriptDone _handle };

@@ -1,8 +1,5 @@
 if (!isServer) exitWith {};
 
-	
-Centerposition = [worldSize / 2, worldsize / 2, 0];
-
 VS_FPS insert [0,[round(diag_fps)],false];
 if (count VS_FPS > 30) then {VS_FPS resize 30};
 
@@ -17,8 +14,7 @@ if ((diag_tickTime - VSCurrentTime) > VSTimeDelay) then {
 	VSCurrentTime = diag_tickTime;
 };
 
-/////////////////////////////////////////////Static Object Virtualization///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//Static Object Virtualization
 private _allStaticObjs = (allMissionObjects "NonStrategic") + (allMissionObjects "Static") + (allMissionObjects "Thing");
 
 private _excludedTypes = FLO_configCache get "SOVbuildings";
@@ -48,7 +44,6 @@ private _BLUMs = allMapMarkers select { markerType _x == "b_installation" };
     _mrkr setMarkerSizeLocal [0, 0];
     _mrkr setMarkerText str _ObjsArray;
 
-    sleep 0.1;
 } forEach _StaticObjs;
 { deleteVehicle _x; } forEach _StaticObjs;
 
@@ -70,9 +65,8 @@ private _ObjMarks = allMapMarkers select {
     deleteMarker _x;
 } forEach _ObjMarks;
 
-/////////////////////////////////////////////Infantry Virtualization///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///// Virtualize Enemy Units /////
+//Infantry Virtualization
+//Virtualize Enemy Units
 private _enemyGroups = allGroups select {
     private _leader = leader _x;
     private _vehicle = vehicle _leader;
@@ -104,7 +98,6 @@ private _enemyGroups = allGroups select {
         _mrkr setMarkerSizeLocal [0, 0];
         _mrkr setMarkerText str _unitTypes;
 
-        sleep 0.1;
         deleteGroup _x;
     } else {
         diag_log format ["fn_CDVS: Came across empty group : %1", _x];
@@ -112,7 +105,7 @@ private _enemyGroups = allGroups select {
     };
 } forEach _enemyGroups;
 
-///// Virtualize CIV-Friendly Units /////
+//Virtualize CIV-Friendly Units
 private _civGroups = allGroups select {
     private _leader = leader _x;
     private _vehicle = vehicle _leader;
@@ -139,7 +132,6 @@ private _civGroups = allGroups select {
         _mrkr setMarkerSizeLocal [0, 0];
         _mrkr setMarkerText str _civUnitsArray;
 
-        sleep 0.1;
         deleteGroup _x;
     } else {
         diag_log format ["fn_CDVS: Came across empty group : %1", _x];
@@ -147,7 +139,7 @@ private _civGroups = allGroups select {
     };
 } forEach _civGroups;
 
-///// Un-Virtualize Enemy Units /////
+//Un-Virtualize Enemy Units
 private _EnmGroupMarks = allMapMarkers select {
     (markerType _x == "o_Ordnance") &&
     (markerColor _x != "colorCivilian") &&
@@ -171,8 +163,6 @@ private _EnmGroupMarks = allMapMarkers select {
             [_EnmGRP] execVM "Scripts\Civ_Relations_Ind.sqf";
         };
 
-        sleep 0.3;
-
         if !(isNull _EnmGRP) then {
             if (count (_array) > 1) then {
                 [_EnmGRP, (getPos ((units _EnmGRP) select 0)), (50 +(random 200))] call BIS_fnc_taskPatrol;
@@ -185,13 +175,11 @@ private _EnmGroupMarks = allMapMarkers select {
 
             [(getMarkerPos _x), 20] execVM "Scripts\INTLitems.sqf";
             deleteMarker _x;
-
-            sleep 0.1;
         };
     };
 } forEach _EnmGroupMarks;
 
-///// Un-Virtualize Civ-Friendly Units /////
+//Un-Virtualize Civ-Friendly Units
 private _CivvGroupMarks = allMapMarkers select {
 	(markerType _x == "o_Ordnance") &&
 	(markerColor _x == "colorCivilian") &&
@@ -226,16 +214,12 @@ private _CivvGroupMarks = allMapMarkers select {
 	[(getMarkerPos _x), 20] execVM "Scripts\INTLitems.sqf";
 	deleteMarker _x;
 
-	sleep 0.1;
 } forEach _CivvGroupMarks;
 
-/////////////////////////////////////////////Triggers Virtualization/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//Triggers Virtualization
 _alltriggers = allMissionObjects 'EmptyDetector';
 {
     private _isActive = ({(side _x == west) && (alive _x)} count (_x nearEntities [["Man","Car","Tank", "Ship", "LandVehicle", "Air"], 3000]) != 0);
     _x hideObjectGlobal !_isActive;
     _x enableSimulationGlobal _isActive;
 } forEach (_alltriggers select {triggerInterval _x != 2});
- 
- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
