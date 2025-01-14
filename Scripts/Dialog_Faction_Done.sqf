@@ -1,9 +1,10 @@
 #include "..\config.sqf"
+// TOREMOVE
 private _is_debug = call is_debug;
 
 _placement = _this select 0;
 
-// Checking if macro works
+/* THIS IS THE OLD CODE FOR SHOW DIALOGE IN FIRST TIME MISSION START TO REMOVE
 if !_is_debug then
 {
 	ctrlDelete (findDisplay 999 displayCtrl 1600);
@@ -129,81 +130,79 @@ sleep 2 ;
 
 }
 else
-{
-	hintSilent "DEBUG MODE";
+*/
 
-	_mrkr = createMarker ["Reputation_Handle", [0, 0, 0]]; 
-	_mrkr setMarkerType "loc_SafetyZone";
-	_mrkr setMarkerColor "Color4_FD_F";
-	_mrkr setMarkerSize [0.6, 0.6]; 
-	_mrkr setMarkerText "2";
-	_mrkr setMarkerAlpha 0.005;
+_mrkr = createMarker ["Reputation_Handle", [0, 0, 0]]; 
+_mrkr setMarkerType "loc_SafetyZone";
+_mrkr setMarkerColor "Color4_FD_F";
+_mrkr setMarkerSize [0.6, 0.6]; 
+_mrkr setMarkerText "2";
+_mrkr setMarkerAlpha 0.005;
 
-	_mrkr = createMarker ["Difficulty_Handle",  [0, 0, 0]]; 
-	_mrkr setMarkerType "loc_SafetyZone";
-	_mrkr setMarkerColor "Color6_FD_F";
-	_mrkr setMarkerSize [0.6, 0.6]; 
-	_mrkr setMarkerText "0";
-	_mrkr setMarkerAlpha 0.005;
+_mrkr = createMarker ["Difficulty_Handle",  [0, 0, 0]]; 
+_mrkr setMarkerType "loc_SafetyZone";
+_mrkr setMarkerColor "Color6_FD_F";
+_mrkr setMarkerSize [0.6, 0.6]; 
+_mrkr setMarkerText "0";
+_mrkr setMarkerAlpha 0.005;
 
-	_mrkr = createMarker ["Money_Handle", [0, 0, 0]]; 
-	_mrkr setMarkerType "loc_SafetyZone";
-	_mrkr setMarkerColor "Color2_FD_F";
-	_mrkr setMarkerSize [0.6, 0.6]; 
-	_mrkr setMarkerText "1000"; 
-	_mrkr setMarkerAlpha 0.005;
+_mrkr = createMarker ["Money_Handle", [0, 0, 0]]; 
+_mrkr setMarkerType "loc_SafetyZone";
+_mrkr setMarkerColor "Color2_FD_F";
+_mrkr setMarkerSize [0.6, 0.6]; 
+_mrkr setMarkerText "1000"; 
+_mrkr setMarkerAlpha 0.005;
 
-	_mrkr = createMarker ["Friendly_Handle", [0, 0, 0]]; 
-	_mrkr setMarkerType "loc_SafetyZone";
-	_mrkr setMarkerColor "ColorGrey";
-	_mrkr setMarkerSize [0.6, 0.6]; 
-	_mrkr setMarkerText "CUSTOM_PLAYER_FACTION"; 
-	_mrkr setMarkerAlpha 0.005;
+_mrkr = createMarker ["Friendly_Handle", [0, 0, 0]]; 
+_mrkr setMarkerType "loc_SafetyZone";
+_mrkr setMarkerColor "ColorGrey";
+_mrkr setMarkerSize [0.6, 0.6]; 
+_mrkr setMarkerText "CUSTOM_PLAYER_FACTION"; 
+_mrkr setMarkerAlpha 0.005;
 
-	_mrkr = createMarker ["Enemy_Handle", [0, 0, 0]]; 
-	_mrkr setMarkerType "loc_SafetyZone";
-	_mrkr setMarkerColor "ColorGrey";
-	_mrkr setMarkerSize [0.6, 0.6]; 
-	_mrkr setMarkerText "CUSTOM_ENEMY_FACTION"; 
-	_mrkr setMarkerAlpha 0.005;
+_mrkr = createMarker ["Enemy_Handle", [0, 0, 0]]; 
+_mrkr setMarkerType "loc_SafetyZone";
+_mrkr setMarkerColor "ColorGrey";
+_mrkr setMarkerSize [0.6, 0.6]; 
+_mrkr setMarkerText "CUSTOM_ENEMY_FACTION"; 
+_mrkr setMarkerAlpha 0.005;
 
-	_mrkr = createMarker ["Civilian_Handle", [0, 0, 0]]; 
-	_mrkr setMarkerType "loc_SafetyZone";
-	_mrkr setMarkerColor "ColorGrey";
-	_mrkr setMarkerSize [0.6, 0.6]; 
-	_mrkr setMarkerText "CUSTOM_CIVILIAN_FACTION"; 
-	_mrkr setMarkerAlpha 0.005;
+_mrkr = createMarker ["Civilian_Handle", [0, 0, 0]]; 
+_mrkr setMarkerType "loc_SafetyZone";
+_mrkr setMarkerColor "ColorGrey";
+_mrkr setMarkerSize [0.6, 0.6]; 
+_mrkr setMarkerText "CUSTOM_CIVILIAN_FACTION"; 
+_mrkr setMarkerAlpha 0.005;
 
-	titleText ["", "BLACK IN",7, true, true];
+titleText ["", "BLACK IN",7, true, true];
 			
-	HQLOCC = 0;
-	publicVariable "HQLOCC";
-	hint "Choose Your Starting Point"; 
-	openMap [true, true]; 
+HQLOCC = 0;
+publicVariable "HQLOCC";
+hint "Choose Your Starting Point"; 
+openMap [true, true]; 
 		
-	onMapSingleClick {
-	onMapSingleClick {}; 
-	player setpos _pos;
-	TSAT setpos _pos;
-	hintSilent "LOADING . . . "; 
-	HQLOCC = 1;
-	publicVariable "HQLOCC";
-	titleText ["", "BLACK IN",999, true, true];
-	};
-
-	waitUntil {HQLOCC == 1};
-	openMap [true, false]; 
-	openMap [false, false];
-
-
-	_FOBC = createVehicle ["B_Slingload_01_Cargo_F",(position player),[],5,"NONE"];
-
-	_FOBC allowDammage false;
-
-	EnemyPrec = 2;
-
-	ZonMarkers = execVM "Scripts\init_Markers.sqf";
-	waitUntil { scriptDone ZonMarkers };
-
-	sleep 2; 
+onMapSingleClick {
+onMapSingleClick {}; 
+player setpos _pos;
+TSAT setpos _pos;
+hintSilent "LOADING . . . "; 
+HQLOCC = 1;
+publicVariable "HQLOCC";
+titleText ["", "BLACK IN",999, true, true];
 };
+
+waitUntil {HQLOCC == 1};
+openMap [true, false]; 
+openMap [false, false];
+
+
+_FOBC = createVehicle ["B_Slingload_01_Cargo_F",(position player),[],5,"NONE"];
+
+_FOBC allowDammage false;
+
+EnemyPrec = 2;
+
+ZonMarkers = execVM "Scripts\init_Markers.sqf";
+waitUntil { scriptDone ZonMarkers };
+
+sleep 2; 
