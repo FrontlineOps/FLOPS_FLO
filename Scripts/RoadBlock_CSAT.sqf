@@ -248,4 +248,4 @@ _WeaponsARRAY = nearestObjects [(getPos thisRoadPostTrigger), ["O_G_HMG_02_high_
 
 
 _HeavGun =  nearestObjects [(getPos thisRoadPostTrigger), ["O_G_Mortar_01_F", "O_G_HMG_02_high_F"], 100] select 0;
-Group = createVehicleCrew _HeavGun; 
+Group = createVehicleCrew _HeavGun;
