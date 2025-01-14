@@ -33,7 +33,7 @@ if (count (nearestObjects [getPos thisOutpostTrigger, FLO_configCache get "tyres
         private _dir = getDirVisual _x;
         private _pos = position _x;
 
-        private _NewVeh = createVehicle [selectRandom (FLO_configCache get "vehicles" select 1), [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"];
+        private _NewVeh = createVehicle [selectRandom (FLO_configCache get "vehicles" select 3), [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"];
         _NewVeh setDir _dir;
         _NewVeh setVehicleLock "LOCKED";
 
@@ -66,20 +66,20 @@ if (count ((getPos thisOutpostTrigger) nearRoads 200) > 0) then {
 
     private _nearRoadleft = _nearRoad2 - _nearRoad1;
     private _nearRoad0 = selectRandom _nearRoadleft;
-    private I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
-    I1_WP_0 SetWaypointType "MOVE";
-    I1_WP_0 setWaypointBehaviour "SAFE";
-    I1_WP_0 setWaypointSpeed "LIMITED";
+    private _I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
+    _I1_WP_0 SetWaypointType "MOVE";
+    _I1_WP_0 setWaypointBehaviour "SAFE";
+    _I1_WP_0 setWaypointSpeed "LIMITED";
 
-    private I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
-    I1_WP_00 SetWaypointType "MOVE";
-    I1_WP_00 setWaypointBehaviour "SAFE";
-    I1_WP_00 setWaypointSpeed "LIMITED";
+    private _I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
+    _I1_WP_00 SetWaypointType "MOVE";
+    _I1_WP_00 setWaypointBehaviour "SAFE";
+    _I1_WP_00 setWaypointSpeed "LIMITED";
 
-    private I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
-    I1_WP_1 SetWaypointType "CYCLE";
-    I1_WP_1 setWaypointBehaviour "SAFE";
-    I1_WP_1 setWaypointSpeed "LIMITED";
+    private _I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
+    _I1_WP_1 SetWaypointType "CYCLE";
+    _I1_WP_1 setWaypointBehaviour "SAFE";
+    _I1_WP_1 setWaypointSpeed "LIMITED";
 };
 
 if (_AGGRSCORE > 10) then {
@@ -95,20 +95,20 @@ if (_AGGRSCORE > 10) then {
 
     private _nearRoadleft = _nearRoad2 - _nearRoad1;
     private _nearRoad0 = selectRandom _nearRoadleft;
-    private I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
-    I1_WP_0 SetWaypointType "MOVE";
-    I1_WP_0 setWaypointBehaviour "SAFE";
-    I1_WP_0 setWaypointSpeed "LIMITED";
+    private _I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
+    _I1_WP_0 SetWaypointType "MOVE";
+    _I1_WP_0 setWaypointBehaviour "SAFE";
+    _I1_WP_0 setWaypointSpeed "LIMITED";
 
-    private I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
-    I1_WP_00 SetWaypointType "MOVE";
-    I1_WP_00 setWaypointBehaviour "SAFE";
-    I1_WP_00 setWaypointSpeed "LIMITED";
+    private _I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
+    _I1_WP_00 SetWaypointType "MOVE";
+    _I1_WP_00 setWaypointBehaviour "SAFE";
+    _I1_WP_00 setWaypointSpeed "LIMITED";
 
-    private I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
-    I1_WP_1 SetWaypointType "CYCLE";
-    I1_WP_1 setWaypointBehaviour "SAFE";
-    I1_WP_1 setWaypointSpeed "LIMITED";
+    private _I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
+    _I1_WP_1 SetWaypointType "CYCLE";
+    _I1_WP_1 setWaypointBehaviour "SAFE";
+    _I1_WP_1 setWaypointSpeed "LIMITED";
 };
 
 // If AGGRSCORE > 5, Create Enemy Assault Vehicles and assault nearest BLUFOR Outpost
