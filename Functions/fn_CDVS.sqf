@@ -1,4 +1,5 @@
 if (!isServer) exitWith {};
+if (VS_IsWorking || {VSCurrentTime + VSTimeDelay > diag_tickTime}) exitwith {};
 
 VS_FPS insert [0,[round(diag_fps)],false];
 if (count VS_FPS > 30) then {VS_FPS resize 30};
@@ -14,6 +15,7 @@ if ((diag_tickTime - VSCurrentTime) > VSTimeDelay) then {
 	VSCurrentTime = diag_tickTime;
 };
 
+VS_IsWorking = true;
 //Static Object Virtualization
 private _allStaticObjs = (allMissionObjects "NonStrategic") + (allMissionObjects "Static") + (allMissionObjects "Thing");
 
@@ -223,3 +225,6 @@ _alltriggers = allMissionObjects 'EmptyDetector';
     _x hideObjectGlobal !_isActive;
     _x enableSimulationGlobal _isActive;
 } forEach (_alltriggers select {triggerInterval _x != 2});
+
+VSCurrentTime = diag_tickTime;
+VS_IsWorking = false;
