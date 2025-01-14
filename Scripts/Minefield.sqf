@@ -31,6 +31,7 @@ for "_i" from 1 to _mineCount do {
 };
 
 [] spawn {
+    scopeName "MinefieldLoop";
     while {true} do {
         sleep 10; // Check every 10 seconds
 
@@ -47,6 +48,7 @@ for "_i" from 1 to _mineCount do {
             [] execVM "Scripts\ReputationPlus.sqf";
             execVM "Scripts\Civ_Relations.sqf";
 
+            breakOut "MinefieldLoop"; // Kill the Do Loop
             break; // Exit the loop once the condition is met
         };
     };

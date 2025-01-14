@@ -26,20 +26,29 @@ private _objectLocT = allMapMarkers select {markerType _x in _markerTypes && mar
 
 sleep 1;
 
-_objectLocT = allMapMarkers select { markerType _x == 'loc_mine' };
-
+// Create Minefields If player is in mine area (1km)
+private _objectLocTMine = allMapMarkers select { markerType _x == 'loc_mine' };
 {
-_trgMine = createTrigger ["EmptyDetector", (getMarkerpos _x), false];
-_trgMine setTriggerArea [1000, 1000, 0, false, 300];
-_trgMine setTriggerTimeout [1, 1, 1, true];
+    [_x] spawn {
+        params ["_marker"];
+        private _pos = getMarkerPos _marker;
+        private _executed = false;
 
-_trgMine setTriggerActivation ["WEST", "PRESENT", false];
-_trgMine setTriggerStatements [
-"this && (({_x isKindOf 'Man'} count thisList >0) or ({_x isKindOf 'LandVehicle'} count thisList >0) or ({_x isKindOf 'Tank'} count thisList >0) or ({_x isKindOf 'Car'} count thisList >0))","[thisTrigger] execVM 'Scripts\Minefield.sqf';", ""];
+        scopeName "ExecMinefield";
+        while {!_executed} do {
+            sleep 1;
+            private _units = _pos nearEntities [["Man", "LandVehicle", "Tank", "Car"], 1000];
+            private _westPresent = _units findIf {side _x == west} > -1;
 
-sleep 0.1;
-
-} forEach _objectLocT;
+            if (_westPresent) then {
+                [_pos] execVM 'Scripts\Minefield.sqf';
+                _executed = true; // Set flag to prevent re-execution
+                breakOut "ExecMinefield";
+                break; // Exit the loop immediately
+            };
+        };
+    };
+} forEach _objectLocTMine;
 
 sleep 1;
 
