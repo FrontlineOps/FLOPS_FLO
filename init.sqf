@@ -1,5 +1,40 @@
+/*
+   File: init.sqf
+   Description:
+   Executed when mission is started (before briefing screen),
+   This script will check if the mission is being loaded from a saved game or if it is a new game.
+    New game? it will show the faction selection dialog. TOCHANGE: Make it also to prod and not only debug).
+    Saved game? it will check if the mission is being loaded from a saved game.
+
+   Usage:
+   - Should be in the main mission folder.
+
+   Details:
+   - See description.
+
+   Notes:
+   - None
+*/
+
+
 #include ".\config.sqf"
+/*
+   Variable: _is_debug
+   Holds a boolean value indicating whether the mission is in debug mode or not.
+
+   Value:
+   - True: The mission is a debug mission.
+   - False: The mission is not a debug mission.
+
+   Source:
+   The value is determined by the result of the is_debug function.
+
+   Usage:
+   This variable can be used throughout the script to enable or disable
+   debug-specific features.
+*/
 private _is_debug = call is_debug;
+private _MissionHighCommander = missionNamespace getVariable ["TheCommander", objNull];
 
 // Intro Title for the Mission
 HQLOCC = 0 ;
@@ -12,22 +47,13 @@ if !(didJIP) then {
     waitUntil { sleep 1; MissionLoadedLitterally == 1};
 }; 
 
-// If NOT a debug mission setted in defines.hpp than show new game selection menu
-if !_is_debug then
+// This is for when the mission is first ever created. (checking against safeZones and if notJoingInProgress)
+// py_core: I removed the check if player is commander,
+//          it will only make sure if there not enough safezones and not joining in progress, then it will prompt to show starting loc.
+
+if ((count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) != 7) && (not didJIP)) then
 {
-    // This is for when the mission is first ever created. 
-    if ((count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) != 7) && (player == TheCommander) && (not didJIP)) then
-    {
-        execVM "Scripts\Dialog_Faction.sqf";
-    };
-}
-else
-{
-    // Else just give us map to choice position and fuckoff :D
-    if ((count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) != 7) && (player == TheCommander) && (not didJIP)) then
-    {
-        [true] execVM "Scripts\Dialog_Faction_Done.sqf";
-    };
+    [true] execVM "Scripts\Dialog_Faction_Done.sqf";
 };
 
 // This is for when the mission is being loaded from a saved game.
@@ -77,7 +103,7 @@ if ((isServer)  && !(didJIP)) then {SYSINT = 0} else {SYSINT = 1} ;
 (findDisplay 46) displayAddEventHandler ["KeyDown", {params ["_displayorcontrol", "_key", "_shift", "_ctrl", "_alt"]; if (_key == 24) then { titleFadeOut 0.01;}; }];
 (findDisplay 46) displayAddEventHandler ["KeyDown", {params ["_displayorcontrol", "_key", "_shift", "_ctrl", "_alt"]; if ((_ctrl) && (_key == 37) && (!dialog) && ((player getVariable ["AIS_unconscious", false]) != true)) then {execVM "Scripts\TEAMS.sqf" ;};}];
 
-// Init R3F_LOG
+// Init R3F Logistics
 execVM "R3F_LOG\init.sqf";
 
 // Init EtV
@@ -86,8 +112,20 @@ waitUntil {!isNil "EtVInitialized"};
 
 // Init VCOM AI
 
-// Helper function to execute and wait for a script
-private _executeAndWait = {
+/* 
+   Function: _executeAndWait
+   Execute array of sqf scripts and wait for each on of them to finish before continuing iteration.
+
+   Example:
+   (start code)
+   // Example usage
+   [param] call _executeAndWait;
+   (end)
+
+   Parameters:
+   param - Array of sqf scripts.
+*/
+private _executeAndWait= {
     params ["_script"];
     // Loop over the _script array and execute each script
     {
