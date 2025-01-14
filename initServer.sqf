@@ -31,7 +31,7 @@ publicVariable "ConVLocc";
 
 VSDistance = 2500; //750; 
 VS_FPS = [];
-VSTimeDelay = 5;
+VSTimeDelay = 20;
 VSCurrentTime = diag_tickTime;
 VS_IsWorking = false;
 
