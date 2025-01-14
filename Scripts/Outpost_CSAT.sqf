@@ -8,10 +8,10 @@ private _AGGRSCORE = parseNumber (markerText _mrkr) ;
 
 // Create Static Helicopter in Outpost
 if (count (nearestObjects [getPos thisOutpostTrigger, FLO_configCache get "helipads", 100]) > 0) then {
-    _HPAD = nearestObjects [getPos thisOutpostTrigger, FLO_configCache get "helipads", 100] select 0;
-    _V = createVehicle [selectRandom (FLO_configCache get "vehicles" select 5), getPos _HPAD, [], 0, "NONE"];
+    private _HPAD = nearestObjects [getPos thisOutpostTrigger, FLO_configCache get "helipads", 100] select 0;
+    private _V = createVehicle [selectRandom (FLO_configCache get "vehicles" select 5), getPos _HPAD, [], 0, "NONE"];
     _V setVehicleLock "LOCKED";
-    _dir = getDir _HPAD;
+    private _dir = getDir _HPAD;
     _V setDir _dir;
 
     _V addEventHandler ["Killed", {
@@ -24,16 +24,16 @@ if (count (nearestObjects [getPos thisOutpostTrigger, FLO_configCache get "helip
 
 // Create Transport in Outpost
 if (count (nearestObjects [getPos thisOutpostTrigger, FLO_configCache get "tyres", 100]) > 0) then {
-    _objectLoc = nearestObjects [getPos thisOutpostTrigger, FLO_configCache get "tyres", 100];
+    private _objectLoc = nearestObjects [getPos thisOutpostTrigger, FLO_configCache get "tyres", 100];
 
     {
         _x hideObject true;
         sleep 1;
 
-        _dir = getDirVisual _x;
-        _pos = position _x;
+        private _dir = getDirVisual _x;
+        private _pos = position _x;
 
-        _NewVeh = createVehicle [selectRandom (FLO_configCache get "vehicles" select 1), [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"];
+        private _NewVeh = createVehicle [selectRandom (FLO_configCache get "vehicles" select 1), [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"];
         _NewVeh setDir _dir;
         _NewVeh setVehicleLock "LOCKED";
 
@@ -57,26 +57,26 @@ if (count ((getPos thisOutpostTrigger) nearRoads 200) > 0) then {
     private _nearRoad = selectRandom ((getPos thisOutpostTrigger) nearRoads 200);
     private _V = createVehicle [selectRandom (FLO_configCache get "vehicles" select 2), (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
 
-    CrewGroup = createVehicleCrew _V;
-    _VC = createGroup East;
-    {[_x] join _VC} forEach units CrewGroup;
+    private _CrewGroup = createVehicleCrew _V;
+    private _VC = createGroup East;
+    {[_x] join _VC} forEach units _CrewGroup;
 
-    _nearRoad2 = thisOutpostTrigger nearRoads 1500;
-    _nearRoad1 = thisOutpostTrigger nearRoads 800;
+    private _nearRoad2 = thisOutpostTrigger nearRoads 1500;
+    private _nearRoad1 = thisOutpostTrigger nearRoads 800;
 
-    _nearRoadleft = _nearRoad2 - _nearRoad1;
-    _nearRoad0 = selectRandom _nearRoadleft;
-    I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
+    private _nearRoadleft = _nearRoad2 - _nearRoad1;
+    private _nearRoad0 = selectRandom _nearRoadleft;
+    private I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
     I1_WP_0 SetWaypointType "MOVE";
     I1_WP_0 setWaypointBehaviour "SAFE";
     I1_WP_0 setWaypointSpeed "LIMITED";
 
-    I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
+    private I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
     I1_WP_00 SetWaypointType "MOVE";
     I1_WP_00 setWaypointBehaviour "SAFE";
     I1_WP_00 setWaypointSpeed "LIMITED";
 
-    I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
+    private I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
     I1_WP_1 SetWaypointType "CYCLE";
     I1_WP_1 setWaypointBehaviour "SAFE";
     I1_WP_1 setWaypointSpeed "LIMITED";
@@ -86,26 +86,26 @@ if (_AGGRSCORE > 10) then {
     private _nearRoad = selectRandom ((getPos thisOutpostTrigger) nearRoads 150);
     private _V = createVehicle [selectRandom (FLO_configCache get "vehicles" select 3), (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
 
-    CrewGroup = createVehicleCrew _V;
-    _VC = createGroup East;
-    {[_x] join _VC} forEach units CrewGroup;
+    private _CrewGroup = createVehicleCrew _V;
+    private _VC = createGroup East;
+    {[_x] join _VC} forEach units _CrewGroup;
 
-    _nearRoad2 = thisOutpostTrigger nearRoads 1500;
-    _nearRoad1 = thisOutpostTrigger nearRoads 800;
+    private _nearRoad2 = thisOutpostTrigger nearRoads 1500;
+    private _nearRoad1 = thisOutpostTrigger nearRoads 800;
 
-    _nearRoadleft = _nearRoad2 - _nearRoad1;
-    _nearRoad0 = selectRandom _nearRoadleft;
-    I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
+    private _nearRoadleft = _nearRoad2 - _nearRoad1;
+    private _nearRoad0 = selectRandom _nearRoadleft;
+    private I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
     I1_WP_0 SetWaypointType "MOVE";
     I1_WP_0 setWaypointBehaviour "SAFE";
     I1_WP_0 setWaypointSpeed "LIMITED";
 
-    I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
+    private I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
     I1_WP_00 SetWaypointType "MOVE";
     I1_WP_00 setWaypointBehaviour "SAFE";
     I1_WP_00 setWaypointSpeed "LIMITED";
 
-    I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
+    private I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
     I1_WP_1 SetWaypointType "CYCLE";
     I1_WP_1 setWaypointBehaviour "SAFE";
     I1_WP_1 setWaypointSpeed "LIMITED";
@@ -113,15 +113,15 @@ if (_AGGRSCORE > 10) then {
 
 // If AGGRSCORE > 5, Create Enemy Assault Vehicles and assault nearest BLUFOR Outpost
 if (_AGGRSCORE > 5) then {
-    _AssltDestMrks = allMapMarkers select {markerType _x == "b_installation"  && (markerColor _x == "ColorYellow" or  markerColor _x == "colorBLUFOR" or markerColor _x == "colorWEST")};  
-    _AssltDest = [_AssltDestMrks,  thisOutpostTrigger] call BIS_fnc_nearestPosition;
+    private _AssltDestMrks = allMapMarkers select {markerType _x == "b_installation"  && (markerColor _x == "ColorYellow" or  markerColor _x == "colorBLUFOR" or markerColor _x == "colorWEST")};  
+    private _AssltDest = [_AssltDestMrks,  thisOutpostTrigger] call BIS_fnc_nearestPosition;
     [thisOutpostTrigger, _AssltDest] execVM "Scripts\VehiInsert_CSAT_2.sqf";            
 
 };
 
 if (_AGGRSCORE > 10) then {
-    _AssltDestMrks = allMapMarkers select {markerType _x == "b_installation"  && (markerColor _x == "ColorYellow" or  markerColor _x == "colorBLUFOR" or markerColor _x == "colorWEST")};  
-    _StrtM = [_AssltDestMrks,  thisOutpostTrigger] call BIS_fnc_nearestPosition;
+    private _AssltDestMrks = allMapMarkers select {markerType _x == "b_installation"  && (markerColor _x == "ColorYellow" or  markerColor _x == "colorBLUFOR" or markerColor _x == "colorWEST")};  
+    private _StrtM = [_AssltDestMrks,  thisOutpostTrigger] call BIS_fnc_nearestPosition;
     [thisOutpostTrigger, _StrtM] execVM "Scripts\VehiInsert_CSAT_2.sqf";    
 };
 
@@ -228,11 +228,11 @@ if (_AGGRSCORE > 10) then {
 };
 
 
-_HeavGuns =  nearestObjects [(getpos thisOutpostTrigger), ["O_G_HMG_02_high_F", "O_G_Mortar_01_F"], 200];
+private _HeavGuns =  nearestObjects [(getpos thisOutpostTrigger), ["O_G_HMG_02_high_F", "O_G_Mortar_01_F"], 200];
 
 {
-    CrewGroup = createVehicleCrew _x; 
-    {_x setUnitLoadout (selectRandom (FLO_configCache get "units"))} forEach units CrewGroup;
+    private _CrewGroup = createVehicleCrew _x; 
+    {_x setUnitLoadout (selectRandom (FLO_configCache get "units"))} forEach units _CrewGroup;
 } forEach _HeavGuns;
 
 
