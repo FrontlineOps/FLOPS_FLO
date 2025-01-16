@@ -34,19 +34,23 @@ private _objectLocTMine = allMapMarkers select { markerType _x == 'loc_mine' };
         private _pos = getMarkerPos _marker;
         private _executed = false;
 
+        //diag_log format ["Starting minefield check for marker: %1 at position: %2", _marker, _pos];
+
         scopeName "ExecMinefield";
         while {!_executed} do {
-            sleep 1;
+            sleep 2;
             private _units = _pos nearEntities [["Man", "LandVehicle", "Tank", "Car"], 1000];
             private _westPresent = _units findIf {side _x == west} > -1;
 
             if (_westPresent) then {
-                [_pos] execVM 'Scripts\Minefield.sqf';
+                [_pos] execVM "Scripts\Minefield.sqf";
                 _executed = true; // Set flag to prevent re-execution
                 breakOut "ExecMinefield";
                 break; // Exit the loop immediately
             };
         };
+
+        //diag_log format ["Minefield execution completed for marker: %1", _marker];
     };
 } forEach _objectLocTMine;
 

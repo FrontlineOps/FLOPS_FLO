@@ -1,4 +1,5 @@
-private _thisMineFieldTrigger = _this select 0;
+params ["_pos"]; 
+
 private _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
 private _mrkr = _mrkrs select 0;
 private _AGGRSCORE = parseNumber (markerText _mrkr) ;  
@@ -26,18 +27,32 @@ if (_AGGRSCORE > 5) then {
 for "_i" from 1 to _mineCount do {
     private _mineType = selectRandom _minesToCreate;
     private _distance = 0 + (random (if (_AGGRSCORE < 6) then {100} else {if (_AGGRSCORE < 11) then {250} else {450}}));
-    _mine = createMine [_mineType, getPos _thisMineFieldTrigger, [], _distance];
+    _mine = createMine [_mineType, _pos, [], _distance];
     _mines pushBack _mine;
 };
 
-[] spawn {
+[_mines] spawn {
+    params ["_mines"];
+    _mines = +_mines; // Create a copy so we can mutate
     scopeName "MinefieldLoop";
-    while {true} do {
+    while {count _mines > 0} do {
         sleep 10; // Check every 10 seconds
 
-        if (count (allMines select {position _x inArea _thisMineFieldTrigger}) == 0) then {
+        // Recount active mines
+        private _i = 0;
+        while {_i < count _mines} do {
+            private _mine = _mines select _i;
+            if (_mine isEqualTo objNull || {!mineActive _mine}) then {
+                _mines deleteAt _i;
+            } else {
+                _i = _i + 1;
+            };
+        };
+
+        // Reward if cleared or exploded
+        if (count _mines == 0) then {
             private _MMarks = allMapMarkers select {markerType _x == "loc_mine"};
-            private _M = [_MMarks, _thisMineFieldTrigger] call BIS_fnc_nearestPosition;
+            private _M = [_MMarks, _pos] call BIS_fnc_nearestPosition;
 
             if (!isNil "_M") then {
                 deleteMarker _M;
@@ -49,7 +64,6 @@ for "_i" from 1 to _mineCount do {
             execVM "Scripts\Civ_Relations.sqf";
 
             breakOut "MinefieldLoop"; // Kill the Do Loop
-            break; // Exit the loop once the condition is met
         };
     };
 };
