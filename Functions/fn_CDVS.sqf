@@ -35,20 +35,38 @@ private _allStaticObjs = [];
 } forEach ["NonStrategic", "Static", "Thing"];
 
 // Filter out excluded types
-private _filteredStaticObjs = _= _allStaticObjs select {
-    private _objClass = typeOf _x;
-    {if (_objClass isKindOf _x) exitwith {1}} count _excludedTypes isEqualTo 0;
+private _filteredStaticObjs = _allStaticObjs select {
+    private _obj = _x;
+    private _objClass = typeOf _obj;
+    
+    // Check if object should be excluded
+    private _shouldExclude = false;
+    {
+        if (_objClass isKindOf _x) exitWith {
+            _shouldExclude = true;
+        };
+    } forEach _excludedTypes;
+    
+    !_shouldExclude
 };
 
 // Get objects to virtualize using efficient filtering
 private _objsToVirtualize = [];
-private _objsToVirtualize = [];
 {
+    private _obj = _x;
     private _pos = getPosWorld _obj;
-    if ( 
-          {if (side _x isEqualTo west && alive _x) exitwith {1};} count (_pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance] isEqualTo 0) 
-        ) 
-    then { _objsToVirtualize pushback _x };
+    private _nearbyUnits = _pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance];
+    private _hasNearbyWest = false;
+    
+    {
+        if (side _x == west && alive _x) exitWith {
+            _hasNearbyWest = true;
+        };
+    } forEach _nearbyUnits;
+    
+    if (!_hasNearbyWest) then {
+        _objsToVirtualize pushBack _obj;
+    };
 } forEach _filteredStaticObjs;
 
 // Store and remove objects
@@ -98,10 +116,16 @@ private _keysToRemove = [];
     };
     
     private _pos = _objData select 1;
-    if ( 
-          {if (side _x isEqualTo west && alive _x) exitwith {1};} count (_pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance] isEqualTo 0) 
-        ) 
-    then { 
+    private _nearbyUnits = _pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance];
+    private _hasNearbyWest = false;
+    
+    {
+        if (side _x == west && alive _x) exitWith {
+            _hasNearbyWest = true;
+        };
+    } forEach _nearbyUnits;
+    
+    if (_hasNearbyWest) then {
         private _objType = _objData select 0;
         
         try {
@@ -139,7 +163,10 @@ private _enemyGroups = allGroups select {
     !(_leader isKindOf "B_Pilot_F") && 
     {isNull objectParent _leader} && 
     {side _x in [independent, east]} &&
-    {{if (side _x == west && alive _x}) exitwith {1};} count (getPos _leader nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance]) isEqualto 0}
+    {
+        private _nearbyUnits = getPos _leader nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance];
+        count (_nearbyUnits select {side _x == west && alive _x}) == 0
+    }
 };
 
 // Store and remove enemy groups
@@ -167,7 +194,8 @@ private _keysToRemove = [];
     private _grpData = VS_VirtualizedGroups get _key;
     private _pos = _grpData select 1;
     
-    if ({if (side _x == west && alive _x) exitwith {1};} count (_pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance]) isNotEqualTo 0) then {
+    private _nearbyUnits = _pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance];
+    if (count (_nearbyUnits select {side _x == west && alive _x}) > 0) then {
         private _side = _grpData select 0;
         private _types = _grpData select 2;
         private _isPatrol = _grpData select 3;
@@ -201,8 +229,9 @@ private _keysToRemove = [];
 // Optimize trigger handling
 private _allTriggers = entities "EmptyDetector";
 {
-    private _isActive = {if (side _x == west && alive _x) exitwith {1};} count (getPos _x nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle", "Air"], 3000]) isNotEqualTo 0;
-    if (triggerInterval _x isNotEqualTo 2) then {
+    private _nearbyUnits = getPos _x nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle", "Air"], 3000];
+    private _isActive = count (_nearbyUnits select {side _x == west && alive _x}) > 0;
+    if (triggerInterval _x != 2) then {
         _x hideObjectGlobal !_isActive;
         _x enableSimulationGlobal _isActive;
     };
