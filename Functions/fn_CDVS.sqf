@@ -23,46 +23,59 @@ VS_IsWorking = true;
 // Initialize or get virtualization hashmap
 if (isNil "VS_VirtualizedObjects") then {
     VS_VirtualizedObjects = createHashMap;
-    diag_log "[CDVS] Initialized VS_VirtualizedObjects hashmap";
 };
 
 // Efficient static object handling
 private _excludedTypes = FLO_configCache get "SOVbuildings";
-diag_log format ["[CDVS] Excluded building types: %1", _excludedTypes];
 
-private _allStaticObjs = entities [["NonStrategic", "Static", "Thing"], [], false, true];
-diag_log format ["[CDVS] Total static objects found: %1", count _allStaticObjs];
+// Get all static objects
+private _allStaticObjs = [];
+{
+    _allStaticObjs append (allMissionObjects _x);
+} forEach ["NonStrategic", "Static", "Thing"];
 
+// Filter out excluded types
 private _filteredStaticObjs = _allStaticObjs select {
-    private _objClass = typeOf _x;
-    private _isExcluded = count (_excludedTypes select {_objClass isKindOf _x}) == 0;
-    if (!_isExcluded) then {
-        diag_log format ["[CDVS] Excluded object of type: %1", _objClass];
-    };
-    _isExcluded
+    private _obj = _x;
+    private _objClass = typeOf _obj;
+    
+    // Check if object should be excluded
+    private _shouldExclude = false;
+    {
+        if (_objClass isKindOf _x) exitWith {
+            _shouldExclude = true;
+        };
+    } forEach _excludedTypes;
+    
+    !_shouldExclude
 };
-diag_log format ["[CDVS] Filtered static objects (after exclusion): %1", count _filteredStaticObjs];
 
 // Get objects to virtualize using efficient filtering
-private _objsToVirtualize = _filteredStaticObjs select {
+private _objsToVirtualize = [];
+{
     private _obj = _x;
     private _pos = getPosWorld _obj;
     private _nearbyUnits = _pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance];
-    private _nearbyWest = _nearbyUnits select {side _x == west && alive _x};
+    private _hasNearbyWest = false;
     
-    if (count _nearbyWest > 0) then {
-        diag_log format ["[CDVS] Object at %1 has %2 nearby west units - keeping", _pos, count _nearbyWest];
-        false
-    } else {
-        diag_log format ["[CDVS] Object at %1 has no nearby west units - virtualizing", _pos];
-        true
+    {
+        if (side _x == west && alive _x) exitWith {
+            _hasNearbyWest = true;
+        };
+    } forEach _nearbyUnits;
+    
+    if (!_hasNearbyWest) then {
+        _objsToVirtualize pushBack _obj;
     };
-};
-diag_log format ["[CDVS] Objects to virtualize: %1", count _objsToVirtualize];
+} forEach _filteredStaticObjs;
 
 // Store and remove objects
 {
     private _obj = _x;
+    if (isNull _obj) then {
+        continue;
+    };
+    
     private _objType = typeOf _obj;
     private _pos = getPosWorld _obj;
     private _objData = [
@@ -72,12 +85,24 @@ diag_log format ["[CDVS] Objects to virtualize: %1", count _objsToVirtualize];
     ];
     
     private _key = format ["%1_%2_%3", _pos select 0, _pos select 1, random 999999];
+    
+    // Store object data before deletion
     VS_VirtualizedObjects set [_key, _objData];
-    deleteVehicle _obj;
-    diag_log format ["[CDVS] Virtualized object: Type=%1, Pos=%2, Key=%3", _objType, _pos, _key];
+    
+    // Delete the object
+    if (!isNull _obj) then {
+        hideObject _obj;
+        _obj enableSimulation false;
+        deleteVehicle _obj;
+        
+        if (!isNull _obj) then {
+            _obj setPos [0,0,0];
+            deleteVehicle _obj;
+        } else {
+            diag_log format ["[CDVS] Successfully virtualized: Type=%1, Pos=%2, Key=%3", _objType, _pos, _key];
+        };
+    };
 } forEach _objsToVirtualize;
-
-diag_log format ["[CDVS] Total objects in virtual storage: %1", count VS_VirtualizedObjects];
 
 // Restore objects when players are nearby
 private _keysToRemove = [];
@@ -86,34 +111,46 @@ private _keysToRemove = [];
     private _objData = VS_VirtualizedObjects get _key;
     
     if (isNil "_objData") then {
-        diag_log format ["[CDVS] ERROR: Invalid object data for key %1", _key];
+        _keysToRemove pushBack _key;
         continue;
     };
     
     private _pos = _objData select 1;
     private _nearbyUnits = _pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance];
-    private _nearbyWest = _nearbyUnits select {side _x == west && alive _x};
+    private _hasNearbyWest = false;
     
-    if (count _nearbyWest > 0) then {
+    {
+        if (side _x == west && alive _x) exitWith {
+            _hasNearbyWest = true;
+        };
+    } forEach _nearbyUnits;
+    
+    if (_hasNearbyWest) then {
         private _objType = _objData select 0;
-        diag_log format ["[CDVS] Restoring object: Type=%1, Pos=%2, Key=%3", _objType, _pos, _key];
         
-        private _obj = createVehicle [_objType, [0,0,0], [], 0, "CAN_COLLIDE"];
-        _obj setPosWorld _pos;
-        _obj setVectorDirAndUp (_objData select 2);
-        _keysToRemove pushBack _key;
-        
-        diag_log format ["[CDVS] Object restored successfully: %1", _obj];
+        try {
+            private _obj = createVehicle [_objType, [0,0,0], [], 0, "CAN_COLLIDE"];
+            if (!isNull _obj) then {
+                _obj setPosWorld _pos;
+                _obj setVectorDirAndUp (_objData select 2);
+                _keysToRemove pushBack _key;
+            } else {
+                diag_log format ["[CDVS] ERROR: Failed to create object of type %1", _objType];
+            };
+        } catch {
+            diag_log format ["[CDVS] ERROR: Exception while restoring object: %1", _exception];
+        };
     };
 } forEach keys VS_VirtualizedObjects;
 
 // Clean up restored objects from hashmap
 {
-    VS_VirtualizedObjects deleteAt _x;
-    diag_log format ["[CDVS] Removed key from virtual storage: %1", _x];
+    if (_x in VS_VirtualizedObjects) then {
+        VS_VirtualizedObjects deleteAt _x;
+    } else {
+        diag_log format ["[CDVS] WARNING: Attempted to remove non-existent key: %1", _x];
+    };
 } forEach _keysToRemove;
-
-diag_log format ["[CDVS] Remaining objects in virtual storage: %1", count VS_VirtualizedObjects];
 
 // Initialize or get AI groups hashmap
 if (isNil "VS_VirtualizedGroups") then {
