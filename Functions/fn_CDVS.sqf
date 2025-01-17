@@ -1,230 +1,204 @@
 if (!isServer) exitWith {};
 if (VS_IsWorking || {VSCurrentTime + VSTimeDelay > diag_tickTime}) exitwith {};
 
-VS_FPS insert [0,[round(diag_fps)],false];
-if (count VS_FPS > 30) then {VS_FPS resize 30};
+// Update FPS tracking using circular buffer
+if (isNil "VS_FPS") then { VS_FPS = [] };
+VS_FPS = [round diag_fps] + VS_FPS;
+if (count VS_FPS > 30) then { VS_FPS resize 30 };
 
-// Smooth out FPS over time (5 second delay between changes to VSDistance)
-// Also, make sure to average out any spikes or dips in server FPS
+// Dynamic distance scaling based on server performance
 if ((diag_tickTime - VSCurrentTime) > VSTimeDelay) then {
-	private _ServerFPS = VS_FPS call BIS_fnc_arithmeticMean;
-	if (_ServerFPS < 30) then {VSDistance = 2000}; 
-	if (_ServerFPS < 25) then {VSDistance = 1750}; 
-	if (_ServerFPS < 20) then {VSDistance = 1500}; 
-	if (_ServerFPS < 15) then {VSDistance = 1000}; 
-	VSCurrentTime = diag_tickTime;
+    private _serverFPS = VS_FPS call BIS_fnc_arithmeticMean;
+    VSDistance = switch (true) do {
+        case (_serverFPS < 15): {1000};
+        case (_serverFPS < 20): {1500};
+        case (_serverFPS < 25): {1750};
+        default {2000};
+    };
+    VSCurrentTime = diag_tickTime;
 };
 
 VS_IsWorking = true;
-//Static Object Virtualization
-private _allStaticObjs = (allMissionObjects "NonStrategic") + (allMissionObjects "Static") + (allMissionObjects "Thing");
 
+// Initialize or get virtualization hashmap
+if (isNil "VS_VirtualizedObjects") then {
+    VS_VirtualizedObjects = createHashMap;
+    diag_log "[CDVS] Initialized VS_VirtualizedObjects hashmap";
+};
+
+// Efficient static object handling
 private _excludedTypes = FLO_configCache get "SOVbuildings";
+diag_log format ["[CDVS] Excluded building types: %1", _excludedTypes];
 
-private _allStaticObjs = _allStaticObjs select {
+private _allStaticObjs = entities [["NonStrategic", "Static", "Thing"], [], false, true];
+diag_log format ["[CDVS] Total static objects found: %1", count _allStaticObjs];
+
+private _filteredStaticObjs = _allStaticObjs select {
     private _objClass = typeOf _x;
-    count (_excludedTypes select { _objClass isKindOf _x }) == 0;
+    private _isExcluded = count (_excludedTypes select {_objClass isKindOf _x}) == 0;
+    if (!_isExcluded) then {
+        diag_log format ["[CDVS] Excluded object of type: %1", _objClass];
+    };
+    _isExcluded
 };
+diag_log format ["[CDVS] Filtered static objects (after exclusion): %1", count _filteredStaticObjs];
 
-private _StaticObjs = _allStaticObjs select {
-    {(side _x == west) && (alive _x)} count (_x nearEntities [["Man","Car","Tank", "Ship", "LandVehicle"], 1600]) == 0;
+// Get objects to virtualize using efficient filtering
+private _objsToVirtualize = _filteredStaticObjs select {
+    private _obj = _x;
+    private _pos = getPosWorld _obj;
+    private _nearbyUnits = _pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance];
+    private _nearbyWest = _nearbyUnits select {side _x == west && alive _x};
+    
+    if (count _nearbyWest > 0) then {
+        diag_log format ["[CDVS] Object at %1 has %2 nearby west units - keeping", _pos, count _nearbyWest];
+        false
+    } else {
+        diag_log format ["[CDVS] Object at %1 has no nearby west units - virtualizing", _pos];
+        true
+    };
 };
+diag_log format ["[CDVS] Objects to virtualize: %1", count _objsToVirtualize];
 
-private _BLUMs = allMapMarkers select { markerType _x == "b_installation" };
-{ createVehicle ["Sign_Pointer_Yellow_F", (getMarkerPos _x), [], 0, "NONE"]; } forEach _BLUMs;
-
+// Store and remove objects
 {
-    private _ObjTyp = typeOf _x;
-    private _ObjPos = getPosATL _x;
-    private _ObjDir = [vectorDir _x, vectorUp _x];
-    private _ObjsArray = [_ObjTyp, _ObjPos, _ObjDir];
-    private _mrkr = createMarkerLocal [str _x, getPos _x];
-    _mrkr setMarkerTypeLocal "o_maint";
-    private _markerColor = if (count (nearestObjects [_ObjPos, ["Sign_Pointer_Yellow_F"], 200]) > 0) then {"ColorBlue"} else {"colorOPFOR"};
-    _mrkr setMarkerColorLocal _markerColor;
-    _mrkr setMarkerAlphaLocal 0;
-    _mrkr setMarkerSizeLocal [0, 0];
-    _mrkr setMarkerText str _ObjsArray;
+    private _obj = _x;
+    private _objType = typeOf _obj;
+    private _pos = getPosWorld _obj;
+    private _objData = [
+        _objType,
+        _pos,
+        [vectorDir _obj, vectorUp _obj]
+    ];
+    
+    private _key = format ["%1_%2_%3", _pos select 0, _pos select 1, random 999999];
+    VS_VirtualizedObjects set [_key, _objData];
+    deleteVehicle _obj;
+    diag_log format ["[CDVS] Virtualized object: Type=%1, Pos=%2, Key=%3", _objType, _pos, _key];
+} forEach _objsToVirtualize;
 
-} forEach _StaticObjs;
-{ deleteVehicle _x; } forEach _StaticObjs;
+diag_log format ["[CDVS] Total objects in virtual storage: %1", count VS_VirtualizedObjects];
 
-private _ObjMarks = allMapMarkers select {
-    (markerType _x == "o_maint") &&
-    ({(side _x == west) && (alive _x) && (isPlayer _x)} count ((getMarkerPos _x) nearEntities [["Man","Car","Tank", "Ship", "LandVehicle"], 1600]) != 0);
+// Restore objects when players are nearby
+private _keysToRemove = [];
+{
+    private _key = _x;
+    private _objData = VS_VirtualizedObjects get _key;
+    
+    if (isNil "_objData") then {
+        diag_log format ["[CDVS] ERROR: Invalid object data for key %1", _key];
+        continue;
+    };
+    
+    private _pos = _objData select 1;
+    private _nearbyUnits = _pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance];
+    private _nearbyWest = _nearbyUnits select {side _x == west && alive _x};
+    
+    if (count _nearbyWest > 0) then {
+        private _objType = _objData select 0;
+        diag_log format ["[CDVS] Restoring object: Type=%1, Pos=%2, Key=%3", _objType, _pos, _key];
+        
+        private _obj = createVehicle [_objType, [0,0,0], [], 0, "CAN_COLLIDE"];
+        _obj setPosWorld _pos;
+        _obj setVectorDirAndUp (_objData select 2);
+        _keysToRemove pushBack _key;
+        
+        diag_log format ["[CDVS] Object restored successfully: %1", _obj];
+    };
+} forEach keys VS_VirtualizedObjects;
+
+// Clean up restored objects from hashmap
+{
+    VS_VirtualizedObjects deleteAt _x;
+    diag_log format ["[CDVS] Removed key from virtual storage: %1", _x];
+} forEach _keysToRemove;
+
+diag_log format ["[CDVS] Remaining objects in virtual storage: %1", count VS_VirtualizedObjects];
+
+// Initialize or get AI groups hashmap
+if (isNil "VS_VirtualizedGroups") then {
+    VS_VirtualizedGroups = createHashMap;
 };
 
-{
-    private _ObjData = parseSimpleArray (markerText _x);
-    private _ObjTyp = _ObjData select 0;
-    private _ObjPos = _ObjData select 1;
-    private _ObjDir = _ObjData select 2;
-
-    private _NewObj = createVehicle [_ObjTyp, [0, 0, (500 + random 2000)], [], 0, "CAN_COLLIDE"];
-    _NewObj setVectorDirAndUp _ObjDir;
-    _NewObj setPosATL _ObjPos;
-
-    deleteMarker _x;
-} forEach _ObjMarks;
-
-//Infantry Virtualization
-//Virtualize Enemy Units
+// Handle enemy groups virtualization
 private _enemyGroups = allGroups select {
     private _leader = leader _x;
-    private _vehicle = vehicle _leader;
-    (typeOf _vehicle != "B_Pilot_F") &&
-    (isNull objectParent _leader) &&
-    ((side _x == independent) || (side _x == east)) &&
-    ({(side _x == west) && (alive _x)} count (_leader nearEntities [["Man","Car","Tank", "Ship", "LandVehicle"], VSDistance]) == 0);
+    !(_leader isKindOf "B_Pilot_F") && 
+    {isNull objectParent _leader} && 
+    {side _x in [independent, east]} &&
+    {
+        private _nearbyUnits = getPos _leader nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance];
+        count (_nearbyUnits select {side _x == west && alive _x}) == 0
+    }
 };
 
+// Store and remove enemy groups
 {
-    private _units = units _x;
-    private _unitCount = count _units;
-    if (_unitCount > 0) then {
-        private _pos = getPos (_units select 0);
-        private _unitTypes = _units apply {typeOf _x};
-        {
-            deleteVehicle _x;
-        } forEach _units;
-
-        private _mrkr = createMarkerLocal [str [(_pos select 0) + (random 1), (_pos select 1) + (random 1)], _pos];
-        _mrkr setMarkerTypeLocal "o_Ordnance";
-        private _markerColor = switch (side _x) do {
-            case east: {"colorOPFOR"};
-            case independent: {"colorIndependent"};
-            default {"colorCivilian"};
-        };
-        _mrkr setMarkerColorLocal _markerColor;
-        _mrkr setMarkerAlphaLocal 0;
-        _mrkr setMarkerSizeLocal [0, 0];
-        _mrkr setMarkerText str _unitTypes;
-
-        deleteGroup _x;
-    } else {
-        diag_log format ["fn_CDVS: Came across empty group : %1", _x];
-        deleteGroup _x;
+    private _grp = _x;
+    private _units = units _grp;
+    if (count _units > 0) then {
+        private _key = format ["ENM_%1_%2_%3", getPos leader _grp select 0, getPos leader _grp select 1, random 999999];
+        VS_VirtualizedGroups set [_key, [
+            side _grp,
+            getPos leader _grp,
+            _units apply {typeOf _x},
+            count _units > 1
+        ]];
+        
+        {deleteVehicle _x} forEach _units;
+        deleteGroup _grp;
     };
 } forEach _enemyGroups;
 
-//Virtualize CIV-Friendly Units
-private _civGroups = allGroups select {
-    private _leader = leader _x;
-    private _vehicle = vehicle _leader;
-    (typeOf _vehicle != "B_Pilot_F") &&
-    (_vehicle == _leader) &&
-    (side _x == civilian) &&
-    ({(side _x == west) && (alive _x) && (isPlayer _x)} count (_leader nearEntities [["Man"], VSDistance]) == 0);
-};
-
+// Restore enemy groups
+private _keysToRemove = [];
 {
-    private _units = units _x;
-    private _unitCount = count _units;
-    if (_unitCount > 0) then {
-        private _pos = getPos (_units select 0);
-        private _civUnitsArray = _units apply {typeOf _x};
-        {
-            deleteVehicle _x;
-        } forEach _units;
-
-        private _mrkr = createMarkerLocal [str [(_pos select 0) + (random 1), (_pos select 1) + (random 1)], _pos];
-        _mrkr setMarkerTypeLocal "o_Ordnance";
-        _mrkr setMarkerColorLocal "colorCivilian";
-        _mrkr setMarkerAlphaLocal 0;
-        _mrkr setMarkerSizeLocal [0, 0];
-        _mrkr setMarkerText str _civUnitsArray;
-
-        deleteGroup _x;
-    } else {
-        diag_log format ["fn_CDVS: Came across empty group : %1", _x];
-        deleteGroup _x;
-    };
-} forEach _civGroups;
-
-//Un-Virtualize Enemy Units
-private _EnmGroupMarks = allMapMarkers select {
-    (markerType _x == "o_Ordnance") &&
-    (markerColor _x != "colorCivilian") &&
-    ({(side _x == west) && (alive _x)} count ((getMarkerPos _x) nearEntities [["Man","Car","Tank", "Ship", "LandVehicle"], VSDistance]) != 0);
-};
-
-{
-    private _EnmGRP = grpNull;
-    private _array = parseSimpleArray (markerText _x);
-    private _spawnSide = switch (markerColor _x) do {
-        case "colorOPFOR": {EAST};
-        case "colorIndependent": {independent};
-        default {grpNull};
-    };
-
-    if (_spawnSide != grpNull) then {
-        _EnmGRP = [(getMarkerPos _x), _spawnSide, _array] call BIS_fnc_spawnGroup;
-        _EnmGRP deleteGroupWhenEmpty true;
-
-        if (_spawnSide == independent) then {
-            [_EnmGRP] execVM "Scripts\Civ_Relations_Ind.sqf";
+    private _key = _x;
+    private _grpData = VS_VirtualizedGroups get _key;
+    private _pos = _grpData select 1;
+    
+    private _nearbyUnits = _pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], VSDistance];
+    if (count (_nearbyUnits select {side _x == west && alive _x}) > 0) then {
+        private _side = _grpData select 0;
+        private _types = _grpData select 2;
+        private _isPatrol = _grpData select 3;
+        
+        private _grp = [_pos, _side, _types] call BIS_fnc_spawnGroup;
+        _grp deleteGroupWhenEmpty true;
+        
+        if (_side == independent) then {
+            [_grp] execVM "Scripts\Civ_Relations_Ind.sqf";
         };
-
-        if !(isNull _EnmGRP) then {
-            if (count (_array) > 1) then {
-                [_EnmGRP, (getPos ((units _EnmGRP) select 0)), (50 +(random 200))] call BIS_fnc_taskPatrol;
-            } else {
-                _allBuildings = nearestObjects [(getMarkerPos _x), ["House", "Strategic"], 20];
-                _allPositions = [];
-                _allBuildings apply {_allPositions append (_x buildingPos -1)};
-                ((units _EnmGRP) select 0) setPos (selectRandom _allPositions);
+        
+        if (_isPatrol) then {
+            [_grp, _pos, 50 + random 200] call BIS_fnc_taskPatrol;
+        } else {
+            private _buildings = nearestObjects [_pos, ["House", "Strategic"], 20];
+            private _positions = [];
+            {_positions append (_x buildingPos -1)} forEach _buildings;
+            if (count _positions > 0) then {
+                (units _grp select 0) setPos (selectRandom _positions);
             };
-
-            [(getMarkerPos _x), 20] execVM "Scripts\INTLitems.sqf";
-            deleteMarker _x;
         };
+        
+        [_pos, 20] execVM "Scripts\INTLitems.sqf";
+        _keysToRemove pushBack _key;
     };
-} forEach _EnmGroupMarks;
+} forEach keys VS_VirtualizedGroups;
 
-//Un-Virtualize Civ-Friendly Units
-private _CivvGroupMarks = allMapMarkers select {
-	(markerType _x == "o_Ordnance") &&
-	(markerColor _x == "colorCivilian") &&
-	({((side _x == west) or (side _x == civilian)) && (alive _x) && (isPlayer _x)} count ((getMarkerPos _x) nearEntities [["Man"], VSDistance]) != 0);
-};
+// Clean up restored groups from hashmap
+{VS_VirtualizedGroups deleteAt _x} forEach _keysToRemove;
 
+// Optimize trigger handling
+private _allTriggers = entities "EmptyDetector";
 {
-	private _CivGRP = grpNull;
-	private _array = parseSimpleArray (markerText _x);
-
-	_CivGRP = [(getMarkerPos _x), civilian, _array] call BIS_fnc_spawnGroup;
-	_CivGRP deleteGroupWhenEmpty true;
-	[_CivGRP] execVM "Scripts\Civ_Relations_Civ.sqf";
-
-	if !(isNull _CivGRP) then {
-		private _chance = selectRandom [0,1,2,3,4];
-
-		if (_chance > 1) then {
-			[_CivGRP, (getPos ((units _CivGRP) select 0)), (50 +(random 200))] call BIS_fnc_taskPatrol;
-		} else {
-			_allBuildings = nearestObjects [(getMarkerPos _x), ["House", "Strategic"], 20];
-			_allPositions = [];
-			_allBuildings apply {_allPositions append (_x buildingPos -1)};
-			((units _CivGRP) select 0) setPos (selectRandom _allPositions);
-		};
-
-		if (_chance < 3) then {
-			((units _CivGRP) select 0) setUnitTrait ["engineer", true];
-		};
-	};
-
-	[(getMarkerPos _x), 20] execVM "Scripts\INTLitems.sqf";
-	deleteMarker _x;
-
-} forEach _CivvGroupMarks;
-
-//Triggers Virtualization
-_alltriggers = allMissionObjects 'EmptyDetector';
-{
-    private _isActive = ({(side _x == west) && (alive _x)} count (_x nearEntities [["Man","Car","Tank", "Ship", "LandVehicle", "Air"], 3000]) != 0);
-    _x hideObjectGlobal !_isActive;
-    _x enableSimulationGlobal _isActive;
-} forEach (_alltriggers select {triggerInterval _x != 2});
+    private _nearbyUnits = getPos _x nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle", "Air"], 3000];
+    private _isActive = count (_nearbyUnits select {side _x == west && alive _x}) > 0;
+    if (triggerInterval _x != 2) then {
+        _x hideObjectGlobal !_isActive;
+        _x enableSimulationGlobal _isActive;
+    };
+} forEach _allTriggers;
 
 VSCurrentTime = diag_tickTime;
 VS_IsWorking = false;
