@@ -208,6 +208,6 @@ private _allTriggers = entities "EmptyDetector";
         _x enableSimulationGlobal _isActive;
     };
 } forEach _allTriggers;
-player sidechat "VS Time: "+str(diag_ticktime - START);
 
+VSCurrentTime = diag_tickTime;
 VS_IsWorking = false;
