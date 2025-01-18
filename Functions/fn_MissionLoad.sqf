@@ -17,23 +17,23 @@ private _MarkerTimeName = _missionTag + "_Time";
 		FreshStartVal = "FreshStart" call BIS_fnc_getParamValue;
 		 if (FreshStartVal == 1) then {
 		 
-			missionProfileNamespace setVariable [_MarkerTimeName, nil];
-			missionProfileNamespace setVariable [_MarkerDataName, nil];
-			missionProfileNamespace setVariable [_VehicleDataName, nil];
-			missionProfileNamespace setVariable [_ObjectDataName, nil];
+			profileNamespace setVariable [_MarkerTimeName, nil];
+			profileNamespace setVariable [_MarkerDataName, nil];
+			profileNamespace setVariable [_VehicleDataName, nil];
+			profileNamespace setVariable [_ObjectDataName, nil];
 		} ;
 		
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-private _date = missionProfileNamespace getVariable _MarkerTimeName;
+private _date = profileNamespace getVariable _MarkerTimeName;
 if (!isNil "_date") then { setDate _date; };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-private _GetVariableMark = missionProfileNamespace getVariable _MarkerDataName;
+private _GetVariableMark = profileNamespace getVariable _MarkerDataName;
 
 _allMarkNames = keys _GetVariableMark;
 
@@ -69,7 +69,7 @@ _mrkr setMarkerAlpha _MAlpha;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-private _GetVariableStatic = missionProfileNamespace getVariable _ObjectDataName;
+private _GetVariableStatic = profileNamespace getVariable _ObjectDataName;
 
 _allVehNames = keys _GetVariableStatic;
 
@@ -89,7 +89,7 @@ _NewVeh = createVehicle [_Type, [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-private _GetVariableVeh = missionProfileNamespace getVariable _VehicleDataName;
+private _GetVariableVeh = profileNamespace getVariable _VehicleDataName;
 
 _allVehNames = keys _GetVariableVeh;
 

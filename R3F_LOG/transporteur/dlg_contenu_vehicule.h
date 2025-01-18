@@ -183,7 +183,7 @@ class R3F_LOG_dlg_contenu_vehicule
 	{
 		x = 0.26; w = 0.45;
 		y = 0.145 - R3F_LOG_dlg_CV_jauge_chargement_h-0.005; h = 0.07;
-		colorBackground[] = {"(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.69])","(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.75])","(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.5])","(missionProfileNamespace getvariable ['GUI_BCG_RGB_A',0.8])"};
+		colorBackground[] = {"(profileNamespace getvariable ['GUI_BCG_RGB_R',0.69])","(profileNamespace getvariable ['GUI_BCG_RGB_G',0.75])","(profileNamespace getvariable ['GUI_BCG_RGB_B',0.5])","(profileNamespace getvariable ['GUI_BCG_RGB_A',0.8])"};
 	};
 	
 	class R3F_LOG_dlg_CV_titre : R3F_LOG_dlg_CV_texte

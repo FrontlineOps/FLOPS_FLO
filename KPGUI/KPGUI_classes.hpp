@@ -564,9 +564,9 @@ class KPGUI_PRE_EditBox {
     colorText[] = {0.95, 0.95, 0.95, 1};
     colorDisabled[] = {1, 1, 1, 0.25};
     colorSelection[] = {
-        "(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.13])",
-        "(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.54])",
-        "(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.21])",
+        "(profileNamespace getvariable ['GUI_BCG_RGB_R',0.13])",
+        "(profileNamespace getvariable ['GUI_BCG_RGB_G',0.54])",
+        "(profileNamespace getvariable ['GUI_BCG_RGB_B',0.21])",
         1
     };
     autocomplete = "";
@@ -653,10 +653,10 @@ class KPGUI_PRE_MapControl {
         colorDone[] = {0.7, 1, 0.3, 1};
         colorFailed[] = {1, 0.3, 0.2, 1};
         color[] = {
-            "(missionProfileNamespace getvariable ['IGUI_TEXT_RGB_R',0])",
-            "(missionProfileNamespace getvariable ['IGUI_TEXT_RGB_G',1])",
-            "(missionProfileNamespace getvariable ['IGUI_TEXT_RGB_B',1])",
-            "(missionProfileNamespace getvariable ['IGUI_TEXT_RGB_A',0.8])"
+            "(profileNamespace getvariable ['IGUI_TEXT_RGB_R',0])",
+            "(profileNamespace getvariable ['IGUI_TEXT_RGB_G',1])",
+            "(profileNamespace getvariable ['IGUI_TEXT_RGB_B',1])",
+            "(profileNamespace getvariable ['IGUI_TEXT_RGB_A',0.8])"
         };
         icon = "\A3\ui_f\data\map\mapcontrol\taskIcon_CA.paa";
         iconCreated = "\A3\ui_f\data\map\mapcontrol\taskIconCreated_CA.paa";

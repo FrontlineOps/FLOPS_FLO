@@ -49,10 +49,10 @@ private _ObjectDataName = _missionTag + "_Objects";
 
 sleep 2;
 
-missionProfileNamespace setVariable [_MarkerTimeName, nil];
-missionProfileNamespace setVariable [_MarkerDataName, nil];
-missionProfileNamespace setVariable [_VehicleDataName, nil];
-missionProfileNamespace setVariable [_ObjectDataName, nil];
+profileNamespace setVariable [_MarkerTimeName, nil];
+profileNamespace setVariable [_MarkerDataName, nil];
+profileNamespace setVariable [_VehicleDataName, nil];
+profileNamespace setVariable [_ObjectDataName, nil];
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
