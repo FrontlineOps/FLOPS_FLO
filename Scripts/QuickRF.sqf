@@ -12,11 +12,17 @@ if ( COMMSDIS == 0 ) then {
 	private _nearestOutpost = "";
 	private _nearestDistance = 1e10; // Start with a very large distance because we want to make sure we can find an outpost
 
-	// Iterate over each marker to find the nearest (janky but works)
+	// Iterate over each marker to find the nearest valid outpost
 	{
 		private _markerPos = getMarkerPos _x;
 		private _distance = _markerPos distance _CNTRQRF;
-		if (_distance < _nearestDistance) then {
+		
+		// Check if there are any players near this outpost
+		private _noPlayersNear = {
+			if (side _x isEqualTo west && alive _x) exitWith {1};
+		} count (_markerPos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], 1000]) isEqualTo 0;
+		
+		if (_distance < _nearestDistance && _noPlayersNear) then {
 			_nearestDistance = _distance;
 			_nearestOutpost = _x;
 		};
