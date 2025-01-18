@@ -1,5 +1,5 @@
 /**
- * Interface d'affichage du contenu du véhicule
+ * Interface d'affichage du contenu du vï¿½hicule
  * 
  * Copyright (C) 2014 Team ~R3F~
  * 
@@ -33,7 +33,7 @@ class R3F_LOG_dlg_liste_objets
 		R3F_LOG_dlg_LO_infos
 	};
 	
-	// Définition des classes de base
+	// Dï¿½finition des classes de base
 	class R3F_LOG_dlg_LO_texte
 	{
 		idc = -1;
@@ -185,13 +185,13 @@ class R3F_LOG_dlg_liste_objets
 			border = "\A3\ui_f\data\gui\cfg\scrollbar\border_ca.paa";
 		};
 	};
-	// FIN Définition des classes de base
+	// FIN Dï¿½finition des classes de base
 	
 	class R3F_LOG_dlg_LO_titre_fond : R3F_LOG_dlg_LO_texte
 	{
 		x = safeZoneX + 0.005; w = 0.40;
 		y = safeZoneY + 0.005; h = 0.07;
-		colorBackground[] = {"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.69])","(profilenamespace getvariable ['GUI_BCG_RGB_G',0.75])","(profilenamespace getvariable ['GUI_BCG_RGB_B',0.5])","(profilenamespace getvariable ['GUI_BCG_RGB_A',0.8])"};
+		colorBackground[] = {"(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.69])","(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.75])","(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.5])","(missionProfileNamespace getvariable ['GUI_BCG_RGB_A',0.8])"};
 	};
 	
 	class R3F_LOG_dlg_LO_titre : R3F_LOG_dlg_LO_texte
@@ -250,7 +250,7 @@ class R3F_LOG_dlg_liste_objets
 	{
 		x = safeZoneX + safeZoneW - 0.005 - 0.35; w = 0.35;
 		y = safeZoneY + 0.005; h = 0.055;
-		colorBackground[] = {"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.69])","(profilenamespace getvariable ['GUI_BCG_RGB_G',0.75])","(profilenamespace getvariable ['GUI_BCG_RGB_B',0.5])","(profilenamespace getvariable ['GUI_BCG_RGB_A',0.8])"};
+		colorBackground[] = {"(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.69])","(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.75])","(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.5])","(missionProfileNamespace getvariable ['GUI_BCG_RGB_A',0.8])"};
 	};
 	
 	class R3F_LOG_dlg_LO_infos_titre : R3F_LOG_dlg_LO_texte

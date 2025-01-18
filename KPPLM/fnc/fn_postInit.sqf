@@ -23,7 +23,7 @@ if (isServer) then {diag_log format ["[KP PLAYER MENU] [%1] [POST] Initializing.
 // Player section
 if (hasInterface) then {
     // Load settings, if available
-    private _settings = profileNamespace getVariable ["KPPLM_Settings", []];
+    private _settings = missionProfileNamespace getVariable ["KPPLM_Settings", []];
     if !(_settings isEqualTo []) then {
         KPPLM_viewFoot = _settings select 0;
         KPPLM_viewVeh = _settings select 1;

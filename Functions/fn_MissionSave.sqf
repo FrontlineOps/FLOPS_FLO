@@ -19,10 +19,10 @@ private _ObjectDataName = _missionTag + "_Objects";
 
 
 
-profileNamespace setVariable [_MarkerTimeName, nil];
-profileNamespace setVariable [_MarkerDataName, nil];
-profileNamespace setVariable [_VehicleDataName, nil];
-profileNamespace setVariable [_ObjectDataName, nil];
+missionProfileNamespace setVariable [_MarkerTimeName, nil];
+missionProfileNamespace setVariable [_MarkerDataName, nil];
+missionProfileNamespace setVariable [_VehicleDataName, nil];
+missionProfileNamespace setVariable [_ObjectDataName, nil];
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ _mrkr setMarkerText str _UnitsArray;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-profileNamespace setVariable [_MarkerTimeName, date];
+missionProfileNamespace setVariable [_MarkerTimeName, date];
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -103,7 +103,7 @@ _VehicleDataHash set [_VehicleName, _VehicleDataHashEach];
 
 } forEach FinalVehSaving ;
 
-profileNamespace setVariable [_VehicleDataName, _VehicleDataHash];
+missionProfileNamespace setVariable [_VehicleDataName, _VehicleDataHash];
 
 [[west,"HQ"], "Vehicles Saved Successfully ..."] remoteExec ["sideChat", 0];
 
@@ -163,7 +163,7 @@ _ObjectDataHash set [_ObjectName, _ObjectDataHashEach];
 
 } forEach FinalSaving ;
 
-profileNamespace setVariable [_ObjectDataName, _ObjectDataHash];
+missionProfileNamespace setVariable [_ObjectDataName, _ObjectDataHash];
 
 [[west,"HQ"], "Structures Saved Successfully ..."] remoteExec ["sideChat", 0];
 
@@ -235,7 +235,7 @@ _MarkerDataHash set [_x, _MarkerDataHashEach];
 
 } forEach SaveMarks ;
 
-profileNamespace setVariable [_MarkerDataName, _MarkerDataHash];
+missionProfileNamespace setVariable [_MarkerDataName, _MarkerDataHash];
 
 [[west,"HQ"], "BattleField Saved Successfully ..."] remoteExec ["sideChat", 0];
 

@@ -1,5 +1,5 @@
 /**
- * Interface d'affichage du contenu du véhicule
+ * Interface d'affichage du contenu du vï¿½hicule
  * 
  * Copyright (C) 2014 Team ~R3F~
  * 
@@ -36,7 +36,7 @@ class R3F_LOG_dlg_contenu_vehicule
 		R3F_LOG_dlg_CV_btn_fermer
 	};
 	
-	// Définition des classes de base
+	// Dï¿½finition des classes de base
 	class R3F_LOG_dlg_CV_texte
 	{
 		idc = -1;
@@ -176,14 +176,14 @@ class R3F_LOG_dlg_contenu_vehicule
 			border = "\A3\ui_f\data\gui\cfg\scrollbar\border_ca.paa";
 		};
 	};
-	// FIN Définition des classes de base
+	// FIN Dï¿½finition des classes de base
 	
 	
 	class R3F_LOG_dlg_CV_titre_fond : R3F_LOG_dlg_CV_texte
 	{
 		x = 0.26; w = 0.45;
 		y = 0.145 - R3F_LOG_dlg_CV_jauge_chargement_h-0.005; h = 0.07;
-		colorBackground[] = {"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.69])","(profilenamespace getvariable ['GUI_BCG_RGB_G',0.75])","(profilenamespace getvariable ['GUI_BCG_RGB_B',0.5])","(profilenamespace getvariable ['GUI_BCG_RGB_A',0.8])"};
+		colorBackground[] = {"(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.69])","(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.75])","(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.5])","(missionProfileNamespace getvariable ['GUI_BCG_RGB_A',0.8])"};
 	};
 	
 	class R3F_LOG_dlg_CV_titre : R3F_LOG_dlg_CV_texte

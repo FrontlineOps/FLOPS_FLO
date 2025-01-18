@@ -15,7 +15,7 @@ private _MarkerTimeName = _missionTag + "_Time";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-private _date = profileNamespace getVariable _MarkerTimeName;
+private _date = missionProfileNamespace getVariable _MarkerTimeName;
 if (!isNil "_date") then { setDate _date; };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ if (!isNil "_date") then { setDate _date; };
 sleep 2 ;
 
 
-private _GetVariableMark = profileNamespace getVariable _MarkerDataName;
+private _GetVariableMark = missionProfileNamespace getVariable _MarkerDataName;
 
 _allMarkNames = keys _GetVariableMark;
 
@@ -60,7 +60,7 @@ _mrkr setMarkerAlpha _MAlpha;
 sleep 2 ;
 
 
-private _GetVariableStatic = profileNamespace getVariable _ObjectDataName;
+private _GetVariableStatic = missionProfileNamespace getVariable _ObjectDataName;
 
 _allVehNames = keys _GetVariableStatic;
 
@@ -81,7 +81,7 @@ _NewVeh = createVehicle [_Type, [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 sleep 2 ;
 
-private _GetVariableVeh = profileNamespace getVariable _VehicleDataName;
+private _GetVariableVeh = missionProfileNamespace getVariable _VehicleDataName;
 
 _allVehNames = keys _GetVariableVeh;
 

@@ -248,9 +248,9 @@ class cTab_RscEdit
 	};
 	colorSelection[] =
 	{
-		"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.69])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_G',0.75])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_B',0.5])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.69])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.75])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.5])",
 		1
 	};
 	autocomplete = "";
@@ -647,9 +647,9 @@ class cTab_ActiveText
 	};
 	colorBackground[] =
 	{
-		"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.69])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_G',0.75])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_B',0.5])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.69])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.75])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.5])",
 		0.7
 	};
 	colorBackgroundDisabled[] =
@@ -661,16 +661,16 @@ class cTab_ActiveText
 	};
 	colorBackgroundActive[] =
 	{
-		"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.69])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_G',0.75])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_B',0.5])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.69])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.75])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.5])",
 		1
 	};
 	colorFocused[] =
 	{
-		"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.69])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_G',0.75])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_B',0.5])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.69])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.75])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.5])",
 		1
 	};
 	colorShadow[] =
@@ -811,9 +811,9 @@ class cTab_RscButtonInv
 	};
 	colorBackground[] =
 	{
-		"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.69])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_G',0.75])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_B',0.5])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.69])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.75])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.5])",
 		0
 	};
 	colorBackgroundDisabled[] =
@@ -825,16 +825,16 @@ class cTab_RscButtonInv
 	};
 	colorBackgroundActive[] =
 	{
-		"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.69])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_G',0.75])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_B',0.5])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.69])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.75])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.5])",
 		0
 	};
 	colorFocused[] =
 	{
-		"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.69])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_G',0.75])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_B',0.5])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.69])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.75])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.5])",
 		0
 	};
 	colorShadow[] =
@@ -946,9 +946,9 @@ class cTab_RscShortcutButton
 	};
 	colorBackground[] =
 	{
-		"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.69])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_G',0.75])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_B',0.5])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.69])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.75])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.5])",
 		1
 	};
 	colorBackground2[] =
@@ -1153,10 +1153,10 @@ class cTab_IGUIBack
 	h = 0.1;
 	colorbackground[] =
 	{
-		"(profilenamespace getvariable ['IGUI_BCG_RGB_R',0])",
-		"(profilenamespace getvariable ['IGUI_BCG_RGB_G',1])",
-		"(profilenamespace getvariable ['IGUI_BCG_RGB_B',1])",
-		"(profilenamespace getvariable ['IGUI_BCG_RGB_A',0.8])"
+		"(missionProfileNamespace getvariable ['IGUI_BCG_RGB_R',0])",
+		"(missionProfileNamespace getvariable ['IGUI_BCG_RGB_G',1])",
+		"(missionProfileNamespace getvariable ['IGUI_BCG_RGB_B',1])",
+		"(missionProfileNamespace getvariable ['IGUI_BCG_RGB_A',0.8])"
 	};
 };
 class cTab_RscCheckbox
@@ -1198,9 +1198,9 @@ class cTab_RscCheckbox
 	};
 	colorSelectedBg[] =
 	{
-		"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.69])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_G',0.75])",
-		"(profilenamespace getvariable ['GUI_BCG_RGB_B',0.5])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_R',0.69])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_G',0.75])",
+		"(missionProfileNamespace getvariable ['GUI_BCG_RGB_B',0.5])",
 		1
 	};
 	colorSelect[] =
@@ -1582,7 +1582,7 @@ class cTab_RscMapControl
 		iconCanceled = "\A3\ui_f\data\map\mapcontrol\taskIconCanceled_CA.paa";
 		iconDone = "\A3\ui_f\data\map\mapcontrol\taskIconDone_CA.paa";
 		iconFailed = "\A3\ui_f\data\map\mapcontrol\taskIconFailed_CA.paa";
-		color[] = {"(profilenamespace getvariable ['IGUI_TEXT_RGB_R',0])","(profilenamespace getvariable ['IGUI_TEXT_RGB_G',1])","(profilenamespace getvariable ['IGUI_TEXT_RGB_B',1])","(profilenamespace getvariable ['IGUI_TEXT_RGB_A',0.8])"};
+		color[] = {"(missionProfileNamespace getvariable ['IGUI_TEXT_RGB_R',0])","(missionProfileNamespace getvariable ['IGUI_TEXT_RGB_G',1])","(missionProfileNamespace getvariable ['IGUI_TEXT_RGB_B',1])","(missionProfileNamespace getvariable ['IGUI_TEXT_RGB_A',0.8])"};
 		colorCreated[] = {1,1,1,1};
 		colorCanceled[] = {0.7,0.7,0.7,1};
 		colorDone[] = {0.7,1,0.3,1};

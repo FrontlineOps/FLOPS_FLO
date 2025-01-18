@@ -572,10 +572,10 @@ class IGUIBack
 	h = 0.1;
 	colorbackground[] = 
 	{
-		"(profilenamespace getvariable ['IGUI_BCG_RGB_R',0])",
-		"(profilenamespace getvariable ['IGUI_BCG_RGB_G',1])",
-		"(profilenamespace getvariable ['IGUI_BCG_RGB_B',1])",
-		"(profilenamespace getvariable ['IGUI_BCG_RGB_A',0.8])"
+		"(missionProfileNamespace getvariable ['IGUI_BCG_RGB_R',0])",
+		"(missionProfileNamespace getvariable ['IGUI_BCG_RGB_G',1])",
+		"(missionProfileNamespace getvariable ['IGUI_BCG_RGB_B',1])",
+		"(missionProfileNamespace getvariable ['IGUI_BCG_RGB_A',0.8])"
 	};
 };
 class RscCheckbox

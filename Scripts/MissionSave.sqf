@@ -17,10 +17,10 @@ private _ObjectDataName = _missionTag + "_Objects";
 
 sleep 2;
 
-profileNamespace setVariable [_MarkerTimeName, nil];
-profileNamespace setVariable [_MarkerDataName, nil];
-profileNamespace setVariable [_VehicleDataName, nil];
-profileNamespace setVariable [_ObjectDataName, nil];
+missionProfileNamespace setVariable [_MarkerTimeName, nil];
+missionProfileNamespace setVariable [_MarkerDataName, nil];
+missionProfileNamespace setVariable [_VehicleDataName, nil];
+missionProfileNamespace setVariable [_ObjectDataName, nil];
 
 
 sleep 2;
@@ -67,11 +67,11 @@ _MarkerDataHash set [_x, _MarkerDataHashEach];
 
 } forEach _SaveMarks ;
 
-profileNamespace setVariable [_MarkerDataName, _MarkerDataHash];
+missionProfileNamespace setVariable [_MarkerDataName, _MarkerDataHash];
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-profileNamespace setVariable [_MarkerTimeName, date];
+missionProfileNamespace setVariable [_MarkerTimeName, date];
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -191,7 +191,7 @@ _VehicleDataHash set [_VehicleName, _VehicleDataHashEach];
 
 } forEach FinalVehSaving ;
 
-profileNamespace setVariable [_VehicleDataName, _VehicleDataHash];
+missionProfileNamespace setVariable [_VehicleDataName, _VehicleDataHash];
 
 
 
@@ -243,7 +243,7 @@ _ObjectDataHash set [_ObjectName, _ObjectDataHashEach];
 
 } forEach FinalSaving ;
 
-profileNamespace setVariable [_ObjectDataName, _ObjectDataHash];
+missionProfileNamespace setVariable [_ObjectDataName, _ObjectDataHash];
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
