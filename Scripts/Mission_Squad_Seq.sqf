@@ -1,4 +1,3 @@
-
 _thisIntelItem = _this select 0;
 
 _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
@@ -298,7 +297,7 @@ _TFOBH setTriggerStatements [
 "this",  
 "  
 
-			playSound3D [getMissionPath (selectRandom ["Sounds\c_eb_35_natojoin_KER_0.ogg"]), player];
+			playSound3D [(getMissionPath 'Sounds\c_eb_35_natojoin_KER_0.ogg'), player];
 
 _MMarks = allMapMarkers select { markerType _x == 'mil_warning'};
 _M = [_MMarks,  thisTrigger] call BIS_fnc_nearestPosition;
@@ -309,7 +308,7 @@ _POW = nearestObjects [thisTrigger , ['B_Pilot_F'], 200] ;
 _CPOW = _POW select {side _x == civilian};
 _THPOW = _CPOW select 0;
 _GRS = group _THPOW;
-			playSound3D [getMissionPath (selectRandom ["Sounds\c_eb_35_natojoin_MEM_0.ogg"]), _THPOW];
+			playSound3D [(getMissionPath 'Sounds\c_eb_35_natojoin_MEM_0.ogg'), _THPOW];
 
 _Group = createGroup West; 
 {[_x] join _Group; _x enableAI 'PATH'; _x setCaptive false; _x setUnitPos 'AUTO';} forEach units _GRS;
@@ -325,7 +324,7 @@ if (count _humanPlayers == 1 ) then {
 {TheCommander hcSetGroup [_x];} forEach _GRPs;
 };
 
-			playSound3D [getMissionPath (selectRandom ["Sounds\c_eb_35_natojoin_MEM_0.ogg"]), ((units _Group) select 0)];
+			playSound3D [(getMissionPath 'Sounds\c_eb_35_natojoin_MEM_0.ogg'), ((units _Group) select 0)];
 			
 [50, 'MISSING SQUAD'] execVM 'Scripts\NOtification.sqf' ;
 [thisTrigger, 1500] execVM 'Scripts\QuickRF.sqf';
@@ -337,5 +336,3 @@ if (count _humanPlayers == 1 ) then {
  /////////////////////////////////////////////////////////////////////////////////////////
  
  sleep 2 ;
-
-
