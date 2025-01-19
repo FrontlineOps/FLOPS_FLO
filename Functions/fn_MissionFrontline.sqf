@@ -187,7 +187,18 @@ if (count _humanPlayers > 0) then {
         private _MountsDest = nearestLocations [(getMarkerPos _Destmrk), ["Mount"], _DSneededFinal];
         private _MountsFronline = _MountsOBJ arrayIntersect _MountsDest;
 
-        private _MountFinal = selectRandom _MountsFronline;
+        private _validMounts = _MountsFronline select {
+            private _mount = _x;
+            private _nearPlayers = _mount nearEntities ["CAManBase", 1000] select {isPlayer _x && {side _x isEqualTo west}};
+            count _nearPlayers isEqualTo 0
+        };
+
+        if (_validMounts isEqualTo []) then {
+            diag_log "[FLO] WARNING: No valid mounts found without players nearby, using original list";
+            _validMounts = _MountsFronline;
+        };
+
+        private _MountFinal = selectRandom _validMounts;
 
         private _ENMASSmarkerName = "AssltOutpost" + (str ([0, 0, 0] getPos [(10 + (random 150)), (0 + (random 360))]));
         publicVariable "_ENMASSmarkerName";
@@ -345,7 +356,18 @@ if (count _humanPlayers > 0) then {
         private _MountsDest = nearestLocations [(getMarkerPos _Destmrk), ["Mount"], _DSneededFinal];
         private _MountsFronline = _MountsOBJ arrayIntersect _MountsDest;
 
-        private _MountFinal = selectRandom _MountsFronline;
+        private _validMounts = _MountsFronline select {
+            private _mount = _x;
+            private _nearPlayers = _mount nearEntities ["CAManBase", 1000] select {isPlayer _x && {side _x isEqualTo west}};
+            count _nearPlayers isEqualTo 0
+        };
+
+        if (_validMounts isEqualTo []) then {
+            diag_log "[FLO] WARNING: No valid mounts found without players nearby, using original list";
+            _validMounts = _MountsFronline;
+        };
+
+        private _MountFinal = selectRandom _validMounts;
 
         private _ENMASSmarkerName = "AssltOutpost" + (str ([0, 0, 0] getPos [(10 + (random 150)), (0 + (random 360))]));
         publicVariable "_ENMASSmarkerName";
