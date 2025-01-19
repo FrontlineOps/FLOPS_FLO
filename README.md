@@ -1,2 +1,4 @@
-# BSP_CO_Altis
-BSP Conventional Operations: Altis
+# FLO_ALTIS
+FLO : Frontline Operations: Altis
+
+STABLE VERSION: 1.0.8
