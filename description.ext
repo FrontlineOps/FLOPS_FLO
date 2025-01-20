@@ -1,11 +1,11 @@
-author = B.S.P Group ;
-onLoadMission = "| Welcome to the Conventional Operations Training |";
-overviewText = "Welcome to the Conventional Operations, Lead the Invasion, Using Conventional Tactics and Operations to capture Strategic Locations and establish Forward Operation Bases across the island, Train your Skills in Different Roles, Within a Realistic Battlefield Simulation Environment!";
+author = Frontline Operations Group;
+onLoadMission = "| Welcome to Frontline Operations |";
+overviewText = "Welcome to Frontline Operations, Lead the Invasion, Using Conventional Tactics and Operations to capture Strategic Locations and establish Forward Operation Bases across the island, Train your Skills in Different Roles, Within a Realistic Combat Environment!";
 onLoadIntroTime = 1;
 onLoadMissionTime = 1;
-onLoadName = B.S.P Conventional Operations;
-loadScreen = "Screens\logo_Conops.paa";
-overviewPicture = "Screens\logo_Conops.paa";
+onLoadName = Frontline Operations;
+loadScreen = "Screens\FLO.paa";
+overviewPicture = "Screens\FLO.paa";
 disabledAI = 1;
 enableDebugConsole = 1;
 
