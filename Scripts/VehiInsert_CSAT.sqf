@@ -18,13 +18,14 @@ if (COMMSDIS == 0) then {
         
         if (selectRandom [true, true, false]) then {
             // Transport vehicle setup
-            _veh = createVehicle [selectRandom East_Ground_Transport, getPosATL _spawnRoad, [], 2, "NONE"];
+            _veh = createVehicle [selectRandom East_Ground_Transport, getPosATL _spawnRoad, [], 2, "CAN_COLLIDE"];
             
             private _crewCount = [(typeOf _veh), true] call BIS_fnc_crewCount;
             _vc = createGroup [east, true];
             
             for "_i" from 1 to _crewCount do {
                 private _unit = _vc createUnit [selectRandom East_Units, getPosATL _spawnRoad, [], 0, "NONE"];
+                [_unit] joinSilent _vc;
                 _unit moveInAny _veh;
             };
             
@@ -53,7 +54,7 @@ if (COMMSDIS == 0) then {
             
             // Add dismount trigger
             private _dismountTrigger = createTrigger ["EmptyDetector", getPos _veh, false];
-            _dismountTrigger setTriggerArea [200, 200, 0, false, 100];
+            _dismountTrigger setTriggerArea [750, 750, 0, false, 100];
             _dismountTrigger setTriggerActivation ["WEST", "PRESENT", false];
             _dismountTrigger setTriggerStatements [
                 "this",
@@ -77,10 +78,11 @@ if (COMMSDIS == 0) then {
             
         } else {
             // Combat vehicle setup
-            _veh = createVehicle [selectRandom East_Ground_Vehicles_Light, getPosATL _spawnRoad, [], 2, "NONE"];
+            _veh = createVehicle [selectRandom East_Ground_Vehicles_Light, getPosATL _spawnRoad, [], 2, "CAN_COLLIDE"];
             private _tempGroup = createVehicleCrew _veh;
             _vc = createGroup [east, true];
             (units _tempGroup) joinSilent _vc;
+            deleteGroup _tempGroup;
         };
         
         // Common vehicle settings
