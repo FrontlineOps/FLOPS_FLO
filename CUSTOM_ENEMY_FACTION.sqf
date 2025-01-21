@@ -55,7 +55,7 @@ East_Units = [
     
     // Support roles (medium frequency)
     "I_medic_F", "I_medic_F",                                    // Medic
-    "Aegis_I_Soldier_MG_F", "Aegis_I_Soldier_MG_F",             // Machine gunner
+    "Aegis_I_Soldier_MG_F", "Aegis_I_Soldier_MG_F",              // Machine gunner
     "I_Soldier_M_F",                                             // Marksman
     "I_Soldier_A_F",                                             // Ammo bearer
     
@@ -64,7 +64,7 @@ East_Units = [
     "I_Soldier_LAT2_F",                                          // Light AT
     "I_Soldier_AT_F",                                            // AT Specialist
     "I_Soldier_AA_F",                                            // AA Specialist
-    "Aegis_I_HeavyGunner_F"                                     // Heavy gunner
+    "Aegis_I_HeavyGunner_F"                                      // Heavy gunner
 ];
 //publicVariable "East_Units";
 
