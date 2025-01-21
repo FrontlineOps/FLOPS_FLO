@@ -23,7 +23,7 @@ if (COMMSDIS == 0) then {
             // Transport helicopter setup
             private _qrfPos = getPos _thisHeliInsertTrigger;
             private _randomDir = random 360;
-            private _landingPos = _qrfPos getPos [750 + (random 250), _randomDir];
+            private _landingPos = _qrfPos getPos [1000 + (random 250), _randomDir];
             _landingPos = [_landingPos, 0, 200, 10, 0, 0.2, 0, [], [_landingPos, _landingPos]] call BIS_fnc_findSafePos;
             
             private _spawnPos = _targetPos vectorAdd [0, 0, 100];
@@ -51,6 +51,7 @@ if (COMMSDIS == 0) then {
                     0,
                     "NONE"
                 ];
+                [_unit] joinSilent _qrfGroup;
             };
             
             // Distribute intel items
