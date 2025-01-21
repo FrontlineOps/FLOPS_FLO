@@ -57,7 +57,7 @@ private _objectLocTMine = allMapMarkers select { markerType _x == 'loc_mine' };
 sleep 1;
 
 // Create AAA sites & Set Trigger for Defenders to spawn if player is in AAA area
-private _objectLocT = allMapMarkers select { markerType _x == "o_antiair"};
+private _objectLocTAAA = allMapMarkers select { markerType _x == "o_antiair"};
 {
     private _P1 =  [ 
         "AAA_01",  
@@ -95,7 +95,7 @@ private _objectLocT = allMapMarkers select { markerType _x == "o_antiair"};
         ];
     };
 
-} forEach _objectLocT;
+} forEach _objectLocTAAA;
 
 sleep 1;
 
