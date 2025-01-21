@@ -1,4 +1,3 @@
-
 // Where are Classnames ? Right click on any Unit or Vehicle in the Editor and Select find in CFG viewer, Last Name in the [path] tab is the Classname,
 
 /*
@@ -47,7 +46,26 @@ East_Air_Heli = ["I_Heli_Attack_03_F", "I_Heli_Light_01_dynamicLoadout_F", "I_He
 East_Air_Jet = ["I_Plane_Fighter_04_F", "I_Plane_Fighter_03_dynamicLoadout_F"]; 
 //publicVariable "East_Air_Jet";
 
-East_Units = ["I_soldier_F", "I_Soldier_LAT_F", "I_Soldier_LAT2_F", "I_Soldier_lite_F", "I_Soldier_CQ_F", "I_Soldier_AT_F", "I_Soldier_AA_F", "I_Soldier_M_F", "Aegis_I_Soldier_MG_F", "I_Soldier_A_F", "Aegis_I_HeavyGunner_F", "I_medic_F"];
+East_Units = [
+    // Regular infantry (high frequency)
+    "I_soldier_F", "I_soldier_F", "I_soldier_F", "I_soldier_F",  // Regular rifleman
+    "I_Soldier_AR_F", "I_Soldier_AR_F",                          // Autorifleman
+    "I_Soldier_CQ_F", "I_Soldier_CQ_F",                          // CQB specialist
+    "I_Soldier_GL_F", "I_Soldier_GL_F",                          // Grenadier
+    
+    // Support roles (medium frequency)
+    "I_medic_F", "I_medic_F",                                    // Medic
+    "Aegis_I_Soldier_MG_F", "Aegis_I_Soldier_MG_F",             // Machine gunner
+    "I_Soldier_M_F",                                             // Marksman
+    "I_Soldier_A_F",                                             // Ammo bearer
+    
+    // Specialists (low frequency)
+    "I_Soldier_LAT_F",                                           // Light AT
+    "I_Soldier_LAT2_F",                                          // Light AT
+    "I_Soldier_AT_F",                                            // AT Specialist
+    "I_Soldier_AA_F",                                            // AA Specialist
+    "Aegis_I_HeavyGunner_F"                                     // Heavy gunner
+];
 //publicVariable "East_Units";
 
 East_Units_Officers = ["I_officer_F"];
