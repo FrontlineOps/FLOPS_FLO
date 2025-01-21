@@ -1,15 +1,5 @@
 disableSerialization;
 
-sleep 0.5;
-
-HQLOCC = 0;
-publicVariable "HQLOCC";
-MarLOCC = 0;
-publicVariable "MarLOCC";
-DIALOCC = 0;
-publicVariable "DIALOCC";
-
-
 (findDisplay 46) createDisplay "factionselect_dialog2";
 waituntil {!isNull findDisplay 999};
 

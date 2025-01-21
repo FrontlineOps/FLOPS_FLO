@@ -15,31 +15,9 @@
    Notes:
    - None
 */
-
-
-#include ".\config.sqf"
-/*
-   Variable: _is_debug
-   Holds a boolean value indicating whether the mission is in debug mode or not.
-
-   Value:
-   - True: The mission is a debug mission.
-   - False: The mission is not a debug mission.
-
-   Source:
-   The value is determined by the result of the is_debug function.
-
-   Usage:
-   This variable can be used throughout the script to enable or disable
-   debug-specific features.
-*/
-private _is_debug = call is_debug;
 private _MissionHighCommander = missionNamespace getVariable ["TheCommander", objNull];
 
 // Intro Title for the Mission
-HQLOCC = 0 ;
-publicVariable "HQLOCC";
-
 titleText ["Frontline Operations Group Presents...", "BLACK IN",9999];
 5 fadeSound 0;
 
@@ -53,7 +31,7 @@ if !(didJIP) then {
 
 if ((count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) != 7) && (not didJIP)) then
 {
-    [true] execVM "Scripts\Dialog_Faction_Done.sqf";
+    execVM "Scripts\Dialog_Faction.sqf";
 };
 
 // This is for when the mission is being loaded from a saved game.
@@ -70,7 +48,7 @@ waitUntil {
 };
 
 // Init Main
-InitMain = execVM "initMain.sqf"; waitUntil { scriptDone InitMain }; 
+execVM "Scripts\Init\init_groups.sqf"; 
 
 // Hint start of init
 hintSilent "LOADING . . . "; 
@@ -79,13 +57,11 @@ HCIV = 0;
 cooldn = 0 ;
 
 enableSaving [false, false] ;
-setViewDistance 1000;
-setobjectViewDistance [1000, 200];
 
 // Init Custom Factions if they are selected
+F_Init = false;
+
 waitUntil {F_Init == "Done"};
-waitUntil {E_Init == "Done"}; 
-waitUntil {C_Init == "Done"};
 
 if (hasInterface) then {
     Triggers0 = execVM "Scripts\init_Triggers.sqf";
@@ -95,7 +71,6 @@ if (hasInterface) then {
 waitUntil {sleep 1; (count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) == 7)};
 
 if ((isServer)  && !(didJIP)) then {SYSINT = 0} else {SYSINT = 1} ;
-
 
 // Init UI Elements
 (findDisplay 46) displayAddEventHandler ["MouseButtonDown", "params ['_displayOrControl', '_button', '_xPos', '_yPos', '_shift', '_ctrl', '_alt'];  if ((_ctrl) && (_button == 1) && ((ctrlMapMouseOver (findDisplay 12 displayCtrl 51)) select 0 == 'marker')) then {[(ctrlMapMouseOver (findDisplay 12 displayCtrl 51)) select 1] execVM 'Scripts\MarkerIntro.sqf';}"]; 
@@ -137,7 +112,7 @@ HC1Present = if ( isNil "HC_1" ) then { False } else {True } ;
 HC2Present = if ( isNil "HC_2" ) then { False } else {True } ; 
 HC3Present = if ( isNil "HC_3" ) then { False } else {True } ; 
 
-waitUntil {(DIALOCC == 1) || (MarLOCC == 1) || (count (allMapMarkers select {markerType _x == "b_installation"}) > 0) || (count (allMapMarkers select {markerType _x == "b_unknown"}) > 0)};
+waitUntil {(MarLOCC == 1) || (count (allMapMarkers select {markerType _x == "b_installation"}) > 0) || (count (allMapMarkers select {markerType _x == "b_unknown"}) > 0)};
 
 //TODO: If we have performance issues in the future we can do this
 // Directly assign triggers to headless clients
@@ -172,6 +147,13 @@ waitUntil {(didJIP) or (TRG3LOCC == 1)};
 
 ///////////////////////////////////////////////////////////////////////////////////
 if (isClass (configfile >> "CfgVehicles" >> "Box_cTab_items") == true ) then { player addItem "ItemAndroid"; player addItem "ItemcTab"; };
+
+call compileScript ["Scripts\Init\init_CommsMenu.sqf"];
+
+[player,'MENU_COMMS_UAV_RECON',nil,nil,''] call BIS_fnc_addCommMenuItem;	
+[player,'MENU_COMMS_SUPPLYDROP',nil,nil,''] call BIS_fnc_addCommMenuItem;
+[player,'MENU_COMMS_INF',nil,nil,''] call BIS_fnc_addCommMenuItem;	
+[player,'MENU_COMMS_ARTI',nil,nil,''] call BIS_fnc_addCommMenuItem;	
 
 // Hint end of init
 hintSilent "LOADED!"; 
