@@ -1,18 +1,27 @@
 params ["_player", "_didJIP"];
 
-        titleText ["Frontline Operations Group Presents...", "BLACK IN",999];
-		5 fadeSound 0;
+titleText ["Frontline Operations Group Presents...", "BLACK IN",999];
+5 fadeSound 0;
 
 sleep 1;
 
 StartingLocationDone = false;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // After Mission Loaded
 waitUntil {MissionLoadedLitterally};
 
+// Check if the starting location has been set & blufor installations already exist
+// if so assume the mission has been loaded from a saved game
+private _installationCount = count (allMapMarkers select {markerType _x == "b_installation"});
+if (count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) == 7 && (_installationCount > 0)) then {
+    StartingLocationDone = true; 
+    publicVariable "StartingLocationDone";
+};
+
+// If starting location has not been set 
+// Assume the mission is a fresh start
 if (!StartingLocationDone) then {
-	// //////////////////// TheCommander : Faction Selection & Starting Location ///////////////////////
+	// Faction Selection & Starting Location
 	if (isNil "TheCommander") then {titleText ["Commander must be assigned to a player at fresh start.\nHave someone return to Lobby and pick Commander.", "BLACK IN",9999]; waitUntil {!isNil "TheCommander"};};
 
 	if (_player == TheCommander) then { 
@@ -20,7 +29,7 @@ if (!StartingLocationDone) then {
 	};
 };
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // After Faction Selection / Safe Zones
 waitUntil {StartingLocationDone};
 
@@ -38,8 +47,7 @@ enableSaving [false, false] ;
 
 waitUntil {F_Init};
 
-////////////////////////////////////////////// // SYSTEMs Init Clients  //////////////////////////////////////////////////
-
+// SYSTEMs Init Clients
 Triggers0 = execVM "Scripts\init_Triggers.sqf";
 waitUntil {sleep 1; scriptDone Triggers0 };
 
@@ -48,17 +56,14 @@ waitUntil {sleep 1; scriptDone Triggers0 };
 // (findDisplay 46) displayAddEventHandler ["KeyDown", {params ["_displayorcontrol", "_key", "_shift", "_ctrl", "_alt"]; if (_key == 24) then { titleFadeOut 0.01;}; }];
 (findDisplay 46) displayAddEventHandler ["KeyDown", {params ["_displayorcontrol", "_key", "_shift", "_ctrl", "_alt"]; if ((_ctrl) && (_key == 37) && (!dialog) && ((player getVariable ["AIS_unconscious", false]) != true)) then {execVM "Scripts\TEAMS.sqf" ;};}];
 
-////////////////////////////////////////////// // R3F Init   // Everyone ////////////////////////////////////////////////
-
+// R3F Init - Everyone 
 execVM "R3F_LOG\init.sqf";
 
-////////////////////////////////////////////// // ETV Init   // Everyone ////////////////////////////////////////////////
-
+// ETV Init - Everyone
 execVM "Scripts\EtV.sqf";
 waitUntil {!isNil "EtVInitialized"};
 
-////////////////////////////////////////////// // Misc ////////////////////////////////////////////////
-
+// Misc
 if (isClass (configfile >> "CfgVehicles" >> "Box_cTab_items") == true ) then { player addItem "ItemAndroid"; player addItem "ItemcTab"; };
 
 call compileScript ["Scripts\init\init_CommsMenu.sqf"];
@@ -71,7 +76,12 @@ call compileScript ["Scripts\init\init_CommsMenu.sqf"];
 [player,'MENU_COMMS_ARTI',nil,nil,''] call BIS_fnc_addCommMenuItem;	
 
 
-////////////////////////////////////////////// // Headless Clients / Everyone ////////////////////////////////////////////////
+// Headless Clients / Everyone
+HC1Present = if ( isNil "HC_1" ) then { False } else {True } ; 
+HC2Present = if ( isNil "HC_2" ) then { False } else {True } ; 
+HC3Present = if ( isNil "HC_3" ) then { False } else {True } ; 
+
+waitUntil {(MarLOCC == 1) || (count (allMapMarkers select {markerType _x == "b_installation"}) > 0) || (count (allMapMarkers select {markerType _x == "b_unknown"}) > 0)};
 
 /* 
    Function: _executeAndWait
@@ -86,6 +96,7 @@ call compileScript ["Scripts\init\init_CommsMenu.sqf"];
    Parameters:
    param - Array of sqf scripts.
 */
+/* 
 private _executeAndWait= {
     params ["_script"];
     {
@@ -93,13 +104,7 @@ private _executeAndWait= {
         waitUntil {sleep 1; scriptDone _handle };
     } forEach _script;
 };
-
-HC1Present = if ( isNil "HC_1" ) then { False } else {True } ; 
-HC2Present = if ( isNil "HC_2" ) then { False } else {True } ; 
-HC3Present = if ( isNil "HC_3" ) then { False } else {True } ; 
-
-waitUntil {(MarLOCC == 1) || (count (allMapMarkers select {markerType _x == "b_installation"}) > 0) || (count (allMapMarkers select {markerType _x == "b_unknown"}) > 0)};
-
+*/
 
 //TODO: If we have performance issues in the future we can do this
 // Directly assign triggers to headless clients
