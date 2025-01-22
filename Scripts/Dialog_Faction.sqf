@@ -39,6 +39,7 @@ populateFactionBoxF = {
 	if ((isClass (configfile >> "CfgFactionClasses" >> "BWA3_Faction_Fleck") == true ) && (isClass (configfile >> "CfgFactionClasses" >> "CUP_B_GER") == true )) then {_ctrl lbAdd "German Armed Forces _ Desert _ BW"; }; 
 	if ((isClass (configfile >> "CfgFactionClasses" >> "BWA3_Faction_Fleck") == true ) && (isClass (configfile >> "CfgFactionClasses" >> "CUP_B_GER") == true )) then {_ctrl lbAdd "German Armed Forces _ Woodland _ BW"; };
 	if (isClass (configfile >> "CfgFactionClasses" >> "FFAA") == true ) then {_ctrl lbAdd "Spanish Armed Forces  _ Woodland _ FFAA"; }; 
+	_ctrl lbSetCurSel 0;
 };
 
 populateFactionBoxE = {
@@ -71,6 +72,7 @@ populateFactionBoxE = {
 	
 	if (isClass (configfile >> "CfgFactionClasses" >> "rhs_faction_msv") == true ) then {_ctrl lbAdd "Russian Armed Forces _ Desert _ RHS";};
 	if (isClass (configfile >> "CfgFactionClasses" >> "rhs_faction_msv") == true ) then {	_ctrl lbAdd "Russian Armed Forces _ Woodland _ RHS";};
+	_ctrl lbSetCurSel 0;
 
 };
 
@@ -88,6 +90,7 @@ populateFactionBoxC = {
     _ctrl lbAdd "Tanoan_Civilians_Insurgents";  
 		if (isClass (configfile >> "CfgFactionClasses" >> "CUP_C_TK") == true ) then {_ctrl lbAdd "MiddleEast_Civilians_Insurgents_CUP";};
     _ctrl lbAdd "Asian_Civilians_Insurgents";  
+	_ctrl lbSetCurSel 0;
 
 };
 
@@ -99,6 +102,7 @@ populateFactionBoxEP = {
     _ctrl lbAdd "50% _ Medium Campaign";  
     _ctrl lbAdd "75% _ Long Campaign";  
     _ctrl lbAdd "100% _ Dedi Servers with HCs";  
+	_ctrl lbSetCurSel 4;
 };
 
 populateFactionBoxSR = {
@@ -108,6 +112,7 @@ populateFactionBoxSR = {
     _ctrl lbAdd "250";  
     _ctrl lbAdd "500";
 	_ctrl lbAdd "1000";
+	_ctrl lbSetCurSel 1;
 };
 
 populateFactionBoxSRep = {
@@ -116,6 +121,7 @@ populateFactionBoxSRep = {
     _ctrl lbAdd "LOW_Enemy to Guerillas"; 
     _ctrl lbAdd "MEDIUM_Neutral to Guerillas";  
     _ctrl lbAdd "HIGH_Friendly to Guerillas";
+	_ctrl lbSetCurSel 1;
 };
 
 populateFactionBoxSD = {
@@ -124,6 +130,7 @@ populateFactionBoxSD = {
     _ctrl lbAdd "EASY _ Low Enemy Presence _ progressive"; 
     _ctrl lbAdd "NORMAL _ Half Enemy Presence _ progressive";  
     _ctrl lbAdd "HARD _ Full Enemy Presence _ progressive";
+	_ctrl lbSetCurSel 1;
 };
 
 

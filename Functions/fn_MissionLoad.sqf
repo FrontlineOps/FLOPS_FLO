@@ -5,7 +5,6 @@ MissionLoadedLitterally = 0 ;
 publicVariable "MissionLoadedLitterally";
 
 
-
 _missionTag = missionName;
 _missionTag = [_missionTag] call BIS_fnc_filterString;
 
@@ -135,7 +134,7 @@ for "_x" from 0 to _CrewSelCnt do { _unit = _Group createunit [_crewType,[0,0,0]
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-MissionLoadedLitterally = 1 ;
+MissionLoadedLitterally = true ;
 publicVariable "MissionLoadedLitterally";
 
 

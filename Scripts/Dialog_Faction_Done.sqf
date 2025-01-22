@@ -122,6 +122,9 @@ if !_is_debug then
 		ZonMarkers = execVM "Scripts\init_Markers.sqf";
 		waitUntil { scriptDone ZonMarkers };
 
+	StartingLocationDone = true;
+	publicVariable "StartingLocationDone";
+
 
 	};
 	sleep 2; 
@@ -201,6 +204,9 @@ else {
 
 	ZonMarkers = execVM "Scripts\init_Markers.sqf";
 	waitUntil { scriptDone ZonMarkers };
+
+	StartingLocationDone = true;
+	publicVariable "StartingLocationDone";
 
 	sleep 2; 
 };

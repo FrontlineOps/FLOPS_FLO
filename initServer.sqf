@@ -27,27 +27,75 @@ publicVariable "ARMDIS";
 ConVLocc = 0 ;
 publicVariable "ConVLocc";
 
+StartingLocationDone = false;
+
 VSDistance = 2500; //750; 
 VS_FPS = [];
 VSTimeDelay = 20;
 VSCurrentTime = diag_tickTime;
 VS_IsWorking = false;
 
+if (isNil "F_Init") then {F_Init = false;};
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// After Mission Loaded
+waitUntil {MissionLoadedLitterally};
+
 //Mission Settings Loading
-waitUntil { sleep 1; ((count (allMapMarkers select {markerType _x == "b_installation"}) > 0) or (HQLOCC == 1)) && (count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) == 7)};
+waitUntil {StartingLocationDone};
 
-if (markerText "Friendly_Handle" == "CUSTOM_PLAYER_FACTION") then {  null = execVM "CUSTOM_PLAYER_FACTION.sqf" };
-if (markerText "Enemy_Handle" == "CUSTOM_ENEMY_FACTION") then {  null = execVM "CUSTOM_ENEMY_FACTION.sqf" };
-if (markerText "Civilian_Handle" == "CUSTOM_CIVILIAN_FACTION") then {  null = execVM "CUSTOM_CIVILIAN_FACTION.sqf" };
+// Dedicated server needs to know factions too
+if (isDedicated) then {
 
-private _Enemy = execVM "Scripts\Enemy_Vars.sqf"; 
-waitUntil { sleep 1; scriptDone _Enemy };
+	execVM "Scripts\init\init_groups.sqf"; 
 
-private _Friendly = execVM "Scripts\Friendly_Vars.sqf"; 
-waitUntil { sleep 1; scriptDone _Friendly };
+	setViewDistance 3000; // for knowsabout
 
-private _Civilian = execVM "Scripts\Civilian_Vars.sqf"; 
-waitUntil { sleep 1; scriptDone _Civilian };
+	sleep 1;
+
+    waitUntil {F_Init};
+
+    ////////////////////////////////////////////// // SYSTEMs Init Server  //////////////////////////////////////////////////
+    // Run these only if dedicated (not hosted - hosted servers run initPlayerLocal)
+
+	////////////////////////////////////////////// // R3F Init   // Everyone ////////////////////////////////////////////////
+
+	execVM "R3F_LOG\init.sqf";
+
+	////////////////////////////////////////////// // ETV Init   // Everyone ////////////////////////////////////////////////
+
+	execVM "Scripts\EtV.sqf";
+	waitUntil {!isNil "EtVInitialized"};
+};
+
+
+/* 
+   Function: _executeAndWait
+   Execute array of sqf scripts and wait for each on of them to finish before continuing iteration.
+
+   Example:
+   (start code)
+   // Example usage
+   [param] call _executeAndWait;
+   (end)
+
+   Parameters:
+   param - Array of sqf scripts.
+*/
+private _executeAndWait= {
+    params ["_script"];
+    {
+        private _handle = execVM _x;
+        waitUntil {sleep 1; scriptDone _handle };
+    } forEach _script;
+};
+
+HC1Present = if ( isNil "HC_1" ) then { False } else {True } ; 
+HC2Present = if ( isNil "HC_2" ) then { False } else {True } ; 
+HC3Present = if ( isNil "HC_3" ) then { False } else {True } ; 
+// Handle the case where no headless clients are present
+if (!HC1Present && !HC2Present && !HC3Present) then {
+    [["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"]] call _executeAndWait;
+};
 
 //Resource Loops//Convoy Loops//Radio Tower Loops
 [] spawn {  

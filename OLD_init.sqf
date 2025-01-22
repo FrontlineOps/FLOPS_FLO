@@ -17,7 +17,7 @@
 */
 private _MissionHighCommander = missionNamespace getVariable ["TheCommander", objNull];
 
-// Intro Title for the Mission
+Intro Title for the Mission
 titleText ["Frontline Operations Group Presents...", "BLACK IN",9999];
 5 fadeSound 0;
 
