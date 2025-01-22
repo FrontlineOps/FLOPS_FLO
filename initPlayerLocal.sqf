@@ -77,9 +77,9 @@ call compileScript ["Scripts\init\init_CommsMenu.sqf"];
 
 
 // Headless Clients / Everyone
-HC1Present = if ( isNil "HC_1" ) then { False } else {True } ; 
-HC2Present = if ( isNil "HC_2" ) then { False } else {True } ; 
-HC3Present = if ( isNil "HC_3" ) then { False } else {True } ; 
+HC1Present = if (isNil "HC_1") then {false} else {true}; 
+HC2Present = if (isNil "HC_2") then {false} else {true}; 
+HC3Present = if (isNil "HC_3") then {false} else {true}; 
 
 waitUntil {(MarLOCC == 1) || (count (allMapMarkers select {markerType _x == "b_installation"}) > 0) || (count (allMapMarkers select {markerType _x == "b_unknown"}) > 0)};
 

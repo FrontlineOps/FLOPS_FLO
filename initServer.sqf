@@ -89,9 +89,9 @@ private _executeAndWait= {
     } forEach _script;
 };
 
-HC1Present = if ( isNil "HC_1" ) then { False } else {True } ; 
-HC2Present = if ( isNil "HC_2" ) then { False } else {True } ; 
-HC3Present = if ( isNil "HC_3" ) then { False } else {True } ; 
+HC1Present = if (isNil "HC_1") then {false} else {true}; 
+HC2Present = if (isNil "HC_2") then {false} else {true}; 
+HC3Present = if (isNil "HC_3") then {false} else {true}; 
 // Handle the case where no headless clients are present
 if (!HC1Present && !HC2Present && !HC3Present) then {
     [["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"]] call _executeAndWait;
