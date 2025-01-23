@@ -26,7 +26,7 @@ _allWatchposts = [
 
 
 _TERR = nearestTerrainObjects [getPos _nearRoad, ["House", "TREE", "SMALL TREE", "BUSH", "ROCK", "ROCKS"], 15]; 
-{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+{_x hideObjectGlobal true;} forEach _TERR ;
 
 _COM = [ selectRandom _allWatchposts, getPos _nearRoad, [0,0,0], (0 + (random 350)), false, false, true ] call LARs_fnc_spawnComp; 
 
