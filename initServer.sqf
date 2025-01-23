@@ -9,8 +9,6 @@ TRG3LOCC = 0;
 publicVariable "TRG3LOCC";
 MarLOCC = 0;
 publicVariable "MarLOCC";
-DIALOCC = 0;
-publicVariable "DIALOCC";
 AVENGLOCC = 1 ;
 publicVariable "AVENGLOCC";
 
@@ -29,27 +27,75 @@ publicVariable "ARMDIS";
 ConVLocc = 0 ;
 publicVariable "ConVLocc";
 
+StartingLocationDone = false;
+
 VSDistance = 2500; //750; 
 VS_FPS = [];
 VSTimeDelay = 20;
 VSCurrentTime = diag_tickTime;
 VS_IsWorking = false;
 
+if (isNil "F_Init") then {F_Init = false;};
+
+// After Mission Loaded
+waitUntil {MissionLoadedLitterally};
+
 //Mission Settings Loading
-waitUntil { sleep 1; ((count (allMapMarkers select {markerType _x == "b_installation"}) > 0) or (HQLOCC == 1)) && (count (allMapMarkers select {markerType _x == "loc_SafetyZone"}) == 7)};
+waitUntil {StartingLocationDone};
 
-if (markerText "Friendly_Handle" == "CUSTOM_PLAYER_FACTION") then {  null = execVM "CUSTOM_PLAYER_FACTION.sqf" };
-if (markerText "Enemy_Handle" == "CUSTOM_ENEMY_FACTION") then {  null = execVM "CUSTOM_ENEMY_FACTION.sqf" };
-if (markerText "Civilian_Handle" == "CUSTOM_CIVILIAN_FACTION") then {  null = execVM "CUSTOM_CIVILIAN_FACTION.sqf" };
+// Dedicated server needs to know factions too
+if (isDedicated) then {
 
-private _Enemy = execVM "Scripts\Enemy_Vars.sqf"; 
-waitUntil { sleep 1; scriptDone _Enemy };
+	execVM "Scripts\init\init_groups.sqf"; 
 
-private _Friendly = execVM "Scripts\Friendly_Vars.sqf"; 
-waitUntil { sleep 1; scriptDone _Friendly };
+	setViewDistance 3000; // for knowsabout
 
-private _Civilian = execVM "Scripts\Civilian_Vars.sqf"; 
-waitUntil { sleep 1; scriptDone _Civilian };
+	sleep 1;
+
+    waitUntil {F_Init};
+
+    // SYSTEMs Init Server 
+    // Run these only if dedicated (not hosted - hosted servers run initPlayerLocal)
+
+	// R3F Init - Everyone
+
+	execVM "R3F_LOG\init.sqf";
+
+	// ETV Init - Everyone
+
+	execVM "Scripts\EtV.sqf";
+	waitUntil {!isNil "EtVInitialized"};
+};
+
+
+/* 
+   Function: _executeAndWait
+   Execute array of sqf scripts and wait for each on of them to finish before continuing iteration.
+
+   Example:
+   (start code)
+   // Example usage
+   [param] call _executeAndWait;
+   (end)
+
+   Parameters:
+   param - Array of sqf scripts.
+*/
+private _executeAndWait= {
+    params ["_script"];
+    {
+        private _handle = execVM _x;
+        waitUntil {sleep 1; scriptDone _handle };
+    } forEach _script;
+};
+
+HC1Present = if (isNil "HC_1") then {false} else {true}; 
+HC2Present = if (isNil "HC_2") then {false} else {true}; 
+HC3Present = if (isNil "HC_3") then {false} else {true}; 
+// Handle the case where no headless clients are present
+if (!HC1Present && !HC2Present && !HC3Present) then {
+    [["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"]] call _executeAndWait;
+};
 
 //Resource Loops//Convoy Loops//Radio Tower Loops
 [] spawn {  
@@ -130,3 +176,19 @@ if (AutoSaveSwitchVal == 1) then {
         };
     };
 };
+
+FLO_configCache = createHashMapFromArray [
+    ["helipads", ["Land_HelipadCircle_F","Land_HelipadCivil_F","Heli_H_rescue","Land_HelipadRescue_F","Land_HelipadSquare_F","HeliHRescue","Heli_H_civil","HeliHCivil","HeliH"]],
+    ["tyres", ["Land_Tyre_F"]],
+    ["vehicles", [East_Air_Heli, East_Ground_Transport, East_Ground_Vehicles_Light, East_Ground_Vehicles_Heavy, East_Ground_Vehicles_Ambient, East_Air_Transport, East_Air_Jet]],
+    ["units", East_Units],
+    ["buildings", ["House", "Land_MilOffices_V1_F", "Land_Cargo_Tower_V3_F", "Land_Cargo_Tower_V2_F", "Land_Cargo_Tower_V1_F", "Land_Cargo_HQ_V3_F", "Land_Cargo_HQ_V2_F", "Land_Cargo_HQ_V1_F", "Land_Cargo_House_V3_F", "Land_Cargo_House_V1_F"]],
+    ["SOVbuildings", ["Sign_Pointer_Cyan_F", "Land_Garbage_square3_F", "Land_Garbage_line_F", "Sign_Pointer_Yellow_F", "Sign_Sphere10cm_F", "Land_vn_controltower_01_f", "Sign_Pointer_Blue_F", "Land_InvisibleBarrier_F", "Land_HelipadEmpty_F",
+    "O_Radar_System_02_F", "O_G_Mortar_01_F", "O_G_HMG_02_high_F", "Land_TripodScreen_01_large_black_F", "Land_vn_b_prop_mapstand_01", "MapBoard_altis_F", "Land_Laptop_device_F", "Land_Map_Malden_F",
+    "Land_Document_01_F", "Land_File2_F", "Land_i_Barracks_V1_F", "Land_u_Barracks_V2_F", "Land_i_Barracks_V2_F", "Land_Barracks_01_grey_F", "Land_Barracks_01_dilapidated_F", "Land_Radar_F", "Land_TTowerBig_1_F",
+    "Land_TTowerBig_2_F", "Land_TripodScreen_01_large_F", "Land_TripodScreen_01_large_sand_F", "Land_TripodScreen_01_dual_v2_sand_F", "Land_TripodScreen_01_dual_v2_F", "Box_FIA_Support_F", "Box_FIA_Ammo_F",
+    "Land_PowerGenerator_F", "Land_Barracks_01_camo_F", "Land_vn_barracks_01_camo_f", "Land_Cargo_House_V1_F", "Land_Cargo_Tower_V1_F", "Land_Cargo_Tower_V3_F", "Land_Cargo_Tower_V2_F", "Land_Cargo_House_V3_F", "Land_Cargo_HQ_V3_F",
+    "Land_Cargo_HQ_V1_F", "B_Slingload_01_Cargo_F", "B_Slingload_01_Repair_F"]],
+	["HQbuildings", ["Land_Cargo_HQ_V3_F", "Land_Cargo_HQ_V1_F", "Land_Cargo_House_V1_F", "Land_Cargo_House_V3_F", "Land_Cargo_HQ_V3_ruins_F", "Land_Cargo_HQ_V1_ruins_F", "Land_Cargo_House_V1_ruins_F", "Land_Cargo_House_V3_ruins_F", "House"]],
+    ["bunkers", ["Land_BagBunker_Large_F", "Land_BagBunker_Small_F", "Land_Cargo_House_V3_F", "Land_Cargo_House_V1_F", "Land_Cargo_Patrol_V3_F", "Land_Cargo_Patrol_V2_F", "Land_Cargo_Patrol_V1_F"]]
+];
