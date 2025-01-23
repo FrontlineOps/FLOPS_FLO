@@ -28,13 +28,52 @@ private _fnc_spawnVehicle = {
     if (count _roads == 0) exitWith {};
     
     private _road = selectRandom _roads;
-    private _pos = _road getRelPos [6, selectRandom [90, -90]];
-    private _veh = createVehicle [selectRandom CivVehArray, [_pos select 0, _pos select 1, (_pos select 2) + 0.5], [], 0, "CAN_COLLIDE"];
-    
-    private _connectedRoad = (roadsConnectedTo _road) select 0;
-    if (!isNil "_connectedRoad") then {
-        _veh setDir (_road getDir _connectedRoad);
+    private _vehType = selectRandom CivVehArray;
+    private _roadDir = if (count roadsConnectedTo _road > 0) then {
+        _road getDir ((roadsConnectedTo _road) select 0)
+    } else {
+        random 360
     };
+    
+    // Try both sides of the road
+    private _sides = [90, -90];
+    private _veh = objNull;
+    
+    {
+        private _roadPos = _road getRelPos [6, _x];
+        private _safePos = [
+            _roadPos,
+            0,          // min distance
+            8,          // max distance
+            (sizeOf _vehType) + 1, // object size + buffer
+            0.3,        // max gradient
+            0,          // max water depth
+            0,          // shore mode
+            [],         // blacklist positions
+            [_roadPos, _roadPos] // default pos
+        ] call BIS_fnc_findSafePos;
+        
+        // Check if position is not on road and surface is suitable
+        if (!isOnRoad _safePos && {!(surfaceIsWater _safePos)}) then {
+            _veh = createVehicle [_vehType, [_safePos select 0, _safePos select 1, (_roadPos select 2) + 0.2], [], 0, "CAN_COLLIDE"];
+            _veh setDir _roadDir;
+            
+            // If vehicle is stuck or in bad position, delete and try other side
+            if (!alive _veh || {(vectorUp _veh) select 2 < 0.8}) then {
+                deleteVehicle _veh;
+                _veh = objNull;
+            } else {
+                breakOut "_fnc_spawnVehicle";
+            };
+        };
+    } forEach _sides;
+    
+    // If no good position found, try directly on the road as last resort
+    if (isNull _veh) then {
+        _veh = createVehicle [_vehType, getPos _road, [], 0, "CAN_COLLIDE"];
+        _veh setDir _roadDir;
+    };
+    
     _veh
 };
 
