@@ -1,6 +1,6 @@
 params ["_player", "_didJIP"];
 
-titleText ["Frontline Operations Group Presents...", "BLACK IN",999];
+titleText ["Frontline Operations Group Presents...", "BLACK IN",9999];
 5 fadeSound 0;
 
 sleep 1;
@@ -46,10 +46,6 @@ cooldn = 0 ;
 enableSaving [false, false] ;
 
 waitUntil {F_Init};
-
-// SYSTEMs Init Clients
-Triggers0 = execVM "Scripts\init_Triggers.sqf";
-waitUntil {sleep 1; scriptDone Triggers0 };
 
 // (findDisplay 46) displayAddEventHandler ["MouseButtonDown", "params ['_displayOrControl', '_button', '_xPos', '_yPos', '_shift', '_ctrl', '_alt'];  if ((_ctrl) && (_button == 1) && ((ctrlMapMouseOver (findDisplay 12 displayCtrl 51)) select 0 == 'marker')) then {[(ctrlMapMouseOver (findDisplay 12 displayCtrl 51)) select 1] execVM 'Scripts\MarkerIntro.sqf';}"]; 
 // (findDisplay 46) displayAddEventHandler ["KeyDown", {params ["_displayorcontrol", "_key", "_shift", "_ctrl", "_alt"]; if ((_ctrl) && (_key == 24) && (!dialog)) then { createDialog "Satellite_Control_Tablet"; HCAM_0 cameraEffect ["Internal", "Back", "HCAM_S"]; }; }];
@@ -126,10 +122,13 @@ private _executeAndWait= {
 //     };
 // };
 
+waitUntil {(didJIP) || (TRG1LOCC == 1)};
+waitUntil {(didJIP) || (TRG2LOCC == 1)};
+waitUntil {(didJIP) || (TRG3LOCC == 1)};
 
-waitUntil {(didJIP) or (TRG1LOCC == 1)};
-waitUntil {(didJIP) or (TRG2LOCC == 1)};
-waitUntil {(didJIP) or (TRG3LOCC == 1)};
+// SYSTEMs Init Clients
+Triggers0 = execVM "Scripts\init_Triggers.sqf";
+waitUntil {sleep 1; scriptDone Triggers0 };
 
 // Hint end of init
 hintSilent "LOADED!"; 
