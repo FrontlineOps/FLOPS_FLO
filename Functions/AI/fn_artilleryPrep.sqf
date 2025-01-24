@@ -10,22 +10,12 @@ private _maxBatteries = 4 + (floor random 6); // Random between 4 and 10 batteri
 private _currentBatteries = count FLO_artilleryBatteries;
 private _newBatteriesCount = (1 + floor(_intensity/3)) min (_maxBatteries - _currentBatteries);
 
-// Get compatible magazines for artillery pieces
-private _fnc_getArtilleryMags = {
-    params ["_vehType"];
-    private _config = configFile >> "CfgVehicles" >> _vehType;
-    private _mags = getArray (_config >> "Turrets" >> "MainTurret" >> "magazines");
-    private _shellTypes = [];
-    
-    {
-        private _magConfig = configFile >> "CfgMagazines" >> _x;
-        if (getNumber (_magConfig >> "type") in [256, 1]) then {
-            _shellTypes pushBackUnique _x;
-        };
-    } forEach _mags;
-    
-    _shellTypes
-};
+// Define artillery magazines
+private _artilleryMagazines = [
+    "32Rnd_155mm_Mo_shells_O",
+    "6Rnd_155mm_Mo_smoke_O",
+    "2Rnd_155mm_Mo_Cluster_O"
+];
 
 // Create new batteries if under cap
 if (_newBatteriesCount > 0) then {
@@ -56,39 +46,32 @@ if (_newBatteriesCount > 0) then {
             _forts pushBack _fort;
         };
         
-        // Add to hashMap with battery info
-        FLO_artilleryBatteries set [
-            netId _arty, 
-            createHashMapFromArray [
-                ["vehicle", _arty],
-                ["group", _artGroup],
-                ["forts", _forts],
-                ["lastFired", time],
-                ["position", getPosASL _arty]
-            ]
-        ];
+        // Add to tracking
+        FLO_artilleryBatteries set [netId _arty, createHashMapFromArray [
+            ["vehicle", _arty],
+            ["group", _artGroup],
+            ["forts", _forts],
+            ["lastFired", time],
+            ["position", getPosASL _arty]
+        ]];
     };
 };
 
-// Use all available batteries within range for the fire mission
+// Execute fire mission for each battery
 {
     private _batteryInfo = _y;
     private _arty = _batteryInfo get "vehicle";
+    private _selectedMagazine = selectRandom _artilleryMagazines;
     
-    if (alive _arty && _arty distance _targetPos < 12000) then {
-        private _compatibleShells = [typeOf _arty] call _fnc_getArtilleryMags;
-        
-        if (count _compatibleShells > 0) then {
-            for "_j" from 1 to (3 + random 3) do {
-                _arty doArtilleryFire [
-                    _targetPos getPos [random 100, random 360],
-                    selectRandom _compatibleShells,
-                    1
-                ];
-                sleep (10 + random 10);
-            };
-            _batteryInfo set ["lastFired", time];
+    if (alive _arty && _targetPos inRangeOfArtillery [[_arty], _selectedMagazine]) then {
+        for "_j" from 1 to (3 + random 3) do {
+            _arty doArtilleryFire [
+                _targetPos getPos [random 100, random 360],
+                _selectedMagazine,
+                1
+            ];
         };
+        _batteryInfo set ["lastFired", time];
     };
 } forEach FLO_artilleryBatteries;
 
