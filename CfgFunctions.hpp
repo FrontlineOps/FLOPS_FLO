@@ -8,6 +8,13 @@ class FLO {
         class CDVS             {};
         class ICS             {};
         class MissionLoad            {preInit = 1;};
-		
+    };
+
+    class AI {
+        file = "Functions\AI";
+
+        class artilleryPrep {};
+        class airRecon {};
+        class executeAttackPattern {};
     };
 };

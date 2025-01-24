@@ -1,106 +1,5 @@
 if (!isServer) exitWith {};
 
-// Artillery preparation function
-private _fnc_artilleryPrep = {
-    params ["_targetPos", "_intensity"];
-    private _artilleryTypes = ["O_MBT_02_arty_F", "O_Mortar_01_F"]; // convert these types to be supported in CUSTOM_ENEMY_FACTION.sqf & init_Groups.sqf
-    private _artilleryCount = 1 + floor(_intensity/3);
-    
-    for "_i" from 1 to _artilleryCount do {
-        private _artPos = [_targetPos, 1000, 2000, 10] call BIS_fnc_findSafePos;
-        private _arty = createVehicle [selectRandom _artilleryTypes, _artPos, [], 0, "NONE"];
-        createVehicleCrew _arty;
-        
-        private _shellTypes = ["Sh_155mm_AMOS", "Smoke_120mm_AMOS_White", "Cluster_155mm_AMOS"];
-        private _selectedShell = selectRandom _shellTypes;
-        
-        for "_j" from 1 to (5 + random 5) do {
-            _arty doArtilleryFire [
-                _targetPos getPos [random 100, random 360],
-                _selectedShell,
-                1
-            ];
-            sleep (10 + random 10);
-        };
-    };
-};
-
-// Air reconnaissance function
-private _fnc_airRecon = {
-    params ["_targetPos"];
-    private _droneType = selectRandom ["O_UAV_02_F", "O_UAV_02_CAS_F"]; // convert these types to be supported in CUSTOM_ENEMY_FACTION.sqf & init_Groups.sqf
-    private _spawnPos = _targetPos getPos [3000, random 360];
-    private _drone = createVehicle [_droneType, _spawnPos, [], 0, "FLY"];
-    createVehicleCrew _drone;
-    
-    private _wp1 = group _drone addWaypoint [_targetPos getPos [500, 0], 0];
-    private _wp2 = group _drone addWaypoint [_targetPos getPos [500, 120], 0];
-    private _wp3 = group _drone addWaypoint [_targetPos getPos [500, 240], 0];
-    private _wp4 = group _drone addWaypoint [_targetPos getPos [500, 0], 0];
-    _wp4 setWaypointType "CYCLE";
-    
-    [_drone] spawn {
-        params ["_drone"];
-        sleep 600;
-        {deleteVehicle _x} forEach crew _drone;
-        deleteVehicle _drone;
-    };
-};
-
-// Attack pattern function
-private _fnc_executeAttackPattern = {
-    params ["_targetPos", "_sourcePos", "_pattern", "_strength"];
-    
-    private _fnc_spawnGroup = {
-        params ["_pos", "_size"];
-        private _group = [_pos, EAST, [
-            selectRandom (FLO_configCache get "units"),
-            selectRandom (FLO_configCache get "units"),
-            selectRandom (FLO_configCache get "units"),
-            selectRandom (FLO_configCache get "units")
-        ]] call BIS_fnc_spawnGroup;
-        _group
-    };
-    
-    switch (_pattern) do {
-        case "PINCER": {
-            private _leftPos = _targetPos getPos [1000, (_sourcePos getDir _targetPos) - 45];
-            private _rightPos = _targetPos getPos [1000, (_sourcePos getDir _targetPos) + 45];
-            
-            private _groupLeft = [_leftPos, _strength] call _fnc_spawnGroup;
-            private _groupRight = [_rightPos, _strength] call _fnc_spawnGroup;
-            
-            [_groupLeft, _targetPos, 100] call BIS_fnc_taskAttack;
-            [_groupRight, _targetPos, 100] call BIS_fnc_taskAttack;
-        };
-        
-        case "FRONTAL": {
-            private _mainPos = _targetPos getPos [800, _sourcePos getDir _targetPos];
-            
-            for "_i" from -3 to 3 do {
-                private _smokePos = _targetPos getPos [400, (_sourcePos getDir _targetPos) + (_i * 15)];
-                "SmokeShellArty" createVehicle _smokePos;
-            };
-            
-            private _mainGroup = [_mainPos, _strength * 2] call _fnc_spawnGroup;
-            [_mainGroup, _targetPos, 50] call BIS_fnc_taskAttack;
-        };
-        
-        case "INFILTRATION": {
-            for "_i" from 0 to 3 do {
-                private _infiltPos = _targetPos getPos [600, (_sourcePos getDir _targetPos) + (_i * 90)];
-                private _group = [_infiltPos, _strength] call _fnc_spawnGroup;
-                
-                _group setBehaviour "STEALTH";
-                _group setCombatMode "GREEN";
-                
-                [_group, _targetPos, 20] call BIS_fnc_taskAttack;
-                sleep 30;
-            };
-        };
-    };
-};
-
 waitUntil {
     sleep 120;
     (count (allMapMarkers select {markerType _x == "loc_Bunker" && markerAlpha _x == 0.003}) > 0)
@@ -202,13 +101,13 @@ if (count _humanPlayers > 0) then {
 
         // Start with recon if aggression is high enough
         if (_AGGRSCORE > 3) then {
-            [getPos _CNTR] call _fnc_airRecon;
+            [getPos _CNTR] call FLO_fnc_airRecon;
             sleep 300;
         };
         
         // Artillery prep based on aggression
         if (_AGGRSCORE > 5) then {
-            [getPos _CNTR, _AGGRSCORE] call _fnc_artilleryPrep;
+            [getPos _CNTR, _AGGRSCORE] call FLO_fnc_artilleryPrep;
             sleep 180;
         };
         
@@ -219,7 +118,7 @@ if (count _humanPlayers > 0) then {
         };
         
         // Execute the attack with combined arms
-        [getPos _CNTR, getMarkerPos _OBJmrk, _pattern, _AGGRSCORE] call _fnc_executeAttackPattern;
+        [getPos _CNTR, getMarkerPos _OBJmrk, _pattern, _AGGRSCORE] call FLO_fnc_executeAttackPattern;
         
         // Original QRF and vehicle insertions follow
         private _QRF = selectRandom ["Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"];
