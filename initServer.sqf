@@ -159,7 +159,7 @@ remoteExec ["FLO_fnc_MissionStartup", 2];
     while {true} do {
         frontLineComplete = false;
         call FLO_fnc_MissionFrontline;
-        waitUntil(frontLineComplete); // wait until function has completed
+        waitUntil {frontLineComplete}; // wait until function has completed
         sleep 300; // Loop every 5 minutes (this is plus the extra time wait inside MissionFrontline)
     };
 };
