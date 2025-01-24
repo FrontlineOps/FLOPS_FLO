@@ -7,7 +7,7 @@ _mrkr = _mrkrs select 0;
 _AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 _TERR = nearestTerrainObjects [locationPosition MountSel, ["House", "TREE", "SMALL TREE", "BUSH", "ROCK", "ROCKS"], 15]; 
-{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+{_x hideObjectGlobal true;} forEach _TERR ;
 
 WPdir = 0 + (random 360);
 if (count (nearestObjects [(locationPosition MountSel), ["House"], 200]) != 0) then {

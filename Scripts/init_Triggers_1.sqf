@@ -9,7 +9,7 @@ private _hideTerrainObjectsNearMarkers = {
     {
         private _terrainObjects = nearestTerrainObjects [(getMarkerPos _x), _types, _radius];
         {
-            [_x, true] remoteExec ["hideObjectGlobal", 2];
+            _x hideObjectGlobal true;
         } forEach _terrainObjects;
     } forEach _markers;
 };
@@ -71,7 +71,7 @@ private _objectLocTAAA = allMapMarkers select { markerType _x == "o_antiair"};
     };
 
     private _TERR = nearestTerrainObjects [(getMarkerpos _x), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40]; 
-    {[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+    {_x hideObjectGlobal true;} forEach _TERR ;
 
     private _compReference = [ selectRandom _P1, (getMarkerpos _x), [0,0,0], _dir, true ] call LARs_fnc_spawnComp;
 
@@ -224,7 +224,7 @@ _trg setTriggerStatements [
 if ( count (nearestObjects [thisTrigger, ['Land_Cargo_Tower_V3_F', 'Land_Cargo_Tower_V2_F', 'Land_Cargo_Tower_V1_F', 'Land_Cargo_HQ_V3_F', 'Land_Cargo_HQ_V2_F', 'Land_Cargo_HQ_V1_F'], 100] ) == 0) then {
 
 _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40]; 
-{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+{_x hideObjectGlobal true;} forEach _TERR ;
 
 _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
 _mrkr = _mrkrs select 0;
@@ -354,7 +354,7 @@ _trg setTriggerStatements [
 "this","	
 
 _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40]; 
-{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+{_x hideObjectGlobal true;} forEach _TERR ;
 
 _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
 _mrkr = _mrkrs select 0;

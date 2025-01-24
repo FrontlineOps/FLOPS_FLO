@@ -222,7 +222,7 @@ if (count _humanPlayers > 0) then {
 			if ( count (nearestObjects [thisTrigger, ['Land_Cargo_Tower_V3_F', 'Land_Cargo_Tower_V2_F', 'Land_Cargo_Tower_V1_F', 'Land_Cargo_HQ_V3_F', 'Land_Cargo_HQ_V2_F', 'Land_Cargo_HQ_V1_F'], 100] ) == 0) then {
 
 			private _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40]; 
-			{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+			{_x hideObjectGlobal true;} forEach _TERR ;
 
 			private _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
 			private _mrkr = _mrkrs select 0;
@@ -387,7 +387,7 @@ if (count _humanPlayers > 0) then {
             "this","	
 
 				private _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40]; 
-				{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+				{_x hideObjectGlobal true;} forEach _TERR ;
 
 				private _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
 				private _mrkr = _mrkrs select 0;

@@ -137,7 +137,7 @@ _objectLocT = allMapMarkers select { markerType _x == 'loc_Transmitter' };
 
 {
 _TERR = nearestTerrainObjects [(getMarkerpos _x), ["FOREST", "House", "TREE", "SMALL TREE", "BUSH", "ROCK", "ROCKS"], 15]; 
-{[_x, true] remoteExec ["hideObjectGlobal", 2];} forEach _TERR ;
+{_x hideObjectGlobal true;} forEach _TERR ;
 } forEach _objectLocT;
 
 {

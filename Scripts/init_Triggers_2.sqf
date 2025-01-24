@@ -21,7 +21,7 @@ _trg setTriggerStatements [
 if ( count (nearestObjects [(getPos thisTrigger), ['Land_Cargo_Tower_V3_F', 'Land_Cargo_Tower_V2_F', 'Land_Cargo_Tower_V1_F', 'Land_Cargo_HQ_V3_F', 'Land_Cargo_HQ_V2_F', 'Land_Cargo_HQ_V1_F'], 100] ) == 0) then {
 
 _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40]; 
-{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+{_x hideObjectGlobal true;} forEach _TERR ;
 
 _P1 = [ 
 'FOB_01',  
@@ -111,7 +111,7 @@ _trg setTriggerStatements [
 [thisTrigger] execVM 'Scripts\Insurgents_Init.sqf';
 
 _TERR = nearestTerrainObjects [(getPos thisTrigger), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 40]; 
-{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+{_x hideObjectGlobal true;} forEach _TERR ;
 
 _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
 _mrkr = _mrkrs select 0;
@@ -217,7 +217,7 @@ _trg setTriggerStatements [
 [thisTrigger] execVM 'Scripts\Insurgents_Init.sqf';
 
 _TERR = nearestTerrainObjects [(getPos thisTrigger), [], 40]; 
-{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+{_x hideObjectGlobal true;} forEach _TERR ;
 	
 _mrkrs = allMapMarkers select {markerColor _x == 'Color6_FD_F'};
 _mrkr = _mrkrs select 0;
@@ -250,7 +250,7 @@ _dir = getDirVisual ((nearestObjects [(getPos thisTrigger), ['House'], 300]) sel
 };
 
 _TERR = nearestTerrainObjects [(getPos thisTrigger), [], 40]; 
-{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+{_x hideObjectGlobal true;} forEach _TERR ;
 
 _COM = [ selectRandom RDRC, (getPos thisTrigger), [0,0,0], _dir, true ] call LARs_fnc_spawnComp;
 _ARRAY = [ _COM ] call LARs_fnc_getCompObjects;

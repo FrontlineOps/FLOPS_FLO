@@ -176,7 +176,7 @@ _thisINSURGTrigger = _this select 0;
 	}else{
 		
 		_TERR = nearestTerrainObjects [(getPos _thisINSURGTrigger), ['FOREST', 'House', 'TREE', 'SMALL TREE', 'BUSH', 'ROCK', 'ROCKS'], 15]; 
-		{[_x, true] remoteExec ['hideObjectGlobal', 0];} forEach _TERR ;
+		{_x hideObjectGlobal true;} forEach _TERR ;
 		
 		_chance = selectRandom [1, 2, 3, 4] ;	
 
