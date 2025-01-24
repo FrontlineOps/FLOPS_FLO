@@ -8,7 +8,7 @@ class EditorData
 	toggles=513;
 	class ItemIDProvider
 	{
-		nextID=131405;
+		nextID=131412;
 	};
 	class MarkerIDProvider
 	{
@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=16579;
+		nextID=16614;
 	};
 	class Camera
 	{
-		pos[]={8318.5049,206.42239,7084.7666};
-		dir[]={0.011546974,-0.68661606,0.72692853};
-		up[]={0.010905251,0.7270202,0.68652946};
-		aside[]={0.99987388,0,-0.015882604};
+		pos[]={-548.85797,26.696911,538.08948};
+		dir[]={-0.31155053,-0.6636526,-0.68008572};
+		up[]={-0.27640519,0.74802941,-0.60336775};
+		aside[]={-0.90915036,1.8416904e-07,0.41648519};
 	};
 };
 binarizationWanted=0;
@@ -11447,7 +11447,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-559.98438,0.0014388561,507.80167};
+						position[]={-559.98401,0.0014388561,507.802};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -15540,7 +15540,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-542.16833,0.0014388561,513.12067};
+						position[]={-542.16803,0.0014388561,513.12097};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -16419,7 +16419,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-555.54797,0.0014388561,534.83203};
+						position[]={-555.54797,0.0014388561,534.83197};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -16443,6 +16443,19 @@ class Mission
 					{
 						class Attribute0
 						{
+							property="ace_isMedic";
+							expression="if (_value != -1 && {_value != (parseNumber (_this getUnitTrait 'medic'))}) then {_this setVariable [""ace_medical_medicClass"", _value, true]}";
+							class Value
+							{
+								class data
+								{
+									singleType="SCALAR";
+									value=1;
+								};
+							};
+						};
+						class Attribute1
+						{
 							property="allowDamage";
 							expression="_this allowdamage _value;";
 							class Value
@@ -16454,7 +16467,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute1
+						class Attribute2
 						{
 							property="speaker";
 							expression="_this setspeaker _value;";
@@ -16467,7 +16480,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute2
+						class Attribute3
 						{
 							property="pitch";
 							expression="_this setpitch _value;";
@@ -16480,7 +16493,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute3
+						class Attribute4
 						{
 							property="hideObject";
 							expression="if !(is3DEN) then {_this hideobjectglobal _value;};";
@@ -16493,7 +16506,7 @@ class Mission
 								};
 							};
 						};
-						nAttributes=4;
+						nAttributes=5;
 					};
 				};
 				class Item1
