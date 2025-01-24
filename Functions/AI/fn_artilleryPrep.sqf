@@ -40,6 +40,11 @@ if (_newBatteriesCount > 0) then {
         _artGroup setBehaviour "COMBAT";
         _artGroup setCombatMode "RED";
         _artGroup enableDynamicSimulation true;
+        _artGroup enableAttack false;
+        {
+            _x disableAI "PATH";
+            _x disableAI "MOVE";
+        } forEach units _artGroup;
         
         // Create fortifications around battery
         private _fortTypes = ["Land_BagBunker_Small_F", "Land_BagFence_Long_F", "Land_BagFence_Round_F"];
