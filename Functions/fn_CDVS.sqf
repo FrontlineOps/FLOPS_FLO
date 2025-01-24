@@ -29,7 +29,7 @@ if (isNil "VS_VirtualizedObjects") then {
 private _excludedTypes = FLO_configCache get "SOVbuildings";
 
 // Get all static objects
-private _filteredStaticObjs append (entities [ ["NonStrategic", "Static", "Thing"], _excludedTypes, false, false]);
+private _filteredStaticObjs = (entities [ ["NonStrategic", "Static", "Thing"], _excludedTypes, false, false]);
 //COMMENT ABOVE LINE AND UNCOMMENT BELOW TO VIRTUALIZE MORE STATIC OBJECTS
 // private _all = (8 allObjects 0) select {_x isKindof "NonStrategic" || {_x isKindOf "Static" || {_x isKindof "Thing"}}};
 // private _filteredStaticObjs = (_all select {
