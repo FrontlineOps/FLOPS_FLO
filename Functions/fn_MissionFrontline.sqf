@@ -93,7 +93,6 @@ if (count _humanPlayers > 0) then {
         _ENMASSmarkerName setMarkerAlpha 0.5;
 
         [parseText "<t color='#FF3619' font='PuristaBold' align = 'right' shadow = '1' size='2'>! WARNING !</t><br /><t  color='#FF3619'  align = 'right' shadow = '1' size='1'>Friendly Objective is Under Attack</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
-        sleep 1.5;
         private _attackingAtGrid = mapGridPosition getMarkerPos _ENMASSmarkerName;
         [[west,"HQ"], "Friendly Location Under Enemy attack at grid" + _attackingAtGrid] remoteExec ["sideChat", 0];
 
