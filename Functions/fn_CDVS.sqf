@@ -1,5 +1,5 @@
 if (!isServer) exitWith {};
-if (/*VS_IsWorking ||* {*/VSCurrentTime + VSTimeDelay > diag_tickTime/*}*/) exitwith {};
+if (VS_IsWorking || {VSCurrentTime + VSTimeDelay > diag_tickTime}) exitwith {};
 
 // Update FPS tracking using circular buffer
 if (isNil "VS_FPS") then { VS_FPS = [] };
