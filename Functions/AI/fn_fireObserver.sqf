@@ -3,7 +3,7 @@
     
     Description:
     Handles the AI Fire Observer system for artillery control
-    Only works with I_RadioOperator_F units
+    Only works with units manually defined as Fire Observer
     
     Parameters:
     _unit - The Radio Operator unit [Object]
@@ -16,6 +16,8 @@
 params ["_unit", "_side"];
 
 // Exit if not a Radio Operator
+// Change I_RadioOperator_F to whatever unit you want to manually define as Fire Observer
+// QuickRF.sqf reference for the unit that will call this function 
 if (typeOf _unit != "I_RadioOperator_F") exitWith { false };
 
 // Initialize global Fire Observer tracking if not exists
@@ -63,7 +65,7 @@ FLO_fireObservers set [_observerId, _observerData];
     if !(_observer get "isObserving") then {
         // Only search if cooldown is over
         if (_currentTime - (_observer get "lastMission") >= _cooldownTime) then {
-            private _nearTargets = _unit nearEntities ["LandVehicle", _scanRadius];
+            private _nearTargets = _unit nearEntities [["Man", "Car", "Tank", "LandVehicle"], _scanRadius];
             _nearTargets = _nearTargets select {
                 side _x != (_observer get "side") && 
                 {!(lineIntersects [eyePos _unit, getPosASL _x, _unit, _x])}
