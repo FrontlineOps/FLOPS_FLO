@@ -17,12 +17,14 @@ if ( INFDIS == 0 ) then {
 
 if (RADationius >= 2000) then {
 PRL = [TRGNew getPos [(70 +(random 30)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
+sleep 0.1;
 [PRL, getPos TRGNew, 2000] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
 };
 
 if (RADationius >= 1000) then {
 PRL = [TRGNew getPos [(70 +(random 30)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
+sleep 0.1;
 [PRL, getPos TRGNew, 50] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
 PRLL = (units PRL) select 0 ;
@@ -38,12 +40,14 @@ if (_AGGRSCORE > 5) then {
 	
 if (RADationius >= 2000) then {
 PRL = [TRGNew getPos [(70 +(random 30)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
+sleep 0.1;
 [PRL, getPos TRGNew, 2000] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
 };
 
 if (RADationius >= 1000) then {
 PRL = [TRGNew getPos [(70 +(random 30)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
+sleep 0.1;
 [PRL, getPos TRGNew, 50] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
 PRLL = (units PRL) select 0 ;
@@ -59,6 +63,7 @@ _flare setVelocity [0,0,-0.1];
 if (_AGGRSCORE > 10) then {
 if (RADationius >= 2000) then {
 PRL = [TRGNew getPos [(70 +(random 30)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
+sleep 0.1;
 [PRL, getPos TRGNew, 2000] call BIS_fnc_taskPatrol;
 			PRL deleteGroupWhenEmpty true;
 PRLL = (units PRL) select 0 ;
