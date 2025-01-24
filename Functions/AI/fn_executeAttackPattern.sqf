@@ -63,16 +63,15 @@ if (_nearestOutpost != "") then {
         };
         
         case "INFILTRATION": {
-            for "_i" from 0 to 3 do {
-                private _infiltPos = _targetPos getPos [600, (_spawnPos getDir _targetPos) + (_i * 90)];
+            {
+                private _infiltPos = _targetPos getPos [600, (_spawnPos getDir _targetPos) + (_x * 90)];
                 private _group = [_spawnPos, _strength] call _fnc_spawnGroup;
                 
                 _group setBehaviour "STEALTH";
                 _group setCombatMode "GREEN";
                 
                 [_group, _infiltPos, 20] call BIS_fnc_taskAttack;
-                sleep 30;
-            };
+            } forEach [0,1,2,3];
         };
     };
 } else {
