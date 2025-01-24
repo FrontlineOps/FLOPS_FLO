@@ -1,488 +1,167 @@
+// Town Hostile Forces System
+params ["_thisTownTrigger"];
 
+// Initialize variables
+private _triggerPos = getPos _thisTownTrigger;
+private _aggrScore = parseNumber (markerText ((allMapMarkers select {markerColor _x == "Color6_FD_F"}) select 0));
+private _repScore = parseNumber (markerText ((allMapMarkers select {markerColor _x == "Color4_FD_F"}) select 0));
+private _chance = selectRandom [0,1,2,3];
 
-_thisTownTrigger = _this select 0;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-_mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
-_mrkr = _mrkrs select 0;
-_AGGRSCORE = parseNumber (markerText _mrkr) ; 
+// Cache building positions
+private _allBuildings = nearestObjects [_triggerPos, ["HOUSE"], 80];
+private _allPositions = [];
+{
+    _allPositions append (_x buildingPos -1);
+} forEach _allBuildings;
 
-
-_mrkrs = allMapMarkers select {markerColor _x == "Color4_FD_F"};
-_mrkr = _mrkrs select 0;
-_REPSCORE = parseNumber (markerText _mrkr) ;  
-
-_Chance = selectRandom [0,1,2,3]; 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-if ( INFDIS == 0 ) then {
-
-PRL = [getPos _thisTownTrigger, East, [selectRandom CivMenArray, selectRandom CivMenArray]] call BIS_fnc_spawnGroup;
-[PRL, getPos _thisTownTrigger, 50] call BIS_fnc_taskPatrol;
-{_uniform = uniform _x;
-_x setUnitLoadout (selectRandom GuerMenArray);
-removeHeadgear _x; 
-_x forceAddUniform _uniform;
-} foreach Units PRL; 
-
-
-if ((dayTime < 21) && (dayTime > 6)) then {
-
-
-PRL = [getPos _thisTownTrigger, East, [selectRandom CivMenArray, selectRandom CivMenArray]] call BIS_fnc_spawnGroup;
-[PRL, getPos _thisTownTrigger, 100] call BIS_fnc_taskPatrol;
-{_uniform = uniform _x;
-_x setUnitLoadout (selectRandom GuerMenArray);
-removeHeadgear _x; 
-_x forceAddUniform _uniform;
-} foreach Units PRL; 
-
-
-}; };
-
-//////////Veicle////////////////////////////////////////////////////////////////////////
-
-_nearRoad = selectRandom (((getPos _thisTownTrigger) nearRoads 200) - ((getPos _thisTownTrigger) nearRoads 100)) ; 
-_V = createVehicle [ selectRandom ["Land_Barricade_01_10m_F", "Land_Barricade_01_4m_F"], (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-		_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-		_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir ;		
-_V setVectorUp [0,0,1];
-
-if (_REPSCORE < 7) then {
-_nearRoad = selectRandom (((getPos _thisTownTrigger) nearRoads 200) - ((getPos _thisTownTrigger) nearRoads 100)) ; 
-_V = createVehicle [ selectRandom ["Land_Barricade_01_10m_F", "Land_Barricade_01_4m_F"], (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-		_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-		_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir ;		
-_V setVectorUp [0,0,1];
+// Spawn patrol function
+private _fnc_spawnPatrol = {
+    params ["_pos", "_radius"];
+    private _group = [_pos, East, [selectRandom CivMenArray, selectRandom CivMenArray]] call BIS_fnc_spawnGroup;
+    [_group, _pos, _radius] call BIS_fnc_taskPatrol;
+    {
+        private _uniform = uniform _x;
+        _x setUnitLoadout (selectRandom GuerMenArray);
+        removeHeadgear _x;
+        _x forceAddUniform _uniform;
+    } forEach units _group;
+    _group
 };
 
-if (_REPSCORE < 5) then {
-_nearRoad = selectRandom (((getPos _thisTownTrigger) nearRoads 200) - ((getPos _thisTownTrigger) nearRoads 100)) ; 
-_V = createVehicle [ selectRandom ["Land_Barricade_01_10m_F", "Land_Barricade_01_4m_F"], (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-		_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-		_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir ;		
-_V setVectorUp [0,0,1];
-};
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-if (_Chance > 1) then {
-		if (count ( (getPos _thisTownTrigger) nearRoads 200 ) > 0 ) then {
-
-_nearRoad = selectRandom ( (getPos _thisTownTrigger) nearRoads 200 ) ; 
-_V = createVehicle [ selectRandom GuerVehArray, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-
-_Group = createVehicleCrew _V; 
-_VC = createGroup East;
-{[_x] join _VC} forEach units _Group;
-
-sleep 3;
-_nearRoad2 =_thisTownTrigger nearRoads 1500 ; 
-_nearRoad1 = _thisTownTrigger nearRoads 800 ; 
-
-_nearRoadleft = _nearRoad2 - _nearRoad1;
-_nearRoad0 = selectRandom _nearRoadleft; 
-I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
-I1_WP_0 SetWaypointType "MOVE";
-I1_WP_0 setWaypointBehaviour "SAFE";
-I1_WP_0 setWaypointSpeed "LIMITED";
-
-I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
-I1_WP_00 SetWaypointType "MOVE";
-I1_WP_00 setWaypointBehaviour "SAFE";
-I1_WP_00 setWaypointSpeed "LIMITED";
-
-I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
-I1_WP_1 SetWaypointType "CYCLE";
-I1_WP_1 setWaypointBehaviour "SAFE";
-I1_WP_1 setWaypointSpeed "LIMITED";
-		};
+// Spawn barricade function
+private _fnc_spawnBarricade = {
+    params ["_triggerPos", "_minRange", "_maxRange"];
+    private _roads = (_triggerPos nearRoads _maxRange) - (_triggerPos nearRoads _minRange);
+    if (count _roads == 0) exitWith {};
+    
+    private _road = selectRandom _roads;
+    private _barricade = createVehicle [selectRandom ["Land_Barricade_01_10m_F", "Land_Barricade_01_4m_F"], 
+        (_road getRelPos [0, 0]), [], 2, "NONE"];
+    
+    private _connectedRoad = (roadsConnectedTo _road) select 0;
+    if (!isNil "_connectedRoad") then {
+        _barricade setDir (_road getDir _connectedRoad);
+        _barricade setVectorUp [0,0,1];
+    };
+    _barricade
 };
 
-
-
-if (_AGGRSCORE > 5) then {
-	if (count ( (getPos _thisTownTrigger) nearRoads 150 ) > 0 ) then {
-_nearRoad = selectRandom ( (getPos _thisTownTrigger) nearRoads 150 ) ; 
-_V = createVehicle [ selectRandom GuerVehArray, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-
-_Group = createVehicleCrew _V; 
-_VC = createGroup East;
-{[_x] join _VC} forEach units _Group;
-	};
-};
-//////OBJECTIVE////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-if (_Chance < 3) then {
-_Buildings = nearestObjects [(getpos _thisTownTrigger), ["House"], 200];  
-_allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 3}; 
-_Position = _allPositionBuildings select 0;
-_Pos = selectRandom (_Position buildingPos -1);
-
-_V = createVehicle [selectRandom ["Land_PowerGenerator_F", "Box_FIA_Ammo_F", "Box_FIA_Support_F"] , _Pos, [], 500, "NONE"]; 
-_V allowDammage false;
-_V setPos _Pos;
-sleep 3;
-_V allowDammage true;
-_V addEventHandler ["Killed", { 
- 
-["ScoreAdded", ["Insurgent Stash Destroyed", 30]] remoteExec ["BIS_fnc_showNotification", 0];
-
-[30] execVM "Scripts\Reward.sqf";
-[] execVM "Scripts\ReputationPlus.sqf";
-
-
-execVM "Scripts\Civ_Relations.sqf";
-
- playMusic "EventTrack01_F_Curator"; 
-}];
-
-_Pos = selectRandom (_Position buildingPos -1);
-G = [_Pos, East,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;   
-{_uniform = uniform _x;
-_x setUnitLoadout (selectRandom GuerMenArray);
-removeHeadgear _x; 
-_x forceAddUniform _uniform;
-} foreach Units G;  
- ((units G) select 0) disableAI "PATH";
- 
-_Pos = selectRandom (_Position buildingPos -1);
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
-  ((units G) select 0) disableAI "PATH";
- 
-_Pos = selectRandom (_Position buildingPos -1);
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
-
+// Spawn vehicle patrol function
+private _fnc_spawnVehiclePatrol = {
+    params ["_triggerPos"];
+    private _roads = _triggerPos nearRoads 200;
+    if (count _roads == 0) exitWith {};
+    
+    private _spawnRoad = selectRandom _roads;
+    private _veh = createVehicle [selectRandom GuerVehArray, (_spawnRoad getRelPos [0, 0]), [], 2, "NONE"];
+    private _group = createVehicleCrew _veh;
+    private _vehGroup = createGroup East;
+    {[_x] join _vehGroup} forEach units _group;
+    
+    // Create patrol waypoints
+    private _patrolRoads = (_triggerPos nearRoads 1500) - (_triggerPos nearRoads 800);
+    if (count _patrolRoads > 0) then {
+        private _patrolRoad = selectRandom _patrolRoads;
+        {
+            private _wp = _vehGroup addWaypoint [getPos _x, 0];
+            _wp setWaypointType "MOVE";
+            _wp setWaypointBehaviour "SAFE";
+            _wp setWaypointSpeed "LIMITED";
+        } forEach [_patrolRoad, _spawnRoad];
+        
+        private _cycle = _vehGroup addWaypoint [getPos _spawnRoad, 3];
+        _cycle setWaypointType "CYCLE";
+        _cycle setWaypointBehaviour "SAFE";
+        _cycle setWaypointSpeed "LIMITED";
+    };
+    [_veh, _vehGroup]
 };
 
+// Spawn infantry if enabled
+if (INFDIS == 0) then {
+    [_triggerPos, 50] call _fnc_spawnPatrol;
+    
+    if ((dayTime < 21) && (dayTime > 6)) then {
+        [_triggerPos, 100] call _fnc_spawnPatrol;
+    };
+};
 
-_V addBackpackCargoGlobal ["B_UAV_01_backpack_F", 2];
-_V addBackpackCargoGlobal ["B_Static_Designator_01_weapon_F", 2];
-_V addBackpackCargoGlobal ["B_W_Static_Designator_01_weapon_F", 2];
-_V addBackpackCargoGlobal ["B_UGV_02_Demining_backpack_F", 2];
-_V addBackpackCargoGlobal ["B_Patrol_Respawn_bag_F", 2];
+// Spawn barricades based on reputation
+[_triggerPos, 100, 200] call _fnc_spawnBarricade;
+if (_repScore < 7) then { [_triggerPos, 100, 200] call _fnc_spawnBarricade; };
+if (_repScore < 5) then { [_triggerPos, 100, 200] call _fnc_spawnBarricade; };
 
+// Spawn vehicle patrols based on chance
+if (_chance > 1) then {
+    [_triggerPos] call _fnc_spawnVehiclePatrol;
+};
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Spawn static weapons and defenses
+if (_chance > 0) then {
+    if (count _allPositions > 0) then {
+        for "_i" from 1 to (1 + floor(random 2)) do {
+            private _pos = selectRandom _allPositions;
+            private _static = createVehicle [selectRandom ["O_HMG_01_high_F", "O_GMG_01_high_F"], 
+                [_pos select 0, _pos select 1, (_pos select 2)], [], 0, "CAN_COLLIDE"];
+            private _group = createVehicleCrew _static;
+            {
+                _x setUnitLoadout (selectRandom GuerMenArray);
+                _x disableAI "PATH";
+            } forEach units _group;
+        };
+    };
+};
 
-_trg = createTrigger ["EmptyDetector", getPos _thisTownTrigger, false];  
-_trg setTriggerArea [150, 150, 0, false, 20];  
+// Spawn supply caches
+if (_chance > 1) then {
+    for "_i" from 1 to (1 + floor(random 2)) do {
+        private _pos = _triggerPos getPos [10 + random 150, random 360];
+        private _box = createVehicle ["CargoNet_01_box_F", [_pos select 0, _pos select 1, (_pos select 2) + 5000], [], 2, "NONE"];
+        _box allowDamage false;
+        if (count _allPositions > 0) then {
+            _box setPos (selectRandom _allPositions);
+        } else {
+            _box setPos _pos;
+        };
+        sleep 0.1;
+        _box allowDamage true;
+        clearWeaponCargoGlobal _box;
+        clearMagazineCargoGlobal _box;
+        clearItemCargoGlobal _box;
+        clearBackpackCargoGlobal _box;
+        
+        // Add random supplies
+        {
+            _box addItemCargoGlobal [_x, 1 + floor(random 3)];
+        } forEach ["FirstAidKit", "Medikit", "ToolKit"];
+        
+        {
+            _box addMagazineCargoGlobal [_x, 2 + floor(random 4)];
+        } forEach ["HandGrenade", "MiniGrenade", "SmokeShell"];
+    };
+};
+
+// Spawn guerrilla forces in buildings
+if (_aggrScore > 5 && {count _allPositions > 0}) then {
+    for "_i" from 1 to (2 + floor(random 3)) do {
+        private _group = [selectRandom _allPositions, East, [selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;
+        {
+            _x disableAI "PATH";
+            _x setUnitPos "UP";
+        } forEach units _group;
+    };
+};
+
+// Create trigger for garrison
+private _trg = createTrigger ["EmptyDetector", _triggerPos, false];
+_trg setTriggerArea [150, 150, 0, false, 20];
 _trg setTriggerTimeout [10, 10, 10, true];
-_trg setTriggerActivation ["WEST SEIZED","PRESENT", false];  
-_trg setTriggerStatements [  
-"this && {(alive _x) && ((side _x) == EAST) && (position _x inArea thisTrigger)} count allUnits < 3", "  
-
-_MMarks = allMapMarkers select { markerType _x == ""o_inf""};
-_M = [_MMarks,  thisTrigger] call BIS_fnc_nearestPosition;
-
-deleteMarker _M ; 
-
-				[30, 'INSURGENTS GARRISON'] execVM 'Scripts\NOtification.sqf' ;
-[] execVM 'Scripts\ReputationPlus.sqf';
-[] execVM 'Scripts\ReputationPlus.sqf';
-[] execVM 'Scripts\ReputationPlus.sqf';
-
-[30] execVM 'Scripts\Reward.sqf';
-[thisTrigger] execVM 'Scripts\VehiInsert_CSAT.sqf';
-", ""]; 
- 
-
-
-//////Garrisons/////////////////////////////////////////////////////////////////////////////////////////
-
-_allBuildings = nearestObjects [getPos _thisTownTrigger, ["HOUSE"], 220];
-_allPositionBuildings = _allBuildings select {count (_x buildingPos -1) > 2};   
-_allPositions = [];  
-_allPositionBuildings apply {_allPositions append (_x buildingPos -1)};  
-_Pos = selectRandom _allPositions;  
-
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "PATH";
-
- 
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;   
-{_uniform = uniform _x;
-_x setUnitLoadout (selectRandom GuerMenArray);
-removeHeadgear _x; 
-_x forceAddUniform _uniform;
-} foreach Units G;  
- ((units G) select 0) disableAI "PATH";
-
-_Pos = selectRandom _allPositions;  
-G = [_Pos, East,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;   
-{_uniform = uniform _x;
-_x setUnitLoadout (selectRandom GuerMenArray);
-removeHeadgear _x; 
-_x forceAddUniform _uniform;
-} foreach Units G;  
- ((units G) select 0) disableAI "PATH";
-
- 
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
- 
- 
-_Pos = selectRandom _allPositions;  
-G = [_Pos, East,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;   
-{_uniform = uniform _x;
-_x setUnitLoadout (selectRandom GuerMenArray);
-removeHeadgear _x; 
-_x forceAddUniform _uniform;
-} foreach Units G;  
-
- 
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
- 
- 
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
-
-
-if (_AGGRSCORE > 5) then {
-	
-_Pos = selectRandom _allPositions;  
-G = [_Pos, East,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;   
-{_uniform = uniform _x;
-_x setUnitLoadout (selectRandom GuerMenArray);
-removeHeadgear _x; 
-_x forceAddUniform _uniform;
-} foreach Units G;  
- ((units G) select 0) disableAI "PATH";
-
-_Pos = selectRandom _allPositions;  
-G = [_Pos, East,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;   
-{_uniform = uniform _x;
-_x setUnitLoadout (selectRandom GuerMenArray);
-removeHeadgear _x; 
-_x forceAddUniform _uniform;
-} foreach Units G;  
-
- 
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
-
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup; 
-{_uniform = uniform _x;
-_x setUnitLoadout (selectRandom GuerMenArray);
-removeHeadgear _x; 
-_x forceAddUniform _uniform;
-} foreach Units G;   
-
- 
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
- 
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
-
-
-};
-
-if (_AGGRSCORE > 10) then {
-
-_Pos = selectRandom _allPositions;  
-G = [_Pos, East,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup; 
-{_uniform = uniform _x;
-_x setUnitLoadout (selectRandom GuerMenArray);
-removeHeadgear _x; 
-_x forceAddUniform _uniform;
-} foreach Units G;      
-((units G) select 0) disableAI "PATH";
-
-_Pos = selectRandom _allPositions;  
-G = [_Pos, East,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;   
-{_uniform = uniform _x;
-_x setUnitLoadout (selectRandom GuerMenArray);
-removeHeadgear _x; 
-_x forceAddUniform _uniform;
-} foreach Units G;  
-
- 
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
-
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;
-{_uniform = uniform _x;
-_x setUnitLoadout (selectRandom GuerMenArray);
-removeHeadgear _x; 
-_x forceAddUniform _uniform;
-} foreach Units G;   
-
- 
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
- 
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
-
-
-};
-
-
-
-//////Assault////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-if ( INFDIS == 0 ) then {
-
-_Chance = selectRandom [1, 2, 3]; 
-if (_Chance > 1) then {
-if (count ( nearestobjects [player,["Land_TripodScreen_01_large_sand_F", "Land_TripodScreen_01_large_F"],33000]) > 0 ) then {
-
-PRL = [getPos _thisTownTrigger, East, [selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;
-
-
-_FOBT = nearestobjects [player,["Land_TripodScreen_01_large_sand_F", "Land_TripodScreen_01_large_F"],33000] select 0 ; 
-_W_1 = PRL addWaypoint [(getPos _FOBT), 0];
-_W_1 SetWaypointType "MOVE";
-_W_1 setWaypointBehaviour "AWARE";
-
-}; }; };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-_Chance2 = selectRandom [0,1,2,3]; 
-
-if (_Chance2 > 1) then {
-if (_REPSCORE < 7) then {
-_Buildings = nearestObjects [(getpos _thisTownTrigger), ["House"], 200];  
-_allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 3}; 
-_Position = selectRandom _allPositionBuildings;
-_dir = getDirVisual _Position;
-_Chance3 = selectRandom [ 1, 2, 3, 4];
-
-if (_Chance3 > 0) then {
-_Cost = 40;
-_mrkrs = allMapMarkers select {markerColor _x == "Color2_FD_F"};
-_mrkr = _mrkrs select 0;
-_Money = parseNumber (markerText _mrkr) ;  
-
-if (_Money >= _Cost) then {
-_NewMoney = _Money - _Cost; 
-_mrkr setMarkerText str _NewMoney;
-	
-[parseText "<t color='#00DB07' font='PuristaBold' align = 'right' shadow = '1' size='3'>! WARNING !</t><br /><t  align = 'right' shadow = '1' size='1.3'>One of our Supply Convoys Ambushed by Guerilla Insurgents, </t><br /><t  align = 'right' shadow = '1' size='1.3'>We believe They are in Possession of our Supply Payload,</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
-_MMarks = allMapMarkers select { markerType _x == "o_unknown"};
-_M = [_MMarks,  _thisTownTrigger] call BIS_fnc_nearestPosition;
-
-sleep 2;
-
-openMap true;
- [markerSize _M, markerPos _M, 1] call BIS_fnc_zoomOnArea;
-
-	
-_Pos = selectRandom (_Position buildingPos -1);
-_posit = _thisTownTrigger getPos [(10 +(random 150)), (0 + (random 360))] ;
-_V = createVehicle [ "CargoNet_01_box_F", [_posit select 0, _posit select 1, (_posit select 2) + 5000], [], 2, "NONE"]; 
-_V allowDammage false;
-_V setDir _dir;
-_V setpos _Pos;
-  };
-};
-
-sleep 2;
-
-if (_Chance3 > 1) then {
-_Cost = 40;
-_mrkrs = allMapMarkers select {markerColor _x == "Color2_FD_F"};
-_mrkr = _mrkrs select 0;
-_Money = parseNumber (markerText _mrkr) ;  
-
-if (_Money >= _Cost) then {
-_NewMoney = _Money - _Cost; 
-_mrkr setMarkerText str _NewMoney;
-	
-_Pos = selectRandom (_Position buildingPos -1);
-_posit = _thisTownTrigger getPos [(10 +(random 150)), (0 + (random 360))] ;
-_V = createVehicle [ "CargoNet_01_box_F", [_posit select 0, _posit select 1, (_posit select 2) + 5000], [], 2, "NONE"]; 
-_V allowDammage false;
-_V setpos _Pos;
-_V setDir _dir;
-  };
-};
-
-sleep 2;
-
-if (_Chance3 > 2) then {
-_Cost = 40;
-_mrkrs = allMapMarkers select {markerColor _x == "Color2_FD_F"};
-_mrkr = _mrkrs select 0;
-_Money = parseNumber (markerText _mrkr) ;  
-
-if (_Money >= _Cost) then {
-_NewMoney = _Money - _Cost; 
-_mrkr setMarkerText str _NewMoney;
-	
-_Pos = selectRandom (_Position buildingPos -1);
-_posit = _thisTownTrigger getPos [(10 +(random 150)), (0 + (random 360))] ;
-_V = createVehicle [ "CargoNet_01_box_F", [_posit select 0, _posit select 1, (_posit select 2) + 5000], [], 2, "NONE"]; 
-_V allowDammage false;
-_V setpos _Pos;
-_V setDir _dir;
-  };
-};
-
-sleep 2;
-
-_Pos = selectRandom _allPositions;  
-G = [_Pos, East,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;   
-{_uniform = uniform _x;
-_x setUnitLoadout (selectRandom GuerMenArray);
-removeHeadgear _x; 
-_x forceAddUniform _uniform;
-} foreach Units G;  
- ((units G) select 0) disableAI "PATH";
- 
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;    
-  ((units G) select 0) disableAI "PATH";
- 
-_Pos = selectRandom _allPositions;  
- G = [_Pos, East,[selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;  
-	
-	
-}; };
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-// {
-
-// _nvg = hmd _x;
-//  _x unassignItem _nvg;
-//  _x removeItem _nvg;
-// 	  _x addPrimaryWeaponItem "acc_flashlight";
-// 	  _x assignItem "acc_flashlight";
-// 	  _x enableGunLights "ForceOn";
-//   } foreach (allUnits select {side _x == east}); 
-
-
-sleep 10;
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-{ if !((side _x) == west) then {
-            ZEUS removeCuratorEditableObjects [[_x],true];
-}; } foreach allUnits;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// {
-// _nvg = hmd _x;
-//  _x unassignItem _nvg;
-//  _x removeItem _nvg;
-// 	  _x addPrimaryWeaponItem "acc_flashlight";
-// 	  _x assignItem "acc_flashlight";
-// 	  _x enableGunLights "ForceOn";
-//   } foreach (allUnits select {side _x == east}); 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+_trg setTriggerActivation ["WEST SEIZED","PRESENT", false];
+_trg setTriggerStatements [
+    "this && {(alive _x) && ((side _x) == EAST) && (position _x inArea thisTrigger)} count allUnits < 3",
+    "[] execVM 'Scripts\NOtification.sqf'; [] execVM 'Scripts\ReputationPlus.sqf'; [] execVM 'Scripts\ReputationPlus.sqf'; [] execVM 'Scripts\ReputationPlus.sqf'; [30] execVM 'Scripts\Reward.sqf'; [thisTrigger] execVM 'Scripts\VehiInsert_CSAT.sqf';",
+    ""
+];
+
+// Call INTLitems script
 [_thisTownTrigger, 200] execVM "Scripts\INTLitems.sqf";
-
-
-sleep 2 ;
-
