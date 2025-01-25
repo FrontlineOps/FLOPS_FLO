@@ -70,7 +70,6 @@ _L addWeapon 'launch_MRAWS_olive_F';
 _L addSecondaryWeaponItem 'MRAWS_HEAT_F'; 
 {_x linkItem 'NVGoggles_OPFOR'; } forEach Units AsltGrp;
 
-   if (markerText 'Revive_Handle' == 'Activate') then {{[_x] call AIS_System_fnc_loadAIS;} forEach Units AsltGrp;};
 	   {	{
 [_x,'MENU_COMMS_UAV_RECON',nil,nil,''] call BIS_fnc_addCommMenuItem;	
 [_x,'MENU_COMMS_SUPPLYDROP',nil,nil,''] call BIS_fnc_addCommMenuItem;
@@ -209,7 +208,6 @@ _L addWeapon 'Rangefinder';
 _L addWeapon 'launch_MRAWS_olive_F';
 _L addSecondaryWeaponItem 'MRAWS_HEAT_F'; 
 {_x linkItem 'NVGoggles_OPFOR'; } forEach Units AsltGrp;
-   if (markerText 'Revive_Handle' == 'Activate') then {{[_x] call AIS_System_fnc_loadAIS;} forEach Units AsltGrp;};
 	   {	{
 [_x,'MENU_COMMS_UAV_RECON',nil,nil,''] call BIS_fnc_addCommMenuItem;	
 [_x,'MENU_COMMS_SUPPLYDROP',nil,nil,''] call BIS_fnc_addCommMenuItem;

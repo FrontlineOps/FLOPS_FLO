@@ -850,22 +850,12 @@ _trg setTriggerStatements [
 [] spawn {  
   while { true } do{  
 {
- _x setDamage 0; 
-  _x setVariable ["ais_stabilized", true, true];
-  _x setVariable ["ais_unconscious", false, true];
-
-  _x setVariable ["ais_fireDamage", 0]; 
- 
- [_x] remoteExecCall ["AIS_System_fnc_restoreFaks", _x, false]; 
+ _x setDamage 0;  
  
   [true] remoteExec ["showHud", _x]; 
-   [true] remoteExecCall ["AIS_Effects_fnc_toggleRadio", _x, false]; 
  
   _x stop false; 
  _x enableAI "all";    
- 
-		_x call AIS_Effects_fnc_removeinjuredMarker;
-			[_x, 50] call AIS_system_fnc_reveal;
 
  [_x, false] remoteExec ["setCaptive", 0, false]; 
   

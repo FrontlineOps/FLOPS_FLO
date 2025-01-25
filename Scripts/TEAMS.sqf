@@ -55,9 +55,6 @@ publicVariable "ZEUSNetworkId";
  }; 
 
 
-   if (markerText "Revive_Handle" == "Activate") then {  {[_x] call AIS_System_fnc_loadAIS;} forEach Units group player; };
-
-
 hint "YOU CANT SWITCH TO HUMAN PLAYERS";
 };
 
