@@ -141,24 +141,6 @@ class CfgCommunicationMenu
 class Params
 {
 	
-		class ReviveSwitch
-	{
-		title = "Revive Switch";
-		texts[] = { "Activate", "DeActivate"};
-		values[] = { 1, 0};
-		default = 0;
-		isGlobal = 1;
-	};
-	
-	class MusicSwitch
-	{
-		title = "Music Switch";
-		texts[] = { "Activate", "DeActivate"};
-		values[] = { 1, 0};
-		default = 1;
-		isGlobal = 1;
-	};
-	
 	class AutoSaveSwitch
 	{
 		title = "AutoSave Switch";
