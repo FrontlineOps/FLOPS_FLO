@@ -64,7 +64,6 @@ _L addItem 'B_IR_Grenade';
 _L addItem 'B_IR_Grenade';
 _L linkItem 'B_UavTerminal';
 {_x linkItem 'NVGogglesB_blk_F'; } forEach Units AsltGrp;
-   if (markerText 'Revive_Handle' == 'Activate') then {{[_x] call AIS_System_fnc_loadAIS;} forEach Units AsltGrp;};
 	   {     	{
 [_x,'MENU_COMMS_UAV_RECON',nil,nil,''] call BIS_fnc_addCommMenuItem;	
 [_x,'MENU_COMMS_SUPPLYDROP',nil,nil,''] call BIS_fnc_addCommMenuItem;
@@ -207,7 +206,6 @@ _L addItem 'B_IR_Grenade';
 _L addItem 'B_IR_Grenade';
 _L linkItem 'B_UavTerminal';
 {_x linkItem 'NVGogglesB_blk_F'; } forEach Units AsltGrp;
-   if (markerText 'Revive_Handle' == 'Activate') then {{[_x] call AIS_System_fnc_loadAIS;} forEach Units AsltGrp;};
    
    {     	{
 [_x,'MENU_COMMS_UAV_RECON',nil,nil,''] call BIS_fnc_addCommMenuItem;	

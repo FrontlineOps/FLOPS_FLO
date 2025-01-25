@@ -64,8 +64,6 @@ GRPReq = [[0,0,0], west, F_SQD] call BIS_fnc_spawnGroup;
 			};
 			
 {_x enableAI 'RADIOPROTOCOL';} foreach Units GRPReq;
-if (markerText 'Revive_Handle' == 'Activate') then {{[_x] call AIS_System_fnc_loadAIS;} forEach Units GRPReq;};
-
 
 //{	{[_x] execVM "Scripts\LDTInit.sqf" ; } forEach Units GRPReq ;  } remoteExec ["call", 2];
 {_x enableAI 'RADIOPROTOCOL'} foreach Units GRPReq;

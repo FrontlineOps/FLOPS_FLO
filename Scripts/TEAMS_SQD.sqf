@@ -213,10 +213,6 @@ if (count _humanPlayers == 1 ) then {
 }else{
 {TheCommander hcSetGroup [_x];} forEach _GRPs;
 };
-
-
-   if (markerText "Revive_Handle" == "Activate") then {  {[_x] call AIS_System_fnc_loadAIS;} forEach (Units (group player)); };
-   if (markerText "Revive_Handle" == "Activate") then {[player] call AIS_System_fnc_loadAIS; };
    
 
 titleText ["", "BLACK IN",1];

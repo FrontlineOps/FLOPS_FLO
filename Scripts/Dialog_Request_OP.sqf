@@ -508,8 +508,6 @@ if (_Cost == 3) then {
 NEWUNIT = group player createUnit [_SQDName, _pos, [], 0, "FORM"];
 publicVariable "NEWUNIT";
 
-if (markerText "Revive_Handle" == "Activate") then {[NEWUNIT] call AIS_System_fnc_loadAIS; };
-
 [NEWUNIT,'MENU_COMMS_SUPPLYDROP',nil,nil,''] call BIS_fnc_addCommMenuItem;
 [NEWUNIT,'MENU_COMMS_UAV_RECON',nil,nil,''] call BIS_fnc_addCommMenuItem;
 [NEWUNIT,'MENU_COMMS_CAS_HELI',nil,nil,''] call BIS_fnc_addCommMenuItem;	
@@ -545,7 +543,6 @@ publicVariable "GRPReq";
 			};
 			
 {_x enableAI 'RADIOPROTOCOL';} foreach Units GRPReq;
-if (markerText 'Revive_Handle' == 'Activate') then {{[_x] call AIS_System_fnc_loadAIS;} forEach Units GRPReq;};
 
 
 //{	{[_x] execVM "Scripts\LDTInit.sqf" ; } forEach Units GRPReq ;  } remoteExec ["call", 2];

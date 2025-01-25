@@ -4,22 +4,11 @@ OLDGRP = group player ;
 removeAllActions player;
 
  player setDamage 0; 
-  player setVariable ["ais_stabilized", true, true];
-  player setVariable ["ais_unconscious", false, true];
-
-  player setVariable ["ais_fireDamage", 0]; 
- 
- [player] remoteExecCall ["AIS_System_fnc_restoreFaks", player, false]; 
  
   [true] remoteExec ["showHud", player]; 
-   [true] remoteExecCall ["AIS_Effects_fnc_toggleRadio", player, false]; 
  
   player stop false; 
  player enableAI "all";    
-
- 
-		player call AIS_Effects_fnc_removeinjuredMarker;
-			[player, 50] call AIS_system_fnc_reveal;
 
  [player, false] remoteExec ["setCaptive", 0, false]; 
   
@@ -211,4 +200,3 @@ ShowHUD [true, true, true, true, true, true, true, true, true, true];
 BIS_DeathBlur ppEffectAdjust [0.0]; 
 BIS_DeathBlur ppEffectCommit 0.0;
 
-if (markerText "Revive_Handle" == "Activate") then {  {[_x] call AIS_System_fnc_loadAIS;} forEach Units group player; };
