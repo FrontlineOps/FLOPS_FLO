@@ -13,7 +13,6 @@ private _newBatteriesCount = (1 + floor(_intensity/3)) min (_maxBatteries - _cur
 // Define artillery magazines
 private _artilleryMagazines = [
     "32Rnd_155mm_Mo_shells_O",
-    "6Rnd_155mm_Mo_smoke_O",
     "2Rnd_155mm_Mo_Cluster_O"
 ];
 
@@ -23,18 +22,21 @@ if (_newBatteriesCount > 0) then {
         // Find position far from target but with good firing position
         private _artPos = [_targetPos, 5000, 10000, 10, 0] call BIS_fnc_findSafePos;
         private _arty = createVehicle [_artilleryTypes, _artPos, [], 0, "NONE"];
-        createVehicleCrew _arty;
         
-        // Set group behavior
-        private _artGroup = group _arty;
-        _artGroup setBehaviour "COMBAT";
-        _artGroup setCombatMode "RED";
-        _artGroup enableDynamicSimulation true;
-        _artGroup enableAttack false;
+        // Set vehicle variables
+        _arty setVariable ["acex_headless_blacklist", true, true];
+        
+        // Create and setup crew
+        private _crew = units (createVehicleCrew _arty);
+        _crew joinSilent _artGroup;
+        _arty disableAI "FSM";
+        _arty disableAI "AUTOTARGET";
         {
-            _x disableAI "PATH";
-            _x disableAI "MOVE";
-        } forEach units _artGroup;
+            _x setUnitCombatMode "BLUE";
+			_x disableAI "FSM";
+			_x disableAI "AUTOTARGET";
+			_x setVariable ["acex_headless_blacklist", true, true];
+        } forEach _crew;
         
         // Create fortifications around battery
         private _fortTypes = ["Land_BagBunker_Small_F", "Land_BagFence_Long_F", "Land_BagFence_Round_F"];
@@ -94,20 +96,29 @@ if (_newBatteriesCount > 0) then {
                 
                 if (_inRange) then {
                     _arty commandArtilleryFire [_finalPos, _selectedMagazine, 1];
-                    
-                    // Wait for crew to be ready before next shot
-                    waitUntil {
-                        sleep 1;
-                        private _crewReady = true;
+                };
+
+                // Wait for crew to be ready before next shot
+                waitUntil {
+                    sleep 1;
+                    private _readys = 0;
+
+                    {
+                        private _rdy = true;
                         {
-                            _crewReady = _crewReady && (unitReady _x);
+                            _rdy = _rdy && (unitReady _x);
                         } forEach [
-                            commander _arty,
-                            gunner _arty,
-                            driver _arty
+                            commander _x,
+                            gunner _x,
+                            driver _x
                         ];
-                        _crewReady
-                    };
+
+                        if(_rdy) then {
+                            _readys = _readys + 1;
+                        };
+                    } forEach [_arty];
+
+                    _readys == (count [_arty]);
                 };
             };
             
