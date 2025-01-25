@@ -48,7 +48,7 @@ private _headlessClients = entities "HeadlessClient_F";
 private _humanPlayers = allPlayers - _headlessClients;
 hcRemoveAllGroups player;
 {player hcRemoveGroup _x;} forEach (allGroups select {side _x == west});
-_GRPs = (allGroups select {(side _x == (side player)) && !(((units _x) select 0) in switchableUnits)});
+private _GRPs = (allGroups select {(side _x == (side player)) && !(((units _x) select 0) in switchableUnits)});
 
 if (count _humanPlayers == 1) then {
     {player hcSetGroup [_x];} forEach _GRPs;
@@ -86,7 +86,7 @@ if ((serverCommandAvailable "#kick") && (serverCommandAvailable "#debug")) then 
     publicVariable "ZEUSNetworkId";
     
     {
-        _ZEUSPLYOBJ = allPlayers select {owner _x == ZEUSNetworkId};
+        private _ZEUSPLYOBJ = allPlayers select {owner _x == ZEUSNetworkId};
         (_ZEUSPLYOBJ select 0) assignCurator ZEUS;
     } remoteExec ["call", 2];
 };
