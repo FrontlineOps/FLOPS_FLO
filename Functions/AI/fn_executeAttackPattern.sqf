@@ -55,7 +55,7 @@ if (_nearestOutpost != "") then {
             
             for "_i" from -3 to 3 do {
                 private _smokePos = _targetPos getPos [400, (_spawnPos getDir _targetPos) + (_i * 15)];
-                "SmokeShellArty" createVehicle _smokePos;
+                "SmokeShellArty" createVehicle _smokePos; //Replace this with a call to FLO_fnc_artilleryPrep for Smoke Shells in the future
             };
             
             private _mainGroup = [_spawnPos, _strength * 2] call _fnc_spawnGroup;
