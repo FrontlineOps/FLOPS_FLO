@@ -168,14 +168,15 @@ private _enemyGroups = allGroups select {
 _checkPos = [0,0,0];
 _mustVirtualize = false;
 private _enemyGroupsToVirtualize = [];
+private _bufferDist = VSDistance + 500;
 _keysToRemove = [];
 {
     private _pos = getPosWorld leader _x;
-    if (_checkPos distance2d _pos > VSDistance) then {
+    if (_checkPos distance2d _pos > _bufferDist) then {
         _mustVirtualize = false;
         _checkPos = _pos;
         {
-            if (_x distance2d _pos > VSDistance) exitwith {_mustVirtualize = true};
+            if (_x distance2d _pos > _bufferDist) exitwith {_mustVirtualize = true};
         } foreach _players;
     };
     if (_mustVirtualize) then { 
