@@ -513,7 +513,6 @@ if (count _humanPlayers > 0) then {
         ];
 
         [parseText "<t color='#FF3619' font='PuristaBold' align = 'right' shadow = '1' size='2'>! WARNING !</t><br /><t  color='#FF3619'  align = 'right' shadow = '1' size='1'>Enemy Deployed New Military Installation</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
-        sleep 1.5;
         _attackingAtGrid = mapGridPosition getMarkerPos _ENMASSmarkerName;
         [[west,"HQ"], "Enemy Deployed New Military Installation at grid " + _attackingAtGrid] remoteExec ["sideChat", 0];
     };
