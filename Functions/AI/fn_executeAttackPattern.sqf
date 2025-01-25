@@ -26,7 +26,7 @@ private _nearestDistance = 1e10;
 // Function to find safe position in a specific direction
 private _fnc_findDirectionalSafePos = {
     params ["_center", "_distance", "_direction"];
-    private _targetPoint = _center getPosASL [_distance, _direction];
+    private _targetPoint = _center getPos [_distance, _direction];
     private _safePos = [_targetPoint, 0, 100, 5, 0, 0.5, 0, [], [_targetPoint, _targetPoint]] call BIS_fnc_findSafePos;
     _safePos
 };
@@ -85,7 +85,7 @@ if (_nearestOutpost != "") then {
             private _mainPos = [_targetPos, 800, _spawnPos getDir _targetPos] call _fnc_findDirectionalSafePos;
             
             for "_i" from -3 to 3 do {
-                private _smokePos = _targetPos getPosASL [400, (_spawnPos getDir _targetPos) + (_i * 15)];
+                private _smokePos = _targetPos getPos [400, (_spawnPos getDir _targetPos) + (_i * 15)];
                 "SmokeShellArty" createVehicle _smokePos; //Replace this with a call to FLO_fnc_artilleryPrep for Smoke Shells in the future
             };
             
