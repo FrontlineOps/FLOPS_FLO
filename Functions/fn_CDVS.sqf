@@ -43,10 +43,12 @@ private _filteredStaticObjs = (entities [ ["NonStrategic", "Static", "Thing"], _
 
 
 private _players = allPlayers - entities "HeadlessClient_F";
+// Set a virtualization buffer from spawn distance so virtualization & spawn aren't same distance
+private _bufferDist = VSDistance + 500;
 
 // Get objects to virtualize and restore using efficient filtering
 private _checkPos = [0,0,0];
-private _mustVirtualize = false;
+private _mustVirtualize = true;
 private _objsToVirtualize = [];
 private _keysToRemove = [];
 
@@ -54,10 +56,10 @@ private _keysToRemove = [];
 {
     private _pos = getPosWorld _x;
     if (_checkPos distance2d _pos > VSDistance) then {
-        _mustVirtualize = false;
+        _mustVirtualize = true;
         _checkPos = _pos;
         {
-            if (_x distance2d _pos > VSDistance) exitwith {_mustVirtualize = true};
+            if (_x distance2d _pos < _bufferDist) exitwith {_mustVirtualize = false};
         } foreach _players;
     };
     if (_mustVirtualize) then { 
@@ -166,17 +168,16 @@ private _enemyGroups = allGroups select {
 
 // Check for objects to virtualize (but hold off on virtualization)
 _checkPos = [0,0,0];
-_mustVirtualize = false;
+_mustVirtualize = true;
 private _enemyGroupsToVirtualize = [];
-private _bufferDist = VSDistance + 500;
 _keysToRemove = [];
 {
     private _pos = getPosWorld leader _x;
     if (_checkPos distance2d _pos > _bufferDist) then {
-        _mustVirtualize = false;
+        _mustVirtualize = true;
         _checkPos = _pos;
         {
-            if (_x distance2d _pos > _bufferDist) exitwith {_mustVirtualize = true};
+            if (_x distance2d _pos < _bufferDist) exitwith {_mustVirtualize = false};
         } foreach _players;
     };
     if (_mustVirtualize) then { 
