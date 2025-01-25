@@ -78,28 +78,6 @@ _L addSecondaryWeaponItem 'MRAWS_HEAT_F';
 [_x,'MENU_COMMS_CAS_HELI',nil,nil,''] call BIS_fnc_addCommMenuItem;	
 [_x,'MENU_COMMS_ARTI',nil,nil,''] call BIS_fnc_addCommMenuItem;	
 } foreach Units AsltGrp; } remoteExec ["call", 0];
-{[ _x,   
- "<img size=2 color='#FFE496' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#FFE496'>Deploy Sandbags",   
-'',   
-'',   
-'_target  == player',          
-'_caller distance _target < 1',     
-{player playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; },   
-{},   
-{  
-_pos =  player getRelPos [1, 0];  
-_dir = getDirVisual player + 180;  
-_veh = createVehicle ["Land_BagFence_Round_F", _pos, [], 0, "CAN_COLLIDE"];  
-_veh setDir _dir;
-_veh setVectorUp [0,0,1];
-},   
-{},   
-[],   
-6,   
-5,   
-false,   
-false   
-] call BIS_fnc_holdActionAdd;  } forEach Units AsltGrp;
 
 
 {
@@ -216,28 +194,6 @@ _L addSecondaryWeaponItem 'MRAWS_HEAT_F';
 [_x,'MENU_COMMS_CAS_HELI',nil,nil,''] call BIS_fnc_addCommMenuItem;	
 [_x,'MENU_COMMS_ARTI',nil,nil,''] call BIS_fnc_addCommMenuItem;	
 } foreach Units AsltGrp; } remoteExec ['call', 0];
-   {[ _x,   
- "<img size=2 color='#FFE496' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#FFE496'>Deploy Sandbags",   
-'',   
-'',   
-'_target  == player',          
-'_caller distance _target < 1',     
-{player playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; },   
-{},   
-{  
-_pos =  player getRelPos [1, 0];  
-_dir = getDirVisual player + 180;  
-_veh = createVehicle ["Land_BagFence_Round_F", _pos, [], 0, "CAN_COLLIDE"];  
-_veh setDir _dir;
-_veh setVectorUp [0,0,1];
-},   
-{},   
-[],   
-6,   
-5,   
-false,   
-false   
-] call BIS_fnc_holdActionAdd;  } forEach Units AsltGrp;
 
 {
 		

@@ -45,36 +45,6 @@ _Height = Position player select 2 ;
 ] call BIS_fnc_holdActionAdd;	
 };
 
-if ((typeOf player == F_Assault_Uav) || (typeOf player == F_Assault_Med) || (typeOf player == F_Assault_AT) || (typeOf player == F_Assault_Amm) || (typeOf player == F_Assault_Mg) || (typeOf player == F_Assault_Eod) || (typeOf player == F_Assault_Mrk) || (typeOf player == F_Assault_SL) || (typeOf player == F_Assault_TL) || (typeOf player == "B_G_Soldier_SL_F") || (typeOf player == "B_CTRG_Sharphooter_F") || (typeOf player == "B_CTRG_soldier_engineer_exp_F") || (typeOf player == "B_CTRG_soldier_GL_LAT_F") || (typeOf player == "B_CTRG_soldier_AR_A_F")) then {
-
-[ player,   
- "<img size=2 color='#FFE496' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#FFE496'>Deploy Sandbags",   
-'',   
-'',   
-'_target  == player',          
-'_caller distance _target < 1',     
-{player playMove "AinvPknlMstpSnonWnonDnon_medic_1" ; },   
-{},   
-{  
-_pos =  player getRelPos [1, 0];  
-_dir = getDirVisual player + 180;  
-_veh = createVehicle ["Land_BagFence_Round_F", _pos, [], 0, "CAN_COLLIDE"];  
-_veh setDir _dir;
-_veh setVectorUp [0,0,1];
-},   
-{},   
-[],   
-6,   
-5,   
-false,   
-false   
-] call BIS_fnc_holdActionAdd;	
-
-
-//{_x linkItem 'NVGoggles_OPFOR'; } forEach Units LoadGroup;
-
-};
-
 if ((typeOf player == F_Diver_Eod) || (typeOf player == F_Diver_Rfl) || (typeOf player == F_Diver_TL) || (typeOf player == "B_T_Diver_F")) then {
 [player] call EtV_Actions;
 };
