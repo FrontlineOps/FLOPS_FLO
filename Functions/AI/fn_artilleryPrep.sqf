@@ -52,7 +52,8 @@ if (_newBatteriesCount > 0) then {
             ["group", _artGroup],
             ["forts", _forts],
             ["lastFired", time],
-            ["position", getPosASL _arty]
+            ["position", getPosASL _arty],
+            ["state", "READY"]
         ]];
     };
 };
@@ -64,14 +65,59 @@ if (_newBatteriesCount > 0) then {
     private _selectedMagazine = selectRandom _artilleryMagazines;
     
     if (alive _arty && _targetPos inRangeOfArtillery [[_arty], _selectedMagazine]) then {
-        for "_j" from 1 to (3 + random 3) do {
-            _arty doArtilleryFire [
-                _targetPos getPos [random 100, random 360],
-                _selectedMagazine,
-                1
-            ];
+        [_arty, _targetPos, _selectedMagazine, _batteryInfo] spawn {
+            params ["_arty", "_targetPos", "_selectedMagazine", "_batteryInfo"];
+            
+            // Set battery to watch target
+            _arty doWatch (_targetPos getPos [0,0]);
+            
+            private _shellCount = 3 + round(random 3);
+            private _minDispersion = 50;
+            private _maxDispersion = 150;
+            
+            _batteryInfo set ["state", "IN MISSION"];
+            
+            for "_i" from 1 to _shellCount do {
+                private _inRange = false;
+                private _attempts = 0;
+                private _finalPos = _targetPos;
+                
+                // Find valid firing position with dispersion
+                while {!_inRange && _attempts < 25} do {
+                    private _dispersedPos = _targetPos getPos [_minDispersion + (random (_maxDispersion - _minDispersion)), random 360];
+                    if (_dispersedPos inRangeOfArtillery [[_arty], _selectedMagazine]) then {
+                        _inRange = true;
+                        _finalPos = _dispersedPos;
+                    };
+                    _attempts = _attempts + 1;
+                };
+                
+                if (_inRange) then {
+                    _arty commandArtilleryFire [_finalPos, _selectedMagazine, 1];
+                    
+                    // Wait for crew to be ready before next shot
+                    waitUntil {
+                        sleep 1;
+                        private _crewReady = true;
+                        {
+                            _crewReady = _crewReady && (unitReady _x);
+                        } forEach [
+                            commander _arty,
+                            gunner _arty,
+                            driver _arty
+                        ];
+                        _crewReady
+                    };
+                };
+            };
+            
+            // Reset state after firing
+            _batteryInfo set ["lastFired", time];
+            _batteryInfo set ["state", "READY"];
+            
+            // Reload ammo
+            [_arty, 1] remoteExec ["setVehicleAmmo", _arty];
         };
-        _batteryInfo set ["lastFired", time];
     };
 } forEach FLO_artilleryBatteries;
 
