@@ -115,23 +115,6 @@ for "_x" from 0 to _CrewSelCnt do { _unit = _Group createunit [_crewType,[0,0,0]
 
 } forEach _allVehNames ; 
 
-				ReviveSwitchVal = "ReviveSwitch" call BIS_fnc_getParamValue;
-		 if (ReviveSwitchVal == 1) then { 
-		 _mrkr = createMarker ["Revive_Handle", [0, 0, 0]]; 
-		_mrkr setMarkerType "loc_SafetyZone";
-		_mrkr setMarkerColor "Color1_FD_F";
-		_mrkr setMarkerSize [0.6, 0.6]; 
-		_mrkr setMarkerText "Activate"; 
-		_mrkr setMarkerAlpha 0.005;
-		 } else {
-		 _mrkr = createMarker ["Revive_Handle", [0, 0, 0]]; 
-		_mrkr setMarkerType "loc_SafetyZone";
-		_mrkr setMarkerColor "Color1_FD_F";
-		_mrkr setMarkerSize [0.6, 0.6]; 
-		_mrkr setMarkerText "DeActivate"; 
-		_mrkr setMarkerAlpha 0.005;	 
-		 };
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 MissionLoadedLitterally = true ;

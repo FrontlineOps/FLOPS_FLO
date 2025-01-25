@@ -46,6 +46,12 @@ East_Air_Heli = ["I_Heli_Attack_03_F", "I_Heli_Light_01_dynamicLoadout_F", "I_He
 East_Air_Jet = ["I_Plane_Fighter_04_F", "I_Plane_Fighter_03_dynamicLoadout_F"]; 
 //publicVariable "East_Air_Jet";
 
+East_Ground_Artillery = ["O_R_MBT_02_arty_F"]; 
+//publicVariable "East_Ground_Artillery";
+
+East_Air_Drone = ["I_UAV_02_lxWS", "I_UAV_01_F"]; 
+//publicVariable "East_Air_Drone";
+
 East_Units = [
     // Regular infantry (high frequency)
     "I_soldier_F", "I_soldier_F", "I_soldier_F", "I_soldier_F",  // Regular rifleman
@@ -64,7 +70,9 @@ East_Units = [
     "I_Soldier_LAT2_F",                                          // Light AT
     "I_Soldier_AT_F",                                            // AT Specialist
     "I_Soldier_AA_F",                                            // AA Specialist
-    "Aegis_I_HeavyGunner_F"                                      // Heavy gunner
+    "Aegis_I_HeavyGunner_F",                                     // Heavy gunner
+
+    "I_RadioOperator_F"                                          // RTO | Fire Observer
 ];
 //publicVariable "East_Units";
 

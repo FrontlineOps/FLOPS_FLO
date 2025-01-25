@@ -98,6 +98,28 @@ if (count _humanPlayers > 0) then {
 
         private _Assaultazimuth = (getMarkerPos _Destmrk) getDir (getMarkerPos _OBJmrk);
 
+        // Start with recon if aggression is high enough
+        if (_AGGRSCORE > 3) then {
+            [getPos _CNTR] call FLO_fnc_airRecon;
+            sleep 300;
+        };
+        
+        // Artillery prep based on aggression
+        if (_AGGRSCORE > 5) then {
+            [getPos _CNTR, _AGGRSCORE] call FLO_fnc_artilleryPrep;
+            sleep 180;
+        };
+        
+        // Select attack pattern based on terrain and situation
+        private _pattern = selectRandom ["PINCER", "FRONTAL", "INFILTRATION"];
+        if (_AGGRSCORE > 10) then {
+            _pattern = "FRONTAL"; // More aggressive at high aggression
+        };
+        
+        // Execute the attack with combined arms
+        [getPos _CNTR, getMarkerPos _OBJmrk, _pattern, _AGGRSCORE] call FLO_fnc_executeAttackPattern;
+        
+        // Original QRF and vehicle insertions follow
         private _QRF = selectRandom ["Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"];
         [_CNTR] execVM _QRF;
         private _PRL = [(getMarkerPos _Destmrk) getPos [(500 + (random 100)), (_Assaultazimuth + (random 20))], East, [
@@ -495,7 +517,6 @@ if (count _humanPlayers > 0) then {
         _attackingAtGrid = mapGridPosition getMarkerPos _ENMASSmarkerName;
         [[west,"HQ"], "Enemy Deployed New Military Installation at grid " + _attackingAtGrid] remoteExec ["sideChat", 0];
     };
-
 };
 
 sleep 10;

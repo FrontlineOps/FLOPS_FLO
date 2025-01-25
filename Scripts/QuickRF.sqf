@@ -33,20 +33,59 @@ if ( COMMSDIS == 0 ) then {
 		// Use the position of the nearest outpost for spawning
 		private _spawnPos = getMarkerPos _nearestOutpost;
 		// Send Immediate QRF if BLUFOR has captured an objective of OPFOR
-		private _PRL = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+		private _unitTypes = [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), 
+		                     selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), 
+		                     selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), 
+		                     selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"),
+		                     "I_RadioOperator_F"];  
+		private _PRL = [_spawnPos, East, _unitTypes] call BIS_fnc_spawnGroup;
+		
+		// Initialize the Radio Operator as Fire Observer
+		{
+			if (typeOf _x == "I_RadioOperator_F") then {
+				[_x, East] call FLO_fnc_fireObserver;
+			};
+		} forEach units _PRL;
+		
 		private _WP_1 = _PRL addWaypoint [(getPos _CNTRQRF), 0]; 
 		_WP_1 SetWaypointType "SAD"; 
 		_PRL deleteGroupWhenEmpty true;
 
 		if (_RADSQRF > 1200) then {
-			private _PRL = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+			private _unitTypes = [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), 
+			                     selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), 
+			                     selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), 
+			                     selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"),
+			                     "I_RadioOperator_F"];  
+			private _PRL = [_spawnPos, East, _unitTypes] call BIS_fnc_spawnGroup;
+			
+			// Initialize the Radio Operator as Fire Observer
+			{
+				if (typeOf _x == "I_RadioOperator_F") then {
+					[_x, East] call FLO_fnc_fireObserver;
+				};
+			} forEach units _PRL;
+			
 			private _WP_1 = _PRL addWaypoint [(getPos _CNTRQRF), 0]; 
 			_WP_1 SetWaypointType "SAD"; 
 			_PRL deleteGroupWhenEmpty true;
 		};
 
 		if (_RADSQRF > 1700) then {
-			private _PRL = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+			private _unitTypes = [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), 
+			                     selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), 
+			                     selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), 
+			                     selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"),
+			                     "I_RadioOperator_F"];  
+			private _PRL = [_spawnPos, East, _unitTypes] call BIS_fnc_spawnGroup;
+			
+			// Initialize the Radio Operator as Fire Observer
+			{
+				if (typeOf _x == "I_RadioOperator_F") then {
+					[_x, East] call FLO_fnc_fireObserver;
+				};
+			} forEach units _PRL;
+			
 			private _WP_1 = _PRL addWaypoint [(getPos _CNTRQRF), 0]; 
 			_WP_1 SetWaypointType "SAD"; 
 			_PRL deleteGroupWhenEmpty true;
