@@ -56,8 +56,8 @@ FLO_fnc_airDrone = {
         ]];
     };
 
-    // Create drone object with methods
-    private _droneObject = createHashMapObject [[
+    // Create drone object type definition (an array) with methods
+    private _droneObjectTypeDDef = [
         ["vehicle", objNull],
         ["group", grpNull],
         ["type", ""],
@@ -71,7 +71,7 @@ FLO_fnc_airDrone = {
         ["cooldownTime", 30],
         
         // Methods
-        ["initialize", {
+        ["#create", {
             params ["_type", "_pos", "_alt"];
             private _spawnPos = [_pos, 8000, 10000, 100, 0] call BIS_fnc_findSafePos;
             _spawnPos set [2, _alt];
@@ -95,7 +95,7 @@ FLO_fnc_airDrone = {
             _group setBehaviour "COMBAT";
             _group setCombatMode "RED";
             
-            _this
+            _self call ["startPatrol", [_pos]]
         }],
         
         ["startPatrol", {
@@ -179,7 +179,7 @@ FLO_fnc_airDrone = {
             };
             true
         }]
-    ]];
+    ];
 
     // Initialize drone
     private _droneType = if (_requestedType != "" && {_requestedType in (FLO_drones get "droneTypes")}) then {
@@ -188,8 +188,8 @@ FLO_fnc_airDrone = {
         selectRandom (FLO_drones get "droneTypes")
     };
     
-    _droneObject call ["initialize", [_droneType, _targetPos, _altitude] ];
-    _droneObject call ["startPatrol", _targetPos];
+    //Create new droneObject - automatically starts patrol
+    private _droneObject = createhashmapobject [_droneObjectTypeDef , [_droneType, _targetPos, _altitude] ];
     
     // Start update loop
     [_droneObject] spawn {
