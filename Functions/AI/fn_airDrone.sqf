@@ -42,7 +42,7 @@ FLO_fnc_airDrone = {
                 ]]
             ]],
             ["createDrone", {
-                params ["_this", "_type", "_pos", "_alt"];
+                params ["_type", "_pos", "_alt"];
                 private _drone = createVehicle [_type, _pos, [], 0, "FLY"];
                 private _group = createGroup [east, true];
                 createVehicleCrew _drone;
@@ -50,8 +50,8 @@ FLO_fnc_airDrone = {
                 _drone
             }],
             ["getDroneById", {
-                params ["_this", "_id"];
-                _this get "activeUnits" get _id
+                params ["_id"];
+                _self get "activeUnits" get _id
             }]
         ]];
     };
@@ -72,26 +72,26 @@ FLO_fnc_airDrone = {
         
         // Methods
         ["initialize", {
-            params ["_this", "_type", "_pos", "_alt"];
+            params ["_type", "_pos", "_alt"];
             private _spawnPos = [_pos, 8000, 10000, 100, 0] call BIS_fnc_findSafePos;
             _spawnPos set [2, _alt];
             
-            private _drone = [FLO_drones, _type, _spawnPos, _alt] call (FLO_drones get "createDrone");
-            _this set ["vehicle", _drone];
-            _this set ["group", group _drone];
-            _this set ["type", _type];
+            private _drone = FLO_Drones call ["createDrone", [_type, _spawnPos, _alt]];
+            _self set ["vehicle", _drone];
+            _self set ["group", group _drone];
+            _self set ["type", _type];
             
             // Setup
             _drone flyInHeight _alt;
             
             // Configure weapons
-            private _weapons = (FLO_drones get "weaponConfigs") get _type;
+            private _weapons = FLO_drones get "weaponConfigs" get _type;
             {
                 _drone setPylonLoadOut [_forEachIndex + 1, _x];
             } forEach _weapons;
-            _this set ["weaponLoadout", _weapons];
+            _self set ["weaponLoadout", _weapons];
             
-            private _group = _this get "group";
+            private _group = _self get "group";
             _group setBehaviour "COMBAT";
             _group setCombatMode "RED";
             
@@ -99,11 +99,11 @@ FLO_fnc_airDrone = {
         }],
         
         ["startPatrol", {
-            params ["_this", "_pos"];
+            params ["_pos"];
             private _waypoints = [];
-            private _group = _this get "group";
-            private _alt = _this get "altitude";
-            private _radius = _this get "patrolRadius";
+            private _group = _self get "group";
+            private _alt = _self get "altitude";
+            private _radius = _self get "patrolRadius";
             
             // Clear existing waypoints
             while {count waypoints _group > 0} do {
@@ -125,22 +125,22 @@ FLO_fnc_airDrone = {
             private _wpCycle = _group addWaypoint [_waypoints select 0, 0];
             _wpCycle setWaypointType "CYCLE";
             
-            _this set ["state", "PATROLLING"];
+            _self set ["state", "PATROLLING"];
         }],
         
         ["engageTarget", {
-            params ["_this", "_target"];
-            private _drone = _this get "vehicle";
+            params ["_target"];
+            private _drone = _self get "vehicle";
             
-            _this set ["state", "ENGAGING"];
-            _this set ["currentTarget", _target];
+            _self set ["state", "ENGAGING"];
+            _self set ["currentTarget", _target];
             
             // Create laser target
             private _laserTarget = createVehicle ["LaserTargetE", getPos _target, [], 0, "CAN_COLLIDE"];
             _laserTarget attachTo [_target, [0,0,1]];
             
             // Select weapon based on target type
-            private _weapon = selectRandom (_this get "weaponLoadout");
+            private _weapon = selectRandom (_self get "weaponLoadout");
             _drone selectWeapon _weapon;
             
             // Attack run
@@ -148,7 +148,7 @@ FLO_fnc_airDrone = {
             _drone doWatch _laserTarget;
             _drone fireAtTarget [_target, _weapon];
             
-            _this set ["lastEngaged", time];
+            _self set ["lastEngaged", time];
             
             // Clean up laser target after engagement
             [_laserTarget] spawn {
@@ -159,24 +159,22 @@ FLO_fnc_airDrone = {
         }],
         
         ["scanForTargets", {
-            params ["_this"];
-            private _drone = _this get "vehicle";
-            private _range = _this get "engagementRange";
+            private _drone = _self get "vehicle";
+            private _range = _self get "engagementRange";
             
             private _nearTargets = _drone nearEntities ["CAManBase", _range];
             _nearTargets select {side _x != side _drone && !(isPlayer _x)}
         }],
         
         ["update", {
-            params ["_this"];
-            if (!alive (_this get "vehicle")) exitWith {false};
+            if (!alive (_self get "vehicle")) exitWith {false};
             
-            if ((_this get "state") == "PATROLLING") then {
-                private _targets = _this call (_this get "scanForTargets");
+            if ((_self get "state") == "PATROLLING") then {
+                private _targets = _self call ["scanForTargets"];
                 if (count _targets > 0) then {
-                    [_this, selectRandom _targets] call (_this get "engageTarget");
-                    sleep (_this get "cooldownTime");
-                    _this set ["state", "PATROLLING"];
+                    _self call ["engageTarget, selectRandom _targets];
+                    sleep (_self get "cooldownTime");
+                    _self set ["state", "PATROLLING"];
                 };
             };
             true
@@ -190,13 +188,13 @@ FLO_fnc_airDrone = {
         selectRandom (FLO_drones get "droneTypes")
     };
     
-    [_droneObject, _droneType, _targetPos, _altitude] call (_droneObject get "initialize");
-    [_droneObject, _targetPos] call (_droneObject get "startPatrol");
+    _droneObject call ["initialize", [_droneType, _targetPos, _altitude] ];
+    _droneObject call ["startPatrol", _targetPos];
     
     // Start update loop
     [_droneObject] spawn {
         params ["_drone"];
-        while {[_drone] call (_drone get "update")} do {
+        while {_drone call ["update"]} do {
             sleep 5;
         };
     };
