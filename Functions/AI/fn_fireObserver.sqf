@@ -68,9 +68,15 @@ private _observerData = createHashMapFromArray [
     // If not observing, look for new targets
     if !(_observer get "isObserving") then {
         private _targets = _unit targets [true, FLO_fireObservers get "scanRadius"];
+        private _validTargets = _targets select {
+            private _target = _x;
+            // Check target is enemy and no friendlies nearby
+            (side _target != side _unit) && 
+            {({(side _x == side _unit) && (alive _x)} count (_target nearEntities ["Man", 200])) == 0}
+        };
         
-        if (count _targets > 0) then {
-            private _target = selectRandom _targets;
+        if (count _validTargets > 0) then {
+            private _target = selectRandom _validTargets;
             _observer set ["observingTarget", _target];
             _observer set ["isObserving", true];
             _observer set ["observationStartTime", _currentTime];
@@ -79,9 +85,14 @@ private _observerData = createHashMapFromArray [
         private _target = _observer get "observingTarget";
         
         if (_currentTime - (_observer get "observationStartTime") >= (FLO_fireObservers get "observationTime")) then {
-            // Execute fire mission
-            [getPosASL _target, 3] call FLO_fnc_artilleryPrep;
-            _observer set ["lastMission", _currentTime];
+            // Double check no friendlies moved into area during observation
+            if ({(side _x == side _unit) && (alive _x)} count (_target nearEntities ["Man", 200]) == 0) then {
+                // Execute fire mission
+                [getPosASL _target, 3] call FLO_fnc_artilleryPrep;
+                _observer set ["lastMission", _currentTime];
+            } else {
+                [side _unit, "HQ"] commandChat "Fire mission aborted - friendlies in target area.";
+            };
             _observer set ["isObserving", false];
             _observer set ["observingTarget", objNull];
         };
