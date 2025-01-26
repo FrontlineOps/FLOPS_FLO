@@ -172,7 +172,7 @@ FLO_fnc_airDrone = {
             if ((_self get "state") == "PATROLLING") then {
                 private _targets = _self call ["scanForTargets"];
                 if (count _targets > 0) then {
-                    _self call ["engageTarget, selectRandom _targets];
+                    _self call ["engageTarget", selectRandom _targets];
                     sleep (_self get "cooldownTime");
                     _self set ["state", "PATROLLING"];
                 };
