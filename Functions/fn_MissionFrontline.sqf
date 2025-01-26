@@ -1,8 +1,24 @@
 if (!isServer) exitWith {};
 
+private _activationConditions = {
+    private _headlessClients = entities "HeadlessClient_F";
+    private _humanPlayers = allPlayers - _headlessClients;
+    private _minPlayers = 4; // Adjust this number as needed
+    
+    // Check various conditions that could activate the mission
+    private _bunkerMarkersExist = count (allMapMarkers select {markerType _x == "loc_Bunker" && markerAlpha _x == 0.003}) > 0; // loc_Bunker markers are created if Players capture an Objective (Outpost/HQ)
+    private _sufficientPlayers = count _humanPlayers >= _minPlayers;
+    private _aggrScore = parseNumber (markerText ((allMapMarkers select {markerColor _x == "Color6_FD_F"}) select 0));
+    private _highAggression = _aggrScore >= 5;
+    
+    // Return true if any activation condition is met
+    (_bunkerMarkersExist && _sufficientPlayers) || 
+    (_highAggression && _sufficientPlayers)
+};
+
 waitUntil {
     sleep 120;
-    (count (allMapMarkers select {markerType _x == "loc_Bunker" && markerAlpha _x == 0.003}) > 0)
+    call _activationConditions
 };
 
 sleep 10;
