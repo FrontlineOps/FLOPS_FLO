@@ -72,7 +72,7 @@ private _observerData = createHashMapFromArray [
             private _target = _x;
             // Check target is enemy and no friendlies nearby
             (side _target != side _unit) && 
-            {({(side _x == side _unit) && (alive _x)} count (_target nearEntities ["Man", 200])) == 0}
+            {({(side _x == side _unit) && (alive _x)} count (_target nearEntities ["Man", 100])) == 0}
         };
         
         if (count _validTargets > 0) then {
@@ -86,7 +86,7 @@ private _observerData = createHashMapFromArray [
         
         if (_currentTime - (_observer get "observationStartTime") >= (FLO_fireObservers get "observationTime")) then {
             // Double check no friendlies moved into area during observation
-            if ({(side _x == side _unit) && (alive _x)} count (_target nearEntities ["Man", 200]) == 0) then {
+            if ({(side _x == side _unit) && (alive _x)} count (_target nearEntities ["Man", 100]) == 0) then {
                 // Execute fire mission
                 [getPosASL _target, 3] call FLO_fnc_artilleryPrep;
                 _observer set ["lastMission", _currentTime];
