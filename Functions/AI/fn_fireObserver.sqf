@@ -69,10 +69,8 @@ private _observerData = createHashMapFromArray [
     if !(_observer get "isObserving") then {
         private _targets = _unit targets [true, FLO_fireObservers get "scanRadius"];
         private _validTargets = _targets select {
-            private _target = _x;
-            // Check target is enemy and no friendlies nearby
-            (side _target != side _unit) && 
-            {({(side _x == side _unit) && (alive _x)} count (_target nearEntities ["Man", 100])) == 0}
+            private _targetPos = getPosASL _x;
+            0 == count ((units side _unit) select {alive _x && _x distance _targetPos < 100})
         };
         
         if (count _validTargets > 0) then {
@@ -86,7 +84,8 @@ private _observerData = createHashMapFromArray [
         
         if (_currentTime - (_observer get "observationStartTime") >= (FLO_fireObservers get "observationTime")) then {
             // Double check no friendlies moved into area during observation
-            if ({(side _x == side _unit) && (alive _x)} count (_target nearEntities ["Man", 100]) == 0) then {
+            private _targetPos = getPosASL _target;
+            if (0 == count ((units side _unit) select {alive _x && _x distance _targetPos < 100})) then {
                 // Execute fire mission
                 [getPosASL _target, 3] call FLO_fnc_artilleryPrep;
                 _observer set ["lastMission", _currentTime];
