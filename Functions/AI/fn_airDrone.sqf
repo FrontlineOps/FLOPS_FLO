@@ -91,8 +91,8 @@ private _droneObjectTypeDDef = [
     ["startPatrol", {
         params ["_pos"];
         private _group = _self get "group";
-        private _alt = _self get "altitude"];
-        private _radius = _self get "patrolRadius"];
+        private _alt = _self get "altitude";
+        private _radius = _self get "patrolRadius";
         private _drone = _self get "vehicle";
         
         // Clear existing waypoints
