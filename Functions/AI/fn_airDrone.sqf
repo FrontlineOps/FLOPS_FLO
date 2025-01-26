@@ -23,7 +23,7 @@ FLO_fnc_airDrone = {
 
     // Initialize drone system if not exists
     if (isNil "FLO_drones") then {
-        FLO_drones = createHashMapObject [
+        FLO_drones = createHashMapObject [ [
             ["activeUnits", createHashMap],
             ["droneTypes", [
                 "Aegis_I_UAV_07_F",
@@ -53,11 +53,11 @@ FLO_fnc_airDrone = {
                 params ["_this", "_id"];
                 _this get "activeUnits" get _id
             }]
-        ];
+        ]];
     };
 
     // Create drone object with methods
-    private _droneObject = createHashMapObject [
+    private _droneObject = createHashMapObject [[
         ["vehicle", objNull],
         ["group", grpNull],
         ["type", ""],
@@ -181,7 +181,7 @@ FLO_fnc_airDrone = {
             };
             true
         }]
-    ];
+    ]];
 
     // Initialize drone
     private _droneType = if (_requestedType != "" && {_requestedType in (FLO_drones get "droneTypes")}) then {
