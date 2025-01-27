@@ -1,165 +1,103 @@
+/*
+    Author: [FLO]
+    Description: Creates a zone around a trigger with watchposts and defensive positions
+    
+    Parameter(s):
+        _this select 0: OBJECT - Trigger object
+        _this select 1: NUMBER - Radius of the zone
+    
+    Returns: HASHMAP - Zone data structure
+*/
 
+params [
+    ["_triggerObj", objNull, [objNull]],
+    ["_radius", 1000, [0]]
+];
 
-TRGNew = _this select 0;
-RADationius = _this select 1;
-
-_mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
-_mrkr = _mrkrs select 0;
-_AGGRSCORE = parseNumber (markerText _mrkr) ;  
-
-_Chance = selectRandom [1, 2, 3]; 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-if ( INFDIS == 0 ) then {
-	
-
-if (RADationius >= 2000) then {
-PRL = [TRGNew getPos [(70 +(random 30)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-sleep 0.1;
-[PRL, getPos TRGNew, 2000] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
+if (isNull _triggerObj) exitWith {
+    diag_log "[FLO] Error: Invalid trigger object passed to ZONEs.sqf";
+    objNull
 };
 
-if (RADationius >= 1000) then {
-PRL = [TRGNew getPos [(70 +(random 30)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-sleep 0.1;
-[PRL, getPos TRGNew, 50] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
-PRLL = (units PRL) select 0 ;
-PRLL addEventHandler ["Killed", { 
-[(_this select 0), 1000] execVM 'Scripts\QuickRF.sqf';
- _flare = "F_20mm_Red" createVehicle [getPos (_this select 0) select 0, getPos (_this select 0) select 1, 120]; 
-_flare setVelocity [0,0,-0.1];
- }];
+// Initialize zone data structure
+private _zoneData = createHashMapObject [[
+    ["position", getPos _triggerObj],
+    ["radius", _radius],
+    ["watchpostPositions", []],
+    ["mounts", []],
+    ["aggrScore", 0]
+]];
+
+// Get aggression score from marker
+private _markers = allMapMarkers select {markerColor _x == "Color6_FD_F"};
+if (count _markers > 0) then {
+    _zoneData set ["aggrScore", parseNumber (markerText (_markers select 0))];
 };
 
+// Find suitable mount positions
+private _allMounts = nearestLocations [_zoneData get "position", ["Mount"], _zoneData get "radius"];
+private _allWatchposts = [
+    "Watchpost_1", "Watchpost_2", "Watchpost_3", "Watchpost_4", 
+    "Watchpost_5", "Watchpost_6", "Watchpost_7", "Watchpost_8",
+    "Watchpost_9", "Watchpost_10"
+];
 
-if (_AGGRSCORE > 5) then {
-	
-if (RADationius >= 2000) then {
-PRL = [TRGNew getPos [(70 +(random 30)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-sleep 0.1;
-[PRL, getPos TRGNew, 2000] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
+// Function to check if position is suitable for watchpost
+private _isSuitablePosition = {
+    params ["_pos"];
+    private _tooClose = false;
+    {
+        if (_pos distance2D _x < 500) exitWith {
+            _tooClose = true;
+        };
+    } forEach (_zoneData get "watchpostPositions");
+    !_tooClose
 };
 
-if (RADationius >= 1000) then {
-PRL = [TRGNew getPos [(70 +(random 30)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-sleep 0.1;
-[PRL, getPos TRGNew, 50] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
-PRLL = (units PRL) select 0 ;
-PRLL addEventHandler ["Killed", { 
-[(_this select 0), 1000] execVM 'Scripts\QuickRF.sqf';
- _flare = "F_20mm_Red" createVehicle [getPos (_this select 0) select 0, getPos (_this select 0) select 1, 120]; 
-_flare setVelocity [0,0,-0.1];
- }];
+// Place initial watchposts
+{
+    private _mountPos = locationPosition _x;
+    if ([_mountPos] call _isSuitablePosition) then {
+        [_x, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
+        (_zoneData get "watchpostPositions") pushBack _mountPos;
+    };
+    if (count (_zoneData get "watchpostPositions") >= 3) exitWith {};
+} forEach _allMounts;
+
+// Add additional watchposts based on aggression score
+if ((_zoneData get "aggrScore") > 5) then {
+    if ((_zoneData get "radius") >= 2000) then {
+        private _validMounts = _allMounts select {[locationPosition _x] call _isSuitablePosition};
+        if !(_validMounts isEqualTo []) then {
+            private _mount = selectRandom _validMounts;
+            [_mount, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
+            (_zoneData get "watchpostPositions") pushBack (locationPosition _mount);
+        };
+    };
+
+    if ((_zoneData get "radius") >= 1000) then {
+        private _validMounts = _allMounts select {[locationPosition _x] call _isSuitablePosition};
+        if !(_validMounts isEqualTo []) then {
+            private _mount = selectRandom _validMounts;
+            [_mount, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
+            (_zoneData get "watchpostPositions") pushBack (locationPosition _mount);
+        };
+    };
 };
 
+// Add even more watchposts for high aggression
+if ((_zoneData get "aggrScore") > 10) then {
+    {
+        if (_x >= (_zoneData get "radius")) then {
+            private _validMounts = _allMounts select {[locationPosition _x] call _isSuitablePosition};
+            if !(_validMounts isEqualTo []) then {
+                private _mount = selectRandom _validMounts;
+                [_mount, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
+                (_zoneData get "watchpostPositions") pushBack (locationPosition _mount);
+            };
+        };
+    } forEach [2000, 1500];
 };
 
-if (_AGGRSCORE > 10) then {
-if (RADationius >= 2000) then {
-PRL = [TRGNew getPos [(70 +(random 30)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-sleep 0.1;
-[PRL, getPos TRGNew, 2000] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
-PRLL = (units PRL) select 0 ;
-PRLL addEventHandler ["Killed", { 
-[(_this select 0), 1000] execVM 'Scripts\QuickRF.sqf';
- _flare = "F_20mm_Red" createVehicle [getPos (_this select 0) select 0, getPos (_this select 0) select 1, 120]; 
-_flare setVelocity [0,0,-0.1];
- }];
-	};
-};
-
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-_allWatchposts = [ 
-"Watchpost_1", 
-"Watchpost_2", 
-"Watchpost_3", 
-"Watchpost_4", 
-"Watchpost_5", 
-"Watchpost_6",
-"Watchpost_7",
-"Watchpost_8",
-"Watchpost_9",
-"Watchpost_10",
-"Road_Post_CSAT_01", 
-"Road_Post_CSAT_02",
-"Road_Post_CSAT_01", 
-"Road_Post_CSAT_02"
-]; 
-
-_MR = RADationius / 6 ;
-_MountsAll = nearestLocations [ TRGNew, ["Mount"], _MR];   
-_MountsNeg = nearestLocations [ TRGNew, ["Mount"], 30];   
-_Mounts = _MountsAll - _MountsNeg ; 
- 
-if (count _mounts > 0) then {
-
-	if (RADationius >= 2000) then {
-		_Mount = selectRandom _Mounts; 
-		_Watchpost = selectRandom _allWatchposts; 
-		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-	};
-
-	sleep 1 ; 
-
-	if (RADationius >= 1000) then {
-		_Mount = selectRandom _Mounts; 
-		_Watchpost = selectRandom _allWatchposts; 
-		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-	};
-
-	sleep 1 ; 
-
-	//TODO ; Make sure this is ok
-	// if (_AGGRSCORE > 5) then {
-			
-	// 	if (RADationius >= 2000) then {
-	// 		_Mount = selectRandom _Mounts; 
-	// 		_Watchpost = selectRandom _allWatchposts; 
-	// 		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-	// 	};
-
-	// 	sleep 1 ; 
-
-	// 	if (RADationius >= 1000) then {
-	// 		_Mount = selectRandom _Mounts; 
-	// 		_Watchpost = selectRandom _allWatchposts; 
-	// 		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-	// 	};
-	// };
-
-	// sleep 1 ; 
-
-	// if (_AGGRSCORE > 10) then {
-			
-	// 	if (RADationius >= 2000) then {
-	// 		_Mount = selectRandom _Mounts; 
-	// 		_Watchpost = selectRandom _allWatchposts; 
-	// 		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-
-	// 	};
-
-	// 	sleep 1 ; 
-
-	// 	if (RADationius >= 1500) then {
-	// 		_Mount = selectRandom _Mounts; 
-	// 		_Watchpost = selectRandom _allWatchposts; 
-	// 		[_Mount, _Watchpost] execVM "Scripts\WatchPost.sqf";
-
-	// 	};
-	// };
-};
-
-
-[TRGNew, 360] execVM "Scripts\INTLitems.sqf";
-
+// Return the zone data
+_zoneData

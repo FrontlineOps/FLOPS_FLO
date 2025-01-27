@@ -1,101 +1,123 @@
+/*
+    Author: [FLO]
+    Description: Creates a watchpost at a road position with AI defenders
+    
+    Parameter(s):
+        _this select 0: OBJECT - Road object
+        _this select 1: NUMBER - Direction
+    
+    Returns: HASHMAP - Watchpost data structure
+*/
 
-_nearRoad = _this select 0;
-_dir = _this select 1;
+params [
+    ["_nearRoad", objNull, [objNull]],
+    ["_dir", 0, [0]]
+];
 
-_allWatchposts = [ 
-"Watchpost_1", 
-"Watchpost_2", 
-"Watchpost_3", 
-"Watchpost_4", 
-"Watchpost_5", 
-"Watchpost_6",
-"Watchpost_7",
-"Watchpost_8",
-"Watchpost_9",
-"Watchpost_10",
-"Road_Post_CSAT_01", 
-"Road_Post_CSAT_02",
-"Road_Post_CSAT_03",  
-"Road_Post_CSAT_04",
-"Road_Post_CSAT_01", 
-"Road_Post_CSAT_02",
-"Road_Post_CSAT_03",  
-"Road_Post_CSAT_04"
-]; 
+if (isNull _nearRoad) exitWith {
+    diag_log "[FLO] Error: Invalid road object passed to WatchPostBB.sqf";
+    objNull
+};
 
+// Initialize watchpost data structure
+private _watchpostData = createHashMapObject [[
+    ["position", getPos _nearRoad],
+    ["direction", _dir],
+    ["units", []],
+    ["groups", []]
+]];
 
+// Define available watchpost compositions
+private _watchpostTypes = [
+    "Watchpost_1", "Watchpost_2", "Watchpost_3", "Watchpost_4", 
+    "Watchpost_5", "Watchpost_6", "Watchpost_7", "Watchpost_8",
+    "Watchpost_9", "Watchpost_10"
+];
 
-_TERR = nearestTerrainObjects [getPos _nearRoad, ["House", "TREE", "SMALL TREE", "BUSH", "ROCK", "ROCKS"], 15]; 
-{_x hideObjectGlobal true;} forEach _TERR ;
+// Clear terrain objects
+private _terrainObjects = nearestTerrainObjects [_watchpostData get "position", ["House", "TREE", "SMALL TREE", "BUSH", "ROCK", "ROCKS"], 15];
+{_x hideObjectGlobal true} forEach _terrainObjects;
 
-_COM = [ selectRandom _allWatchposts, getPos _nearRoad, [0,0,0], (0 + (random 350)), false, false, true ] call LARs_fnc_spawnComp; 
+// Spawn composition
+private _composition = [
+    selectRandom _watchpostTypes,
+    _watchpostData get "position",
+    [0,0,0],
+    random 350,
+    false,
+    false,
+    true
+] call LARs_fnc_spawnComp;
 
+// Spawn patrol groups
+private _spawnPatrolGroup = {
+    params ["_pos", "_radius"];
+    private _group = [
+        _pos getPos [10 + random 20, random 360],
+        East,
+        [selectRandom East_Units, selectRandom East_Units]
+    ] call BIS_fnc_spawnGroup;
+    
+    [_group, _pos, _radius] call BIS_fnc_taskPatrol;
+    _group deleteGroupWhenEmpty true;
+    (_watchpostData get "groups") pushBack _group;
+    _group
+};
 
-PRL = [(getPos _nearRoad) getPos [(10 +(random 20)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-[PRL, getPos _nearRoad, 50] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
+[_watchpostData get "position", 50] call _spawnPatrolGroup;
 
-// if (_AGGRSCORE > 5) then {
-// PRL = [(getPos _nearRoad) getPos [(10 +(random 20)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-// [PRL, getPos _nearRoad, 100] call BIS_fnc_taskPatrol;
-// 			PRL deleteGroupWhenEmpty true;
-// };
+// Initialize building positions
+private _buildings = nearestObjects [_watchpostData get "position", ["HOUSE", "Strategic"], 20];
+private _positions = [];
+{
+    _positions append (_x buildingPos -1);
+} forEach _buildings;
 
-sleep 5 ;
+// Spawn static defenders
+private _spawnStaticDefender = {
+    params ["_pos", "_disablePath"];
+    private _group = [_pos, East, [selectRandom East_Units]] call BIS_fnc_spawnGroup;
+    if (_disablePath) then {
+        (units _group select 0) disableAI "PATH";
+    };
+    _group deleteGroupWhenEmpty true;
+    (_watchpostData get "groups") pushBack _group;
+    _group
+};
 
+// Spawn building defenders
+for "_i" from 1 to 3 do {
+    if !(_positions isEqualTo []) then {
+        [selectRandom _positions, true] call _spawnStaticDefender;
+    };
+};
 
-_allBuildings = nearestObjects [(getPos _nearRoad), ["HOUSE", "Strategic"], 20];  
-_allPositions = [];  
-_allBuildings apply {_allPositions append (_x buildingPos -1)};  
+// Spawn perimeter defenders
+for "_i" from 1 to 5 do {
+    private _pos = (_watchpostData get "position") getPos [15 + random 15, random 360];
+    [_pos, true] call _spawnStaticDefender;
+};
 
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
+[(_watchpostData get "position") getPos [15 + random 15, random 360], false] call _spawnStaticDefender;
 
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
+// Setup heavy weapons
+private _weaponSetup = {
+    {
+        [_x, 3, position _x, "ATL"] call BIS_fnc_setHeight;
+        _x setVectorUp [0,0,1];
+    } forEach _this;
+};
 
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+private _heavyWeapons = nearestObjects [_watchpostData get "position", ["O_G_HMG_02_high_F", "O_G_Mortar_01_F"], 100];
+_heavyWeapons call _weaponSetup;
 
+if !(_heavyWeapons isEqualTo []) then {
+    private _heavyGun = _heavyWeapons select 0;
+    if (!isNil "_heavyGun") then {
+        private _crew = createVehicleCrew _heavyGun;
+        (_watchpostData get "groups") pushBack (group _crew);
+    };
+};
 
-G = [(getPos _nearRoad) getPos [(15 +(random 15)), (0 + (random 360))] , East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
-
-G = [(getPos _nearRoad) getPos [(15 +(random 15)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
-
-G = [(getPos _nearRoad) getPos [(15 +(random 15)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
-
-G = [(getPos _nearRoad) getPos [(15 +(random 15)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
-
-G = [ (getPos _nearRoad) getPos [(15 +(random 15)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
-
-
-// {
-
-// _nvg = hmd _x;
-//  _x unassignItem _nvg;
-//  _x removeItem _nvg;
-// 	  _x addPrimaryWeaponItem "acc_flashlight";
-// 	  _x assignItem "acc_flashlight";
-// 	  _x enableGunLights "ForceOn";
-//   } foreach (allUnits select {side _x == east}); 
-
-
-
-sleep 5 ;
-_WeaponsARRAY = nearestObjects [(getPos _nearRoad), ["O_G_HMG_02_high_F", "O_G_Mortar_01_F"], 100] ;
-{[_x, 3, position _x, "ATL"] call BIS_fnc_setHeight; _x setVectorUp [0,0,1]; } forEach _WeaponsARRAY;
-
-
-_HeavGun =  nearestObjects [(getPos _nearRoad), ["O_G_Mortar_01_F", "O_G_HMG_02_high_F"], 100] select 0;
-if !(isnil "_HeavGun") then {HeavWeapGroup = createVehicleCrew _HeavGun;}; 
+// Return the watchpost data
+_watchpostData
