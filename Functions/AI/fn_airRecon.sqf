@@ -29,7 +29,10 @@ private _nearestDistance = 1e10;
 if (_nearestOutpost != "") then {
     private _spawnPos = getMarkerPos _nearestOutpost;
     private _drone = createVehicle [_droneType, _spawnPos, [], 100, "FLY"];
-    createVehicleCrew _drone;
+
+    // Create and setup crew
+    private _crew = units (east createVehicleCrew _drone);
+    _crew joinSilent _droneGroup;
     
     private _wp1 = group _drone addWaypoint [_targetPos getPos [500, 0], 0];
     private _wp2 = group _drone addWaypoint [_targetPos getPos [500, 120], 0];

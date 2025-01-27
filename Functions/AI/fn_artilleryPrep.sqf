@@ -27,7 +27,7 @@ if (_newBatteriesCount > 0) then {
         _arty setVariable ["acex_headless_blacklist", true, true];
         
         // Create and setup crew
-        private _crew = units (createVehicleCrew _arty);
+        private _crew = units (east createVehicleCrew _arty);
         _crew joinSilent _artGroup;
         _arty disableAI "FSM";
         _arty disableAI "AUTOTARGET";

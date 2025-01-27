@@ -151,7 +151,7 @@ class Params
 	class AutoSaveInterval
 	{
 		title = "AutoSave Interval";
-		texts[] = { "5 Minuties", "10 Minuties", "20 Minuties"};		
+		texts[] = { "5 Minutes", "10 Minutes", "20 Minutes"};		
 		values[] = { 300, 600, 1200 };
 		default = 300;
 		isGlobal = 1;

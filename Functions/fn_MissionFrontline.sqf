@@ -1,8 +1,24 @@
 if (!isServer) exitWith {};
 
+private _activationConditions = {
+    private _headlessClients = entities "HeadlessClient_F";
+    private _humanPlayers = allPlayers - _headlessClients;
+    private _minPlayers = 4; // Adjust this number as needed
+    
+    // Check various conditions that could activate the mission
+    private _bunkerMarkersExist = count (allMapMarkers select {markerType _x == "loc_Bunker" && markerAlpha _x == 0.003}) > 0; // loc_Bunker markers are created if Players capture an Objective (Outpost/HQ)
+    private _sufficientPlayers = count _humanPlayers >= _minPlayers;
+    private _aggrScore = parseNumber (markerText ((allMapMarkers select {markerColor _x == "Color6_FD_F"}) select 0));
+    private _highAggression = _aggrScore >= 5;
+    
+    // Return true if any activation condition is met
+    (_bunkerMarkersExist && _sufficientPlayers) || 
+    (_highAggression && _sufficientPlayers)
+};
+
 waitUntil {
     sleep 120;
-    (count (allMapMarkers select {markerType _x == "loc_Bunker" && markerAlpha _x == 0.003}) > 0)
+    call _activationConditions
 };
 
 sleep 10;
@@ -10,10 +26,7 @@ sleep 10;
 private _BunkMarks = allMapMarkers select {markerType _x == "loc_Bunker" && markerAlpha _x == 0.003};
 {deleteMarker _x;} forEach _BunkMarks;
 
-private _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
-private _mrkr = _mrkrs select 0;
-
-private _AGGRSCORE = markerText _mrkr call BIS_fnc_parseNumber;
+private _AGGRSCORE = parseNumber (markerText ((allMapMarkers select {markerColor _x == "Color6_FD_F"}) select 0));
 
 // OPFOR Frontline Becomes More Aggressive as Aggression Increases 
 // Setting up more Outpost FOBs pushing BLUFOR Installations
@@ -221,7 +234,8 @@ if (count _humanPlayers > 0) then {
 
         private _validMounts = _MountsFronline select {
             private _mount = _x;
-            private _nearPlayers = _mount nearEntities ["CAManBase", 1000] select {isPlayer _x && {side _x isEqualTo west}};
+            private _mountPos = locationPosition _mount;
+            private _nearPlayers = allPlayers select {(_x distance _mountPos) < 1000 && {side _x isEqualTo west}};
             count _nearPlayers isEqualTo 0
         };
 
@@ -390,7 +404,8 @@ if (count _humanPlayers > 0) then {
 
         private _validMounts = _MountsFronline select {
             private _mount = _x;
-            private _nearPlayers = _mount nearEntities ["CAManBase", 1000] select {isPlayer _x && {side _x isEqualTo west}};
+            private _mountPos = locationPosition _mount;
+            private _nearPlayers = allPlayers select {(_x distance _mountPos) < 1000 && {side _x isEqualTo west}};
             count _nearPlayers isEqualTo 0
         };
 
@@ -404,13 +419,14 @@ if (count _humanPlayers > 0) then {
         private _ENMASSmarkerName = "AssltOutpost" + (str ([0, 0, 0] getPos [(10 + (random 150)), (0 + (random 360))]));
         publicVariable "_ENMASSmarkerName";
 
-        createMarker [_ENMASSmarkerName, (getPos _MountFinal)];
+        createMarker [_ENMASSmarkerName, (locationPosition _MountFinal)];
         _ENMASSmarkerName setMarkerType "o_service";
         _ENMASSmarkerName setMarkerColor "colorOPFOR";
         _ENMASSmarkerName setMarkerSize [0.8, 0.8];
         _ENMASSmarkerName setMarkerAlpha 1;
 
-        private _trg = createTrigger ["EmptyDetector", (getPos _MountFinal), false];
+        private _mountPos = locationPosition _MountFinal;
+        private _trg = createTrigger ["EmptyDetector", _mountPos, false];
         _trg setTriggerArea [2000, 2000, 0, false, 100];
         _trg setTriggerInterval 3;
         _trg setTriggerTimeout [1, 1, 1, true];
@@ -503,12 +519,12 @@ if (count _humanPlayers > 0) then {
 				]; };
 
 						
-				private _COM = [ selectRandom _P1, getPosATL _MountFinal, [0,0,0], _dir, true ] call LARs_fnc_spawnComp;	
+				private _COM = [ selectRandom _P1, _mountPos, [0,0,0], _dir, true ] call LARs_fnc_spawnComp;	
 				private _ARRAY = [ _COM ] call LARs_fnc_getCompObjects;
 				{_x setVectorUp [0,0,1]} forEach _ARRAY;
 
 
-				_trgA = createTrigger ['EmptyDetector', (getPosATL _MountFinal), false];
+				_trgA = createTrigger ['EmptyDetector', _mountPos, false];
 				_trgA setTriggerArea [1000, 1000, 0, false, 100];
 				_trgA setTriggerInterval 3;
 				_trgA setTriggerTimeout [3, 3, 3, true];

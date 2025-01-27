@@ -1,96 +1,150 @@
+/*
+    Author: [FLO]
+    Description: Creates a watchpost at specified location with AI defenders
+    
+    Parameter(s):
+        _this select 0: LOCATION - Mount selection location
+        _this select 1: STRING - Watchpost composition name
+    
+    Returns: OBJECT - Watchpost composition object
+*/
 
-MountSel = _this select 0;
-_Watchpost = _this select 1;
+params [
+    ["_mountSel", locationNull, [locationNull]],
+    ["_watchpostComp", "", [""]]
+];
 
-_mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
-_mrkr = _mrkrs select 0;
-_AGGRSCORE = parseNumber (markerText _mrkr) ;  
-
-_TERR = nearestTerrainObjects [locationPosition MountSel, ["House", "TREE", "SMALL TREE", "BUSH", "ROCK", "ROCKS"], 15]; 
-{_x hideObjectGlobal true;} forEach _TERR ;
-
-WPdir = 0 + (random 360);
-if (count (nearestObjects [(locationPosition MountSel), ["House"], 200]) != 0) then {
-WPdir = getDirVisual ((nearestObjects [(locationPosition MountSel), ["House"], 200]) select 0);
-};
-_COM = [ _Watchpost, locationPosition MountSel, [0,0,0], WPdir, true ] call LARs_fnc_spawnComp;	
-
-
-PRL = [(locationPosition MountSel) getPos [(10 +(random 10)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-[PRL, locationPosition MountSel, 50] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
-
-if (_AGGRSCORE > 5) then {
-PRL = [(locationPosition MountSel) getPos [(10 +(random 10)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-[PRL, locationPosition MountSel, 100] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
+if (isNull _mountSel || _watchpostComp == "") exitWith {
+    diag_log "[FLO] Error: Invalid parameters passed to WatchPost.sqf";
+    objNull
 };
 
-sleep 1 ;
-_ARRAY = [ _COM ] call LARs_fnc_getCompObjects;
-{_x setVectorUp [0,0,1];} forEach _ARRAY; 
+// Initialize watchpost data structure
+private _watchpostData = createHashMapObject [[
+    ["position", locationPosition _mountSel],
+    ["composition", _watchpostComp],
+    ["units", []],
+    ["groups", []]
+]];
 
-_allBuildings = nearestObjects [(locationPosition MountSel), ["HOUSE", "Strategic"], 20];  
-_allPositions = [];  
-_allBuildings apply {_allPositions append (_x buildingPos -1)};  
-
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
-
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
-
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
-
-if (_AGGRSCORE > 5) then {
-G = [(locationPosition MountSel) getPos [(10 +(random 10)), (0 + (random 360))] , East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
-
-G = [(locationPosition MountSel) getPos [(10 +(random 10)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
-
-
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+// Get aggression score from marker
+private _aggrScore = 0;
+private _markers = allMapMarkers select {markerColor _x == "Color6_FD_F"};
+if (count _markers > 0) then {
+    _aggrScore = parseNumber (markerText (_markers select 0));
 };
 
-//TODO : Is this ok?
-// if (_AGGRSCORE > 10) then {
-// G = [(locationPosition MountSel) getPos [(10 +(random 10)), (0 + (random 360))] , East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-// ((units G) select 0) disableAI "PATH";  
-// 			G deleteGroupWhenEmpty true;
+// Clear terrain objects
+private _terrainObjects = nearestTerrainObjects [_watchpostData get "position", ["House", "TREE", "SMALL TREE", "BUSH", "ROCK", "ROCKS"], 15];
+{_x hideObjectGlobal true} forEach _terrainObjects;
 
-// G = [(locationPosition MountSel) getPos [(10 +(random 10)), (0 + (random 360))], East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-// ((units G) select 0) disableAI "PATH";  
-// 			G deleteGroupWhenEmpty true;
-
-
-// G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-// 			G deleteGroupWhenEmpty true;
-// };
-
-// {
-
-// _nvg = hmd _x;
-//  _x unassignItem _nvg;
-//  _x removeItem _nvg;
-// 	  _x addPrimaryWeaponItem "acc_flashlight";
-// 	  _x assignItem "acc_flashlight";
-// 	  _x enableGunLights "ForceOn";
-//   } foreach (allUnits select {side _x == east}); 
-
-
-sleep 1 ;
-_WeaponsARRAY = nearestObjects [(locationPosition MountSel), ["O_G_HMG_02_high_F", "O_G_Mortar_01_F"], 100] ;
-{[_x, 3, position _x, "ATL"] call BIS_fnc_setHeight; _x setVectorUp [0,0,1]; } forEach _WeaponsARRAY;
-
-
-HeavGuns =  nearestObjects [(locationPosition MountSel), ["O_G_Mortar_01_F", "O_G_HMG_02_high_F"], 100] ;
-if (count HeavGuns > 0) then {
-{HeavWeapGroup = createVehicleCrew _x; } forEach HeavGuns ; 
+// Calculate watchpost direction
+private _wpDir = 0;
+private _nearbyHouses = nearestObjects [_watchpostData get "position", ["House"], 200];
+if !(_nearbyHouses isEqualTo []) then {
+    _wpDir = getDirVisual (_nearbyHouses select 0);
+} else {
+    _wpDir = random 360;
 };
+
+// Spawn composition
+private _composition = [
+    _watchpostData get "composition",
+    _watchpostData get "position",
+    [0,0,0],
+    _wpDir,
+    true
+] call LARs_fnc_spawnComp;
+
+// Adjust composition objects
+{
+    _x setVectorUp [0,0,1];
+} forEach ([_composition] call LARs_fnc_getCompObjects);
+
+// Initialize building positions
+private _buildings = nearestObjects [_watchpostData get "position", ["HOUSE", "Strategic"], 20];
+private _positions = [];
+{
+    _positions append (_x buildingPos -1);
+} forEach _buildings;
+
+// Spawn patrol groups
+private _spawnPatrolGroup = {
+    params ["_pos", "_radius"];
+    private _group = [
+        _pos getPos [10 + random 10, random 360],
+        East,
+        [selectRandom East_Units, selectRandom East_Units]
+    ] call BIS_fnc_spawnGroup;
+    
+    [_group, _pos, _radius] call BIS_fnc_taskPatrol;
+    _group deleteGroupWhenEmpty true;
+    (_watchpostData get "groups") pushBack _group;
+    _group
+};
+
+[_watchpostData get "position", 50] call _spawnPatrolGroup;
+
+if (_aggrScore > 5) then {
+    [_watchpostData get "position", 100] call _spawnPatrolGroup;
+};
+
+// Spawn static defenders
+private _spawnStaticDefender = {
+    params ["_pos", "_disablePath"];
+    private _group = [_pos, East, [selectRandom East_Units]] call BIS_fnc_spawnGroup;
+    if (_disablePath) then {
+        (units _group select 0) disableAI "PATH";
+    };
+    _group deleteGroupWhenEmpty true;
+    (_watchpostData get "groups") pushBack _group;
+    _group
+};
+
+// Spawn initial defenders
+for "_i" from 1 to 3 do {
+    if !(_positions isEqualTo []) then {
+        [selectRandom _positions, true] call _spawnStaticDefender;
+    };
+};
+
+// Spawn additional defenders based on aggression score
+if (_aggrScore > 5) then {
+    for "_i" from 1 to 3 do {
+        private _pos = if (_positions isEqualTo []) then {
+            _watchpostData get "position" getPos [10 + random 10, random 360]
+        } else {
+            selectRandom _positions
+        };
+        [_pos, true] call _spawnStaticDefender;
+    };
+};
+
+// Setup heavy weapons
+private _weaponSetup = {
+    {
+        [_x, 3, position _x, "ATL"] call BIS_fnc_setHeight;
+        _x setVectorUp [0,0,1];
+    } forEach _this;
+};
+
+private _heavyWeapons = nearestObjects [_watchpostData get "position", ["O_G_HMG_02_high_F", "O_G_Mortar_01_F"], 100];
+_heavyWeapons call _weaponSetup;
+
+if !(_heavyWeapons isEqualTo []) then {
+    {
+        private _crewGroup = createVehicleCrew _x;
+        if (!isNull _crewGroup) then {
+            _crewGroup deleteGroupWhenEmpty true;
+            (_watchpostData get "groups") pushBack _crewGroup;
+            
+            // Add crew members to units array
+            {
+                (_watchpostData get "units") pushBack _x;
+            } forEach (units _crewGroup);
+        };
+    } forEach _heavyWeapons;
+};
+
+// Return the watchpost data
+_watchpostData
