@@ -72,6 +72,7 @@ private _airSupportTypeDef = [
     ["cooldownTime", 45],
     ["currentLaser", objNull],
     ["standoffRange", []],
+    ["updateHandle", scriptNull],
     
     // Methods
     ["#create", {
@@ -97,7 +98,8 @@ private _airSupportTypeDef = [
             _x setUnitCombatMode "GREEN";
         } forEach units _group;
         
-        _self call ["setupApproach", [_pos]]
+        _self call ["setupApproach", [_pos]];
+        _self call ["startUpdateLoop"];
     }],
     
     ["setupApproach", {
@@ -211,10 +213,38 @@ private _airSupportTypeDef = [
         _targets select {side _x != side _aircraft && alive _x}
     }],
     
+    ["startUpdateLoop", {
+        if (!isNull (_self get "updateHandle")) exitWith {
+            diag_log "[FLO][AirSupport] Update loop already running";
+        };
+        
+        private _handle = [_self] spawn {
+            params ["_obj"];
+            while {true} do {
+                if !(_obj call ["update"]) exitWith {
+                    diag_log "[FLO][AirSupport] Update loop terminated due to condition";
+                };
+                sleep 1; // Adjust this value based on performance needs
+            };
+            _obj set ["updateHandle", scriptNull];
+        };
+        _self set ["updateHandle", _handle];
+    }],
+    
+    ["stopUpdateLoop", {
+        private _handle = _self get "updateHandle";
+        if (!isNull _handle) then {
+            terminate _handle;
+            _self set ["updateHandle", scriptNull];
+            diag_log "[FLO][AirSupport] Update loop stopped";
+        };
+    }],
+    
     ["update", {
         private _aircraft = _self get "vehicle";
         if (!alive _aircraft) exitWith {
             _self call ["cleanupLaser"];
+            _self call ["stopUpdateLoop"];
             false
         };
         
@@ -235,8 +265,14 @@ private _airSupportTypeDef = [
             };
             case "ENGAGING": {
                 private _currentTarget = _self get "currentTarget";
-                if (!alive _currentTarget || 
-                    (time - (_self get "lastEngaged")) > (_self get "cooldownTime")) then {
+                private _timeSinceLastEngagement = time - (_self get "lastEngaged");
+                diag_log format ["[FLO][AirSupport] Engaging - Current target: %1, Time since last engagement: %2s", _currentTarget, _timeSinceLastEngagement];
+                
+                if (!alive _currentTarget || _timeSinceLastEngagement > (_self get "cooldownTime")) then {
+                    diag_log format ["[FLO][AirSupport] Ending engagement - Target alive: %1, Cooldown exceeded: %2", 
+                        alive _currentTarget, 
+                        _timeSinceLastEngagement > (_self get "cooldownTime")
+                    ];
                     _self call ["cleanupLaser"];
                     _self set ["state", "APPROACHING"];
                     _self set ["currentTarget", objNull];
