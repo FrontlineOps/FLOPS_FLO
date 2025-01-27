@@ -67,8 +67,8 @@ private _airSupportTypeDef = [
     ["currentTarget", objNull],
     ["weaponLoadout", []],
     ["altitude", _altitude],
-    ["approachRadius", 3000],
-    ["engagementRange", 2000],
+    ["approachRadius", 4000],
+    ["engagementRange", 6000],
     ["cooldownTime", 45],
     ["currentLaser", objNull],
     ["standoffRange", []],
@@ -121,7 +121,7 @@ private _airSupportTypeDef = [
                     // Helicopter with standoff position
                     private _minRange = _standoffRange select 0;
                     private _maxRange = _standoffRange select 1;
-                    _holdPos = _pos getPos [_maxRange - (random (_maxRange * 0.2)), random 90];
+                    _holdPos = _pos getPos [_minRange + (random (_maxRange - _minRange)), random 90];
                 };
                 _holdPos set [2, _alt];
                     
