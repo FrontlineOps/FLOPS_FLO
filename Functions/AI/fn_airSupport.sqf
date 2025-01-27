@@ -266,13 +266,13 @@ private _airSupportTypeDef = [
             case "ENGAGING": {
                 private _currentTarget = _self get "currentTarget";
                 private _timeSinceLastEngagement = time - (_self get "lastEngaged");
-                diag_log format ["[FLO][AirSupport] Engaging - Current target: %1, Time since last engagement: %2s", _currentTarget, _timeSinceLastEngagement];
+                //diag_log format ["[FLO][AirSupport] Engaging - Current target: %1, Time since last engagement: %2s", _currentTarget, _timeSinceLastEngagement];
                 
                 if (!alive _currentTarget || _timeSinceLastEngagement > (_self get "cooldownTime")) then {
-                    diag_log format ["[FLO][AirSupport] Ending engagement - Target alive: %1, Cooldown exceeded: %2", 
-                        alive _currentTarget, 
-                        _timeSinceLastEngagement > (_self get "cooldownTime")
-                    ];
+                    // diag_log format ["[FLO][AirSupport] Ending engagement - Target alive: %1, Cooldown exceeded: %2", 
+                    //     alive _currentTarget, 
+                    //     _timeSinceLastEngagement > (_self get "cooldownTime")
+                    // ];
                     _self call ["cleanupLaser"];
                     _self set ["state", "APPROACHING"];
                     _self set ["currentTarget", objNull];
