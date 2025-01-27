@@ -15,7 +15,7 @@ class FLO {
 
         class artilleryPrep         {};
         class airRecon              {};
-        class airDrone              {};
+        class airSupport            {};
         class executeAttackPattern  {};
         class fireObserver          {};
     };
