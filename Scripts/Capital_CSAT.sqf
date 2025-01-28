@@ -1,710 +1,349 @@
-
-
-thisCapitalTrigger = _this select 0;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-_mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
-_mrkr = _mrkrs select 0;
-_AGGRSCORE = parseNumber (markerText _mrkr) ;  
-
-//////Resources////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-sleep 15 ; 
-
-_posit = thisCapitalTrigger getPos [(10 +(random 250)), (0 + (random 360))] ;
-_V = createVehicle [ "CargoNet_01_box_F", [_posit select 0, _posit select 1, (_posit select 2) + 6], [], 2, "NONE"]; 
-_V allowDammage false;
-
-_posit = thisCapitalTrigger getPos [(10 +(random 250)), (0 + (random 360))] ;
-_V = createVehicle [ "CargoNet_01_box_F", [_posit select 0, _posit select 1, (_posit select 2) + 6], [], 2, "NONE"]; 
-_V allowDammage false;
-
-_posit = thisCapitalTrigger getPos [(10 +(random 250)), (0 + (random 360))] ;
-_V = createVehicle [ "CargoNet_01_box_F", [_posit select 0, _posit select 1, (_posit select 2) + 6], [], 2, "NONE"]; 
-_V allowDammage false;
-
-_posit = thisCapitalTrigger getPos [(10 +(random 250)), (0 + (random 360))] ;
-_V = createVehicle [ "CargoNet_01_box_F", [_posit select 0, _posit select 1, (_posit select 2) + 6], [], 2, "NONE"]; 
-_V allowDammage false;
-
-_posit = thisCapitalTrigger getPos [(10 +(random 250)), (0 + (random 360))] ;
-_V = createVehicle [ "CargoNet_01_box_F", [_posit select 0, _posit select 1, (_posit select 2) + 6], [], 2, "NONE"]; 
-_V allowDammage false;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	if (count ( (getPos thisCapitalTrigger) nearRoads 300 ) > 0 ) then {
-
-
-_nearRoad = selectRandom ((getPos thisCapitalTrigger) nearRoads 150 ) ; 
-		_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-		_dir = _nearRoad getDir _nextRoad;
-[_nearRoad, _dir] execVM "Scripts\WatchPostBB.sqf";
-
-_nearRoad = selectRandom ((getPos thisCapitalTrigger) nearRoads 200 ) ; 
-		_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-		_dir = _nearRoad getDir _nextRoad;
-[_nearRoad, _dir] execVM "Scripts\WatchPostBB.sqf";
-
-
-if (_AGGRSCORE > 5) then {
-_nearRoad = selectRandom ((getPos thisCapitalTrigger) nearRoads 200 ) ; 
-		_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-		_dir = _nearRoad getDir _nextRoad;
-[_nearRoad, _dir] execVM "Scripts\WatchPostBB.sqf";
-
-_nearRoad = selectRandom ((getPos thisCapitalTrigger) nearRoads 300 ) ; 
-		_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-		_dir = _nearRoad getDir _nextRoad;
-[_nearRoad, _dir] execVM "Scripts\WatchPostBB.sqf";
-};
-
-if (_AGGRSCORE > 10) then {
-_nearRoad = selectRandom ((getPos thisCapitalTrigger) nearRoads 300 ) ; 
-		_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-		_dir = _nearRoad getDir _nextRoad;
-[_nearRoad, _dir] execVM "Scripts\WatchPostBB.sqf";
-};
-
-	};
-//////Groups////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-PRL = [thisCapitalTrigger getPos [(10 +(random 90)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-[PRL, thisCapitalTrigger getPos [(10 +(random 90)), (0 + (random 360))], 300] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
-PRLL = Leader PRL;
-PRLL addEventHandler ["Killed", { 
- _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
- [(_this select 0)] execVM _QRF;
- _flare = "F_20mm_Red" createVehicle [getPos (_this select 0) select 0, getPos (_this select 0) select 1, 120]; 
-_flare setVelocity [0,0,-0.1];
- }];
-
-PRL = [thisCapitalTrigger getPos [(10 +(random 90)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-[PRL, thisCapitalTrigger getPos [(10 +(random 90)), (0 + (random 360))], 300] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
-PRLL = Leader PRL;
-PRLL addEventHandler ["Killed", { 
- _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
- [(_this select 0)] execVM _QRF;
- _flare = "F_20mm_Red" createVehicle [getPos (_this select 0) select 0, getPos (_this select 0) select 1, 120]; 
-_flare setVelocity [0,0,-0.1];
- }];
- 
-if (_AGGRSCORE > 5) then {
-PRL = [thisCapitalTrigger getPos [(10 +(random 90)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-[PRL, thisCapitalTrigger getPos [(10 +(random 90)), (0 + (random 360))], 400] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
-PRLL = Leader PRL;
-PRLL addEventHandler ["Killed", { 
- _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
- [(_this select 0)] execVM _QRF;
- _flare = "F_20mm_Red" createVehicle [getPos (_this select 0) select 0, getPos (_this select 0) select 1, 120]; 
-_flare setVelocity [0,0,-0.1];
- }];
-};
-
-
-if (_AGGRSCORE >10) then {
-PRL = [thisCapitalTrigger getPos [(10 +(random 90)), (0 + (random 360))], East, [selectRandom East_Units, selectRandom East_Units, selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-[PRL, thisCapitalTrigger getPos [(10 +(random 90)), (0 + (random 360))], 500] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
-PRLL = Leader PRL;
-PRLL addEventHandler ["Killed", { 
- _QRF = selectRandom [ "Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"]; 
- [(_this select 0)] execVM _QRF;
- _flare = "F_20mm_Red" createVehicle [getPos (_this select 0) select 0, getPos (_this select 0) select 1, 120]; 
-_flare setVelocity [0,0,-0.1];
- }];
-};
-
-
-//////Watchpost////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//////Assault////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-			_AssltDestMrks = allMapMarkers select {markerType _x == "b_installation"  && (markerColor _x == "ColorYellow" or  markerColor _x == "colorBLUFOR" or markerColor _x == "colorWEST")};  
-			_StrtM = [_AssltDestMrks,  thisCapitalTrigger] call BIS_fnc_nearestPosition;
-[thisCapitalTrigger, _StrtM] execVM "Scripts\VehiInsert_CSAT_2.sqf";			
-
-			_AssltDestMrks = allMapMarkers select {markerType _x == "b_installation"  && (markerColor _x == "ColorYellow" or  markerColor _x == "colorBLUFOR" or markerColor _x == "colorWEST")};  
-			_StrtM = [_AssltDestMrks,  thisCapitalTrigger] call BIS_fnc_nearestPosition;
-[thisCapitalTrigger, _StrtM] execVM "Scripts\VehiInsert_CSAT_2.sqf";			
-
-
-if (_AGGRSCORE > 10) then {
-			_AssltDestMrks = allMapMarkers select {markerType _x == "b_installation"  && (markerColor _x == "ColorYellow" or  markerColor _x == "colorBLUFOR" or markerColor _x == "colorWEST")};  
-			_StrtM = [_AssltDestMrks,  thisCapitalTrigger] call BIS_fnc_nearestPosition;
-[thisCapitalTrigger, _StrtM] execVM "Scripts\VehiInsert_CSAT_2.sqf";	
-};
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-if ( LOGDIS == 0 ) then {
-	
-if (count ( (getPos thisCapitalTrigger) nearRoads 150 ) > 0 ) then {
-
-
-_nearRoad = selectRandom ( (getPos thisCapitalTrigger) nearRoads 150 ) ; 
-_V = createVehicle [ selectRandom EastGround_Vehicles_Heavy, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-
-CrewGroup = createVehicleCrew _V; 
-_VC = createGroup East;
-{[_x] join _VC} forEach units CrewGroup;
-
-
-sleep 3;
-_Wposs0 = [_V, 70, 300, 1, 0, 1, 0] call BIS_fnc_findSafePos; 
-_nearRoad0 = ( _Wposs0 nearRoads 200 ) select 0; 
-I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
-I1_WP_0 SetWaypointType "MOVE";
-I1_WP_0 setWaypointBehaviour "SAFE";
-I1_WP_0 setWaypointSpeed "LIMITED";
-
-I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
-I1_WP_00 SetWaypointType "MOVE";
-I1_WP_00 setWaypointBehaviour "SAFE";
-I1_WP_00 setWaypointSpeed "LIMITED";
-
-I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
-I1_WP_1 SetWaypointType "CYCLE";
-I1_WP_1 setWaypointBehaviour "SAFE";
-I1_WP_1 setWaypointSpeed "LIMITED";
-
-
-
-_nearRoad = selectRandom ( (getPos thisCapitalTrigger) nearRoads 150 ) ; 
-_V = createVehicle [ selectRandom EastGround_Vehicles_Light, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-
-CrewGroup = createVehicleCrew _V; 
-_VC = createGroup East;
-{[_x] join _VC} forEach units CrewGroup;
-
-
-sleep 3;
-_Wposs0 = [_V, 70, 300, 1, 0, 1, 0] call BIS_fnc_findSafePos; 
-_nearRoad0 = ( _Wposs0 nearRoads 200 ) select 0; 
-I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
-I1_WP_0 SetWaypointType "MOVE";
-I1_WP_0 setWaypointBehaviour "SAFE";
-I1_WP_0 setWaypointSpeed "LIMITED";
-
-I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
-I1_WP_00 SetWaypointType "MOVE";
-I1_WP_00 setWaypointBehaviour "SAFE";
-I1_WP_00 setWaypointSpeed "LIMITED";
-
-I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
-I1_WP_1 SetWaypointType "CYCLE";
-I1_WP_1 setWaypointBehaviour "SAFE";
-I1_WP_1 setWaypointSpeed "LIMITED";
-
-if (_AGGRSCORE > 5) then {
-
-
-_nearRoad = selectRandom ( (getPos thisCapitalTrigger) nearRoads 150 ) ; 
-_V = createVehicle [ selectRandom EastGround_Vehicles_Heavy, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-
-CrewGroup = createVehicleCrew _V; 
-_VC = createGroup East;
-{[_x] join _VC} forEach units CrewGroup;
-
-
-sleep 3;
-_Wposs0 = [_V, 70, 300, 1, 0, 1, 0] call BIS_fnc_findSafePos; 
-_nearRoad0 = ( _Wposs0 nearRoads 200 ) select 0; 
-I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
-I1_WP_0 SetWaypointType "MOVE";
-I1_WP_0 setWaypointBehaviour "SAFE";
-I1_WP_0 setWaypointSpeed "LIMITED";
-
-I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
-I1_WP_00 SetWaypointType "MOVE";
-I1_WP_00 setWaypointBehaviour "SAFE";
-I1_WP_00 setWaypointSpeed "LIMITED";
-
-I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
-I1_WP_1 SetWaypointType "CYCLE";
-I1_WP_1 setWaypointBehaviour "SAFE";
-I1_WP_1 setWaypointSpeed "LIMITED";
-
-
-
-_nearRoad = selectRandom ( (getPos thisCapitalTrigger) nearRoads 150 ) ; 
-_V = createVehicle [ selectRandom EastGround_Vehicles_Light, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-
-CrewGroup = createVehicleCrew _V; 
-_VC = createGroup East;
-{[_x] join _VC} forEach units CrewGroup;
-
-
-sleep 3;
-_Wposs0 = [_V, 70, 300, 1, 0, 1, 0] call BIS_fnc_findSafePos; 
-_nearRoad0 = ( _Wposs0 nearRoads 200 ) select 0; 
-I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
-I1_WP_0 SetWaypointType "MOVE";
-I1_WP_0 setWaypointBehaviour "SAFE";
-I1_WP_0 setWaypointSpeed "LIMITED";
-
-I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
-I1_WP_00 SetWaypointType "MOVE";
-I1_WP_00 setWaypointBehaviour "SAFE";
-I1_WP_00 setWaypointSpeed "LIMITED";
-
-I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
-I1_WP_1 SetWaypointType "CYCLE";
-I1_WP_1 setWaypointBehaviour "SAFE";
-I1_WP_1 setWaypointSpeed "LIMITED";
-
-};
-
-if (_AGGRSCORE > 10) then {
-
-
-_nearRoad = selectRandom ( (getPos thisCapitalTrigger) nearRoads 150 ) ; 
-_V = createVehicle [ selectRandom EastGround_Vehicles_Heavy, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-
-CrewGroup = createVehicleCrew _V; 
-_VC = createGroup East;
-{[_x] join _VC} forEach units CrewGroup;
-
-
-sleep 3;
-_Wposs0 = [_V, 70, 300, 1, 0, 1, 0] call BIS_fnc_findSafePos; 
-_nearRoad0 = ( _Wposs0 nearRoads 200 ) select 0; 
-I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
-I1_WP_0 SetWaypointType "MOVE";
-I1_WP_0 setWaypointBehaviour "SAFE";
-I1_WP_0 setWaypointSpeed "LIMITED";
-
-I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
-I1_WP_00 SetWaypointType "MOVE";
-I1_WP_00 setWaypointBehaviour "SAFE";
-I1_WP_00 setWaypointSpeed "LIMITED";
-
-I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
-I1_WP_1 SetWaypointType "CYCLE";
-I1_WP_1 setWaypointBehaviour "SAFE";
-I1_WP_1 setWaypointSpeed "LIMITED";
-
-
-
-_nearRoad = selectRandom ( (getPos thisCapitalTrigger) nearRoads 150 ) ; 
-_V = createVehicle [ selectRandom EastGround_Vehicles_Light, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-
-CrewGroup = createVehicleCrew _V; 
-_VC = createGroup East;
-{[_x] join _VC} forEach units CrewGroup;
-
-
-sleep 3;
-_Wposs0 = [_V, 70, 300, 1, 0, 1, 0] call BIS_fnc_findSafePos; 
-_nearRoad0 = ( _Wposs0 nearRoads 200 ) select 0; 
-I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
-I1_WP_0 SetWaypointType "MOVE";
-I1_WP_0 setWaypointBehaviour "SAFE";
-I1_WP_0 setWaypointSpeed "LIMITED";
-
-I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
-I1_WP_00 SetWaypointType "MOVE";
-I1_WP_00 setWaypointBehaviour "SAFE";
-I1_WP_00 setWaypointSpeed "LIMITED";
-
-I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
-I1_WP_1 SetWaypointType "CYCLE";
-I1_WP_1 setWaypointBehaviour "SAFE";
-I1_WP_1 setWaypointSpeed "LIMITED";
-
-};
-
-};
-};
-//////Garrisons////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-_all = nearestObjects [(getPos thisCapitalTrigger), ["HOUSE"], 300];  
-_allBuildings = _all select {count (_x buildingPos -1) > 1}; 
-
-_rndSolX = selectRandom East_Units; 
-_rndBuilding = selectRandom _allBuildings;  
-_PosAGL = ASLToAGL getPosASL _rndBuilding;
-G = [_PosAGL, East,[_rndSolX]] call BIS_fnc_spawnGroup;    
-[((units G) select 0), 10, _PosAGL, "ATL"] call BIS_fnc_setHeight;
-((units G) select 0) setUnitPos "MIDDLE";
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
-
-_rndSolX = selectRandom East_Units; 
-_rndBuilding = selectRandom _allBuildings;  
-_PosAGL = ASLToAGL getPosASL _rndBuilding;
-G = [_PosAGL, East,[_rndSolX]] call BIS_fnc_spawnGroup;    
-[((units G) select 0), 10, _PosAGL, "ATL"] call BIS_fnc_setHeight;
-((units G) select 0) setUnitPos "MIDDLE";
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
-
-_rndSolX = selectRandom East_Units; 
-_rndBuilding = selectRandom _allBuildings;  
-_PosAGL = ASLToAGL getPosASL _rndBuilding;
-G = [_PosAGL, East,[_rndSolX]] call BIS_fnc_spawnGroup;    
-[((units G) select 0), 10, _PosAGL, "ATL"] call BIS_fnc_setHeight;
-((units G) select 0) setUnitPos "MIDDLE";
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
-
-_rndSolX = selectRandom East_Units; 
-_rndBuilding = selectRandom _allBuildings;  
-_PosAGL = ASLToAGL getPosASL _rndBuilding;
-G = [_PosAGL, East,[_rndSolX]] call BIS_fnc_spawnGroup;    
-[((units G) select 0), 10, _PosAGL, "ATL"] call BIS_fnc_setHeight;
-((units G) select 0) setUnitPos "MIDDLE";
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
-
-_rndSolX = selectRandom East_Units; 
-_rndBuilding = selectRandom _allBuildings;  
-_PosAGL = ASLToAGL getPosASL _rndBuilding;
-G = [_PosAGL, East,[_rndSolX]] call BIS_fnc_spawnGroup;    
-[((units G) select 0), 10, _PosAGL, "ATL"] call BIS_fnc_setHeight;
-((units G) select 0) setUnitPos "MIDDLE";
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
-
-_rndSolX = selectRandom East_Units; 
-_rndBuilding = selectRandom _allBuildings;  
-_PosAGL = ASLToAGL getPosASL _rndBuilding;
-G = [_PosAGL, East,[_rndSolX]] call BIS_fnc_spawnGroup;    
-[((units G) select 0), 10, _PosAGL, "ATL"] call BIS_fnc_setHeight;
-((units G) select 0) setUnitPos "MIDDLE";
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
-
-if (_AGGRSCORE > 10) then {
-
-_rndSolX = selectRandom East_Units; 
-_rndBuilding = selectRandom _allBuildings;  
-_PosAGL = ASLToAGL getPosASL _rndBuilding;
-G = [_PosAGL, East,[_rndSolX]] call BIS_fnc_spawnGroup;    
-[((units G) select 0), 10, _PosAGL, "ATL"] call BIS_fnc_setHeight;
-((units G) select 0) setUnitPos "MIDDLE";
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
-
-_rndSolX = selectRandom East_Units; 
-_rndBuilding = selectRandom _allBuildings;  
-_PosAGL = ASLToAGL getPosASL _rndBuilding;
-G = [_PosAGL, East,[_rndSolX]] call BIS_fnc_spawnGroup;    
-[((units G) select 0), 10, _PosAGL, "ATL"] call BIS_fnc_setHeight;
-((units G) select 0) setUnitPos "MIDDLE";
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
-
-_rndSolX = selectRandom East_Units; 
-_rndBuilding = selectRandom _allBuildings;  
-_PosAGL = ASLToAGL getPosASL _rndBuilding;
-G = [_PosAGL, East,[_rndSolX]] call BIS_fnc_spawnGroup;    
-[((units G) select 0), 10, _PosAGL, "ATL"] call BIS_fnc_setHeight;
-((units G) select 0) setUnitPos "MIDDLE";
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
-
-_rndSolX = selectRandom East_Units; 
-_rndBuilding = selectRandom _allBuildings;  
-_PosAGL = ASLToAGL getPosASL _rndBuilding;
-G = [_PosAGL, East,[_rndSolX]] call BIS_fnc_spawnGroup;    
-[((units G) select 0), 10, _PosAGL, "ATL"] call BIS_fnc_setHeight;
-((units G) select 0) setUnitPos "MIDDLE";
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
-
-_rndSolX = selectRandom East_Units; 
-_rndBuilding = selectRandom _allBuildings;  
-_PosAGL = ASLToAGL getPosASL _rndBuilding;
-G = [_PosAGL, East,[_rndSolX]] call BIS_fnc_spawnGroup;    
-[((units G) select 0), 10, _PosAGL, "ATL"] call BIS_fnc_setHeight;
-((units G) select 0) setUnitPos "MIDDLE";
-((units G) select 0) disableAI "PATH";
-
-_rndSolX = selectRandom East_Units; 
-_rndBuilding = selectRandom _allBuildings;  
-_PosAGL = ASLToAGL getPosASL _rndBuilding;
-G = [_PosAGL, East,[_rndSolX]] call BIS_fnc_spawnGroup;    
-[((units G) select 0), 10, _PosAGL, "ATL"] call BIS_fnc_setHeight;
-((units G) select 0) setUnitPos "MIDDLE";
-((units G) select 0) disableAI "PATH";
-			G deleteGroupWhenEmpty true;
-
-};
-
-
-
-//////Garrisons////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-_CRT = [
-"Box_IND_WpsSpecial_F",
-"Box_IND_WpsSpecial_F",
-"Box_East_WpsSpecial_F",
-"Box_East_WpsSpecial_F",
-"Box_IND_Support_F",
-"Box_IND_Support_F",
-"Box_IND_Support_F",
-"Box_East_Support_F",
-"Box_East_Support_F",
-"Box_East_Support_F",
-"Box_CSAT_Equip_F",
-"Box_AAF_Equip_F",
-"Box_East_WpsLaunch_F",
-"Box_East_WpsLaunch_F",
-"Box_IND_WpsLaunch_F",
-"Box_IND_WpsLaunch_F",
-"Box_East_AmmoOrd_F",
-"Box_East_Ammo_F",
-"Box_IND_Ammo_F",
-"Box_IND_AmmoOrd_F",
-"Box_East_Wps_F",
-"Box_IND_Wps_F"
+params [["_thisCapitalTrigger", objNull, [objNull]]];
+
+// Initialize variables
+private _triggerPos = getPos _thisCapitalTrigger;
+private _AGGRSCORE = parseNumber (markerText ((allMapMarkers select {markerColor _x == "Color6_FD_F"}) # 0));
+
+// Supply crate types
+private _CRT = [
+    "Box_IND_WpsSpecial_F", "Box_IND_WpsSpecial_F",
+    "Box_East_WpsSpecial_F", "Box_East_WpsSpecial_F",
+    "Box_IND_Support_F", "Box_IND_Support_F", "Box_IND_Support_F",
+    "Box_East_Support_F", "Box_East_Support_F", "Box_East_Support_F",
+    "Box_CSAT_Equip_F", "Box_AAF_Equip_F",
+    "Box_East_WpsLaunch_F", "Box_East_WpsLaunch_F",
+    "Box_IND_WpsLaunch_F", "Box_IND_WpsLaunch_F",
+    "Box_East_AmmoOrd_F", "Box_East_Ammo_F",
+    "Box_IND_Ammo_F", "Box_IND_AmmoOrd_F",
+    "Box_East_Wps_F", "Box_IND_Wps_F"
 ];
 
-_allBuildings = nearestObjects [(getPos thisCapitalTrigger), ["HOUSE"], 350];  
-_allPositions = [];  
-_allBuildings apply {_allPositions append (_x buildingPos -1)};  
+// Function to spawn resource boxes
+private _fnc_spawnResourceBox = {
+    params ["_triggerPos"];
+    private _pos = _triggerPos getPos [10 + random 250, random 360];
+    private _box = createVehicle ["CargoNet_01_box_F", [_pos # 0, _pos # 1, (_pos # 2) + 6], [], 2, "NONE"];
+    _box allowDamage false;
+};
 
+// Function to spawn watch posts
+private _fnc_spawnWatchPost = {
+    params ["_road", "_dir"];
+    if (!isNull _road) then {
+        [_road, _dir] execVM "Scripts\WatchPostBB.sqf";
+    };
+};
 
-G = [selectRandom _allPositions, East,[selectRandom East_Units_Officers, selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "PATH";
-_OFC = Leader G;
+// Function to create patrol group
+private _fnc_createPatrolGroup = {
+    params ["_spawnPos", "_patrolPos", "_radius"];
+    private _group = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+    [_group, _patrolPos, _radius] call BIS_fnc_taskPatrol;
+    _group deleteGroupWhenEmpty true;
+    
+    private _leader = leader _group;
+    _leader addEventHandler ["Killed", {
+        params ["_unit"];
+        private _QRF = selectRandom ["Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"];
+        [_unit] execVM _QRF;
+        private _flare = "F_20mm_Red" createVehicle [getPos _unit # 0, getPos _unit # 1, 120];
+        _flare setVelocity [0,0,-0.1];
+    }];
+    
+    _group
+};
 
+// Function to spawn vehicle patrol
+private _fnc_spawnVehiclePatrol = {
+    params ["_triggerPos", "_vehType"];
+    
+    private _nearRoad = selectRandom (_triggerPos nearRoads 150);
+    if (isNull _nearRoad) exitWith {};
+    
+    private _veh = createVehicle [_vehType, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
+    private _crewGroup = createVehicleCrew _veh;
+    private _vehGroup = createGroup East;
+    {[_x] join _vehGroup} forEach units _crewGroup;
+    
+    sleep 3;
+    
+    private _wp0Pos = [_veh, 70, 300, 1, 0, 1, 0] call BIS_fnc_findSafePos;
+    private _wp0Road = (_wp0Pos nearRoads 200) # 0;
+    
+    {
+        private _wp = _vehGroup addWaypoint [getPos _x, 0];
+        _wp setWaypointType "MOVE";
+        _wp setWaypointBehaviour "SAFE";
+        _wp setWaypointSpeed "LIMITED";
+    } forEach [_wp0Road, _nearRoad];
+    
+    private _wpCycle = _vehGroup addWaypoint [getPos _nearRoad, 3];
+    _wpCycle setWaypointType "CYCLE";
+};
 
-((units G) select 0) disableAI "PATH";
+// Function to create garrison unit
+private _fnc_createGarrisonUnit = {
+    params ["_building"];
+    private _posAGL = ASLToAGL getPosASL _building;
+    private _group = [_posAGL, East, [selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+    private _unit = (units _group) # 0;
+    
+    [_unit, 10, _posAGL, "ATL"] call BIS_fnc_setHeight;
+    _unit setUnitPos "MIDDLE";
+    _unit disableAI "PATH";
+    _group deleteGroupWhenEmpty true;
+    
+    _group
+};
 
-_Buildings = nearestObjects [(getPos thisCapitalTrigger), ["HOUSE"], 100] ;  
-_allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 2}; 
-_HQ = _allPositionBuildings select 0;
-_dir = getDirVisual _HQ;
-[ "Intel_01", (selectRandom (_HQ buildingPos -1)), [0,0,0], _dir, false, false, true ] call LARs_fnc_spawnComp; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+// Function to setup single HQ
+private _fnc_setupHQ = {
+    params ["_building", "_CRT"];
+    
+    private _dir = getDirVisual _building;
+    private _buildingPos = selectRandom (_building buildingPos -1);
+    
+    // Setup intel composition
+    ["Intel_01", _buildingPos, [0,0,0], _dir, false, false, true] call LARs_fnc_spawnComp;
+    
+    // Create supply boxes
+    for "_i" from 1 to 2 do {
+        createVehicle [selectRandom _CRT, selectRandom (_building buildingPos -1), [], 0, "NONE"];
+    };
+    
+    // Spawn garrison units
+    for "_i" from 1 to 3 do {
+        private _group = [selectRandom (_building buildingPos -1), East, [selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+        private _unit = (units _group) # 0;
+        _unit disableAI "PATH";
+        _group deleteGroupWhenEmpty true;
+    };
+};
 
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+// Main execution
+sleep 15;
 
-_Buildings = nearestObjects [(getPos thisCapitalTrigger), ["HOUSE"], 100] ;  
-_allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 2}; 
-_HQ = _allPositionBuildings select 1;
-_dir = getDirVisual _HQ;
-[ "Intel_01", (selectRandom (_HQ buildingPos -1)), [0,0,0], _dir, false, false, true ] call LARs_fnc_spawnComp; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
-((units G) select 0) disableAI "PATH";  
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+// Spawn resource boxes
+for "_i" from 1 to 5 do {
+    private _pos = _triggerPos getPos [10 + random 250, random 360];
+    private _box = createVehicle ["CargoNet_01_box_F", [_pos # 0, _pos # 1, (_pos # 2) + 6], [], 2, "NONE"];
+    _box allowDamage false;
+};
 
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+// Spawn watch posts if roads are available
+if (count (_triggerPos nearRoads 300) > 0) then {
+    // Initial watch posts
+    {
+        private _nearRoad = selectRandom (_triggerPos nearRoads _x);
+        if (!isNull _nearRoad) then {
+            private _nextRoad = (roadsConnectedTo _nearRoad) # 0;
+            [_nearRoad, _nearRoad getDir _nextRoad] call _fnc_spawnWatchPost;
+        };
+    } forEach [150, 200];
+    
+    // Additional watch posts based on aggression
+    if (_AGGRSCORE > 5) then {
+        {
+            private _nearRoad = selectRandom (_triggerPos nearRoads _x);
+            if (!isNull _nearRoad) then {
+                private _nextRoad = (roadsConnectedTo _nearRoad) # 0;
+                [_nearRoad, _nearRoad getDir _nextRoad] call _fnc_spawnWatchPost;
+            };
+        } forEach [200, 300];
+    };
+    
+    if (_AGGRSCORE > 10) then {
+        private _nearRoad = selectRandom (_triggerPos nearRoads 300);
+        if (!isNull _nearRoad) then {
+            private _nextRoad = (roadsConnectedTo _nearRoad) # 0;
+            [_nearRoad, _nearRoad getDir _nextRoad] call _fnc_spawnWatchPost;
+        };
+    };
+};
 
-_Buildings = nearestObjects [(getPos thisCapitalTrigger), ["HOUSE"], 100] ;  
-_allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 2}; 
-_HQ = _allPositionBuildings select 2;
-_dir = getDirVisual _HQ;
-[ "Intel_01", (selectRandom (_HQ buildingPos -1)), [0,0,0], _dir, false, false, true ] call LARs_fnc_spawnComp; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+// Spawn initial patrol groups
+{
+    private _spawnPos = _triggerPos getPos [10 + random 90, random 360];
+    private _patrolPos = _triggerPos getPos [10 + random 90, random 360];
+    [_spawnPos, _patrolPos, 300] call _fnc_createPatrolGroup;
+} forEach [1,2];
 
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
-
-
-
-
+// Spawn additional groups based on aggression
 if (_AGGRSCORE > 5) then {
-	
-G = [selectRandom _allPositions, East,[selectRandom East_Units_Officers, selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "PATH";
-_OFC = Leader G;
-
-
-((units G) select 0) disableAI "PATH";
-
-_Buildings = nearestObjects [(getPos thisCapitalTrigger), ["HOUSE"], 100] ;  
-_allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 2}; 
-_HQ = _allPositionBuildings select 3;
-_dir = getDirVisual _HQ;
-[ "Intel_01", (selectRandom (_HQ buildingPos -1)), [0,0,0], _dir, false, false, true ] call LARs_fnc_spawnComp; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
-
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
+    private _spawnPos = _triggerPos getPos [10 + random 90, random 360];
+    private _patrolPos = _triggerPos getPos [10 + random 90, random 360];
+    [_spawnPos, _patrolPos, 400] call _fnc_createPatrolGroup;
 };
 
 if (_AGGRSCORE > 10) then {
-G = [selectRandom _allPositions, East,[selectRandom East_Units_Officers, selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "PATH";
-_OFC = Leader G;
-
-((units G) select 0) disableAI "PATH";
-
-_Buildings = nearestObjects [(getPos thisCapitalTrigger), ["HOUSE"], 100] ;  
-_allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 2}; 
-_HQ = _allPositionBuildings select 4;
-_dir = getDirVisual _HQ;
-[ "Intel_01", (selectRandom (_HQ buildingPos -1)), [0,0,0], _dir, false, false, true ] call LARs_fnc_spawnComp; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-_V = createVehicle [(selectRandom _CRT), (selectRandom (_HQ buildingPos -1)), [], 0, "NONE"]; 
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
-
-G = [ (selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
- };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-if ( HELIDIS == 0 ) then {
-_Chance = selectRandom [1, 2, 3]; 
-if (_Chance > 2) then {
-_V = createVehicle [selectRandom East_Air_Heli, (getPos thisCapitalTrigger), [], 1500, "FLY"]; 
-CrewGroup = createVehicleCrew _V; 
-_VC = createGroup East;
-{[_x] join _VC} forEach units CrewGroup;
-[_VC, (getPos thisCapitalTrigger), 1000] call BIS_fnc_taskPatrol;
-_V  addeventhandler ["fuel", {(_this select 0) setfuel 1}] ;
-_V flyInHeight 100; 
-_V disableAI "LIGHTS"; 
-_V setPilotLight true;
-_V setCollisionLight true; 
-  };
+    private _spawnPos = _triggerPos getPos [10 + random 90, random 360];
+    private _patrolPos = _triggerPos getPos [10 + random 90, random 360];
+    [_spawnPos, _patrolPos, 500] call _fnc_createPatrolGroup;
 };
 
-// {
+// Spawn vehicles if logistics are enabled
+if (LOGDIS == 0 && {count (_triggerPos nearRoads 150) > 0}) then {
+    private _fnc_createVehicle = {
+        params ["_vehType"];
+        private _nearRoad = selectRandom (_triggerPos nearRoads 150);
+        private _veh = createVehicle [_vehType, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
+        
+        private _crewGroup = createVehicleCrew _veh;
+        private _vehGroup = createGroup East;
+        {[_x] join _vehGroup} forEach units _crewGroup;
+        
+        sleep 3;
+        
+        private _wp0Pos = [_veh, 70, 300, 1, 0, 1, 0] call BIS_fnc_findSafePos;
+        private _wp0Road = (_wp0Pos nearRoads 200) # 0;
+        
+        {
+            private _wp = _vehGroup addWaypoint [getPos _x, 0];
+            _wp setWaypointType "MOVE";
+            _wp setWaypointBehaviour "SAFE";
+            _wp setWaypointSpeed "LIMITED";
+        } forEach [_wp0Road, _nearRoad];
+        
+        private _wpCycle = _vehGroup addWaypoint [getPos _nearRoad, 3];
+        _wpCycle setWaypointType "CYCLE";
+    };
+    
+    // Spawn initial vehicles
+    [selectRandom (FLO_configCache get "vehicles" select 3)] call _fnc_createVehicle;
+    [selectRandom (FLO_configCache get "vehicles" select 2)] call _fnc_createVehicle;
+    
+    // Additional vehicles based on aggression
+    if (_AGGRSCORE > 5) then {
+        [selectRandom (FLO_configCache get "vehicles" select 3)] call _fnc_createVehicle;
+        [selectRandom (FLO_configCache get "vehicles" select 2)] call _fnc_createVehicle;
+    };
+    
+    if (_AGGRSCORE > 10) then {
+        [selectRandom (FLO_configCache get "vehicles" select 3)] call _fnc_createVehicle;
+        [selectRandom (FLO_configCache get "vehicles" select 2)] call _fnc_createVehicle;
+    };
+};
 
-// _nvg = hmd _x;
-//  _x unassignItem _nvg;
-//  _x removeItem _nvg;
-// 	  _x addPrimaryWeaponItem "acc_flashlight";
-// 	  _x assignItem "acc_flashlight";
-// 	  _x enableGunLights "ForceOn";
-//   } foreach (allUnits select {side _x == east}); 
+// Get suitable buildings for HQ
+private _hqBuildings = nearestObjects [_triggerPos, ["HOUSE"], 100] select {count (_x buildingPos -1) > 2};
 
+// Setup initial HQs
+for "_i" from 0 to 2 min ((count _hqBuildings) - 1) do {
+    [_hqBuildings # _i, _CRT] call _fnc_setupHQ;
+};
 
-sleep 10;
+// Setup additional HQs based on aggression
+if (_AGGRSCORE > 5 && {count _hqBuildings > 3}) then {
+    [_hqBuildings # 3, _CRT] call _fnc_setupHQ;
+};
 
-_trg = createTrigger ["EmptyDetector", getPos thisCapitalTrigger, false];  
-_trg setTriggerArea [1000, 1000, 0, false, 200];  
-_trgA setTriggerTimeout [2, 2, 2, true];
-_trg setTriggerActivation ["WEST", "PRESENT", false];  
-_trg setTriggerStatements [  
-"this",  "[thisTrigger, 2000] execVM 'Scripts\ZONEs.sqf';", ""]; 
+if (_AGGRSCORE > 10 && {count _hqBuildings > 4}) then {
+    [_hqBuildings # 4, _CRT] call _fnc_setupHQ;
+};
 
-_trg = createTrigger ["EmptyDetector", getPos thisCapitalTrigger, false];  
-_trg setTriggerArea [300, 300, 0, false, 40];  
-_trgA setTriggerTimeout [2, 2, 2, true];
-_trg setTriggerActivation ["WEST", "PRESENT", false];  
-_trg setTriggerStatements [  
-"this",  "[thisTrigger] execVM 'Scripts\CQBURB.sqf';", ""]; 
+// Function to setup avenger system
+private _fnc_setupAvenger = {
+    params ["_triggerPos"];
+    
+    private _avengerTrigger = createTrigger ["EmptyDetector", _triggerPos, false];
+    _avengerTrigger setTriggerArea [400, 400, 0, false, 50];
+    _avengerTrigger setTriggerTimeout [30, 30, 30, true];
+    _avengerTrigger setTriggerActivation ["WEST", "PRESENT", true];
+    _avengerTrigger setTriggerStatements [
+        "this && AVENGLOCC == 1 && ({((side _x) == east) && (getPos _x distance thisTrigger < 200)} count allUnits < 25)",
+        "
+        AVENGLOCC = 0;
+        publicVariable 'AVENGLOCC';
+        
+        if (({((side _x) == east) && (position _x inArea thisTrigger)} count allUnits < 25) && ({(getNumber (configfile >> 'CfgVehicles' >> typeOf _x >> 'side') == 0) && (getPos _x inArea thisTrigger)} count allDeadMen > 0)) then {
+            private _allDEAD = allDeadMen select {(getNumber (configfile >> 'CfgVehicles' >> typeOf _x >> 'side') == 0) && (getPos _x inArea thisTrigger)};
+            private _aDEAD = _allDEAD # 0;
+            private _pos = getPos _aDEAD;
+            private _buildings = nearestObjects [thisTrigger, ['HOUSE'], 60] select {count (_x buildingPos -1) > 1};
+            private _HQ = selectRandom _buildings;
+            private _avenger = [selectRandom (_HQ buildingPos -1), East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
+            _avenger deleteGroupWhenEmpty true;
+            
+            private _wp = _avenger addWaypoint [_pos, 0];
+            _wp setWaypointType 'SAD';
+        };
+        
+        execVM 'Scripts\AVENGLOCCER.sqf';
+        ",
+        ""
+    ];
+};
 
+// Setup avenger system
+[_triggerPos] call _fnc_setupAvenger;
 
-_trgINT = createTrigger ["EmptyDetector", getPos thisCapitalTrigger, false];
-_trgINT setTriggerArea [400, 400, 0, false, 50];
-_trgINT setTriggerTimeout [30, 30, 30, true];
-_trgINT setTriggerActivation ["WEST", "PRESENT", true];
-_trgINT setTriggerStatements [
-			"this && AVENGLOCC == 1 && ({((side _x) == east) && (getPos _x distance thisTrigger < 200)} count allUnits < 25)", "
+// Function to create trigger
+private _fnc_createTrigger = {
+    params ["_pos", "_area", "_timeout", "_activation", "_statements"];
+    
+    private _trigger = createTrigger ["EmptyDetector", _pos, false];
+    _trigger setTriggerArea _area;
+    _trigger setTriggerTimeout [_timeout, _timeout, _timeout, true];
+    _trigger setTriggerActivation _activation;
+    _trigger setTriggerStatements _statements;
+    
+    _trigger
+};
 
-					AVENGLOCC = 0 ;
-					publicVariable 'AVENGLOCC';
-				
-					if ( ({((side _x) == east) && (position _x inArea  thisTrigger)} count allUnits < 25) && ({(getNumber (configfile >> 'CfgVehicles' >> typeOf _x >> 'side') == 0) && (getPos _x inArea thisTrigger)} count allDeadMen > 0) ) then {
-					_allDEAD = allDeadMen select {(getNumber (configfile >> 'CfgVehicles' >> typeOf _x >> 'side') == 0) && (getPos _x inArea thisTrigger)} ; 
-					_aDEAD = _allDEAD select 0 ; 
-					_pos = getPos _aDEAD ;
-					_Buildings = nearestObjects [thisTrigger, ['HOUSE'], 60] ;  
-					_allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 1}; 
-					_HQ = selectRandom _allPositionBuildings ;
-					_Avenger = [(selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-								_Avenger deleteGroupWhenEmpty true;
+// Create zone trigger
+[
+    _triggerPos,
+    [1000, 1000, 0, false, 200],
+    2,
+    ["WEST", "PRESENT", false],
+    ["this", "[thisTrigger, 2000] execVM 'Scripts\ZONEs.sqf';", ""]
+] call _fnc_createTrigger;
 
-					_W_1 = _Avenger addWaypoint [_pos, 0] ;
-					_W_1 SetWaypointType 'SAD';
-								};
-					if ( ({((side _x) == east) && (position _x inArea  thisTrigger)} count allUnits < 25) && ({(getNumber (configfile >> 'CfgVehicles' >> typeOf _x >> 'side') == 0) && (getPos _x inArea thisTrigger)} count allDeadMen > 0) ) then {
-					_allDEAD = allDeadMen select {(getNumber (configfile >> 'CfgVehicles' >> typeOf _x >> 'side') == 0) && (getPos _x inArea thisTrigger)} ; 
-					_aDEAD = _allDEAD select 0 ; 
-					_pos = getPos _aDEAD ;
-					_Buildings = nearestObjects [thisTrigger, ['HOUSE'], 60] ;  
-					_allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 1}; 
-					_HQ = selectRandom _allPositionBuildings ;
-					_Avenger = [(selectRandom (_HQ buildingPos -1)), East,[selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-								_Avenger deleteGroupWhenEmpty true;
+// Create CQB trigger
+[
+    _triggerPos,
+    [300, 300, 0, false, 40],
+    2,
+    ["WEST", "PRESENT", false],
+    ["this", "[thisTrigger] execVM 'Scripts\CQBURB.sqf';", ""]
+] call _fnc_createTrigger;
 
-					_W_1 = _Avenger addWaypoint [_pos, 0] ;
-					_W_1 SetWaypointType 'SAD';
-								};				
-								
-				 execVM 'Scripts\AVENGLOCCER.sqf';
+// Create capture trigger
+[
+    _triggerPos,
+    [220, 220, 0, false, 200],
+    10,
+    ["WEST SEIZED", "PRESENT", true],
+    [
+        "this",
+        "
+        [parseText '<t color=""#1AA3FF"" font=""PuristaBold"" align = ""right"" shadow = ""1"" size=""2"">SITREP</t><br /><t color=""#959393"" align = ""right"" shadow = ""1"" size=""0.8"">Friendly Forces Dominating the Battle,</t><br /><t color=""#959393"" align = ""right"" shadow = ""1"" size=""0.8"">Keep Up the Fight, We will Capture and Secure the Outpost,</t>', [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ['BIS_fnc_textTiles', 0];
+        
+        private _allMarks = allMapMarkers select {markerType _x == 'n_installation'};
+        private _FOBMrk = [_allMarks, thisTrigger] call BIS_fnc_nearestPosition;
+        _FOBMrk setMarkerColor 'ColorGrey';
+        private _attackingAtGrid = mapGridPosition getMarkerPos _FOBMrk;
+        [[west,'HQ'], 'Friendly Forces Dominating the Battle at grid ' + _attackingAtGrid] remoteExec ['sideChat', 0];
+        
+        [thisTrigger] execVM 'Scripts\City_CSAT_CAPTURE_West.sqf';
+        ",
+        "
+        private _allMarks = allMapMarkers select {markerType _x == 'n_installation'};
+        private _FOBMrk = [_allMarks, thisTrigger] call BIS_fnc_nearestPosition;
+        _FOBMrk setMarkerColor 'colorOPFOR';
+        "
+    ]
+] call _fnc_createTrigger;
 
-			", ""];
+// Remove units from Zeus
+{
+    if !((side _x) == west) then {
+        ZEUS removeCuratorEditableObjects [[_x], true];
+    };
+} forEach allUnits;
 
+// Initialize intel items
+[_thisCapitalTrigger, 500] execVM "Scripts\INTLitems.sqf";
 
-
-_trg = createTrigger ["EmptyDetector", getPos thisCapitalTrigger, false];  
-_trg setTriggerArea [220, 220, 0, false, 200];  
-_trg setTriggerTimeout [10, 10, 10, true];
-_trg setTriggerActivation ["WEST SEIZED", "PRESENT", true];  
-_trg setTriggerStatements [  
-"this",  "  
-
-[parseText '<t color=""#1AA3FF"" font=""PuristaBold"" align = ""right"" shadow = ""1"" size=""2"">SITREP</t><br /><t color=""#959393"" align = ""right"" shadow = ""1"" size=""0.8"">Friendly Forces Dominating the Battle,</t><br /><t color=""#959393"" align = ""right"" shadow = ""1"" size=""0.8"">Keep Up the Fight, We will Capture and Secure the Outpost,</t>', [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ['BIS_fnc_textTiles', 0];
-_allMarks = allMapMarkers select {markerType _x == 'n_installation'};  
-_FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
-						_FOBMrk setMarkerColor 'ColorGrey' ;	
-									_attackingAtGrid = mapGridPosition getMarkerPos _FOBMrk;
-								[[west,'HQ'], 'Friendly Forces Dominating the Battle at grid ' + _attackingAtGrid] remoteExec ['sideChat', 0];
-
-[thisTrigger] execVM 'Scripts\City_CSAT_CAPTURE_West.sqf';
-
-", "
-
-_allMarks = allMapMarkers select {markerType _x == 'n_installation'};  
-_FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
-						_FOBMrk setMarkerColor 'colorOPFOR' ;	
-
-"]; 
-
-
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-{ if !((side _x) == west) then {
-            ZEUS removeCuratorEditableObjects [[_x],true];
-}; } foreach allUnits;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-[thisCapitalTrigger, 500] execVM "Scripts\INTLitems.sqf";
-
-sleep 2 ;
+sleep 2;
 
