@@ -271,7 +271,7 @@ _trg setTriggerArea [1000, 1000, 0, false, 200];
 _trg setTriggerTimeout [2, 2, 2, true];
 _trg setTriggerActivation ["WEST", "PRESENT", false];  
 _trg setTriggerStatements [  
-"this",  "[thisTrigger, 1500] execVM 'Scripts\ZONEs.sqf';", ""]; 
+"this",  "[thisTrigger, 600] execVM 'Scripts\ZONEs.sqf';", ""]; 
   
   
 _trg = createTrigger ["EmptyDetector", getPos thisOutpostTrigger, false];  
