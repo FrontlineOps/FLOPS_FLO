@@ -1,65 +1,66 @@
+params ["_trigger"];
+private _triggerPos = getPos _trigger;
+private _AGGRSCORE = parseNumber (markerText ((allMapMarkers select {markerColor _x == "Color6_FD_F"}) #0));
 
-_thisAAATrigger = _this select 0; 
-_mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
-_mrkr = _mrkrs select 0;
-_AGGRSCORE = parseNumber (markerText _mrkr) ;  
+// Building position collection (fixed)
+private _Buildings = nearestObjects [_triggerPos, ["House", "Strategic"], 70];
+private _allPositions = [];
+{
+    private _bldgPos = _x buildingPos -1;
+    if (count _bldgPos > 0) then {
+        _allPositions append _bldgPos;
+    };
+} forEach _Buildings;
 
-
-
-_Buildings = nearestObjects [_thisAAATrigger, ["HOUSE", "Strategic"], 70] ;  
-_allPositionBuildings = _Buildings select {count (_x buildingPos -1) > 0}; 
-_allPositions = [];  
-_allPositionBuildings apply {_allPositions append (_x buildingPos -1)};  
-
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";  
-			G deleteGroupWhenEmpty true;
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH"; 
-			G deleteGroupWhenEmpty true;
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH"; 
-			G deleteGroupWhenEmpty true;
-
-PRL = [_thisAAATrigger getpos [(20 + (random 20)), (0 + (random 350))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-[PRL, _thisAAATrigger getpos [(20 + (random 20)), (0 + (random 350))], 50] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
-
-
-if (_AGGRSCORE > 5) then {
-PRL = [_thisAAATrigger getpos [(0 + (random 20)), (0 + (random 350))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-[PRL, _thisAAATrigger getpos [(0 + (random 20)), (0 + (random 350))], 150] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
-
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-			G deleteGroupWhenEmpty true;
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH"; 
-			G deleteGroupWhenEmpty true;
+// Fallback if no positions found
+if (_allPositions isEqualTo []) then {
+    _allPositions = [_triggerPos];
 };
 
-if (_AGGRSCORE > 10) then {
-PRL = [_thisAAATrigger getpos [(0 + (random 20)), (0 + (random 350))], East, [selectRandom East_Units, selectRandom East_Units]] call BIS_fnc_spawnGroup;
-[PRL, _thisAAATrigger getpos [(0 + (random 20)), (0 + (random 350))], 200] call BIS_fnc_taskPatrol;
-			PRL deleteGroupWhenEmpty true;
-
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-G = [ selectRandom _allPositions, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH"; 
-			G deleteGroupWhenEmpty true;
+// Spawn garrison units with position safety check
+_spawnGarrison = {
+    params ["_position", "_disableAI"];
+    if (count _position == 0) then {
+        _position = [_triggerPos];
+    };
+    private _grp = [selectRandom _position, east, [selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+    if (_disableAI) then { (units _grp # 0) disableAI "PATH" };
+    _grp deleteGroupWhenEmpty true;
+    _grp
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-[_thisAAATrigger, 100] execVM "Scripts\INTLitems.sqf";
+// Spawn patrol function
+_spawnPatrol = {
+    params ["_center", "_radius", "_unitCount"];
+    private _pos = _center getPos [_radius, random 360];
+    private _grp = [_pos, east, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
+    [_grp, _pos, _radius] call BIS_fnc_taskPatrol;
+    _grp deleteGroupWhenEmpty true;
+    _grp
+};
 
-// {
-// _nvg = hmd _x;
-//  _x unassignItem _nvg;
-//  _x removeItem _nvg;
-// 	  _x addPrimaryWeaponItem "acc_flashlight";
-// 	  _x assignItem "acc_flashlight";
-// 	  _x enableGunLights "ForceOn";
-//   } foreach (allUnits select {side _x == east}); 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Base spawns (always present)
+for "_i" from 1 to 4 do {
+    private _disableAI = _i in [1,2,4];
+    [_allPositions, _disableAI] call _spawnGarrison;
+};
+
+[_triggerPos, 20, 50] call _spawnPatrol;
+
+// Aggression-based spawning
+switch (true) do {
+    case (_AGGRSCORE > 10): {
+        [_triggerPos, 20, 200] call _spawnPatrol;
+        for "_i" from 1 to 2 do {
+            [_allPositions, _i == 2] call _spawnGarrison;
+        };
+    };
+    case (_AGGRSCORE > 5): {
+        [_triggerPos, 20, 150] call _spawnPatrol;
+        for "_i" from 1 to 2 do {
+            [_allPositions, _i == 2] call _spawnGarrison;
+        };
+    };
+};
+
+[_trigger, 100] execVM "Scripts\INTLitems.sqf";
