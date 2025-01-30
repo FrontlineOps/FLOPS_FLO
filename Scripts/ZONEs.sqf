@@ -42,6 +42,13 @@ private _allWatchposts = [
     "Watchpost_9", "Watchpost_10"
 ];
 
+// Find enemy positions from markers
+private _enemyMarkers = allMapMarkers select {
+    markerType _x == "b_installation"
+};
+
+private _enemyPositions = _enemyMarkers apply {getMarkerPos _x};
+
 // Function to check if position is suitable for watchpost
 private _isSuitablePosition = {
     params ["_pos"];
@@ -54,33 +61,64 @@ private _isSuitablePosition = {
     !_tooClose
 };
 
-// Place initial watchposts
+// Function to score position based on direction to enemies
+private _scorePosition = {
+    params ["_pos"];
+    if (_enemyPositions isEqualTo []) exitWith {1};
+    
+    private _zonePos = _zoneData get "position";
+    private _zoneToPos = _zonePos getDir _pos;
+    
+    private _bestScore = 0;
+    {
+        private _zoneToEnemy = _zonePos getDir _x;
+        private _angleDiff = abs ((_zoneToEnemy - _zoneToPos + 180) % 360 - 180);
+        private _dirScore = 1 - (_angleDiff / 180); // 1 when facing enemy, 0 when facing away
+        _bestScore = _bestScore max _dirScore;
+    } forEach _enemyPositions;
+    
+    _bestScore
+};
+
+// Sort mounts by score
+private _sortedMounts = [_allMounts, [], {-([locationPosition _x] call _scorePosition)}] call BIS_fnc_sortBy;
+
+// Place initial watchposts with direction consideration
 {
     private _mountPos = locationPosition _x;
     if ([_mountPos] call _isSuitablePosition) then {
-        [_x, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
-        (_zoneData get "watchpostPositions") pushBack _mountPos;
+        private _score = [_mountPos] call _scorePosition;
+        if (_score > 0.5) then { // Only place if reasonably facing enemies
+            [_x, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
+            (_zoneData get "watchpostPositions") pushBack _mountPos;
+        };
     };
     if (count (_zoneData get "watchpostPositions") >= 3) exitWith {};
-} forEach _allMounts;
+} forEach _sortedMounts;
 
 // Add additional watchposts based on aggression score
 if ((_zoneData get "aggrScore") > 5) then {
     if ((_zoneData get "radius") >= 2000) then {
         private _validMounts = _allMounts select {[locationPosition _x] call _isSuitablePosition};
         if !(_validMounts isEqualTo []) then {
-            private _mount = selectRandom _validMounts;
-            [_mount, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
-            (_zoneData get "watchpostPositions") pushBack (locationPosition _mount);
+            private _sortedMounts = [_validMounts, [], {-([locationPosition _x] call _scorePosition)}] call BIS_fnc_sortBy;
+            private _mount = _sortedMounts select 0;
+            if ([locationPosition _mount] call _scorePosition > 0.5) then {
+                [_mount, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
+                (_zoneData get "watchpostPositions") pushBack (locationPosition _mount);
+            };
         };
     };
 
     if ((_zoneData get "radius") >= 1000) then {
         private _validMounts = _allMounts select {[locationPosition _x] call _isSuitablePosition};
         if !(_validMounts isEqualTo []) then {
-            private _mount = selectRandom _validMounts;
-            [_mount, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
-            (_zoneData get "watchpostPositions") pushBack (locationPosition _mount);
+            private _sortedMounts = [_validMounts, [], {-([locationPosition _x] call _scorePosition)}] call BIS_fnc_sortBy;
+            private _mount = _sortedMounts select 0;
+            if ([locationPosition _mount] call _scorePosition > 0.5) then {
+                [_mount, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
+                (_zoneData get "watchpostPositions") pushBack (locationPosition _mount);
+            };
         };
     };
 };
@@ -91,9 +129,12 @@ if ((_zoneData get "aggrScore") > 10) then {
         if (_x >= (_zoneData get "radius")) then {
             private _validMounts = _allMounts select {[locationPosition _x] call _isSuitablePosition};
             if !(_validMounts isEqualTo []) then {
-                private _mount = selectRandom _validMounts;
-                [_mount, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
-                (_zoneData get "watchpostPositions") pushBack (locationPosition _mount);
+                private _sortedMounts = [_validMounts, [], {-([locationPosition _x] call _scorePosition)}] call BIS_fnc_sortBy;
+                private _mount = _sortedMounts select 0;
+                if ([locationPosition _mount] call _scorePosition > 0.5) then {
+                    [_mount, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
+                    (_zoneData get "watchpostPositions") pushBack (locationPosition _mount);
+                };
             };
         };
     } forEach [2000, 1500];

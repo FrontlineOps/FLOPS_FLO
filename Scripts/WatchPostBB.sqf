@@ -115,7 +115,7 @@ if !(_heavyWeapons isEqualTo []) then {
     private _heavyGun = _heavyWeapons select 0;
     if (!isNil "_heavyGun") then {
         private _crew = createVehicleCrew _heavyGun;
-        (_watchpostData get "groups") pushBack (group _crew);
+        (_watchpostData get "units") pushBack (crew _heavyGun # 0);
     };
 };
 

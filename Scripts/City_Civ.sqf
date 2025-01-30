@@ -1,551 +1,283 @@
- 
-thisCityCivTrigger = _this select 0;
-_Chance = selectRandom [1, 2, 3]; 
-_mrkrs = allMapMarkers select {markerColor _x == "Color4_FD_F"};
-_mrkr = _mrkrs select 0;
-_REPSCORE = parseNumber (markerText _mrkr) ;  
+params [["_thisCityCivTrigger", objNull, [objNull]]];
 
+private _chance = selectRandom [1, 2, 3];
+private _REPSCORE = parseNumber (markerText ((allMapMarkers select {markerColor _x == "Color4_FD_F"}) # 0));
+private _triggerPos = getPos _thisCityCivTrigger;
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-_allBuildings = nearestObjects [(getPos thisCityCivTrigger), ["HOUSE"], 150];   
- 
-{ 
-_x removeAllEventHandlers "Killed"; 
-_x addEventHandler ["Killed", { 
-[playerSide, "HQ"] commandChat "WATCH for CIVILIAN PROPERTIES Corporal !"; 
-
-[] execVM "Scripts\ReputationMinus.sqf";
-[] execVM "Scripts\Civ_Relations.sqf";
-
-}]; 
+// Setup building event handlers
+private _allBuildings = nearestObjects [_triggerPos, ["HOUSE"], 150];
+{
+    _x removeAllEventHandlers "Killed";
+    _x addEventHandler ["Killed", {
+        [playerSide, "HQ"] commandChat "WATCH for CIVILIAN PROPERTIES Corporal !";
+        [] execVM "Scripts\ReputationMinus.sqf";
+        [] execVM "Scripts\Civ_Relations.sqf";
+    }];
 } forEach _allBuildings;
 
-//////Generator////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-_Houses= nearestObjects [(getPos thisCityCivTrigger) , ["HOUSE"], 300] ;  
-_OtherHouses = nearestObjects [(getPos thisCityCivTrigger) , ["HOUSE"], 50] ; 
-_PowerHouses = _Houses - _OtherHouses;
-_allPowerHouses = _PowerHouses select {count (_x buildingPos -1) > 2}; 
-_PowerHouse = selectRandom _allPowerHouses;  
-_dir = getDirVisual _PowerHouse;
-_V = createVehicle ["Land_PowerGenerator_F", (selectRandom (_PowerHouse buildingPos -1)), [], 0, "FLY"]; 
-_V addEventHandler ["Killed", { 
-[] execVM "Scripts\ReputationMinus.sqf";
-execVM "Scripts\Civ_Relations.sqf";
-[(_this select 0)] execVM 'Scripts\Sabotage.sqf';
-}];
-_V allowDammage false;
-_V setPos (selectRandom (_PowerHouse buildingPos -1));
-_V setDir _dir;
-sleep 3;
-_V allowDammage true;
-_V = createVehicle ["Land_TTowerSmall_2_F", getPos _PowerHouse, [], 0, "NONE"]; 
+// Generator setup
+private _houses = nearestObjects [_triggerPos, ["HOUSE"], 300];
+private _otherHouses = nearestObjects [_triggerPos, ["HOUSE"], 50];
+private _powerHouses = _houses - _otherHouses;
+private _allPowerHouses = _powerHouses select {count (_x buildingPos -1) > 2};
 
-_markerName = "PowerHouseMark" + (str (getPos _PowerHouse));  
-_mrkr = createMarker [_markerName, getPos _PowerHouse];   
-_mrkr setMarkerType "loc_Lighthouse";
-_mrkr setMarkerColor "colorOPFOR";
-_mrkr setMarkerSize [0.6, 0.6]; 
-_mrkr setMarkerAlpha 0.001;  
-
- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- if (_Chance > 0) then {
- _nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 300 ) ; 
-_pos = _nearRoad getRelPos [6, 0];
-_V = createVehicle [selectRandom CivVehArray, [_pos select 0, _pos select 1, (_pos select 2) + 10], [], 0, "CAN_COLLIDE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir;
-
- _nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 300 ) ; 
-_pos = _nearRoad getRelPos [6, 0];
-_V = createVehicle [selectRandom CivVehArray, [_pos select 0, _pos select 1, (_pos select 2) + 10], [], 0, "CAN_COLLIDE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir;
-
- _nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 2000 ) ; 
-_pos = _nearRoad getRelPos [6, 0];
-_V = createVehicle [selectRandom CivVehArray, [_pos select 0, _pos select 1, (_pos select 2) + 10], [], 0, "CAN_COLLIDE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir;
- };
- 
- sleep 1;
- 
-  if (_Chance > 1) then {
- _nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 300 ) ; 
-_pos = _nearRoad getRelPos [6, 0];
-_V = createVehicle [selectRandom CivVehArray, [_pos select 0, _pos select 1, (_pos select 2) + 10], [], 0, "CAN_COLLIDE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir;
- 
- _nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 300 ) ; 
-_pos = _nearRoad getRelPos [6, 0];
-_V = createVehicle [selectRandom CivVehArray, [_pos select 0, _pos select 1, (_pos select 2) + 10], [], 0, "CAN_COLLIDE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir;
-
- _nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 2000 ) ; 
-_pos = _nearRoad getRelPos [6, 0];
-_V = createVehicle [selectRandom CivVehArray, [_pos select 0, _pos select 1, (_pos select 2) + 10], [], 0, "CAN_COLLIDE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir;
-
- };
-
- sleep 1;
- 
-  if (_Chance > 2) then {
- _nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 300 ) ; 
-_pos = _nearRoad getRelPos [6, 0];
-_V = createVehicle [selectRandom CivVehArray, [_pos select 0, _pos select 1, (_pos select 2) + 10], [], 0, "CAN_COLLIDE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir;
-
- _nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 300 ) ; 
-_pos = _nearRoad getRelPos [6, 0];
-_V = createVehicle [selectRandom CivVehArray, [_pos select 0, _pos select 1, (_pos select 2) + 10], [], 0, "CAN_COLLIDE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir;
-
- _nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 2000 ) ; 
-_pos = _nearRoad getRelPos [6, 0];
-_V = createVehicle [selectRandom CivVehArray, [_pos select 0, _pos select 1, (_pos select 2) + 10], [], 0, "CAN_COLLIDE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir;
- };
-
- sleep 1;
-  
-if (_Chance > 0) then {
-_nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 300 ) ; 
-_pos = _nearRoad getRelPos [6, 0];
-_V = createVehicle [selectRandom CivVehArray, [_pos select 0, _pos select 1, (_pos select 2) + 10], [], 0, "CAN_COLLIDE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir;
-_Group = createVehicleCrew _V; 
-
-sleep 3;
-_Wposs0 = [_V, 70, 300, 1, 0, 1, 0] call BIS_fnc_findSafePos; 
-_nearRoad0 = ( _Wposs0 nearRoads 5000 ) select 0; 
-I1_WP_0 = _Group addWaypoint [getPos _nearRoad0, 0];
-I1_WP_0 SetWaypointType "MOVE";
-I1_WP_0 setWaypointBehaviour "SAFE";
-I1_WP_0 setWaypointSpeed "LIMITED";
-
-_nearRoad1 = ( _Wposs0 nearRoads 5000 ) select 0; 
-I1_WP_00 = _Group addWaypoint [getPos _nearRoad1, 0];
-I1_WP_00 SetWaypointType "MOVE";
-I1_WP_00 setWaypointBehaviour "SAFE";
-I1_WP_00 setWaypointSpeed "LIMITED";
-
-I1_WP_1 = _Group addWaypoint [getPos _nearRoad1, 3];
-I1_WP_1 SetWaypointType "CYCLE";
-I1_WP_1 setWaypointBehaviour "SAFE";
-I1_WP_1 setWaypointSpeed "LIMITED";
-  };
- 
- sleep 1;
-  
- 
-if (_Chance > 1) then {
-_nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 300 ) ; 
-_pos = _nearRoad getRelPos [6, 0];
-_V = createVehicle [selectRandom CivVehArray, [_pos select 0, _pos select 1, (_pos select 2) + 10], [], 0, "CAN_COLLIDE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir;
-_Group = createVehicleCrew _V; 
-if (_REPSCORE < 7) then {
-_trg = createTrigger ["EmptyDetector", _pos];  
-_trg setTriggerArea [15, 15, 0, false, 6];  
-_trg setTriggerActivation ["WEST", "PRESENT", false];  
-_trg setTriggerStatements [  
-"this or (vehicle player) inArea thisTrigger",  " [thisTrigger, 'Sh_155mm_AMOS', 0, 1, 0] spawn BIS_fnc_fireSupportVirtual;", ""]; 
-_V addEventHandler ["Killed", { [(_this select 0), "Sh_155mm_AMOS", 0, 1, 0] spawn BIS_fnc_fireSupportVirtual;}]; 
-
-
-_trg attachTo [_V, [0, 0, 0]]; 
-};
-sleep 3;
-
-_nearRoad0 = selectRandom (_nearRoad nearRoads 5000 ) ; 
-_I1_WP_0 = _Group addWaypoint [getPos _nearRoad0, 0];
-_I1_WP_0 SetWaypointType "MOVE";
-_I1_WP_0 setWaypointBehaviour "SAFE";
-_I1_WP_0 setWaypointSpeed "LIMITED";
-
-_nearRoad1 = selectRandom ( _nearRoad0 nearRoads 5000 ) ; 
-_I1_WP_00 = _Group addWaypoint [getPos _nearRoad1, 0];
-_I1_WP_00 SetWaypointType "MOVE";
-_I1_WP_00 setWaypointBehaviour "SAFE";
-_I1_WP_00 setWaypointSpeed "LIMITED";
-
-_I1_WP_1 = _Group addWaypoint [getPos _nearRoad1, 7];
-_I1_WP_1 SetWaypointType "CYCLE";
-  };
-
-
- sleep 1;
- 
-if (_Chance > 2) then {
-_nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 300 ) ; 
-_pos = _nearRoad getRelPos [6, 0];
-_V = createVehicle [selectRandom CivVehArray, [_pos select 0, _pos select 1, (_pos select 2) + 10], [], 0, "CAN_COLLIDE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir;
-_Group = createVehicleCrew _V; 
-if (_REPSCORE < 7) then {
-_trg = createTrigger ["EmptyDetector", _pos];  
-_trg setTriggerArea [15, 15, 0, false, 6];  
-_trg setTriggerActivation ["WEST", "PRESENT", false];  
-_trg setTriggerStatements [  
-"this or (vehicle player) inArea thisTrigger",  " [thisTrigger, 'Sh_155mm_AMOS', 0, 1, 0] spawn BIS_fnc_fireSupportVirtual;", ""]; 
-_V addEventHandler ["Killed", { [(_this select 0), "Sh_155mm_AMOS", 0, 1, 0] spawn BIS_fnc_fireSupportVirtual;}]; 
-
-_trg attachTo [_V, [0, 0, 0]]; 
+if (count _allPowerHouses > 0) then {
+    private _powerHouse = selectRandom _allPowerHouses;
+    private _dir = getDirVisual _powerHouse;
+    private _buildingPos = selectRandom (_powerHouse buildingPos -1);
+    
+    private _generator = createVehicle ["Land_PowerGenerator_F", _buildingPos, [], 0, "FLY"];
+    _generator addEventHandler ["Killed", {
+        [] execVM "Scripts\ReputationMinus.sqf";
+        execVM "Scripts\Civ_Relations.sqf";
+        [(_this select 0)] execVM 'Scripts\Sabotage.sqf';
+    }];
+    
+    _generator allowDamage false;
+    _generator setPos _buildingPos;
+    _generator setDir _dir;
+    sleep 3;
+    _generator allowDamage true;
+    
+    createVehicle ["Land_TTowerSmall_2_F", getPos _powerHouse, [], 0, "NONE"];
+    
+    private _markerName = format ["PowerHouseMark_%1", getPos _powerHouse];
+    private _powerMarker = createMarker [_markerName, getPos _powerHouse];
+    _powerMarker setMarkerType "loc_Lighthouse";
+    _powerMarker setMarkerColor "colorOPFOR";
+    _powerMarker setMarkerSize [0.6, 0.6];
+    _powerMarker setMarkerAlpha 0.001;
 };
 
-sleep 3;
-_nearRoad0 = selectRandom (_nearRoad nearRoads 5000 ) ; 
-_I1_WP_0 = _Group addWaypoint [getPos _nearRoad0, 0];
-_I1_WP_0 SetWaypointType "MOVE";
-_I1_WP_0 setWaypointBehaviour "SAFE";
-_I1_WP_0 setWaypointSpeed "LIMITED";
-
-_nearRoad1 = selectRandom ( _nearRoad0 nearRoads 5000 ) ; 
-_I1_WP_00 = _Group addWaypoint [getPos _nearRoad1, 0];
-_I1_WP_00 SetWaypointType "MOVE";
-_I1_WP_00 setWaypointBehaviour "SAFE";
-_I1_WP_00 setWaypointSpeed "LIMITED";
-
-_I1_WP_1 = _Group addWaypoint [getPos _nearRoad1, 7];
-_I1_WP_1 SetWaypointType "CYCLE";
-  };
-  
- ///////////////////////////////////////////////////////////////////////////////
-_all = nearestObjects [(getPos thisCityCivTrigger), ["HOUSE"], 20];  
-_Buildings = _all select {count (_x buildingPos -1) > 7}; 
-{
-_Lantern = createVehicle ["Land_Camping_Light_F", [(getPos _x) select 0, (getPos _x) select 1, ((getPos _x) select 2) + 1], [], 0, "NONE"];
-} forEach _Buildings;
- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- 
-_allBuildings = nearestObjects [getPos thisCityCivTrigger, ["HOUSE"], 200];  
-_allPositions = [];  
-_allBuildings apply {_allPositions append (_x buildingPos -1)};  
-G_stuff = ["C_UavTerminal","ItemRadio","MobilePhone","Rangefinder","acc_pointer_IR","U_BG_leader","ItemCompass","MineDetector","U_I_FullGhillie_lsh","U_BG_Guerilla1_1","C_UavTerminal","ItemRadio","MobilePhone","Rangefinder","acc_pointer_IR","U_BG_leader","ItemCompass","MineDetector","U_I_FullGhillie_lsh","U_BG_Guerilla1_1","MobilePhone","C_UavTerminal","ItemRadio","MobilePhone","Rangefinder","acc_pointer_IR","U_BG_leader","ItemCompass","MineDetector","U_I_FullGhillie_lsh","U_BG_Guerilla1_1","arifle_Mk20_F","arifle_Mk20_GL_F","arifle_Mk20_GL_plain_F","arifle_Mk20_plain_F","arifle_Mk20C_F","arifle_Mk20C_plain_F","arifle_SDAR_F","arifle_TRG20_F","arifle_TRG21_F","arifle_TRG21_GL_F","hgun_ACPC2_F","hgun_PDW2000_F","hgun_Pistol_Signal_F","launch_I_Titan_F","launch_I_Titan_short_F","launch_NLAW_F","launch_RPG32_F","launch_Titan_F","launch_Titan_short_F","LMG_Mk200_F","srifle_DMR_06_camo_F","srifle_DMR_06_olive_F","srifle_EBR_F","srifle_GM6_camo_F","srifle_GM6_F"];
-_M = [allMapMarkers,  thisCityCivTrigger] call BIS_fnc_nearestPosition;
-
-
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "ANIM";
-_WHB = (nearestObjects [(getPos ((units G) select 0)), ["HOUSE"], 30]) select 0;  
-_POSB = selectRandom (_WHB buildingPos -1) ;
-_BARREL = createVehicle ["Land_BarrelEmpty_F",[(_POSB select 0),(_POSB select 1),(_POSB select 2)+0.1], [], 0, "can_Collide"];
-sleep 0.5;
-_WH = createVehicle ["groundweaponholder",[(_POSB select 0),(_POSB select 1),(getposATL _BARREL select 2)], [], 0, "can_Collide"];
-			deletevehicle _BARREL;
-_WH addItemCargo [selectRandom G_stuff, 1];
-_chance = selectRandom [0, 1, 2] ; if (_chance > 0) then { ((units G) select 0) setUnitTrait ["engineer", true]; };
-if (_chance > 1) then { _WHV = (nearestObjects [(getPos ((units G) select 0)), ["LandVehicle"], 50]) select 0; _WHV addItemCargo [selectRandom G_stuff, 1]; ((units G) select 0) setUnitTrait ["engineer", true]; };
-
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "ANIM";
-if ((markerColor _M == "colorOPFOR") or (_REPSCORE < 7)) then {
-_WHB = (nearestObjects [(getPos ((units G) select 0)), ["HOUSE"], 30]) select 0;  
-_POSB = selectRandom (_WHB buildingPos -1) ;
-_BARREL = createVehicle ["Land_BarrelEmpty_F",[(_POSB select 0),(_POSB select 1),(_POSB select 2)+0.1], [], 0, "can_Collide"];
-sleep 0.5;
-_WH = createVehicle ["groundweaponholder",[(_POSB select 0),(_POSB select 1),(getposATL _BARREL select 2)], [], 0, "can_Collide"];
-			deletevehicle _BARREL;
-_WH addItemCargo [selectRandom G_stuff, 1];
-_chance = selectRandom [0, 1, 2] ; if (_chance > 0) then { ((units G) select 0) setUnitTrait ["engineer", true]; };
-if (_chance > 1) then { _WHV = (nearestObjects [(getPos ((units G) select 0)), ["LandVehicle"], 50]) select 0; _WHV addItemCargo [selectRandom G_stuff, 1]; ((units G) select 0) setUnitTrait ["engineer", true]; };
+// Optimized vehicle spawning function
+private _fnc_spawnVehicle = {
+    params ["_road", "_vehType", "_addCrew"];
+    
+    private _pos = _road getRelPos [6, 0];
+    private _veh = createVehicle [_vehType, [_pos select 0, _pos select 1, (_pos select 2) + 10], [], 0, "CAN_COLLIDE"];
+    private _nextRoad = (roadsConnectedTo _road) select 0;
+    _veh setDir (_road getDir _nextRoad);
+    
+    if (_addCrew) then {
+        private _group = createVehicleCrew _veh;
+        [_group, _road] call {
+            params ["_group", "_startRoad"];
+            private _wp0 = _group addWaypoint [getPos (_startRoad nearRoads 5000 select 0), 0];
+            _wp0 setWaypointType "MOVE";
+            _wp0 setWaypointBehaviour "SAFE";
+            _wp0 setWaypointSpeed "LIMITED";
+            
+            private _wp1 = _group addWaypoint [getPos (_startRoad nearRoads 5000 select 0), 0];
+            _wp1 setWaypointType "MOVE";
+            
+            private _wpCycle = _group addWaypoint [getPos (_startRoad nearRoads 5000 select 0), 3];
+            _wpCycle setWaypointType "CYCLE";
+        };
+    };
+    
+    _veh
 };
 
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "ANIM";
-if ((markerColor _M == "colorOPFOR") or (_REPSCORE < 5)) then {
-_WHB = (nearestObjects [(getPos ((units G) select 0)), ["HOUSE"], 30]) select 0;  
-_POSB = selectRandom (_WHB buildingPos -1) ;
-_BARREL = createVehicle ["Land_BarrelEmpty_F",[(_POSB select 0),(_POSB select 1),(_POSB select 2)+0.1], [], 0, "can_Collide"];
-sleep 0.5;
-_WH = createVehicle ["groundweaponholder",[(_POSB select 0),(_POSB select 1),(getposATL _BARREL select 2)], [], 0, "can_Collide"];
-			deletevehicle _BARREL;
-_WH addItemCargo [selectRandom G_stuff, 1];
-_chance = selectRandom [0, 1, 2] ; if (_chance > 0) then { ((units G) select 0) setUnitTrait ["engineer", true]; };
-if (_chance > 1) then { _WHV = (nearestObjects [(getPos ((units G) select 0)), ["LandVehicle"], 50]) select 0; _WHV addItemCargo [selectRandom G_stuff, 1]; ((units G) select 0) setUnitTrait ["engineer", true]; };
-};
-
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "ANIM";
-if ((markerColor _M == "colorOPFOR") or (_REPSCORE < 5)) then {
-_WHB = (nearestObjects [(getPos ((units G) select 0)), ["HOUSE"], 30]) select 0;  
-_POSB = selectRandom (_WHB buildingPos -1) ;
-_BARREL = createVehicle ["Land_BarrelEmpty_F",[(_POSB select 0),(_POSB select 1),(_POSB select 2)+0.1], [], 0, "can_Collide"];
-sleep 0.5;
-_WH = createVehicle ["groundweaponholder",[(_POSB select 0),(_POSB select 1),(getposATL _BARREL select 2)], [], 0, "can_Collide"];
-			deletevehicle _BARREL;
-_WH addItemCargo [selectRandom G_stuff, 1];
-_chance = selectRandom [0, 1, 2] ; if (_chance > 0) then { ((units G) select 0) setUnitTrait ["engineer", true]; };
-if (_chance > 1) then { _WHV = (nearestObjects [(getPos ((units G) select 0)), ["LandVehicle"], 50]) select 0; _WHV addItemCargo [selectRandom G_stuff, 1]; ((units G) select 0) setUnitTrait ["engineer", true]; };
-};
-
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "ANIM";
-
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "ANIM";
-
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "ANIM";
-
-
-
-
-if ((markerColor _M == "colorOPFOR") or (_REPSCORE < 7)) then {
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "MOVE";
-((units G) select 0) enableAI "ANIM";
-((units G) select 0) enableAI "PATH";
-((units G) select 0) enableAI "TEAMSWITCH";  
-((units G) select 0) setUnitTrait ["engineer", true];
-[G,thisCityCivTrigger getPos [(0 + (random 100)), (0 + (random 350))], (100 + (random 250))] call BIS_fnc_taskPatrol;
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "MOVE";
-((units G) select 0) enableAI "ANIM";
-((units G) select 0) enableAI "PATH";  
-((units G) select 0) enableAI "TEAMSWITCH";  
-((units G) select 0) setUnitTrait ["engineer", true];
-[G,thisCityCivTrigger getPos [(0 + (random 100)), (0 + (random 350))], (100 + (random 250))] call BIS_fnc_taskPatrol;
-};
-
-
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "MOVE";
-((units G) select 0) enableAI "ANIM";
-((units G) select 0) enableAI "PATH";  
-((units G) select 0) enableAI "TEAMSWITCH";  
-[G,thisCityCivTrigger getPos [(0 + (random 100)), (0 + (random 350))], (100 + (random 250))] call BIS_fnc_taskPatrol;
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "MOVE";
-((units G) select 0) enableAI "ANIM";
-((units G) select 0) enableAI "PATH";  
-((units G) select 0) enableAI "TEAMSWITCH";  
-[G,thisCityCivTrigger getPos [(0 + (random 100)), (0 + (random 350))], (100 + (random 250))] call BIS_fnc_taskPatrol;
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "MOVE";
-((units G) select 0) enableAI "ANIM";
-((units G) select 0) enableAI "PATH";  
-((units G) select 0) enableAI "TEAMSWITCH";  
-[G,thisCityCivTrigger getPos [(0 + (random 100)), (0 + (random 350))], (100 + (random 250))] call BIS_fnc_taskPatrol;
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;   
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "MOVE";
-((units G) select 0) enableAI "ANIM";
-((units G) select 0) enableAI "PATH";    
-((units G) select 0) enableAI "TEAMSWITCH";  
-[G,thisCityCivTrigger getPos [(0 + (random 100)), (0 + (random 350))], (100 + (random 250))] call BIS_fnc_taskPatrol;
-G = [selectRandom _allPositions, civilian,[selectRandom CivMenArray]] call BIS_fnc_spawnGroup;   
-((units G) select 0) disableAI "all";
-((units G) select 0) enableAI "MOVE";
-((units G) select 0) enableAI "ANIM";
-((units G) select 0) enableAI "PATH";    
-((units G) select 0) enableAI "TEAMSWITCH";  
-[G,thisCityCivTrigger getPos [(0 + (random 100)), (0 + (random 350))], (100 + (random 250))] call BIS_fnc_taskPatrol;
-
- 	   _allZoneMarks = allMapMarkers select {markerType _x == "n_installation" || markerType _x == "o_installation" || markerType _x == "o_antiair" || markerType _x == "o_service" || markerType _x == "o_armor" || markerType _x == "loc_Power" || markerType _x == "o_recon" || markerType _x == "o_support" || markerType _x == "n_support" || markerType _x == "loc_Ruin" } ;  
-       _MMM = [_allZoneMarks,  thisCityCivTrigger] call BIS_fnc_nearestPosition ;
-
-
-if (((getMarkerPos _MMM) distance (getPos thisCityCivTrigger)) < 1500) then {
-
-
-if ((_REPSCORE > 10) or (_REPSCORE < 7)) then {
-
-
-G = [selectRandom _allPositions, independent,[selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;     
-
-G = [selectRandom _allPositions, independent,[selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;     
-[G,thisCityCivTrigger getPos [(0 + (random 100)), (0 + (random 350))], 90] call BIS_fnc_taskPatrol;
-
-G = [selectRandom _allPositions, independent,[selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;     
-[G,thisCityCivTrigger getPos [(0 + (random 100)), (0 + (random 350))], 90] call BIS_fnc_taskPatrol;
-
-G = [selectRandom _allPositions, independent,[selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;     
-[G,thisCityCivTrigger getPos [(0 + (random 100)), (0 + (random 350))], 90] call BIS_fnc_taskPatrol;
-};
-
-if ((_REPSCORE > 12) or (_REPSCORE < 5)) then {
-
-
-G = [selectRandom _allPositions, independent,[selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;     
-
-G = [selectRandom _allPositions, independent,[selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;     
-[G,thisCityCivTrigger getPos [(0 + (random 100)), (0 + (random 350))], 90] call BIS_fnc_taskPatrol;
-
-G = [selectRandom _allPositions, independent,[selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;     
-[G,thisCityCivTrigger getPos [(0 + (random 100)), (0 + (random 350))], 90] call BIS_fnc_taskPatrol;
-
-G = [selectRandom _allPositions, independent,[selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;     
-[G,thisCityCivTrigger getPos [(0 + (random 100)), (0 + (random 350))], 90] call BIS_fnc_taskPatrol;
-};
-
-if (_REPSCORE < 7) then {
-_nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 100 ) ; 
-_RoadSide =  selectRandom [0, 180] ;
-_pos = _nearRoad getRelPos [8, _RoadSide];
-_Clutter = createVehicle [selectRandom _Clutters, _pos, [], (0 + (random 3)), "CAN_COLLIDE"] ;
-_IED = createMine [selectRandom _IEDs,  _pos, [], 0];
-_Clutter setVectorUp [0,0,1];
-_trg = createTrigger ["EmptyDetector", _pos];  
-_trg setTriggerArea [10, 10, 0, false, 4];  
-_trg setTriggerActivation ["WEST", "PRESENT", false];  
-_trg setTriggerStatements [  
-"this && stance player != 'PRONE' ", " [thisTrigger, 'Sh_82mm_AMOS', 0, 1, 0, false, 0, 10, ['']] spawn BIS_fnc_fireSupportVirtual;", ""]; 
-
-_nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 100 ) ; 
-_RoadSide =  selectRandom [0, 180] ;
-_pos = _nearRoad getRelPos [8, _RoadSide];
-_Clutter = createVehicle [selectRandom _Clutters, _pos, [], (0 + (random 3)), "CAN_COLLIDE"] ;
-_IED = createMine [selectRandom _IEDs,  _pos, [], 0];
-_Clutter setVectorUp [0,0,1];
-_trg = createTrigger ["EmptyDetector", _pos];  
-_trg setTriggerArea [10, 10, 0, false, 4];  
-_trg setTriggerActivation ["WEST", "PRESENT", false];  
-_trg setTriggerStatements [  
-"this && stance player != 'PRONE' ", " [thisTrigger, 'Sh_82mm_AMOS', 0, 1, 0, false, 0, 10, ['']] spawn BIS_fnc_fireSupportVirtual;", ""]; 
-
-_nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 100 ) ; 
-_RoadSide =  selectRandom [0, 180] ;
-_pos = _nearRoad getRelPos [8, _RoadSide];
-_Clutter = createVehicle [selectRandom _Clutters, _pos, [], (0 + (random 3)), "CAN_COLLIDE"] ;
-_IED = createMine [selectRandom _IEDs,  _pos, [], 0];
-_Clutter setVectorUp [0,0,1];
-_trg = createTrigger ["EmptyDetector", _pos];  
-_trg setTriggerArea [10, 10, 0, false, 4];  
-_trg setTriggerActivation ["WEST", "PRESENT", false];  
-_trg setTriggerStatements [  
-"this && stance player != 'PRONE' ", " [thisTrigger, 'Sh_82mm_AMOS', 0, 1, 0, false, 0, 10, ['']] spawn BIS_fnc_fireSupportVirtual;", ""]; 
-
-_nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 100 ) ; 
-_RoadSide =  selectRandom [0, 180] ;
-_pos = _nearRoad getRelPos [8, _RoadSide];
-_Clutter = createVehicle [selectRandom _Clutters, _pos, [], (0 + (random 3)), "CAN_COLLIDE"] ;
-_IED = createMine [selectRandom _IEDs,  _pos, [], 0];
-_Clutter setVectorUp [0,0,1];
-_trg = createTrigger ["EmptyDetector", _pos];  
-_trg setTriggerArea [10, 10, 0, false, 4];  
-_trg setTriggerActivation ["WEST", "PRESENT", false];  
-_trg setTriggerStatements [  
-"this && stance player != 'PRONE' ", " [thisTrigger, 'Sh_82mm_AMOS', 0, 1, 0, false, 0, 10, ['']] spawn BIS_fnc_fireSupportVirtual;", ""]; 
-
-if (_REPSCORE < 5) then {
-
-_nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 100 ) ; 
-_RoadSide =  selectRandom [0, 180] ;
-_pos = _nearRoad getRelPos [8, _RoadSide];
-_Clutter = createVehicle [selectRandom _Clutters, _pos, [], (0 + (random 3)), "CAN_COLLIDE"] ;
-_IED = createMine [selectRandom _IEDs,  _pos, [], 0];
-_Clutter setVectorUp [0,0,1];
-_trg = createTrigger ["EmptyDetector", _pos];  
-_trg setTriggerArea [10, 10, 0, false, 4];  
-_trg setTriggerActivation ["WEST", "PRESENT", false];  
-_trg setTriggerStatements [  
-"this && stance player != 'PRONE' ", " [thisTrigger, 'Sh_82mm_AMOS', 0, 1, 0, false, 0, 10, ['']] spawn BIS_fnc_fireSupportVirtual;", ""]; 
-
-
-	
-_nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 100 ) ; 
-_RoadSide =  selectRandom [0, 180] ;
-_pos = _nearRoad getRelPos [8, _RoadSide];
-_Clutter = createVehicle [selectRandom _Clutters, _pos, [], (0 + (random 3)), "CAN_COLLIDE"] ;
-_IED = createMine [selectRandom _IEDs,  _pos, [], 0];
-_Clutter setVectorUp [0,0,1];
-_trg = createTrigger ["EmptyDetector", _pos];  
-_trg setTriggerArea [10, 10, 0, false, 4];  
-_trg setTriggerActivation ["WEST", "PRESENT", false];  
-_trg setTriggerStatements [  
-"this && stance player != 'PRONE' ", " [thisTrigger, 'Sh_82mm_AMOS', 0, 1, 0, false, 0, 10, ['']] spawn BIS_fnc_fireSupportVirtual;", ""]; 
-
-
-
-_nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 100 ) ; 
-_RoadSide =  selectRandom [0, 180] ;
-_pos = _nearRoad getRelPos [8, _RoadSide];
-_Clutter = createVehicle [selectRandom _Clutters, _pos, [], (0 + (random 3)), "CAN_COLLIDE"] ;
-_IED = createMine [selectRandom _IEDs,  _pos, [], 0];
-_Clutter setVectorUp [0,0,1];
-_trg = createTrigger ["EmptyDetector", _pos];  
-_trg setTriggerArea [10, 10, 0, false, 4];  
-_trg setTriggerActivation ["WEST", "PRESENT", false];  
-_trg setTriggerStatements [  
-"this && stance player != 'PRONE' ", " [thisTrigger, 'Sh_82mm_AMOS', 0, 1, 0, false, 0, 10, ['']] spawn BIS_fnc_fireSupportVirtual;", ""]; 
-
-
-
-_nearRoad = selectRandom ((getpos thisCityCivTrigger) nearRoads 100 ) ; 
-_RoadSide =  selectRandom [0, 180] ;
-_pos = _nearRoad getRelPos [8, _RoadSide];
-_Clutter = createVehicle [selectRandom _Clutters, _pos, [], (0 + (random 3)), "CAN_COLLIDE"] ;
-_IED = createMine [selectRandom _IEDs,  _pos, [], 0];
-_Clutter setVectorUp [0,0,1];
-_trg = createTrigger ["EmptyDetector", _pos];  
-_trg setTriggerArea [10, 10, 0, false, 4];  
-_trg setTriggerActivation ["WEST", "PRESENT", false];  
-_trg setTriggerStatements [  
-"this && stance player != 'PRONE' ", " [thisTrigger, 'Sh_82mm_AMOS', 0, 1, 0, false, 0, 10, ['']] spawn BIS_fnc_fireSupportVirtual;", ""]; 
-
+// Spawn vehicles based on chance
+if (_chance > 0) then {
+    for "_i" from 1 to 3 do {
+        private _nearRoad = selectRandom ((_triggerPos nearRoads [300, 2000] select _i min 1));
+        if (!isNull _nearRoad) then {
+            [_nearRoad, selectRandom CivVehArray, false] call _fnc_spawnVehicle;
+        };
     };
 };
 
+if (_chance > 1) then {
+    for "_i" from 1 to 3 do {
+        private _nearRoad = selectRandom ((_triggerPos nearRoads [300, 2000] select _i min 1));
+        if (!isNull _nearRoad) then {
+            private _veh = [_nearRoad, selectRandom CivVehArray, true] call _fnc_spawnVehicle;
+            
+            if (_REPSCORE < 7) then {
+                private _trg = createTrigger ["EmptyDetector", getPos _veh];
+                _trg setTriggerArea [15, 15, 0, false, 6];
+                _trg setTriggerActivation ["WEST", "PRESENT", false];
+                _trg setTriggerStatements [
+                    "this or (vehicle player) inArea thisTrigger",
+                    "[thisTrigger, 'Sh_155mm_AMOS', 0, 1, 0] spawn BIS_fnc_fireSupportVirtual;",
+                    ""
+                ];
+                _veh addEventHandler ["Killed", {
+                    params ["_unit"];
+                    [_unit, "Sh_155mm_AMOS", 0, 1, 0] spawn BIS_fnc_fireSupportVirtual;
+                }];
+                _trg attachTo [_veh, [0, 0, 0]];
+            };
+        };
+    };
 };
 
-////////////////////NIGHTLIFE////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+if (_chance > 2) then {
+    for "_i" from 1 to 3 do {
+        private _nearRoad = selectRandom ((_triggerPos nearRoads [300, 2000] select _i min 1));
+        if (!isNull _nearRoad) then {
+            private _veh = [_nearRoad, selectRandom CivVehArray, true] call _fnc_spawnVehicle;
+            
+            if (_REPSCORE < 7) then {
+                private _trg = createTrigger ["EmptyDetector", getPos _veh];
+                _trg setTriggerArea [15, 15, 0, false, 6];
+                _trg setTriggerActivation ["WEST", "PRESENT", false];
+                _trg setTriggerStatements [
+                    "this or (vehicle player) inArea thisTrigger",
+                    "[thisTrigger, 'Sh_155mm_AMOS', 0, 1, 0] spawn BIS_fnc_fireSupportVirtual;",
+                    ""
+                ];
+                _veh addEventHandler ["Killed", {
+                    params ["_unit"];
+                    [_unit, "Sh_155mm_AMOS", 0, 1, 0] spawn BIS_fnc_fireSupportVirtual;
+                }];
+                _trg attachTo [_veh, [0, 0, 0]];
+            };
+        };
+    };
+};
 
-  if ((dayTime < 19) && (dayTime > 7)) then { {_x hideObjectGlobal false; _x enableSimulationGlobal true; } foreach (allUnits select {side _x == civilian && _x checkAIFeature "PATH" == true}) ; } ; 
-  if ((dayTime > 19) or (dayTime < 7)) then { {_x hideObjectGlobal true; _x enableSimulationGlobal false; } foreach (allUnits select {side _x == civilian && _x checkAIFeature "PATH" == true}) ; } ; 
+// Function to spawn civilians
+private _fnc_spawnCivilians = {
+    params ["_cityCivTrigger", "_reputationScore"];
+    
+    private _buildings = nearestObjects [_triggerPos, ["HOUSE"], 200];
+    private _allPositions = [];
+    {_allPositions append (_x buildingPos -1)} forEach _buildings;
+    
+    if (count _allPositions == 0) exitWith {};
+    
+    // Static civilians
+    for "_i" from 1 to 6 do {
+        private _group = [selectRandom _allPositions, civilian, [selectRandom CivMenArray]] call BIS_fnc_spawnGroup;
+        private _unit = (units _group) select 0;
+        _unit disableAI "all";
+        _unit enableAI "ANIM";
+        
+        if (_i <= 4 && {_reputationScore < 7 || markerColor ([allMapMarkers, _cityCivTrigger] call BIS_fnc_nearestPosition) == "colorOPFOR"}) then {
+            private _building = (nearestObjects [getPos _unit, ["HOUSE"], 30]) select 0;
+            if (!isNull _building) then {
+                private _pos = selectRandom (_building buildingPos -1);
+                private _holder = createVehicle ["groundweaponholder", _pos, [], 0, "CAN_COLLIDE"];
+                _holder addItemCargo [selectRandom G_stuff, 1];
+                
+                if (random 1 > 0.5) then {
+                    _unit setUnitTrait ["engineer", true];
+                    private _nearVeh = (nearestObjects [getPos _unit, ["LandVehicle"], 50]) select 0;
+                    if (!isNull _nearVeh) then {
+                        _nearVeh addItemCargo [selectRandom G_stuff, 1];
+                    };
+                };
+            };
+        };
+    };
+    
+    // Patrolling civilians
+    for "_i" from 1 to 5 do {
+        private _group = [selectRandom _allPositions, civilian, [selectRandom CivMenArray]] call BIS_fnc_spawnGroup;
+        private _unit = (units _group) select 0;
+        {_unit enableAI _x} forEach ["MOVE", "ANIM", "PATH", "TEAMSWITCH"];
+        [_group, _cityCivTrigger getPos [random 100, random 350], 100 + random 250] call BIS_fnc_taskPatrol;
+    };
+};
 
-////////////////////NIGHTLIFE////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Function to spawn guerrilla forces
+private _fnc_spawnGuerrillaForces = {
+    params ["_cityCivTrigger", "_reputationScore"];
+    
+    private _buildings = nearestObjects [_triggerPos, ["HOUSE"], 200];
+    private _positions = [];
+    {_positions append (_x buildingPos -1)} forEach _buildings;
+    
+    if (count _positions == 0) exitWith {};
+    
+    // First wave of guerrillas
+    if (_reputationScore > 10 || _reputationScore < 7) then {
+        for "_i" from 1 to 4 do {
+            private _group = [selectRandom _positions, independent, [selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;
+            if (_i > 1) then {
+                [_group, _cityCivTrigger getPos [random 100, random 350], 90] call BIS_fnc_taskPatrol;
+            };
+        };
+    };
+    
+    // Second wave of guerrillas
+    if (_reputationScore > 12 || _reputationScore < 5) then {
+        for "_i" from 1 to 4 do {
+            private _group = [selectRandom _positions, independent, [selectRandom GuerMenArray, selectRandom GuerMenArray]] call BIS_fnc_spawnGroup;
+            if (_i > 1) then {
+                [_group, _cityCivTrigger getPos [random 100, random 350], 90] call BIS_fnc_taskPatrol;
+            };
+        };
+    };
+};
 
+// Function to place IEDs
+private _fnc_placeIEDs = {
+    params ["_cityCivTrigger", "_reputationScore"];
+    if (_reputationScore >= 7) exitWith {};
+    
+    private _iedCount = [4, 8] select (_reputationScore < 5);
+    for "_i" from 1 to _iedCount do {
+        private _nearRoad = selectRandom ((_triggerPos nearRoads 100));
+        if (isNull _nearRoad) continue;
+        
+        private _pos = _nearRoad getRelPos [8, selectRandom [0, 180]];
+        private _clutter = createVehicle [selectRandom _Clutters, _pos, [], random 3, "CAN_COLLIDE"];
+        _clutter setVectorUp [0,0,1];
+        
+        createMine [selectRandom _IEDs, _pos, [], 0];
+        
+        private _trg = createTrigger ["EmptyDetector", _pos];
+        _trg setTriggerArea [10, 10, 0, false, 4];
+        _trg setTriggerActivation ["WEST", "PRESENT", false];
+        _trg setTriggerStatements [
+            "this && stance player != 'PRONE'",
+            "[thisTrigger, 'Sh_82mm_AMOS', 0, 1, 0, false, 0, 10, ['']] spawn BIS_fnc_fireSupportVirtual;",
+            ""
+        ];
+    };
+};
+
+// Function to handle day/night cycle
+private _fnc_handleDayNightCycle = {
+    private _isDay = dayTime < 19 && dayTime > 7;
+    {
+        _x hideObjectGlobal (!_isDay);
+        _x enableSimulationGlobal _isDay;
+    } forEach (allUnits select {side _x == civilian && _x checkAIFeature "PATH"});
+};
+
+// Main execution
+[_thisCityCivTrigger, _REPSCORE] call _fnc_spawnCivilians;
+
+// Check for nearby military installations
+private _militaryMarkers = allMapMarkers select {
+    markerType _x in [
+        "n_installation", "o_installation", "o_antiair",
+        "o_service", "o_armor", "loc_Power", "o_recon",
+        "o_support", "n_support", "loc_Ruin"
+    ]
+};
+
+private _nearestMilitary = [_militaryMarkers, _thisCityCivTrigger] call BIS_fnc_nearestPosition;
+if ((_nearestMilitary distance _thisCityCivTrigger) < 1500) then {
+    [_thisCityCivTrigger, _REPSCORE] call _fnc_spawnGuerrillaForces;
+    [_thisCityCivTrigger, _REPSCORE] call _fnc_placeIEDs;
+};
+
+// Add lighting to buildings
+{
+    createVehicle ["Land_Camping_Light_F", [
+        (getPos _x) select 0,
+        (getPos _x) select 1,
+        ((getPos _x) select 2) + 1
+    ], [], 0, "NONE"];
+} forEach (nearestObjects [_triggerPos, ["HOUSE"], 20] select {count (_x buildingPos -1) > 7});
+
+// Handle day/night cycle
+call _fnc_handleDayNightCycle;
 
 sleep 5;
-
-
 execVM "Scripts\Civ_Relations.sqf";
-
-// {
-
-// _nvg = hmd _x;
-//  _x unassignItem _nvg;
-//  _x removeItem _nvg;
-// 	  _x addPrimaryWeaponItem "acc_flashlight";
-// 	  _x assignItem "acc_flashlight";
-// 	  _x enableGunLights "ForceOn";
-//   } foreach (allUnits select {side _x != west}); 
-
- 
