@@ -30,11 +30,11 @@ if (isNil "FLO_airSupport") then {
             params ["_heliType"];
             // Default standoff ranges for helicopters
             private _ranges = switch (_heliType) do {
-                case "I_Heli_Attack_03_F": {[3000, 6000]};
+                case "I_Heli_Attack_03_F": {[3500, 6000]};
                 case "I_Heli_Light_01_dynamicLoadout_F": {[800, 1500]};
                 case "I_Heli_light_03_dynamicLoadout_F": {[1000, 2500]};
-                case "Aegis_I_Raven_Heli_Attack_04_F": {[1500, 4000]};
-                default {[2000, 5000]};
+                case "Aegis_I_Raven_Heli_Attack_04_F": {[2000, 4000]};
+                default {[3000, 5000]};
             };
             _ranges
         }],
@@ -49,7 +49,11 @@ if (isNil "FLO_airSupport") then {
             private _pylonMags = [
                 "PylonRack_4Rnd_LG_scalpel",  // SCALPEL missiles
                 "PylonRack_4Rnd_ACE_Hellfire_AGM114K",  // AGM-114K Hellfire
-                "PylonRack_4Rnd_ACE_Hellfire_AGM114N"  // AGM-114N Hellfire
+                "PylonRack_4Rnd_ACE_Hellfire_AGM114N",  // AGM-114N Hellfire
+                "PylonRack_12Rnd_ACE_DAGR", // DAGR missiles 12x
+                "PylonRack_24Rnd_ACE_DAGR", // DAGR missiles 24x
+                "ace_hot_3_PylonRack_3Rnd", // HOT missiles 3x
+                "ace_hot_3_PylonRack_4Rnd" // HOT missiles 4x
             ];
             
             // Get all pylon indices and set loadouts
@@ -88,7 +92,7 @@ private _airSupportTypeDef = [
     ["altitude", _altitude],
     ["approachRadius", 4000],
     ["engagementRange", 6000],
-    ["cooldownTime", 45],
+    ["cooldownTime", 10],
     ["currentLaser", objNull],
     ["standoffRange", []],
     ["updateHandle", scriptNull],
@@ -200,9 +204,10 @@ private _airSupportTypeDef = [
         _self set ["currentLaser", _laserTarget];
         
         // Select weapon and engage
-        private _weapon = weapons (vehicle _aircraft) select 0;
+        private _weapon = selectRandom (weapons (vehicle _aircraft));
         if (!isNull _gunner) then {
             _gunner reveal [_target, 4];
+            _gunner doTarget _target;
             _gunner fireAtTarget [_target, _weapon];
         } else {
             _pilot reveal [_target, 4];
