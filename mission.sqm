@@ -8,7 +8,7 @@ class EditorData
 	toggles=513;
 	class ItemIDProvider
 	{
-		nextID=131412;
+		nextID=131422;
 	};
 	class MarkerIDProvider
 	{
@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=16614;
+		nextID=16628;
 	};
 	class Camera
 	{
-		pos[]={-548.85797,26.696911,538.08948};
-		dir[]={-0.31155053,-0.6636526,-0.68008572};
-		up[]={-0.27640519,0.74802941,-0.60336775};
-		aside[]={-0.90915036,1.8416904e-07,0.41648519};
+		pos[]={-564.15289,29.063663,494.78882};
+		dir[]={0.24260862,-0.68750483,0.68452215};
+		up[]={0.22968709,0.72612166,0.64806443};
+		aside[]={0.94258517,-4.1292515e-07,-0.33407345};
 	};
 };
 binarizationWanted=0;
@@ -8278,6 +8278,7 @@ class Mission
 					};
 					id=123578;
 					type="LocationCity_F";
+					atlOffset=0.29646683;
 				};
 				class Item8
 				{
@@ -10682,6 +10683,19 @@ class Mission
 					{
 						class Attribute0
 						{
+							property="ace_isMedic";
+							expression="if (_value != -1 && {_value != (parseNumber (_this getUnitTrait 'medic'))}) then {_this setVariable [""ace_medical_medicClass"", _value, true]}";
+							class Value
+							{
+								class data
+								{
+									singleType="SCALAR";
+									value=0;
+								};
+							};
+						};
+						class Attribute1
+						{
 							property="allowDamage";
 							expression="_this allowdamage _value;";
 							class Value
@@ -10693,7 +10707,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute1
+						class Attribute2
 						{
 							property="speaker";
 							expression="_this setspeaker _value;";
@@ -10706,7 +10720,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute2
+						class Attribute3
 						{
 							property="pitch";
 							expression="_this setpitch _value;";
@@ -10719,7 +10733,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute3
+						class Attribute4
 						{
 							property="hideObject";
 							expression="if !(is3DEN) then {_this hideobjectglobal _value;};";
@@ -10732,7 +10746,7 @@ class Mission
 								};
 							};
 						};
-						nAttributes=4;
+						nAttributes=5;
 					};
 				};
 			};
@@ -11020,7 +11034,7 @@ class Mission
 					{
 						skill=0.49833947;
 						rank="CORPORAL";
-						init="this setUnitTrait [""medic"", true];" \n "this setVariable [""ace_medical_medicclass"",2, true];";
+						init="this setUnitTrait [""doctor"", true];" \n "this setVariable [""ace_medical_medicclass"",2, true];";
 						description="CFR Charlie (Platoon Medic)";
 						isPlayable=1;
 						disableSimulation=1;
@@ -11036,6 +11050,19 @@ class Mission
 					{
 						class Attribute0
 						{
+							property="ace_isMedic";
+							expression="if (_value != -1 && {_value != (parseNumber (_this getUnitTrait 'medic'))}) then {_this setVariable [""ace_medical_medicClass"", _value, true]}";
+							class Value
+							{
+								class data
+								{
+									singleType="SCALAR";
+									value=2;
+								};
+							};
+						};
+						class Attribute1
+						{
 							property="allowDamage";
 							expression="_this allowdamage _value;";
 							class Value
@@ -11047,7 +11074,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute1
+						class Attribute2
 						{
 							property="speaker";
 							expression="_this setspeaker _value;";
@@ -11060,7 +11087,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute2
+						class Attribute3
 						{
 							property="pitch";
 							expression="_this setpitch _value;";
@@ -11073,7 +11100,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute3
+						class Attribute4
 						{
 							property="hideObject";
 							expression="if !(is3DEN) then {_this hideobjectglobal _value;};";
@@ -11086,7 +11113,7 @@ class Mission
 								};
 							};
 						};
-						nAttributes=4;
+						nAttributes=5;
 					};
 				};
 			};
@@ -12202,7 +12229,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-560.03638,0.0014388561,510.93665};
+						position[]={-560.03601,0.0014388561,510.93698};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -12957,7 +12984,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-559.84235,0.0014388561,513.95667};
+						position[]={-559.84198,0.0014388561,513.95697};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -13712,7 +13739,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-559.54138,0.0014388561,517.30963};
+						position[]={-559.54102,0.0014388561,517.31};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -14500,7 +14527,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-540.73535,0.0014388561,509.67065};
+						position[]={-540.73499,0.0014388561,509.67099};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -15019,7 +15046,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-540.77338,0.0014388561,506.38266};
+						position[]={-540.77301,0.0014388561,506.383};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -15457,7 +15484,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-538.6377,0.0014388561,512.77551};
+						position[]={-538.638,0.0014388561,512.776};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -15466,7 +15493,7 @@ class Mission
 					{
 						skill=0.49833947;
 						rank="CORPORAL";
-						init="this setUnitTrait [""medic"", true];" \n "this setVariable [""ace_medical_medicclass"",2, true];";
+						init="this setUnitTrait [""doctor"", true];" \n "this setVariable [""ace_medical_medicclass"",2, true];";
 						description="Field Docter@Banshee";
 						isPlayable=1;
 						disableSimulation=1;
@@ -15482,6 +15509,19 @@ class Mission
 					{
 						class Attribute0
 						{
+							property="ace_isMedic";
+							expression="if (_value != -1 && {_value != (parseNumber (_this getUnitTrait 'medic'))}) then {_this setVariable [""ace_medical_medicClass"", _value, true]}";
+							class Value
+							{
+								class data
+								{
+									singleType="SCALAR";
+									value=2;
+								};
+							};
+						};
+						class Attribute1
+						{
 							property="allowDamage";
 							expression="_this allowdamage _value;";
 							class Value
@@ -15493,7 +15533,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute1
+						class Attribute2
 						{
 							property="speaker";
 							expression="_this setspeaker _value;";
@@ -15506,7 +15546,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute2
+						class Attribute3
 						{
 							property="pitch";
 							expression="_this setpitch _value;";
@@ -15519,7 +15559,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute3
+						class Attribute4
 						{
 							property="hideObject";
 							expression="if !(is3DEN) then {_this hideobjectglobal _value;};";
@@ -15532,7 +15572,7 @@ class Mission
 								};
 							};
 						};
-						nAttributes=4;
+						nAttributes=5;
 					};
 				};
 				class Item1
@@ -15548,7 +15588,7 @@ class Mission
 					{
 						skill=0.49833947;
 						rank="CORPORAL";
-						init="this setUnitTrait [""medic"", true];" \n "this setVariable [""ace_medical_medicclass"",2, true];";
+						init="this setUnitTrait [""doctor"", true];" \n "this setVariable [""ace_medical_medicclass"",2, true];";
 						description="CFR Charlie";
 						isPlayable=1;
 						disableSimulation=1;
@@ -15564,6 +15604,19 @@ class Mission
 					{
 						class Attribute0
 						{
+							property="ace_isMedic";
+							expression="if (_value != -1 && {_value != (parseNumber (_this getUnitTrait 'medic'))}) then {_this setVariable [""ace_medical_medicClass"", _value, true]}";
+							class Value
+							{
+								class data
+								{
+									singleType="SCALAR";
+									value=2;
+								};
+							};
+						};
+						class Attribute1
+						{
 							property="allowDamage";
 							expression="_this allowdamage _value;";
 							class Value
@@ -15575,7 +15628,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute1
+						class Attribute2
 						{
 							property="speaker";
 							expression="_this setspeaker _value;";
@@ -15588,7 +15641,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute2
+						class Attribute3
 						{
 							property="pitch";
 							expression="_this setpitch _value;";
@@ -15601,7 +15654,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute3
+						class Attribute4
 						{
 							property="hideObject";
 							expression="if !(is3DEN) then {_this hideobjectglobal _value;};";
@@ -15614,7 +15667,7 @@ class Mission
 								};
 							};
 						};
-						nAttributes=4;
+						nAttributes=5;
 					};
 				};
 				class Item2
@@ -15622,7 +15675,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-540.27234,0.0014388561,513.08264};
+						position[]={-540.27197,0.0014388561,513.08301};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -15630,7 +15683,7 @@ class Mission
 					{
 						skill=0.49833947;
 						rank="CORPORAL";
-						init="this setUnitTrait [""medic"", true];" \n "this setVariable [""ace_medical_medicclass"",2, true];";
+						init="this setUnitTrait [""doctor"", true];" \n "this setVariable [""ace_medical_medicclass"",2, true];";
 						description="CFR Charlie";
 						isPlayable=1;
 						disableSimulation=1;
@@ -15646,6 +15699,19 @@ class Mission
 					{
 						class Attribute0
 						{
+							property="ace_isMedic";
+							expression="if (_value != -1 && {_value != (parseNumber (_this getUnitTrait 'medic'))}) then {_this setVariable [""ace_medical_medicClass"", _value, true]}";
+							class Value
+							{
+								class data
+								{
+									singleType="SCALAR";
+									value=2;
+								};
+							};
+						};
+						class Attribute1
+						{
 							property="allowDamage";
 							expression="_this allowdamage _value;";
 							class Value
@@ -15657,7 +15723,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute1
+						class Attribute2
 						{
 							property="speaker";
 							expression="_this setspeaker _value;";
@@ -15670,7 +15736,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute2
+						class Attribute3
 						{
 							property="pitch";
 							expression="_this setpitch _value;";
@@ -15683,7 +15749,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute3
+						class Attribute4
 						{
 							property="hideObject";
 							expression="if !(is3DEN) then {_this hideobjectglobal _value;};";
@@ -15696,7 +15762,7 @@ class Mission
 								};
 							};
 						};
-						nAttributes=4;
+						nAttributes=5;
 					};
 				};
 				class Item3
@@ -15704,7 +15770,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-547.53027,0.0014388561,513.38507};
+						position[]={-547.53003,0.0014388561,513.38501};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -15786,7 +15852,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-545.67963,0.0014388561,513.26556};
+						position[]={-545.67999,0.0014388561,513.26599};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -15868,7 +15934,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-544.03156,0.0014388561,513.2287};
+						position[]={-544.03198,0.0014388561,513.229};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -16469,6 +16535,113 @@ class Mission
 						};
 						class Attribute2
 						{
+							property="ace_advanced_fatigue_performanceFactor";
+							expression="_this setVariable [""ace_advanced_fatigue_performanceFactor"", _value, true]";
+							class Value
+							{
+								class data
+								{
+									singleType="SCALAR";
+									value=1.3144276;
+								};
+							};
+						};
+						class Attribute3
+						{
+							property="speaker";
+							expression="_this setspeaker _value;";
+							class Value
+							{
+								class data
+								{
+									singleType="STRING";
+									value="Male04GRE";
+								};
+							};
+						};
+						class Attribute4
+						{
+							property="pitch";
+							expression="_this setpitch _value;";
+							class Value
+							{
+								class data
+								{
+									singleType="SCALAR";
+									value=1.02;
+								};
+							};
+						};
+						class Attribute5
+						{
+							property="hideObject";
+							expression="if !(is3DEN) then {_this hideobjectglobal _value;};";
+							class Value
+							{
+								class data
+								{
+									singleType="BOOL";
+									value=1;
+								};
+							};
+						};
+						nAttributes=6;
+					};
+				};
+				class Item1
+				{
+					dataType="Object";
+					class PositionInfo
+					{
+						position[]={-556.966,0.0014388561,534.97998};
+						angles[]={0,0.034138639,0};
+					};
+					side="West";
+					class Attributes
+					{
+						rank="SERGEANT";
+						init="this setUnitTrait [""medic"", true];" \n "this setVariable [""ace_medical_medicclass"",1, true];";
+						description="JFO (CFR Bravo)";
+						isPlayable=1;
+						disableSimulation=1;
+						class Inventory
+						{
+							map="ItemMap";
+						};
+					};
+					id=131251;
+					type="B_G_Soldier_TL_F";
+					atlOffset=185.97;
+					class CustomAttributes
+					{
+						class Attribute0
+						{
+							property="allowDamage";
+							expression="_this allowdamage _value;";
+							class Value
+							{
+								class data
+								{
+									singleType="BOOL";
+									value=0;
+								};
+							};
+						};
+						class Attribute1
+						{
+							property="ace_advanced_fatigue_performanceFactor";
+							expression="_this setVariable [""ace_advanced_fatigue_performanceFactor"", _value, true]";
+							class Value
+							{
+								class data
+								{
+									singleType="SCALAR";
+									value=1.3144276;
+								};
+							};
+						};
+						class Attribute2
+						{
 							property="speaker";
 							expression="_this setspeaker _value;";
 							class Value
@@ -16509,93 +16682,12 @@ class Mission
 						nAttributes=5;
 					};
 				};
-				class Item1
-				{
-					dataType="Object";
-					class PositionInfo
-					{
-						position[]={-556.966,0.0014388561,534.98004};
-						angles[]={0,0.034138639,0};
-					};
-					side="West";
-					class Attributes
-					{
-						rank="SERGEANT";
-						init="this setUnitTrait [""medic"", true];" \n "this setVariable [""ace_medical_medicclass"",1, true];";
-						description="JFO (CFR Bravo)";
-						isPlayable=1;
-						disableSimulation=1;
-						class Inventory
-						{
-							map="ItemMap";
-						};
-					};
-					id=131251;
-					type="B_G_Soldier_TL_F";
-					atlOffset=185.97;
-					class CustomAttributes
-					{
-						class Attribute0
-						{
-							property="allowDamage";
-							expression="_this allowdamage _value;";
-							class Value
-							{
-								class data
-								{
-									singleType="BOOL";
-									value=0;
-								};
-							};
-						};
-						class Attribute1
-						{
-							property="speaker";
-							expression="_this setspeaker _value;";
-							class Value
-							{
-								class data
-								{
-									singleType="STRING";
-									value="Male04GRE";
-								};
-							};
-						};
-						class Attribute2
-						{
-							property="pitch";
-							expression="_this setpitch _value;";
-							class Value
-							{
-								class data
-								{
-									singleType="SCALAR";
-									value=1.02;
-								};
-							};
-						};
-						class Attribute3
-						{
-							property="hideObject";
-							expression="if !(is3DEN) then {_this hideobjectglobal _value;};";
-							class Value
-							{
-								class data
-								{
-									singleType="BOOL";
-									value=1;
-								};
-							};
-						};
-						nAttributes=4;
-					};
-				};
 				class Item2
 				{
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-558.70099,0.0014388561,535.18304};
+						position[]={-558.70099,0.0014388561,535.18298};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -16629,6 +16721,19 @@ class Mission
 						};
 						class Attribute1
 						{
+							property="ace_advanced_fatigue_performanceFactor";
+							expression="_this setVariable [""ace_advanced_fatigue_performanceFactor"", _value, true]";
+							class Value
+							{
+								class data
+								{
+									singleType="SCALAR";
+									value=1.2581593;
+								};
+							};
+						};
+						class Attribute2
+						{
 							property="speaker";
 							expression="_this setspeaker _value;";
 							class Value
@@ -16640,7 +16745,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute2
+						class Attribute3
 						{
 							property="pitch";
 							expression="_this setpitch _value;";
@@ -16653,7 +16758,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute3
+						class Attribute4
 						{
 							property="hideObject";
 							expression="if !(is3DEN) then {_this hideobjectglobal _value;};";
@@ -16666,7 +16771,7 @@ class Mission
 								};
 							};
 						};
-						nAttributes=4;
+						nAttributes=5;
 					};
 				};
 				class Item3
@@ -16674,7 +16779,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-560.5,0.0014388561,535.37402};
+						position[]={-560.5,0.0014388561,535.37396};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -16708,6 +16813,19 @@ class Mission
 						};
 						class Attribute1
 						{
+							property="ace_advanced_fatigue_performanceFactor";
+							expression="_this setVariable [""ace_advanced_fatigue_performanceFactor"", _value, true]";
+							class Value
+							{
+								class data
+								{
+									singleType="SCALAR";
+									value=1.2581593;
+								};
+							};
+						};
+						class Attribute2
+						{
 							property="speaker";
 							expression="_this setspeaker _value;";
 							class Value
@@ -16719,7 +16837,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute2
+						class Attribute3
 						{
 							property="pitch";
 							expression="_this setpitch _value;";
@@ -16732,7 +16850,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute3
+						class Attribute4
 						{
 							property="hideObject";
 							expression="if !(is3DEN) then {_this hideobjectglobal _value;};";
@@ -16745,7 +16863,7 @@ class Mission
 								};
 							};
 						};
-						nAttributes=4;
+						nAttributes=5;
 					};
 				};
 				class Item4
@@ -16753,7 +16871,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={-562.30115,0.0014388561,535.64215};
+						position[]={-562.30103,0.0014388561,535.64197};
 						angles[]={0,0.034138639,0};
 					};
 					side="West";
@@ -16789,6 +16907,32 @@ class Mission
 						};
 						class Attribute1
 						{
+							property="ace_isEngineer";
+							expression="if !(_value == ([0, 1] select (_this getUnitTrait 'engineer')) || {_value == -1}) then {_this setVariable ['ace_isEngineer', _value, true]}";
+							class Value
+							{
+								class data
+								{
+									singleType="SCALAR";
+									value=2;
+								};
+							};
+						};
+						class Attribute2
+						{
+							property="ace_advanced_fatigue_performanceFactor";
+							expression="_this setVariable [""ace_advanced_fatigue_performanceFactor"", _value, true]";
+							class Value
+							{
+								class data
+								{
+									singleType="SCALAR";
+									value=1.3144276;
+								};
+							};
+						};
+						class Attribute3
+						{
 							property="pitch";
 							expression="_this setpitch _value;";
 							class Value
@@ -16800,7 +16944,7 @@ class Mission
 								};
 							};
 						};
-						class Attribute2
+						class Attribute4
 						{
 							property="hideObject";
 							expression="if !(is3DEN) then {_this hideobjectglobal _value;};";
@@ -16813,7 +16957,7 @@ class Mission
 								};
 							};
 						};
-						nAttributes=3;
+						nAttributes=5;
 					};
 				};
 			};

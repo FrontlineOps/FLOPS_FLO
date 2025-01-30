@@ -25,10 +25,12 @@ if (isNil "FLO_fireObservers") then {
     FLO_fireObservers = createHashMapFromArray [
         ["observationTime", 15],    // Time needed to maintain vision
         ["cooldownTime", 300],      // 5 minutes between fire missions
+        ["airSupportCooldown", 900],// 15 minutes between air support
         ["minRange", 100],          // Minimum range for artillery
         ["maxRange", 4000],         // Maximum range for artillery
         ["scanRadius", 1000],       // How far the observer looks for targets
-        ["observers", createHashMap]  // Store individual observer data
+        ["observers", createHashMap],  // Store individual observer data
+        ["lastAirSupport", -900]    // Initialize air support cooldown
     ];
 };
 
@@ -86,8 +88,24 @@ private _observerData = createHashMapFromArray [
             // Double check no friendlies moved into area during observation
             private _targetPos = getPosASL _target;
             if (0 == count ((units side _unit) select {alive _x && _x distance _targetPos < 100})) then {
-                // Execute fire mission
-                [getPosASL _target, 3] call FLO_fnc_artilleryPrep;
+                private _lastAirSupport = FLO_fireObservers get "lastAirSupport";
+                private _airSupportAvailable = (_currentTime - _lastAirSupport) > (FLO_fireObservers get "airSupportCooldown");
+
+                private _supportType = floor random 10; // 0 to 10
+                if (_supportType <= 3 && _airSupportAvailable) then {
+                    // Call air support
+                    private _airSupport = [getPosASL _target, "CAS", "", 500] call FLO_fnc_airSupport;
+                    if (!isNil "_airSupport") then {
+                        FLO_fireObservers set ["lastAirSupport", _currentTime];
+                        [side _unit, "HQ"] commandChat "CAS birds inbound to marked position";
+                    };
+                } else {
+                    // Call artillery
+                    [getPosASL _target, 3] call FLO_fnc_artilleryPrep;
+                    [side _unit, "HQ"] commandChat "Artillery barrage inbound to marked position";
+                };
+
+                // Update both cooldowns
                 _observer set ["lastMission", _currentTime];
             } else {
                 [side _unit, "HQ"] commandChat "Fire mission aborted - friendlies in target area.";
