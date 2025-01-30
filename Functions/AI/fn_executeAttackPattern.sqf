@@ -1,3 +1,19 @@
+/*
+    Function: FLO_fnc_executeAttackPattern
+    
+    Description:
+    Manages the execution of attack patterns for OPFOR units.
+    
+    Parameters:
+    _targetPos - Target position for attack pattern [Array]
+    _sourcePos - Source position for attack pattern [Array]
+    _pattern - Type of attack pattern ("PINCER", "FRONTAL", "INFILTRATION") [String]
+    _strength - Strength of the attack pattern [Number]
+    
+    Returns:
+    HashMap - Tracking object for attack pattern
+*/
+
 params ["_targetPos", "_sourcePos", "_pattern", "_strength"];
 
 // Find nearest valid OPFOR outpost for spawning

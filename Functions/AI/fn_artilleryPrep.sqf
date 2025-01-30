@@ -1,3 +1,18 @@
+/*
+    Function: FLO_fnc_artilleryPrep
+    
+    Description:
+    Manages the preparation of artillery batteries for a fire mission.
+    Uses a HashMapArray to track and manage artillery units and their states.
+    
+    Parameters:
+    _targetPos - Target position for artillery fire [Array]
+    _intensity - Intensity of the fire mission [Number]
+    
+    Returns:
+    HashMap - Tracking object for artillery batteries
+*/
+
 params ["_targetPos", "_intensity"];
 
 // Initialize global artillery tracking if not exists

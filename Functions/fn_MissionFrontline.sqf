@@ -114,17 +114,6 @@ if (count _humanPlayers > 0) then {
         // Start with recon if aggression is high enough
         if (_AGGRSCORE > 3) then {
             [getPos _CNTR] call FLO_fnc_airRecon;
-            
-            // Deploy armed drone support at higher aggression
-            if (_AGGRSCORE > 7) then {
-                private _drone = [getPos _CNTR, "B_UAV_05_F", 6000] call FLO_fnc_airDrone;
-                
-                // Store drone reference in mission namespace for tracking
-                if (isNil "FLO_activeMissionDrones") then {
-                    FLO_activeMissionDrones = createHashMap;
-                };
-                FLO_activeMissionDrones set [_ENMASSmarkerName, _drone];
-            };
             sleep 300;
         };
         

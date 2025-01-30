@@ -1,3 +1,16 @@
+/*
+    Function: FLO_fnc_airRecon
+    
+    Description:
+    Manages the execution of air reconnaissance missions.
+    
+    Parameters:
+    _targetPos - Target position for air reconnaissance [Array]
+    
+    Returns:
+    HashMap - Tracking object for air reconnaissance
+*/
+
 params ["_targetPos"];
 
 private _droneType = selectRandom ((FLO_configCache get "vehicles") select 8); 
