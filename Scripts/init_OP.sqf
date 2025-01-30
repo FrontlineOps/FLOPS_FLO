@@ -154,69 +154,63 @@ FOBB addEventHandler ["Killed", {
     {deleteVehicle _x;} forEach _triggers;
 }]; 
 
-// Start holdout monitoring
+// Modified holdout loop with marker updates
 [] spawn {
     private _holdoutTime = 0;
-    private _maxHoldTime = 600; // 10 minutes in seconds
-    private _checkInterval = 30; // Check every 30 seconds
+    private _maxHoldTime = 600; // 10 minutes
+    private _checkInterval = 5;
     private _areaRadius = 100;
+    private _statusMarker = nil;
     
     while {alive FOBB} do {
-        // Get BLUFOR presence in the area
-        private _bluforCount = {
-            alive _x && 
-            side _x == WEST && 
-            (_x distance FOBB) < _areaRadius
-        } count allUnits;
-        
-        // Get OPFOR presence in the area
-        private _opforCount = {
-            alive _x && 
-            side _x == EAST && 
-            (_x distance FOBB) < _areaRadius
-        } count allUnits;
+        private _bluforCount = {alive _x && side _x == WEST && (_x distance FOBB) < _areaRadius} count allUnits;
+        private _opforCount = {alive _x && side _x == EAST && (_x distance FOBB) < _areaRadius} count allUnits;
 
-        // Update holdout timer based on control status
         if (_opforCount > _bluforCount && _opforCount > 0) then {
-            _holdoutTime = _holdoutTime + _checkInterval;
+            // Create marker only when countdown starts
+            if (isNil "_statusMarker") then {
+                _statusMarker = createMarker ["OP_Status", getPos FOBB];
+                _statusMarker setMarkerType "hd_warning";
+                _statusMarker setMarkerColor "ColorRed";
+                _statusMarker setMarkerSize [1,1];
+            };
             
-            // Update players about remaining time
-            if (_holdoutTime % 60 == 0) then {
-                private _timeLeft = _maxHoldTime - _holdoutTime;
+            _holdoutTime = _holdoutTime + _checkInterval;
+            private _timeLeft = _maxHoldTime - _holdoutTime;
+            private _minutes = floor(_timeLeft/60);
+            private _seconds = _timeLeft % 60;
+            _statusMarker setMarkerText format["OP UNDER SIEGE: %1:%2", _minutes, [_seconds, 2] call CBA_fnc_formatNumber];
+            
+            if (_timeLeft % 60 == 0) then {
                 [format["OP under siege! %1 minutes remaining", ceil(_timeLeft/60)]] remoteExec ["hint", -2];
             };
             
-            // Check if holdout time exceeded
             if (_holdoutTime >= _maxHoldTime) exitWith {
-                // Execute destruction sequence
+                _statusMarker setMarkerText "OP LOST!";
+                _statusMarker setMarkerColor "ColorBlack";
+                deleteMarker _statusMarker;
+                
                 [playerSide, 'HQ'] remoteExec ["commandChat", 0];
                 "OP has fallen to enemy forces!" remoteExec ["hint", -2];
-                
-                // Cleanup objects
-                private _FOBC = nearestObjects [FOBB, ['B_Slingload_01_Cargo_F'], 1000] select 0;
-                private _FOBT = nearestObjects [FOBB, [F_OP_C_01], 1000] select 0;
-                deleteVehicle _FOBC;
-                FOBB setDamage 1;
-                deleteVehicle _FOBT;
-                
-                // Cleanup markers
-                private _allMarks = allMapMarkers select {markerPos _x inArea [getPos FOBB, _areaRadius, _areaRadius, 0, false]};
-                { deleteMarker _x } forEach _allMarks;
-                
-                // Cleanup triggers
-                private _allTriggers = allMissionObjects "EmptyDetector";
-                private _triggers = _allTriggers select { position _x distance FOBB < _areaRadius };
-                { deleteVehicle _x } forEach _triggers;
             };
         } else {
-            // Reset timer if BLUFOR regains control
-            if (_holdoutTime > 0) then {
-                _holdoutTime = 0;
-                "OP defense successful! Timer reset." remoteExec ["hint", -2];
+            // Delete marker when BLUFOR regains control
+            if (!isNil "_statusMarker") then {
+                deleteMarker _statusMarker;
+                _statusMarker = nil;
+                if (_holdoutTime > 0) then {
+                    "OP defense successful! Timer reset." remoteExec ["hint", -2];
+                };
             };
+            _holdoutTime = 0;
         };
         
         sleep _checkInterval;
+    };
+    
+    // Cleanup marker if it exists
+    if (!isNil "_statusMarker") then {
+        deleteMarker _statusMarker;
     };
 };
 
