@@ -44,9 +44,28 @@ if (isNil "FLO_airSupport") then {
             _spawnPos set [2, _alt];
             
             private _aircraft = createVehicle [_type, _spawnPos, [], 0, "FLY"];
+            
+            // Configure pylons for long-range weapons
+            private _pylonMags = [
+                "PylonRack_4Rnd_LG_scalpel",  // SCALPEL missiles
+                "PylonRack_4Rnd_ACE_Hellfire_AGM114K",  // AGM-114K Hellfire
+                "PylonRack_4Rnd_ACE_Hellfire_AGM114N"  // AGM-114N Hellfire
+            ];
+            
+            // Get all pylon indices and set loadouts
+            if (_aircraft isKindOf "Helicopter") then {
+                private _pylonIndices = getAllPylonsInfo _aircraft apply {_x select 0};
+                {
+                    private _selectedMag = selectRandom _pylonMags;
+                    [_aircraft, [_x, _selectedMag, true]] remoteExec ["setPylonLoadout", _aircraft];
+                } forEach _pylonIndices;
+            };
+
+            // Create crew and group
             private _group = createGroup [east, true];
             createVehicleCrew _aircraft;
             (crew _aircraft) joinSilent _group;
+            
             _aircraft
         }],
         ["getAircraftById", {
@@ -94,7 +113,7 @@ private _airSupportTypeDef = [
         _group setCombatBehaviour "COMBAT";
         _group setCombatMode "GREEN";
         {
-            _x setBehaviour "COMBAT";
+            _x setBehaviourStrong "COMBAT";
             _x setUnitCombatMode "GREEN";
         } forEach units _group;
         
@@ -123,7 +142,7 @@ private _airSupportTypeDef = [
                     // Helicopter with standoff position
                     private _minRange = _standoffRange select 0;
                     private _maxRange = _standoffRange select 1;
-                    _holdPos = _pos getPos [_minRange + (random (_maxRange - _minRange)), random 90];
+                    _holdPos = _pos getPos [_minRange + (random (_maxRange - _minRange)), 270 + random 90];
                 };
                 _holdPos set [2, _alt];
                     
@@ -148,7 +167,7 @@ private _airSupportTypeDef = [
                 _wp1 setWaypointCombatMode "GREEN";
                 
                 private _wp2 = _group addWaypoint [_pos, 0];
-                _wp2 setWaypointType "DESTROY";
+                _wp2 setWaypointType "CYCLE";
                 _wp2 setWaypointBehaviour "COMBAT";
                 _wp2 setWaypointCombatMode "GREEN";
             };
@@ -162,6 +181,10 @@ private _airSupportTypeDef = [
         private _aircraft = _self get "vehicle";
         private _pilot = driver _aircraft;
         private _gunner = gunner _aircraft;
+
+        if (!isNull _gunner) then {
+            _pilot disableAI "TARGET";
+        };
         
         if (!alive _aircraft || !alive _target) exitWith {false};
         
@@ -177,17 +200,11 @@ private _airSupportTypeDef = [
         _self set ["currentLaser", _laserTarget];
         
         // Select weapon and engage
-        private _weapon = selectRandom (_self get "weaponLoadout");
+        private _weapon = weapons (vehicle _aircraft) select 0;
         if (!isNull _gunner) then {
-            _gunner selectWeapon _weapon;
-            _gunner doTarget _target;
-            _gunner doWatch _laserTarget;
             _gunner reveal [_target, 4];
             _gunner fireAtTarget [_target, _weapon];
         } else {
-            _pilot selectWeapon _weapon;
-            _pilot doTarget _target;
-            _pilot doWatch _laserTarget;
             _pilot reveal [_target, 4];
             _pilot fireAtTarget [_target, _weapon];
         };
