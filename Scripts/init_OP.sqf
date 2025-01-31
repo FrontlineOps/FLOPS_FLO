@@ -188,7 +188,6 @@ FOBB addEventHandler ["Killed", {
                 _statusMarker setMarkerColor "ColorBlack";
                 deleteMarker _statusMarker;
                 
-                [playerSide, 'HQ'] remoteExec ["commandChat", 0];
                 "OP has fallen to enemy forces!" remoteExec ["hint", -2];
                 
                 // Execute OP destruction sequence

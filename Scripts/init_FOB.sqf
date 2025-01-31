@@ -225,7 +225,6 @@ _TFOBA attachTo [FOBB, [0, 0, 0]];
                 _statusMarker setMarkerColor "ColorBlack";
                 deleteMarker _statusMarker;
                 
-                [playerSide, 'HQ'] remoteExec ["commandChat", 0];
                 "FOB has fallen to enemy forces!" remoteExec ["hint", -2];
                 
                 private _FOBC = nearestObjects [FOBB, ['B_Slingload_01_Cargo_F'], 1000] param [0, objNull];
