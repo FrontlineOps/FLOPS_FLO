@@ -1,4 +1,3 @@
-
 if (!isServer) exitWith {};
 
 [[west,"HQ"], "Saving Mission ..."] remoteExec ["sideChat", 0];
@@ -158,8 +157,7 @@ private _ObjectName = vehicleVarName _x ;
    _ObjectDataHashEach set ["posASL",getPosASL _x]  ;
    _ObjectDataHashEach set ["vectorDirAndUp",[vectorDir _x,vectorUp _x]]  ;
 
-   
-_ObjectDataHash set [_ObjectName, _ObjectDataHashEach];
+   _ObjectDataHash set [_ObjectName, _ObjectDataHashEach];
 
 } forEach FinalSaving ;
 
