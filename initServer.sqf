@@ -107,6 +107,9 @@ if (!HC1Present && !HC2Present && !HC3Present) then {
             remoteExec ["FLO_fnc_ICS", 2];
         };
 
+        // Why is this here?
+        // This is a convoy loop, move it to it's own file so we can preprocessFileLineNumbers it and pass CGM Properly
+        // This causes convoys to be broken due to no CGM being passed
         if (ConVLocc == 1) then {
             private _RoadMrks = allMapMarkers select {markerType _x == "mil_dot" && markerColor _x == "colorCivilian" && markerAlpha _x == 0.3};
             {deleteMarker _x} forEach _RoadMrks;
