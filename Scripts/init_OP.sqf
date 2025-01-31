@@ -146,19 +146,18 @@ FOBB addEventHandler ["Killed", {
     deleteVehicle _FOBC;
     _FOBB setdamage 1;
     deleteVehicle _FOBT;
-    _allMarks = allMapMarkers select {markerText _x == 'OP' && markerType _x == 'b_installation'};  
-    _FOBMrk = [_allMarks,  (_this select 0)] call BIS_fnc_nearestPosition;
-    deleteMarker _FOBMrk ; 
+    private _markerName = _this select 0 getVariable "opMarkerName";
+    deleteMarker _markerName;
     _alltriggers = allMissionObjects "EmptyDetector";
     _triggers = _alltriggers select {position _x distance (_this select 0) < 20};
     {deleteVehicle _x;} forEach _triggers;
 }]; 
 
-// Modified holdout loop with marker updates
+// Modified holdout monitoring for OP
 [] spawn {
     private _holdoutTime = 0;
-    private _maxHoldTime = 600; // 10 minutes
-    private _checkInterval = 5;
+    private _maxHoldTime = 600; // 10 minutes for OP
+    private _checkInterval = 1;
     private _areaRadius = 100;
     private _statusMarker = nil;
     
@@ -167,12 +166,11 @@ FOBB addEventHandler ["Killed", {
         private _opforCount = {alive _x && side _x == EAST && (_x distance FOBB) < _areaRadius} count allUnits;
 
         if (_opforCount > _bluforCount && _opforCount > 0) then {
-            // Create marker only when countdown starts
             if (isNil "_statusMarker") then {
                 _statusMarker = createMarker ["OP_Status", getPos FOBB];
-                _statusMarker setMarkerType "hd_warning";
+                _statusMarker setMarkerType "mil_objective";
                 _statusMarker setMarkerColor "ColorRed";
-                _statusMarker setMarkerSize [1,1];
+                _statusMarker setMarkerSize [1.2,1.2];
             };
             
             _holdoutTime = _holdoutTime + _checkInterval;
@@ -192,9 +190,25 @@ FOBB addEventHandler ["Killed", {
                 
                 [playerSide, 'HQ'] remoteExec ["commandChat", 0];
                 "OP has fallen to enemy forces!" remoteExec ["hint", -2];
+                
+                // Execute OP destruction sequence
+                private _FOBC = nearestObjects [FOBB, ['B_Slingload_01_Cargo_F'], 1000] param [0, objNull];
+                private _FOBT = nearestObjects [FOBB, [F_OP_C_01], 1000] param [0, objNull];
+                
+                if (!isNull _FOBC) then { deleteVehicle _FOBC };
+                if (!isNull FOBB) then { FOBB setDamage 1 };
+                if (!isNull _FOBT) then { deleteVehicle _FOBT };
+                
+                // Delete OP marker
+                private _markerName = FOBB getVariable "opMarkerName";
+                deleteMarker _markerName;
+                
+                // Cleanup triggers
+                private _allTriggers = allMissionObjects "EmptyDetector";
+                private _triggers = _allTriggers select { position _x distance FOBB < 300 };
+                { deleteVehicle _x } forEach _triggers;
             };
         } else {
-            // Delete marker when BLUFOR regains control
             if (!isNil "_statusMarker") then {
                 deleteMarker _statusMarker;
                 _statusMarker = nil;
@@ -208,7 +222,6 @@ FOBB addEventHandler ["Killed", {
         sleep _checkInterval;
     };
     
-    // Cleanup marker if it exists
     if (!isNil "_statusMarker") then {
         deleteMarker _statusMarker;
     };
@@ -226,7 +239,8 @@ _mrkr = createMarker [_markerName, _relpos];
 _mrkr setMarkerType "b_installation";
 _mrkr setMarkerColor "ColorYellow";
 _mrkr setMarkerText "OP";
-_mrkr setMarkerSize [1.5, 1.5]; 
+_mrkr setMarkerSize [1.5, 1.5];
+FOBB setVariable ["opMarkerName", _markerName, true];
 
 
  
