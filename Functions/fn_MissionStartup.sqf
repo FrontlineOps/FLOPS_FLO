@@ -50,7 +50,17 @@ publicVariable "FOBB";
 
 
 { 
-	if (count (nearestObjects [ _x, [F_HQ_C_01], 20]) > 0) then {     
+	if (count (nearestObjects [ _x, [F_HQ_C_01], 20]) > 0) then { 
+
+		// Create marker and set variable
+    	_relpos = _x getRelPos [12, 0];
+    	_markerName = "respawn_west" + (str (getPos _x));  
+    	_mrkr = createMarker [_markerName, _relpos];  
+    	_mrkr setMarkerType "b_installation";
+    	_mrkr setMarkerColor "ColorYellow";
+    	_mrkr setMarkerText "FOB";
+    	_mrkr setMarkerSize [2, 2];
+    	_x setVariable ["fobMarkerName", _markerName, true];  // Set on FOB object
 
 		{ null = [_x, -1, west, "LIGHT"] execVM "R3F_LOG\USER_FUNCT\init_creation_factory.sqf" } remoteExec ["call", 0]; 
 
@@ -243,20 +253,21 @@ publicVariable "FOBB";
 
 
 		// Start holdout monitoring for FOB
-		[] spawn {
+		[_x] spawn {
+			params ["_fob"];
 			private _holdoutTime = 0;
-			private _maxHoldTime = 900; // 15 minutes for FOB
+			private _maxHoldTime = 900; // 15 minutes
 			private _checkInterval = 1;
 			private _areaRadius = 200;
 			private _statusMarker = nil;
 			
-			while {alive FOBB} do {
-				private _bluforCount = {alive _x && side _x == WEST && (_x distance FOBB) < _areaRadius} count allUnits;
-				private _opforCount = {alive _x && side _x == EAST && (_x distance FOBB) < _areaRadius} count allUnits;
+			while {alive _fob} do {
+				private _bluforCount = {alive _x && side _x == WEST && (_x distance _fob) < _areaRadius} count allUnits;
+				private _opforCount = {alive _x && side _x == EAST && (_x distance _fob) < _areaRadius} count allUnits;
 
 				if (_opforCount > _bluforCount && _opforCount > 0) then {
 					if (isNil "_statusMarker") then {
-						_statusMarker = createMarker ["FOB_Status", getPos FOBB];
+						_statusMarker = createMarker ["FOB_Status", getPos _fob];
 						_statusMarker setMarkerType "mil_objective";
 						_statusMarker setMarkerColor "ColorRed";
 						_statusMarker setMarkerSize [1.5,1.5];
@@ -279,18 +290,18 @@ publicVariable "FOBB";
 						
 						"FOB has fallen to enemy forces!" remoteExec ["hint", -2];
 						
-						private _FOBC = nearestObjects [FOBB, ['B_Slingload_01_Cargo_F'], 1000] param [0, objNull];
-						private _FOBT = nearestObjects [FOBB, [F_HQ_C_01], 1000] param [0, objNull];
+						private _FOBC = nearestObjects [_fob, ['B_Slingload_01_Cargo_F'], 1000] param [0, objNull];
+						private _FOBT = nearestObjects [_fob, [F_HQ_C_01], 1000] param [0, objNull];
 						
 						if (!isNull _FOBC) then { deleteVehicle _FOBC };
-						if (!isNull FOBB) then { FOBB setDamage 1 };
+						if (!isNull _fob) then { _fob setDamage 1 };
 						if (!isNull _FOBT) then { deleteVehicle _FOBT };
 						
-						private _markerName = FOBB getVariable "fobMarkerName";
+						private _markerName = _fob getVariable "fobMarkerName";
 						deleteMarker _markerName;
 						
 						private _allTriggers = allMissionObjects "EmptyDetector";
-						private _triggers = _allTriggers select { position _x distance FOBB < 500 };
+						private _triggers = _allTriggers select { position _x distance _fob < 500 };
 						{ deleteVehicle _x } forEach _triggers;
 						
 						// Call failure script
@@ -458,7 +469,17 @@ false
 
 _FOBB = nearestObjects [Centerposition, [F_OP_01], 40000];
 
-{ if (count (nearestObjects [ _x, [F_OP_C_01], 6]) > 0) then {     
+{ if (count (nearestObjects [ _x, [F_OP_C_01], 6]) > 0) then {  
+	
+// Create marker and set variable
+_relpos = _x getRelPos [12, 0];
+_markerName = "respawn_west" + (str (getPos _x));  
+_mrkr = createMarker [_markerName, _relpos];  
+_mrkr setMarkerType "b_installation";
+_mrkr setMarkerColor "ColorYellow";
+_mrkr setMarkerText "OP";
+_mrkr setMarkerSize [1.5, 1.5];
+_x setVariable ["opMarkerName", _markerName, true];  // Set on OP object   
 
 { null = [_x, -1, west, "LIGHT"] execVM "R3F_LOG\USER_FUNCT\init_creation_factory.sqf" } remoteExec ["call", 0]; 
 
@@ -630,20 +651,22 @@ _TFOBA attachTo [_x, [0, 0, 0]];
 
 
 		// Modified holdout monitoring for OP
-		[] spawn {
+		[_x] spawn {
+			params ["_op"];
 			private _holdoutTime = 0;
-			private _maxHoldTime = 600; // 10 minutes for OP
+			private _maxHoldTime = 600; // 10 minutes
 			private _checkInterval = 1;
 			private _areaRadius = 100;
 			private _statusMarker = nil;
 			
-			while {alive FOBB} do {
-				private _bluforCount = {alive _x && side _x == WEST && (_x distance FOBB) < _areaRadius} count allUnits;
-				private _opforCount = {alive _x && side _x == EAST && (_x distance FOBB) < _areaRadius} count allUnits;
+			while {alive _op} do {
+				private _bluforCount = {alive _x && side _x == WEST && (_x distance _op) < _areaRadius} count allUnits;
+				private _opforCount = {alive _x && side _x == EAST && (_x distance _op) < _areaRadius} count allUnits;
+
 
 				if (_opforCount > _bluforCount && _opforCount > 0) then {
 					if (isNil "_statusMarker") then {
-						_statusMarker = createMarker ["OP_Status", getPos FOBB];
+						_statusMarker = createMarker ["OP_Status", getPos _op];
 						_statusMarker setMarkerType "mil_objective";
 						_statusMarker setMarkerColor "ColorRed";
 						_statusMarker setMarkerSize [1.2,1.2];
@@ -667,15 +690,15 @@ _TFOBA attachTo [_x, [0, 0, 0]];
 						"OP has fallen to enemy forces!" remoteExec ["hint", -2];
 						
 						// Execute OP destruction sequence
-						private _FOBC = nearestObjects [FOBB, ['B_Slingload_01_Cargo_F'], 1000] param [0, objNull];
-						private _FOBT = nearestObjects [FOBB, [F_OP_C_01], 1000] param [0, objNull];
+						private _OPC = nearestObjects [_op, ['B_Slingload_01_Cargo_F'], 1000] param [0, objNull];
+						private _OPT = nearestObjects [_op, [F_OP_C_01], 1000] param [0, objNull];
 						
-						if (!isNull _FOBC) then { deleteVehicle _FOBC };
-						if (!isNull FOBB) then { FOBB setDamage 1 };
-						if (!isNull _FOBT) then { deleteVehicle _FOBT };
+						if (!isNull _OPC) then { deleteVehicle _OPC };
+						if (!isNull _op) then { _op setDamage 1 };
+						if (!isNull _OPT) then { deleteVehicle _OPT };
 						
 						// Delete OP marker
-						private _markerName = FOBB getVariable "opMarkerName";
+						private _markerName = _op getVariable "opMarkerName";
 						deleteMarker _markerName;
 						
 						// Cleanup triggers

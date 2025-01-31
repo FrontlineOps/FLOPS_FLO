@@ -157,17 +157,7 @@ private _ObjectName = vehicleVarName _x ;
    _ObjectDataHashEach set ["posASL",getPosASL _x]  ;
    _ObjectDataHashEach set ["vectorDirAndUp",[vectorDir _x,vectorUp _x]]  ;
 
-   // Add marker name if this is an OP
-   if (!isNil {_x getVariable "opMarkerName"}) then {
-       _ObjectDataHashEach set ["opMarkerName", _x getVariable "opMarkerName"];
-   };
-
-   // Add marker name if this is an OP
-   if (!isNil {_x getVariable "fobMarkerName"}) then {
-       _ObjectDataHashEach set ["fobMarkerName", _x getVariable "fobMarkerName"];
-   };
-
-_ObjectDataHash set [_ObjectName, _ObjectDataHashEach];
+   _ObjectDataHash set [_ObjectName, _ObjectDataHashEach];
 
 } forEach FinalSaving ;
 
