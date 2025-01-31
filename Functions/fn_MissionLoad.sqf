@@ -1,4 +1,3 @@
-
 if (!isServer) exitWith {};
 
 MissionLoadedLitterally = 0 ; 
@@ -73,15 +72,23 @@ private _GetVariableStatic = profileNamespace getVariable _ObjectDataName;
 _allVehNames = keys _GetVariableStatic;
 
 {
-_StcAtts = _GetVariableStatic get _x;
-_posASL = _StcAtts get "posASL";
-_Type = _StcAtts get "type";
-_DirUp = _StcAtts get "vectorDirAndUp";
-
-_NewVeh = createVehicle [_Type, [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"] ;
-     _NewVeh setVectorDirAndUp _DirUp;
-     _NewVeh setPosASL _posASL;
-} forEach _allVehNames ; 
+    _StcAtts = _GetVariableStatic get _x;
+    _posASL = _StcAtts get "posASL";
+    _Type = _StcAtts get "type";
+    _DirUp = _StcAtts get "vectorDirAndUp";
+    
+    _NewVeh = createVehicle [_Type, [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"];
+    _NewVeh setVectorDirAndUp _DirUp;
+    _NewVeh setPosASL _posASL;
+    
+    // Restore marker variables if they exist
+    if (!isNil {_StcAtts get "opMarkerName"}) then {
+        _NewVeh setVariable ["opMarkerName", _StcAtts get "opMarkerName", true];
+    };
+    if (!isNil {_StcAtts get "fobMarkerName"}) then {
+        _NewVeh setVariable ["fobMarkerName", _StcAtts get "fobMarkerName", true];
+    };
+} forEach _allVehNames;
 
 
 
