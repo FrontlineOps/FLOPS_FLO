@@ -242,38 +242,81 @@ publicVariable "FOBB";
 
 
 
-		_TFOBB = createTrigger ["EmptyDetector", getPos _x];
-		_TFOBB setTriggerArea [100, 100, 0, false, 20];
-		_TFOBB setTriggerInterval 2;
-		_TFOBB setTriggerActivation ["EAST SEIZED", "PRESENT", false];
-		_TFOBB setTriggerStatements [
-		"this && {(alive _x) && ((side _x) == WEST) && (position _x inArea thisTrigger)} count allUnits < 5","
+		// Start holdout monitoring for FOB
+		[] spawn {
+			private _holdoutTime = 0;
+			private _maxHoldTime = 900; // 15 minutes for FOB
+			private _checkInterval = 1;
+			private _areaRadius = 200;
+			private _statusMarker = nil;
+			
+			while {alive FOBB} do {
+				private _bluforCount = {alive _x && side _x == WEST && (_x distance FOBB) < _areaRadius} count allUnits;
+				private _opforCount = {alive _x && side _x == EAST && (_x distance FOBB) < _areaRadius} count allUnits;
 
-
-					[playerSide, 'HQ'] commandChat 'all Forces Fall Back. We Lost the FOB,...';
-					_FOBC = nearestObjects [ thisTrigger, ['B_Slingload_01_Cargo_F'], 1000] select 0;
-					_FOBB = nearestObjects [ thisTrigger, [F_HQ_01], 1000] select 0;
-					_FOBT = nearestObjects [thisTrigger, [F_HQ_C_01], 1000]  select 0;
-					deleteVehicle _FOBC;
-					_FOBB setdamage 1;
-					deleteVehicle _FOBT;
+				if (_opforCount > _bluforCount && _opforCount > 0) then {
+					if (isNil "_statusMarker") then {
+						_statusMarker = createMarker ["FOB_Status", getPos FOBB];
+						_statusMarker setMarkerType "mil_objective";
+						_statusMarker setMarkerColor "ColorRed";
+						_statusMarker setMarkerSize [1.5,1.5];
+					};
 					
-					_allMarks = allMapMarkers select {markerText _x == 'FOB' && markerType _x == 'b_installation'};  
-					_FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
-					deleteMarker _FOBMrk ; 
+					_holdoutTime = _holdoutTime + _checkInterval;
+					private _timeLeft = _maxHoldTime - _holdoutTime;
+					private _minutes = floor(_timeLeft/60);
+					private _seconds = _timeLeft % 60;
+					_statusMarker setMarkerText format["FOB UNDER SIEGE: %1:%2", _minutes, [_seconds, 2] call CBA_fnc_formatNumber];
 					
-					[] execVM 'Scripts\Failed.sqf';
+					if (_timeLeft % 60 == 0) then {
+						[format["FOB under siege! %1 minutes remaining", ceil(_timeLeft/60)]] remoteExec ["hint", -2];
+					};
+					
+					if (_holdoutTime >= _maxHoldTime) exitWith {
+						_statusMarker setMarkerText "FOB LOST!";
+						_statusMarker setMarkerColor "ColorBlack";
+						deleteMarker _statusMarker;
+						
+						"FOB has fallen to enemy forces!" remoteExec ["hint", -2];
+						
+						private _FOBC = nearestObjects [FOBB, ['B_Slingload_01_Cargo_F'], 1000] param [0, objNull];
+						private _FOBT = nearestObjects [FOBB, [F_HQ_C_01], 1000] param [0, objNull];
+						
+						if (!isNull _FOBC) then { deleteVehicle _FOBC };
+						if (!isNull FOBB) then { FOBB setDamage 1 };
+						if (!isNull _FOBT) then { deleteVehicle _FOBT };
+						
+						private _markerName = FOBB getVariable "fobMarkerName";
+						deleteMarker _markerName;
+						
+						private _allTriggers = allMissionObjects "EmptyDetector";
+						private _triggers = _allTriggers select { position _x distance FOBB < 500 };
+						{ deleteVehicle _x } forEach _triggers;
+						
+						// Call failure script
+						[] execVM 'Scripts\Failed.sqf';
+					};
+				} else {
+					if (!isNil "_statusMarker") then {
+						deleteMarker _statusMarker;
+						_statusMarker = nil;
+						if (_holdoutTime > 0) then {
+							"FOB defense successful! Timer reset." remoteExec ["hint", -2];
+						};
+					};
+					_holdoutTime = 0;
+				};
+				
+				sleep _checkInterval;
+			};
+			
+			if (!isNil "_statusMarker") then {
+				deleteMarker _statusMarker;
+			};
+		};
 
-					_alltriggers = allMissionObjects ""EmptyDetector"";
-					_triggers = _alltriggers select {position _x inArea thisTrigger};
-					{deleteVehicle _x;}forEach _triggers;
-
-		", ""];
-
-		_TFOBB attachTo [_x, [0, 0, 0]]; 
-
-		}
- } foreach FOBB;
+}
+} foreach FOBB;
 
  ///////////////////////////////////////////////////////
  
@@ -586,34 +629,78 @@ _TFOBA attachTo [_x, [0, 0, 0]];
 
 
 
-_TFOBB = createTrigger ["EmptyDetector", getPos _x];
-_TFOBB setTriggerArea [100, 100, 0, false, 20];
-_TFOBB setTriggerInterval 2;
-_TFOBB setTriggerActivation ["EAST SEIZED", "PRESENT", false];
-_TFOBB setTriggerStatements [
-"this && {(alive _x) && ((side _x) == WEST) && (position _x inArea thisTrigger)} count allUnits < 5","
+		// Modified holdout monitoring for OP
+		[] spawn {
+			private _holdoutTime = 0;
+			private _maxHoldTime = 600; // 10 minutes for OP
+			private _checkInterval = 1;
+			private _areaRadius = 100;
+			private _statusMarker = nil;
+			
+			while {alive FOBB} do {
+				private _bluforCount = {alive _x && side _x == WEST && (_x distance FOBB) < _areaRadius} count allUnits;
+				private _opforCount = {alive _x && side _x == EAST && (_x distance FOBB) < _areaRadius} count allUnits;
 
-
-[playerSide, 'HQ'] commandChat 'all Forces Fall Back. We Lost the OP,...';
-_FOBC = nearestObjects [ thisTrigger, ['B_Slingload_01_Cargo_F'], 1000] select 0;
-_FOBB = nearestObjects [ thisTrigger, [F_OP_01], 1000] select 0;
-_FOBT = nearestObjects [thisTrigger, [F_OP_C_01], 1000]  select 0;
-deleteVehicle _FOBC;
-_FOBB setdamage 1;
-deleteVehicle _FOBT;
-_allMarks = allMapMarkers select {markerPos _x inArea thisTrigger && markerType _x == 'b_installation'};  
-	{  
-deleteMarker _x ; 
-	} forEach _allMarks; 
-
-
-_alltriggers = allMissionObjects ""EmptyDetector"";
-_triggers = _alltriggers select {position _x inArea thisTrigger};
-{deleteVehicle _x;}forEach _triggers;
-
-", ""];
-
-_TFOBB attachTo [_x, [0, 0, 0]]; 
+				if (_opforCount > _bluforCount && _opforCount > 0) then {
+					if (isNil "_statusMarker") then {
+						_statusMarker = createMarker ["OP_Status", getPos FOBB];
+						_statusMarker setMarkerType "mil_objective";
+						_statusMarker setMarkerColor "ColorRed";
+						_statusMarker setMarkerSize [1.2,1.2];
+					};
+					
+					_holdoutTime = _holdoutTime + _checkInterval;
+					private _timeLeft = _maxHoldTime - _holdoutTime;
+					private _minutes = floor(_timeLeft/60);
+					private _seconds = _timeLeft % 60;
+					_statusMarker setMarkerText format["OP UNDER SIEGE: %1:%2", _minutes, [_seconds, 2] call CBA_fnc_formatNumber];
+					
+					if (_timeLeft % 60 == 0) then {
+						[format["OP under siege! %1 minutes remaining", ceil(_timeLeft/60)]] remoteExec ["hint", -2];
+					};
+					
+					if (_holdoutTime >= _maxHoldTime) exitWith {
+						_statusMarker setMarkerText "OP LOST!";
+						_statusMarker setMarkerColor "ColorBlack";
+						deleteMarker _statusMarker;
+						
+						"OP has fallen to enemy forces!" remoteExec ["hint", -2];
+						
+						// Execute OP destruction sequence
+						private _FOBC = nearestObjects [FOBB, ['B_Slingload_01_Cargo_F'], 1000] param [0, objNull];
+						private _FOBT = nearestObjects [FOBB, [F_OP_C_01], 1000] param [0, objNull];
+						
+						if (!isNull _FOBC) then { deleteVehicle _FOBC };
+						if (!isNull FOBB) then { FOBB setDamage 1 };
+						if (!isNull _FOBT) then { deleteVehicle _FOBT };
+						
+						// Delete OP marker
+						private _markerName = FOBB getVariable "opMarkerName";
+						deleteMarker _markerName;
+						
+						// Cleanup triggers
+						private _allTriggers = allMissionObjects "EmptyDetector";
+						private _triggers = _allTriggers select { position _x distance FOBB < 300 };
+						{ deleteVehicle _x } forEach _triggers;
+					};
+				} else {
+					if (!isNil "_statusMarker") then {
+						deleteMarker _statusMarker;
+						_statusMarker = nil;
+						if (_holdoutTime > 0) then {
+							"OP defense successful! Timer reset." remoteExec ["hint", -2];
+						};
+					};
+					_holdoutTime = 0;
+				};
+				
+				sleep _checkInterval;
+			};
+			
+			if (!isNil "_statusMarker") then {
+				deleteMarker _statusMarker;
+			};
+		};
 
 [playerSide, "HQ"] commandChat "OP Deployed";
  }
