@@ -42,8 +42,37 @@ private _nearestDistance = 1e10;
 // Function to find safe position in a specific direction
 private _fnc_findDirectionalSafePos = {
     params ["_center", "_distance", "_direction"];
+    
+    // Calculate target point in desired direction
     private _targetPoint = _center getPos [_distance, _direction];
-    private _safePos = [_targetPoint, 0, 100, 5, 0, 0.5, 0, [], [_targetPoint, _targetPoint]] call BIS_fnc_findSafePos;
+    
+    // Search for safe position with better parameters
+    // Start with a wider search radius and gradually reduce if needed
+    private _searchRadius = _distance * 0.3; // 30% of desired distance
+    private _minDist = 10; // Minimum 10m from target point
+    private _attempts = 0;
+    private _maxAttempts = 5;
+    private _safePos = [];
+    
+    while {_attempts < _maxAttempts} do {
+        _safePos = [_targetPoint, _minDist, _searchRadius, 5, 0, 0.5, 0] call BIS_fnc_findSafePos;
+        
+        // If position found and it's in roughly the right direction (+/- 30 degrees)
+        if (count _safePos > 0 && {
+            private _actualDir = _center getDir _safePos;
+            private _dirDiff = abs ((_direction - _actualDir + 180) % 360 - 180);
+            _dirDiff < 30
+        }) exitWith {};
+        
+        _searchRadius = _searchRadius * 1.5;
+        _attempts = _attempts + 1;
+    };
+    
+    // If no good position found, return the target point
+    if (count _safePos == 0) then {
+        _safePos = _targetPoint;
+    };
+    
     _safePos
 };
 
