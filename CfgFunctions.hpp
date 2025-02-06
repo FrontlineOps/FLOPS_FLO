@@ -20,5 +20,6 @@ class FLO {
         class fireObserver          {};
         class calculateQRFResponse  {};
         class requestQRF            {};
+        class heliInsert            {};
     };
 };

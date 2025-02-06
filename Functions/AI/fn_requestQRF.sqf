@@ -92,13 +92,27 @@ private _approachPos = _targetPos getPos [_approachDistance, _dir - 180];
 // Helper function for vehicle and crew creation
 private _fnc_createVehicleWithCrew = {
     params ["_vehType", "_spawnPos"];
-    private _veh = _vehType createVehicle _spawnPos;
+    
+    // Find nearest road
+    private _nearRoads = _spawnPos nearRoads 1500;
+    private _spawnPosRoad = if (count _nearRoads > 0) then {
+        getPos (_nearRoads select 0)
+    } else {
+        _spawnPos
+    };
+    
+    private _veh = createVehicle [_vehType, _spawnPosRoad, [], 0, "NONE"];
+    private _group = createGroup [EAST, true];
     createVehicleCrew _veh;
-    private _group = group effectiveCommander _veh;
+    
+    // Move crew to EAST side
+    {
+        [_x] joinSilent _group;
+    } forEach (crew _veh);
     
     // Get max cargo capacity
-    private _crewCount = [_veh] call BIS_fnc_crewCount;
-    private _maxCargo = _crewCount select 3; // Index 3 is cargo capacity
+    private _crewInfo = [typeOf _veh] call BIS_fnc_crewCount;
+    _crewInfo params ["_totalPositions", "_crewPositions", "_cargoPositions", "_maxCargo"];
     
     // Add intel to crew
     private _intelItems = ["FlashDisk", "FilesSecret", "SmartPhone", "MobilePhone", "DocumentsSecret"];
@@ -148,7 +162,11 @@ switch (_tier) do {
         // Create and add infantry to APC
         private _mechInfGroup = createGroup EAST;
         for "_i" from 1 to _mechMaxCargo do {
-            private _unit = _mechInfGroup createUnit [selectRandom (FLO_configCache get "units"), _spawnPos, [], 0, "NONE"];
+            private _unitType = selectRandom (FLO_configCache get "units");
+            private _unit = _mechInfGroup createUnit [_unitType, _spawnPos, [], 0, "NONE"];
+            if (_unitType == "I_RadioOperator_F") then {
+                [_unit] call FLO_fnc_fireObserver;
+            };
             _unit assignAsCargo _mechVeh;
             _unit moveInCargo _mechVeh;
         };
@@ -165,12 +183,7 @@ switch (_tier) do {
         
         // Add transport helicopter if using heli insert
         if (_insertType == "HeliInsert") then {
-            private _heliVehType = selectRandom (FLO_configCache get "vehicles" select 5);
-            _result = [_heliVehType, _spawnPos] call _fnc_createVehicleWithCrew;
-            private _heliVeh = _result select 0;
-            private _heliGroup = _result select 1;
-            private _heliMaxCargo = _result select 2;
-            _groups pushBack _heliGroup;
+            [_thisHeliInsertTrigger, _targetPos, _spawnPos] call FLO_fnc_heliInsert;
         };
     };
     
@@ -185,7 +198,11 @@ switch (_tier) do {
         // Create and add infantry to APC
         private _mechInfGroup = createGroup EAST;
         for "_i" from 1 to _mechMaxCargo do {
-            private _unit = _mechInfGroup createUnit [selectRandom (FLO_configCache get "units"), _spawnPos, [], 0, "NONE"];
+            private _unitType = selectRandom (FLO_configCache get "units");
+            private _unit = _mechInfGroup createUnit [_unitType, _spawnPos, [], 0, "NONE"];
+            if (_unitType == "I_RadioOperator_F") then {
+                [_unit] call FLO_fnc_fireObserver;
+            };
             _unit assignAsCargo _mechVeh;
             _unit moveInCargo _mechVeh;
         };
@@ -198,12 +215,7 @@ switch (_tier) do {
         _groups pushBack _mechGroup;
         
         if (_insertType == "HeliInsert") then {
-            private _heliVehType = selectRandom (FLO_configCache get "vehicles" select 5);
-            _result = [_heliVehType, _spawnPos] call _fnc_createVehicleWithCrew;
-            private _heliVeh = _result select 0;
-            private _heliGroup = _result select 1;
-            private _heliMaxCargo = _result select 2;
-            _groups pushBack _heliGroup;
+            [_thisHeliInsertTrigger, _targetPos, _spawnPos] call FLO_fnc_heliInsert;
         };
         
         // Add air support based on aggression
@@ -223,7 +235,11 @@ switch (_tier) do {
         // Create and add infantry
         private _infGroup = createGroup EAST;
         for "_i" from 1 to _maxCargo do {
-            private _unit = _infGroup createUnit [selectRandom (FLO_configCache get "units"), _spawnPos, [], 0, "NONE"];
+            private _unitType = selectRandom (FLO_configCache get "units");
+            private _unit = _infGroup createUnit [_unitType, _spawnPos, [], 0, "NONE"];
+            if (_unitType == "I_RadioOperator_F") then {
+                [_unit] call FLO_fnc_fireObserver;
+            };
             _unit assignAsCargo _veh;
             _unit moveInCargo _veh;
         };
@@ -257,7 +273,11 @@ switch (_tier) do {
         // Create and add infantry
         private _infGroup = createGroup EAST;
         for "_i" from 1 to _maxCargo do {
-            private _unit = _infGroup createUnit [selectRandom (FLO_configCache get "units"), _spawnPos, [], 0, "NONE"];
+            private _unitType = selectRandom (FLO_configCache get "units");
+            private _unit = _infGroup createUnit [_unitType, _spawnPos, [], 0, "NONE"];
+            if (_unitType == "I_RadioOperator_F") then {
+                [_unit] call FLO_fnc_fireObserver;
+            };
             _unit assignAsCargo _veh;
             _unit moveInCargo _veh;
         };
