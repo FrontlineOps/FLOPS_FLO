@@ -165,7 +165,7 @@ switch (_tier) do {
             private _unitType = selectRandom (FLO_configCache get "units");
             private _unit = _mechInfGroup createUnit [_unitType, _spawnPos, [], 0, "NONE"];
             if (_unitType == "I_RadioOperator_F") then {
-                [_unit] call FLO_fnc_fireObserver;
+                [_unit, EAST] call FLO_fnc_fireObserver;
             };
             _unit assignAsCargo _mechVeh;
             _unit moveInCargo _mechVeh;
@@ -201,7 +201,7 @@ switch (_tier) do {
             private _unitType = selectRandom (FLO_configCache get "units");
             private _unit = _mechInfGroup createUnit [_unitType, _spawnPos, [], 0, "NONE"];
             if (_unitType == "I_RadioOperator_F") then {
-                [_unit] call FLO_fnc_fireObserver;
+                [_unit, EAST] call FLO_fnc_fireObserver;
             };
             _unit assignAsCargo _mechVeh;
             _unit moveInCargo _mechVeh;
@@ -238,7 +238,7 @@ switch (_tier) do {
             private _unitType = selectRandom (FLO_configCache get "units");
             private _unit = _infGroup createUnit [_unitType, _spawnPos, [], 0, "NONE"];
             if (_unitType == "I_RadioOperator_F") then {
-                [_unit] call FLO_fnc_fireObserver;
+                [_unit, EAST] call FLO_fnc_fireObserver;
             };
             _unit assignAsCargo _veh;
             _unit moveInCargo _veh;
@@ -276,7 +276,7 @@ switch (_tier) do {
             private _unitType = selectRandom (FLO_configCache get "units");
             private _unit = _infGroup createUnit [_unitType, _spawnPos, [], 0, "NONE"];
             if (_unitType == "I_RadioOperator_F") then {
-                [_unit] call FLO_fnc_fireObserver;
+                [_unit, EAST] call FLO_fnc_fireObserver;
             };
             _unit assignAsCargo _veh;
             _unit moveInCargo _veh;
