@@ -88,6 +88,7 @@ _insertionTypes params ["_insertType", "_approachDistance"];
 // Calculate approach position
 private _dir = _spawnPos getDir _targetPos;
 private _approachPos = _targetPos getPos [_approachDistance, _dir - 180];
+_approachPos = [_approachPos, 0, 200, 10, 0, 0.2, 0, [], [_approachPos, _approachPos]] call BIS_fnc_findSafePos;
 
 // Helper function for vehicle and crew creation
 private _fnc_createVehicleWithCrew = {
@@ -110,9 +111,10 @@ private _fnc_createVehicleWithCrew = {
         [_x] joinSilent _group;
     } forEach (crew _veh);
     
-    // Get max cargo capacity
-    private _crewInfo = [typeOf _veh] call BIS_fnc_crewCount;
-    _crewInfo params ["_totalPositions", "_crewPositions", "_cargoPositions", "_maxCargo"];
+    // Calculate cargo capacity (total seats minus crew seats)
+    private _totalSeats = [typeOf _veh, true] call BIS_fnc_crewCount;  // Get total seats including cargo
+    private _crewSeats = [typeOf _veh, false] call BIS_fnc_crewCount;  // Get crew seats only
+    private _maxCargo = _totalSeats - _crewSeats;  // Calculate actual cargo capacity
     
     // Add intel to crew
     private _intelItems = ["FlashDisk", "FilesSecret", "SmartPhone", "MobilePhone", "DocumentsSecret"];
@@ -307,16 +309,58 @@ switch (_tier) do {
     _x setCombatMode "RED";
     
     // First move to approach position, then to target
-    [_x, _approachPos, 50] call BIS_fnc_taskAttack;
+    private _wp = [_x, _approachPos, 50] call BIS_fnc_taskAttack;
     
     // After reaching approach position, move to actual target
-    [_x, _targetPos, _approachPos] spawn {
-        params ["_group", "_targetPos", "_approachPos"];
+    [_x, _targetPos, _approachPos, _wp] spawn {
+        params ["_group", "_targetPos", "_approachPos", "_wp"];
         waitUntil {
             sleep 5;
             leader _group distance _approachPos < 100
         };
+        _group deleteWaypoint _wp;
         [_group, _targetPos, 50] call BIS_fnc_taskAttack;
+    };
+    
+    // Add killed event handler to each unit
+    {
+        _x addEventHandler ["Killed", {
+            params ["_unit"];
+            private _nearVeh = nearestObjects [_unit, ["LandVehicle"], 50] select 0;
+            {
+                if !(_x in [driver _nearVeh, gunner _nearVeh, commander _nearVeh]) then {
+                    [_x] orderGetIn false;
+                    [_x] allowGetIn false;
+                    unassignVehicle _x;
+                    doGetOut _x;
+                };
+            } forEach crew _nearVeh;
+        }];
+    } forEach units _x;
+    
+    // Get the vehicle the group is using
+    private _groupVeh = vehicle leader _x;
+    if (_groupVeh != leader _x) then {
+        // Create and setup dismount trigger
+        private _dismountTrigger = createTrigger ["EmptyDetector", getPos _groupVeh, false];
+        _dismountTrigger setTriggerArea [750, 750, 0, false, 100];
+        _dismountTrigger setTriggerActivation ["WEST", "PRESENT", false];
+        _dismountTrigger setTriggerStatements [
+            "this",
+            "
+            private _veh = nearestObjects [thisTrigger, ['LandVehicle'], 50] select 0;
+            {
+                if !(_x in [driver _veh, gunner _veh, commander _veh]) then {
+                    [_x] orderGetIn false;
+                    [_x] allowGetIn false;
+                    unassignVehicle _x;
+                    doGetOut _x;
+                };
+            } forEach crew _veh;
+            ",
+            ""
+        ];
+        _dismountTrigger attachTo [_groupVeh, [0,0,0]];
     };
 } forEach _groups;
 
