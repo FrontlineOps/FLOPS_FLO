@@ -159,7 +159,7 @@ _trgINT setTriggerStatements [
     "
     AVENGLOCC = 0;
     publicVariable 'AVENGLOCC';
-    [thisTrigger] execVM 'Scripts\QuickRF.sqf';
+    [getPos thisTrigger, 200] call FLO_fnc_requestQRF;
     ",
     ""
 ];

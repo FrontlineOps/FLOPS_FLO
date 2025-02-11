@@ -54,7 +54,7 @@ PRL = [_Position getPos [(40 + (random 10)), (0 + (random 350))], East, [selectR
 
 PRLL = (units PRL) select 0 ;
 PRLL addEventHandler ["Killed", { 
-[(_this select 0), 1000] execVM 'Scripts\QuickRF.sqf';
+[getPos _thisRadioTrigger, 1000] call FLO_fnc_requestQRF;
 
  _flare = "F_20mm_Red" createVehicle [getPos (_this select 0) select 0, getPos (_this select 0) select 1, 120]; 
 _flare setVelocity [0,0,-0.1];

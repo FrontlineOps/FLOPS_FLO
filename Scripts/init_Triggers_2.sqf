@@ -164,7 +164,7 @@ _mrkr setMarkerType 'loc_Bunker';
 _mrkr setMarkerAlpha 0.003;
 
 [] execVM 'Scripts\DangerPlus.sqf';
-[(_this select 0), 1000] execVM 'Scripts\QuickRF.sqf';
+[getPos (_this select 0), 1000] call FLO_fnc_requestQRF;
   
  execVM 'Scripts\InfDis.sqf';
 
@@ -268,7 +268,7 @@ deleteMarker _M ;
 [] execVM 'Scripts\DangerMinus.sqf';
 [] execVM 'Scripts\DangerMinus.sqf';
 [] execVM 'Scripts\DangerMinus.sqf';
-[(_this select 0), 1000] execVM 'Scripts\QuickRF.sqf';
+[getPos (_this select 0), 1000] call FLO_fnc_requestQRF;
 
  execVM 'Scripts\AADis.sqf';
 

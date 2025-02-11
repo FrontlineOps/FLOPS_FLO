@@ -327,7 +327,7 @@ if (count _humanPlayers == 1 ) then {
 			playSound3D [(getMissionPath 'Sounds\c_eb_35_natojoin_MEM_0.ogg'), ((units _Group) select 0)];
 			
 [50, 'MISSING SQUAD'] execVM 'Scripts\NOtification.sqf' ;
-[thisTrigger, 1500] execVM 'Scripts\QuickRF.sqf';
+[getPos thisTrigger, 1500] call FLO_fnc_requestQRF;
 [50] execVM 'Scripts\Reward.sqf';
  ", ""]; 
  
