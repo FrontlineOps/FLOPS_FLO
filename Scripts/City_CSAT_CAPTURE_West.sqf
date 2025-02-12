@@ -174,7 +174,7 @@ _trg setTriggerStatements [
 "];				
 
 
-				[_trg, 3000] execVM 'Scripts\QuickRF.sqf';
+				[getPos _trg, 3000] call FLO_fnc_requestQRF;
 
 
 		};		

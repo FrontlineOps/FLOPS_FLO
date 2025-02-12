@@ -18,5 +18,8 @@ class FLO {
         class airSupport            {};
         class executeAttackPattern  {};
         class fireObserver          {};
+        class calculateQRFResponse  {};
+        class requestQRF            {};
+        class heliInsert            {};
     };
 };
