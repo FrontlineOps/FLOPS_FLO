@@ -164,7 +164,59 @@ private _baseAngle = 360 / _spawnCount;
     _spawnPositions pushBack _pos;
 } forEach ([] call {private _arr = []; for "_i" from 1 to _spawnCount do {_arr pushBack _i}; _arr});
 
+// Calculate total spawn delay based on force size
+private _totalDelay = switch (true) do {
+    case (_spawnCount >= 15): { 300 };  // 5 minutes for large forces
+    case (_spawnCount >= 9): { 180 };   // 3 minutes for medium forces
+    default { 120 };                    // 2 minutes for small forces
+};
+
+// Calculate delay between each spawn
+private _delayPerSpawn = _totalDelay / _spawnCount;
+
+// Function to check if position is within radio coverage
+private _fnc_hasRadioCoverage = {
+    params ["_pos"];
+    private _transmitterMarkers = allMapMarkers select { markerType _x == "loc_Transmitter" && markerColor _x == "colorBLUFOR" };
+    private _hasRadio = false;
+    
+    {
+        if ((getMarkerPos _x) distance _pos < 3500) exitWith {
+            _hasRadio = true;
+        };
+    } forEach _transmitterMarkers;
+    
+    _hasRadio
+};
+
 for "_spawnIndex" from 1 to _spawnCount do {
+    // Get spawn position for this element
+    private _elementApproachPos = _spawnPositions select (_spawnIndex - 1);
+    
+    // Add delay between spawns
+    if (_spawnIndex > 1) then {
+        sleep (_delayPerSpawn + random 10 - random 10); // Add small randomization
+    };
+    
+    // Only show announcements if within radio tower range
+    if ([_elementApproachPos] call _fnc_hasRadioCoverage) then {
+        // Announce reinforcements periodically
+        if (_spawnIndex == 1) then {
+            [parseText "<t color='#FF3619' font='PuristaBold' align = 'right' shadow = '1' size='2'>! WARNING !</t><br /><t  color='#FF3619'  align = 'right' shadow = '1' size='1'>Enemy QRF Forces Inbound!</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+            private _attackingAtGrid = mapGridPosition _elementApproachPos;
+            [[west,"HQ"], "Enemy QRF forces detected moving at grid " + _attackingAtGrid] remoteExec ["sideChat", 0];
+        } else {
+            if (_spawnIndex mod 3 == 0) then {
+                private _msg = selectRandom [
+                    "Additional enemy forces detected!",
+                    "More hostile units approaching!",
+                    "Enemy reinforcements moving in!"
+                ];
+                [_msg] remoteExec ["hint", 0];
+            };
+        };
+    };
+
     // Adjust tier based on spawn index and total count
     private _adjustedTier = switch (true) do {
         case (_spawnIndex <= (_spawnCount * 0.2)): { 
@@ -184,9 +236,6 @@ for "_spawnIndex" from 1 to _spawnCount do {
             "Tier1"
         };
     };
-
-    // Get spawn position for this element
-    private _elementApproachPos = _spawnPositions select (_spawnIndex - 1);
 
     switch (_adjustedTier) do {
         case "Tier4": {
