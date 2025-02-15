@@ -226,7 +226,7 @@ for "_spawnIndex" from 1 to _spawnCount do {
     
     // Add delay between spawns
     if (_spawnIndex > 1) then {
-        private _delay = _delayPerSpawn + random 10 - random 10;
+        private _delay = _delayPerSpawn + (60 + random 180); // Random delay between 60-240 seconds
         [_delay] spawn {
             params ["_delay"];
             sleep _delay;
