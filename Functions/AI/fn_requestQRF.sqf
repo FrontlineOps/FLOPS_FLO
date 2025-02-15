@@ -153,14 +153,45 @@ private _spawnCount = switch (true) do {
     default { 1 };                    // Minimal aggression - squad-sized
 };
 
-// Calculate spawn positions in a circular pattern
+// Calculate spawn positions in a spiral pattern with safe distances
 private _spawnPositions = [];
 private _baseAngle = 360 / _spawnCount;
+private _minSafeDistance = 50; // Minimum distance between spawn points
+private _spiralGrowth = 20;    // How much the spiral grows per point
+
 {
     private _angle = _baseAngle * _forEachIndex;
-    private _distance = _approachDistance + (random 500 - random 500); // Varied distances
+    private _spiralDistance = _minSafeDistance + (_spiralGrowth * _forEachIndex); // Spiral growth
+    private _distance = _approachDistance + _spiralDistance + (random 200 - random 100); // Add some randomness
     private _pos = _targetPos getPos [_distance, (_dir - 180) + _angle];
-    _pos = [_pos, 0, 200, 10, 0, 0.2, 0, [], [_pos, _pos]] call BIS_fnc_findSafePos;
+    
+    // Find safe position with larger search radius and minimum building distance
+    _pos = [_pos, 0, 300, 15, 0, 0.3, 0, [], [_pos, _pos]] call BIS_fnc_findSafePos;
+    
+    // Ensure minimum distance from other spawn points
+    private _isSafe = true;
+    {
+        if (_pos distance2D _x < _minSafeDistance) then {
+            _isSafe = false;
+        };
+    } forEach _spawnPositions;
+    
+    // If position isn't safe, try to find a new one
+    if (!_isSafe) then {
+        for "_i" from 1 to 5 do {
+            _distance = _approachDistance + _spiralDistance + (random 300);
+            _pos = _targetPos getPos [_distance, (_dir - 180) + _angle + (random 60 - random 60)];
+            _pos = [_pos, 0, 300, 15, 0, 0.3, 0, [], [_pos, _pos]] call BIS_fnc_findSafePos;
+            _isSafe = true;
+            {
+                if (_pos distance2D _x < _minSafeDistance) then {
+                    _isSafe = false;
+                };
+            } forEach _spawnPositions;
+            if (_isSafe) exitWith {};
+        };
+    };
+    
     _spawnPositions pushBack _pos;
 } forEach ([] call {private _arr = []; for "_i" from 1 to _spawnCount do {_arr pushBack _i}; _arr});
 
