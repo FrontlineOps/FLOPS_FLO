@@ -195,7 +195,11 @@ for "_spawnIndex" from 1 to _spawnCount do {
     
     // Add delay between spawns
     if (_spawnIndex > 1) then {
-        sleep (_delayPerSpawn + random 10 - random 10); // Add small randomization
+        private _delay = _delayPerSpawn + random 10 - random 10;
+        [_delay] spawn {
+            params ["_delay"];
+            sleep _delay;
+        };
     };
     
     // Only show announcements if within radio tower range
