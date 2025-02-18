@@ -21,8 +21,9 @@ params [
 _targetPos = if (_targetPos isEqualType objNull) then {getPos _targetPos} else {_targetPos};
 
 // Find nearest valid OPFOR outpost
-private _opforOutpostMarkers = allMapMarkers select {markerType _x == "o_installation" || markerType _x == "o_service" || markerType _x == "o_support"};
-
+private _opforOutpostMarkers = allMapMarkers select {
+    markerType _x in ["o_installation", "o_service", "o_support"]
+};
 
 private _nearestOutpost = "";
 private _nearestDistance = 1e10;
