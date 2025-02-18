@@ -35,7 +35,7 @@ publicVariable "MapBooard";
 
 				deleteMarker _M ; 
 
-				[getPos (_this select 0), 1000] call FLO_fnc_requestQRF;
+				[(_this select 0), 1000] call FLO_fnc_requestQRF;
 
 								[30, "RECON SITE"] execVM "Scripts\NOtification.sqf" ;
 

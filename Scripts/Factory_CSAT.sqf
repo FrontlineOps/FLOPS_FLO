@@ -336,7 +336,7 @@ _triggers = _alltriggers select {position _x inArea thisTrigger};
 ', ''];
 
 [50] execVM 'Scripts\Reward.sqf';
-[getPos thisTrigger, 1000] call FLO_fnc_requestQRF;
+[thisTrigger, 1000] call FLO_fnc_requestQRF;
 
 _markerName = ""AssaultMark"" + (str (position player));  
 _mrkr = createMarker [_markerName, position player]; 

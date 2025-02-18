@@ -159,7 +159,7 @@ _trgINT setTriggerStatements [
     "
     AVENGLOCC = 0;
     publicVariable 'AVENGLOCC';
-    [getPos thisTrigger, 200] call FLO_fnc_requestQRF;
+    [thisTrigger, 200] call FLO_fnc_requestQRF;
     ",
     ""
 ];

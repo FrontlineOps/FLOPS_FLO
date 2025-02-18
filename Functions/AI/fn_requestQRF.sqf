@@ -5,7 +5,7 @@
     Requests and spawns a Quick Reaction Force based on threat level and location.
     
     Parameters:
-    _targetPos - Position to respond to [Array]
+    _targetPos - Position to respond to [Array or Object] - Can be position array or trigger/object
     _radius - Radius of the area to consider for threat calculation [Number]
     
     Returns:
@@ -13,14 +13,16 @@
 */
 
 params [
-    ["_targetPos", [0,0,0], [[]], [3]],
+    ["_targetPos", [0,0,0], [[], objNull], [3]],
     ["_radius", 500, [0]]
 ];
 
+// Convert _targetPos to position array if it's an object
+_targetPos = if (_targetPos isEqualType objNull) then {getPos _targetPos} else {_targetPos};
+
 // Find nearest valid OPFOR outpost
-private _opforOutpostMarkers = allMapMarkers select {
-    markerType _x in ["o_installation", "o_service", "o_support"]
-};
+private _opforOutpostMarkers = allMapMarkers select {markerType _x == "o_installation" || markerType _x == "o_service" || markerType _x == "o_support"};
+
 
 private _nearestOutpost = "";
 private _nearestDistance = 1e10;
@@ -312,7 +314,7 @@ for "_spawnIndex" from 1 to _spawnCount do {
             
             // Add air support if first spawn
             if (_spawnIndex == 1) then {
-                [_targetPos, "CAS"] spawn FLO_fnc_airSupport;
+                [_targetPos, "CAS"] call FLO_fnc_airSupport;
             };
             
             // Add transport helicopter if using heli insert
@@ -354,7 +356,7 @@ for "_spawnIndex" from 1 to _spawnCount do {
             
             // Add air support if first spawn and aggression is high
             if (_spawnIndex == 1 && _AGGRSCORE > 5) then {
-                [_targetPos, "CAS"] spawn FLO_fnc_airSupport;
+                [_targetPos, "CAS"] call FLO_fnc_airSupport;
             };
         };
         

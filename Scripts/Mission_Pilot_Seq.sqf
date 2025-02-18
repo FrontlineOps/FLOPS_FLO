@@ -379,7 +379,7 @@ _M = [_MMarks,  (_this select 0)] call BIS_fnc_nearestPosition;
 deleteMarker _M ; 
 
 [50] execVM "Scripts\Reward.sqf";
-[getPos (_this select 0), 1500] call FLO_fnc_requestQRF;
+[(_this select 0), 1500] call FLO_fnc_requestQRF;
 				[50, "CAPTURED PILOT"] execVM "Scripts\NOtification.sqf" ;
 
 
