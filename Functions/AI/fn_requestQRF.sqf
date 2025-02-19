@@ -12,6 +12,11 @@
     Array - [success (Boolean), spawnedGroups (Array)]
 */
 
+// Check if communications are disrupted
+if (COMMSDIS != 0) exitWith {
+    [false, []]
+};
+
 params [
     ["_targetPos", [0,0,0], [[], objNull], [3]],
     ["_radius", 500, [0]]
