@@ -143,7 +143,9 @@ private _headgear = [
     "H_PilotHelmetHeli_B",
     "H_CrewHelmetHeli_B",
     "H_MilCap_mcamo",
-    "H_Booniehat_mcamo_hs"
+    "H_Booniehat_mcamo_hs",
+    "ACE_EHP",
+    "ACE_EarPlugs"
 ];
 
 // Equipment and items
@@ -160,14 +162,16 @@ private _toolItems = [
     "ACE_EntrenchingTool",
     "ACE_Flashlight_XL50",
     "ACE_MapTools",
-    "ACE_EarPlugs",
     "ACE_wirecutter",
     "ACE_DefusalKit",
     "ACE_Clacker",
     "ToolKit",
     "MineDetector",
     "ChemicalDetector_01_watch_F",
-    "B_UavTerminal"
+    "ACE_IR_Strobe_Item",
+    "B_UavTerminal",
+    "ItemcTab",
+    "ItemAndroid"
 ];
 
 private _navigationItems = [
@@ -176,10 +180,12 @@ private _navigationItems = [
     "ItemWatch",
     "ItemRadio",
     "ItemGPS",
-    "NVGoggles",
+    "ACE_NVG_Gen4",
+    "ACE_NVG_Gen4_WP",
     "Binocular",
     "Rangefinder",
     "Laserdesignator",
+    "ACE_MX2A",
     "ACE_Vector"
 ];
 
@@ -209,7 +215,8 @@ private _backpacks = [
     "B_CombinationUnitRespirator_01_F",
     "B_Patrol_Medic_bag_F",
     "B_Patrol_Supply_bag_F",
-    "B_Patrol_Respawn_bag_F"
+    "B_Patrol_Respawn_bag_F",
+    "tfw_ilbe_whip_mc"
 ];
 
 // Magazines and throwables
@@ -269,7 +276,14 @@ private _grenades = [
     "1Rnd_SmokeBlue_Grenade_shell",
     "1Rnd_SmokeGreen_Grenade_shell",
     "1Rnd_SmokeOrange_Grenade_shell",
+    "ACE_40mm_Flare_white",
+    "ACE_40mm_Flare_red",
+    "ACE_40mm_Flare_green",
+    "ACE_40mm_Flare_ir",
     "ACE_M84",
+    "ACE_CTS9",
+    "ACE_M14",
+    "KAT_M7A3",
     "Chemlight_green",
     "ACE_Chemlight_HiRed",
     "ACE_Chemlight_HiGreen"
