@@ -126,6 +126,8 @@ waitUntil {(didJIP) || (TRG1LOCC == 1)};
 waitUntil {(didJIP) || (TRG2LOCC == 1)};
 waitUntil {(didJIP) || (TRG3LOCC == 1)};
 
+[] call FLO_fnc_restrictedArsenal;
+
 // SYSTEMs Init Clients
 Triggers0 = execVM "Scripts\init_Triggers.sqf";
 waitUntil {sleep 1; scriptDone Triggers0 };

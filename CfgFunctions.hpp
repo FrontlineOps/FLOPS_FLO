@@ -22,4 +22,10 @@ class FLO {
         class requestQRF            {};
         class heliInsert            {};
     };
+
+    class Arsenal {
+        file = "Functions\Arsenal";
+
+        class restrictedArsenal {};
+    };
 };

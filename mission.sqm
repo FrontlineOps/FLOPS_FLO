@@ -16,7 +16,7 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=16628;
+		nextID=16649;
 	};
 	class Camera
 	{
@@ -27,7 +27,7 @@ class EditorData
 	};
 };
 binarizationWanted=0;
-sourceName="BSP_CO";
+sourceName="BSP_CO_Altis";
 addons[]=
 {
 	"A3_Structures_F_EPA_Walls",
@@ -8278,7 +8278,6 @@ class Mission
 					};
 					id=123578;
 					type="LocationCity_F";
-					atlOffset=0.29646683;
 				};
 				class Item8
 				{
