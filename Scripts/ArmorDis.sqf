@@ -1,7 +1,7 @@
 sleep 18 ;
 
 
-[parseText "<t color='#1AA3FF' font='PuristaBold' align = 'right' shadow = '1' size='2'>+ Enemy Armored Support Dismantled </t><br /><t  align = 'right' shadow = '1' size='1'>For the Next Hour</t>", [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+["showNotification", ["SUPPORT DISABLED", "Enemy Armored Support Dismantled For the Next Hour", "success"]] call FLO_fnc_intelSystem;
 
 
 

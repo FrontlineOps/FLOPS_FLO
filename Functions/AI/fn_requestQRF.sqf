@@ -400,7 +400,7 @@ missionNamespace setVariable [_qrfVarName, []];
         if ([_elementApproachPos] call _fnc_hasRadioCoverage) then {
             // Announce reinforcements periodically
             if (_spawnIndex == 1) then {
-                [parseText "<t color='#FF3619' font='PuristaBold' align = 'right' shadow = '1' size='2'>! WARNING !</t><br /><t  color='#FF3619'  align = 'right' shadow = '1' size='1'>Enemy QRF Forces Inbound!</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+                ["showNotification", ["! WARNING !", "Enemy QRF Forces Inbound!", "warning"]] call FLO_fnc_intelSystem;
                 private _attackingAtGrid = mapGridPosition _elementApproachPos;
                 [[west,"HQ"], "Enemy QRF forces detected moving at grid " + _attackingAtGrid] remoteExec ["sideChat", 0];
             } else {
@@ -410,7 +410,7 @@ missionNamespace setVariable [_qrfVarName, []];
                         "More hostile units approaching!",
                         "Enemy reinforcements moving in!"
                     ];
-                    [_msg] remoteExec ["hint", 0];
+                    ["showNotification", ["! WARNING !", _msg, "warning"]] call FLO_fnc_intelSystem;
                 };
             };
         };

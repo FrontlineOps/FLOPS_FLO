@@ -324,37 +324,6 @@ I1_WP_1 SetWaypointType "CYCLE";
 I1_WP_1 setWaypointBehaviour "SAFE";
 I1_WP_1 setWaypointSpeed "LIMITED";
 
-
-_nearRoad = selectRandom ( (getpos thisBaseTrigger) nearRoads 300 ) ; 
-_V = createVehicle [ selectRandom East_Ground_Vehicles_Heavy, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V setDir _dir;
-CrewGroup = createVehicleCrew _V; 
-_VC = createGroup East;
-{[_x] join _VC} forEach units CrewGroup;
-
-sleep 3;
-_nearRoad2 =thisBaseTrigger nearRoads 1500 ; 
-_nearRoad1 = thisBaseTrigger nearRoads 800 ; 
-
-_nearRoadleft = _nearRoad2 - _nearRoad1;
-_nearRoad0 = selectRandom _nearRoadleft; 
-I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
-I1_WP_0 SetWaypointType "MOVE";
-I1_WP_0 setWaypointBehaviour "SAFE";
-I1_WP_0 setWaypointSpeed "LIMITED";
-
-I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
-I1_WP_00 SetWaypointType "MOVE";
-I1_WP_00 setWaypointBehaviour "SAFE";
-I1_WP_00 setWaypointSpeed "LIMITED";
-
-I1_WP_1 = _VC addWaypoint [getPos _nearRoad0, 3];
-I1_WP_1 SetWaypointType "CYCLE";
-I1_WP_1 setWaypointBehaviour "SAFE";
-I1_WP_1 setWaypointSpeed "LIMITED";
-
 };
 
 
@@ -710,7 +679,7 @@ _trg setTriggerActivation ["WEST SEIZED", "PRESENT", true];
 _trg setTriggerStatements [  
 "this",  "  
 
-[parseText '<t color=""#1AA3FF"" font=""PuristaBold"" align = ""right"" shadow = ""1"" size=""2"">SITREP</t><br /><t color=""#959393"" align = ""right"" shadow = ""1"" size=""0.8"">Friendly Forces Dominating the Battle,</t><br /><t color=""#959393"" align = ""right"" shadow = ""1"" size=""0.8"">Keep Up the Fight, We will Capture and Secure the Outpost,</t>', [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ['BIS_fnc_textTiles', 0];
+["showNotification", ["SITREP", "Friendly Forces Dominating the Battle\nKeep Up the Fight, We will Capture and Secure the Outpost", "info"]] call FLO_fnc_intelSystem;
 _allMarks = allMapMarkers select {markerType _x == 'n_support'};  
 _FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
 						_FOBMrk setMarkerColor 'ColorGrey' ;	

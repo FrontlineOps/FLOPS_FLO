@@ -105,7 +105,7 @@ if (count _humanPlayers > 0) then {
         _ENMASSmarkerName setMarkerSize [2.5, 2.5];
         _ENMASSmarkerName setMarkerAlpha 0.5;
 
-        [parseText "<t color='#FF3619' font='PuristaBold' align = 'right' shadow = '1' size='2'>! WARNING !</t><br /><t  color='#FF3619'  align = 'right' shadow = '1' size='1'>Friendly Objective is Under Attack</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+        ["showNotification", ["! WARNING !", "Friendly Objective is Under Attack!", "warning"]] call FLO_fnc_intelSystem;
         private _attackingAtGrid = mapGridPosition getMarkerPos _ENMASSmarkerName;
         [[west,"HQ"], "Friendly Location Under Enemy attack at grid" + _attackingAtGrid] remoteExec ["sideChat", 0];
 
@@ -336,7 +336,7 @@ if (count _humanPlayers > 0) then {
 
 			", ""
         ];
-        [parseText "<t color='#FF3619' font='PuristaBold' align = 'right' shadow = '1' size='2'>! WARNING !</t><br /><t  color='#FF3619'  align = 'right' shadow = '1' size='1'>Enemy Deployed New Military Installation</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+        ["showNotification", ["! WARNING !", "Enemy Deployed New Military Installation!", "warning"]] call FLO_fnc_intelSystem;
         _attackingAtGrid = mapGridPosition getMarkerPos _ENMASSmarkerName;
         [[west,"HQ"], "Enemy Deployed New Military Installation at grid " + _attackingAtGrid] remoteExec ["sideChat", 0];
     };
@@ -528,7 +528,7 @@ if (count _humanPlayers > 0) then {
 				", ""
         ];
 
-        [parseText "<t color='#FF3619' font='PuristaBold' align = 'right' shadow = '1' size='2'>! WARNING !</t><br /><t  color='#FF3619'  align = 'right' shadow = '1' size='1'>Enemy Deployed New Military Installation</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+        ["showNotification", ["! WARNING !", "Enemy Deployed New Military Installation!", "warning"]] call FLO_fnc_intelSystem;
         _attackingAtGrid = mapGridPosition getMarkerPos _ENMASSmarkerName;
         [[west,"HQ"], "Enemy Deployed New Military Installation at grid " + _attackingAtGrid] remoteExec ["sideChat", 0];
     };

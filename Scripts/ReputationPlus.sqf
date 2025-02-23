@@ -6,7 +6,7 @@ _REPSCORE = parseNumber (markerText _mrkr) ;
 
 if (_REPSCORE != 16) then {
 
-[parseText "<t color='#00DB07' font='PuristaBold' align = 'right' shadow = '1' size='2'>REPUTATION</t><br /><t  align = 'right' shadow = '1' size='1'>Increased + + + </t>", [0, 0.5, 1, 1], nil, 4, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+["showNotification", ["REPUTATION", "Increased + + +", "success"]] call FLO_fnc_intelSystem;
 
 
 _NewScore = _REPSCORE + 1; 

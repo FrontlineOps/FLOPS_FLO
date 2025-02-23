@@ -1,5 +1,3 @@
-
-
 _Chance = selectRandom [1, 2, 3]; 
 
 _nearRoad = selectRandom ( (getpos player) nearRoads 500 ) ; 
@@ -18,7 +16,7 @@ openMap true;
 
 sleep 5;
 
-[parseText "<t color='#1AA3FF' font='PuristaBold' align = 'right' shadow = '1' size='2.5'>Mission : Clear Minefield</t><br /><t  align = 'right' shadow = '1' size='2'>_ Disarm Every Mine in the Area</t>", [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+["showNotification", ["CIVILIAN MISSION", "Clear Minefield - Disarm Every Mine in the Area", "info"]] call FLO_fnc_intelSystem;
 
 
 _V = createVehicle [ VP,getpos _nearRoad, [], 4, "NONE"]; 

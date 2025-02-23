@@ -6,12 +6,13 @@
     Intel decays over time but can be increased through intel collection and radio tower control.
     
     Parameter(s):
-    _mode - The function mode to execute ["init", "get", "add", "notify"] (String)
+    _mode - The function mode to execute ["init", "get", "add", "notify", "showNotification"] (String)
     _params - Parameters based on mode (Array)
         init: [] - No parameters needed
         get: [] - No parameters needed
         add: [_amount, _source] - Amount to add and source of intel
         notify: [_message, _importance] - Message to broadcast and its importance (1-3)
+        showNotification: [_title, _message, _type] - Title, message and type ("warning", "intel", "success", "info")
     
     Returns:
     Based on mode:
@@ -19,6 +20,7 @@
         get: Number - Current intel level
         add: Number - New intel level
         notify: Boolean - True if message was broadcast
+        showNotification: Boolean - True if notification was shown
 */
 
 params [
@@ -95,8 +97,14 @@ switch (_mode) do {
         // Apply radio tower bonus if any exist
         private _radioTowers = FLO_Intel_System getOrDefault ["radioTowers", 0];
         private _bonus = 1 + (_radioTowers * _RADIO_TOWER_BONUS);
-        private _adjustedAmount = _amount * _bonus;
         
+        // Add small intel gain for intel items
+        if (_source == "intel_item") then {
+            _amount = 0.005;
+            _bonus = 1; // No radio tower bonus for intel items
+        };
+        
+        private _adjustedAmount = _amount * _bonus;
         private _current = FLO_Intel_System getOrDefault ["intelLevel", 0];
         private _new = ((_current + _adjustedAmount) min _MAX_INTEL_LEVEL) max _MIN_INTEL_LEVEL;
         
@@ -139,6 +147,52 @@ switch (_mode) do {
             private _formattedMsg = format [
                 "<t color='%1' font='PuristaBold' align='right' shadow='1' size='1.2'>INTELLIGENCE UPDATE</t><br/><t align='right' shadow='1' size='1'>%2</t>",
                 _color,
+                _message
+            ];
+            
+            [parseText _formattedMsg, [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+            true
+        } else {
+            false
+        };
+    };
+    
+    case "showNotification": {
+        _params params [
+            ["_title", "", [""]],
+            ["_message", "", [""]],
+            ["_type", "info", [""]]
+        ];
+        
+        // Get current intel level
+        private _intelLevel = FLO_Intel_System getOrDefault ["intelLevel", 0];
+        private _radioTowers = FLO_Intel_System getOrDefault ["radioTowers", 0];
+        
+        // Define notification requirements based on type
+        private _requirements = switch (_type) do {
+            case "warning": { [50, 2] }; // Requires 50 intel or 2 radio towers
+            case "intel": { [25, 1] };   // Requires 25 intel or 1 radio tower
+            case "success": { [0, 0] };  // Always shown
+            case "info": { [0, 0] };     // Always shown
+            default { [25, 1] };         // Default to intel requirements
+        };
+        
+        _requirements params ["_requiredIntel", "_requiredTowers"];
+        
+        // Check if we meet requirements
+        if (_intelLevel >= _requiredIntel || _radioTowers >= _requiredTowers) then {
+            private _color = switch (_type) do {
+                case "warning": { "#FF3619" };  // Red
+                case "intel": { "#FACE00" };    // Yellow
+                case "success": { "#00DB07" };  // Green
+                case "info": { "#1AA3FF" };     // Blue
+                default { "#FFFFFF" };          // White
+            };
+            
+            private _formattedMsg = format [
+                "<t color='%1' font='PuristaBold' align='right' shadow='1' size='2'>%2</t><br/><t align='right' shadow='1' size='1'>%3</t>",
+                _color,
+                _title,
                 _message
             ];
             

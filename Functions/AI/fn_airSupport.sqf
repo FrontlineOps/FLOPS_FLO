@@ -359,6 +359,21 @@ private _airSupport = createHashMapObject [_airSupportTypeDef, [_aircraftType, _
 // Add to active units if creation was successful
 if (!isNull (_airSupport get "vehicle")) then {
     FLO_airSupport get "activeUnits" set [str _airSupport, _airSupport];
+    
+    // Notify about air support based on mission type
+    private _notificationText = switch (_missionType) do {
+        case "CAS": {
+            if (_aircraftType isKindOf "Helicopter") then {
+                "Enemy attack helicopters providing close air support!"
+            } else {
+                "Enemy CAS aircraft providing air support!"
+            };
+        };
+        case "STRIKE": {"Enemy strike aircraft inbound!"};
+        default {"Enemy aircraft detected!"};
+    };
+    
+    ["showNotification", ["! WARNING !", _notificationText, "warning"]] call FLO_fnc_intelSystem;
 };
 
 _airSupport
