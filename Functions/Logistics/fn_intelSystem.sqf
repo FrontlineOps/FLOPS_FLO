@@ -49,6 +49,10 @@ switch (_mode) do {
     case "init": {
         // Start the intel decay loop
         [] spawn {
+            private _INTEL_DECAY_RATE = 0.1;
+            private _MIN_INTEL_LEVEL = 0;
+            private _DECAY_INTERVAL = 60;
+            
             while {true} do {
                 private _currentLevel = FLO_Intel_System getOrDefault ["intelLevel", 0];
                 private _lastUpdate = FLO_Intel_System getOrDefault ["lastUpdate", time];
