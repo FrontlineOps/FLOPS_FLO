@@ -1211,3 +1211,7 @@ _x setVariable ["ACE_isEOD", true];
 [] call FLO_fnc_opforResources;
 [[east,"HQ"], "OPFOR Resource System Initialized..."] remoteExec ["sideChat", 0];
 
+// Initialize Intel System
+["init"] call FLO_fnc_intelSystem;
+["Intelligence System Online", "WEST"] remoteExec ["hint", 0];
+

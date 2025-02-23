@@ -27,6 +27,7 @@ class FLO {
         file = "Functions\Logistics";
 
         class opforResources {};
+        class intelSystem {};
     };
 
     class Arsenal {
