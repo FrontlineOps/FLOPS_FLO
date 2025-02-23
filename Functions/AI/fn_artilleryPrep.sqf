@@ -4,6 +4,7 @@
     Description:
     Manages the preparation of artillery batteries for a fire mission.
     Uses a HashMapArray to track and manage artillery units and their states.
+    Now requires OPFOR resources for deployment and ammo resupply.
     
     Parameters:
     _targetPos - Target position for artillery fire [Array]
@@ -14,6 +15,10 @@
 */
 
 params ["_targetPos", "_intensity"];
+
+// Resource costs
+private _BATTERY_COST = 30;    // Cost to deploy a new battery
+private _RELOAD_COST = 15;     // Cost to reload a battery
 
 // Initialize global artillery tracking if not exists
 if (isNil "FLO_artilleryBatteries") then {
@@ -29,13 +34,20 @@ private _maxBatteries = 4 + (floor random 6); // Random between 4 and 10 batteri
 private _currentBatteries = count FLO_artilleryBatteries;
 private _newBatteriesCount = (1 + floor(_intensity/3)) min (_maxBatteries - _currentBatteries);
 
+// Check resources for new batteries
+private _totalBatteryCost = _BATTERY_COST * _newBatteriesCount;
+if (!["spend", [_totalBatteryCost]] call FLO_fnc_opforResources) then {
+    _newBatteriesCount = 0;
+    diag_log "[FLO][Artillery] Insufficient resources for new artillery batteries";
+};
+
 // Define artillery magazines
 private _artilleryMagazines = [
     "32Rnd_155mm_Mo_shells_O",
     "2Rnd_155mm_Mo_Cluster_O"
 ];
 
-// Create new batteries if under cap
+// Create new batteries if under cap and resources available
 if (_newBatteriesCount > 0) then {
     for "_i" from 1 to _newBatteriesCount do {
         // Find position far from target but with good firing position
@@ -95,9 +107,14 @@ if (_newBatteriesCount > 0) then {
         if (_state == "RELOADING") then {
             private _reloadStartTime = _batteryInfo get "reloadStartTime";
             if ((time - _reloadStartTime) >= _RELOAD_TIME) then {
-                _batteryInfo set ["state", "READY"];
-                _batteryInfo set ["ammoLevel", 1];
-                [_arty, 1] remoteExec ["setVehicleAmmo", _arty];
+                // Check resources for reload
+                if (["spend", [_RELOAD_COST]] call FLO_fnc_opforResources) then {
+                    _batteryInfo set ["state", "READY"];
+                    _batteryInfo set ["ammoLevel", 1];
+                    [_arty, 1] remoteExec ["setVehicleAmmo", _arty];
+                } else {
+                    diag_log "[FLO][Artillery] Insufficient resources to reload artillery battery";
+                };
             };
         };
         

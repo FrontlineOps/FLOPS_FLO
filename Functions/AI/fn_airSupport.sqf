@@ -4,6 +4,7 @@
     Description:
     Manages air support operations including CAS and strike missions.
     Uses OOP-like approach with hashMapObjects for advanced aircraft behavior and mission execution.
+    Requires OPFOR resources for initial aircraft deployment.
     
     Parameters:
     _targetPos - Target position for air support [Array]
@@ -20,6 +21,13 @@ params [
     ["_missionType", "CAS", [""]],
     ["_aircraftType", "", [""]],
     ["_altitude", 1000, [0]]
+];
+
+// Resource costs for initial deployment
+private _AIRCRAFT_COSTS = createHashMapFromArray [
+    ["CAS_HELI", 40],     // Attack helicopter
+    ["CAS_JET", 60],      // CAS jet
+    ["STRIKE", 80]        // Strike aircraft
 ];
 
 // Initialize air support system if not exists
@@ -39,7 +47,25 @@ if (isNil "FLO_airSupport") then {
             _ranges
         }],
         ["createAircraft", {
-            params ["_type", "_pos", "_alt"];
+            params ["_type", "_pos", "_alt", "_missionType"];
+            
+            // Calculate cost based on aircraft type and mission
+            private _cost = if (_type isKindOf "Helicopter") then {
+                _AIRCRAFT_COSTS get "CAS_HELI"
+            } else {
+                if (_missionType == "CAS") then {
+                    _AIRCRAFT_COSTS get "CAS_JET"
+                } else {
+                    _AIRCRAFT_COSTS get "STRIKE"
+                }
+            };
+            
+            // Check if we have enough resources
+            if (!["spend", [_cost]] call FLO_fnc_opforResources) exitWith {
+                diag_log "[FLO][AirSupport] Insufficient resources for new aircraft";
+                objNull
+            };
+            
             private _spawnPos = [_pos, 8000, 10000, 100, 0] call BIS_fnc_findSafePos;
             _spawnPos set [2, _alt];
             
@@ -100,7 +126,12 @@ private _airSupportTypeDef = [
     // Methods
     ["#create", {
         params ["_type", "_pos", "_alt", "_missionType", "_standoffRange"];
-        private _aircraft = FLO_airSupport call ["createAircraft", [_type, _pos, _alt]];
+        private _aircraft = FLO_airSupport call ["createAircraft", [_type, _pos, _alt, _missionType]];
+        
+        if (isNull _aircraft) exitWith {
+            diag_log "[FLO][AirSupport] Failed to create aircraft due to insufficient resources";
+        };
+        
         _self set ["vehicle", _aircraft];
         _self set ["group", group _aircraft];
         _self set ["type", _type];
@@ -325,7 +356,9 @@ if (_aircraftType isKindOf "Helicopter") then {
 // Create the air support object with proper parameter array syntax
 private _airSupport = createHashMapObject [_airSupportTypeDef, [_aircraftType, _targetPos, _altitude, _missionType, _standoffRange]];
 
-// Add to active units
-FLO_airSupport get "activeUnits" set [str _airSupport, _airSupport];
+// Add to active units if creation was successful
+if (!isNull (_airSupport get "vehicle")) then {
+    FLO_airSupport get "activeUnits" set [str _airSupport, _airSupport];
+};
 
 _airSupport
