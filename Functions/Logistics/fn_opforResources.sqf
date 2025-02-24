@@ -43,16 +43,16 @@ if (isNil "FLO_OPFOR_Resources") then {
 
 switch (_mode) do {
     case "init": {
-        // Resource generation values per installation type
-        private _resourceValues = createHashMapFromArray [
-            ["o_installation", 7],     // Military Outpost
-            ["n_support", 5],          // Military Service Post
-            ["o_support", 3],          // Military Road Post
-            ["n_installation", 15]     // Military Headquarters
-        ];
-
         // Main resource generation loop
         [] spawn {
+            // Resource generation values per installation type
+            private _resourceValues = createHashMapFromArray [
+                ["o_installation", 7],     // Military Outpost
+                ["n_support", 5],          // Military Service Post
+                ["o_support", 3],          // Military Road Post
+                ["n_installation", 15]     // Military Headquarters
+            ];
+
             while {true} do {
                 private _totalResources = 0;
                 
