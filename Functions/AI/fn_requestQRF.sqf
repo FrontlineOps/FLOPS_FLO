@@ -89,10 +89,10 @@ private _spawnCount = switch (true) do {
 // Calculate total cost
 private _totalCost = _baseCost * _spawnCount;
 
-// Check if we have enough resources
-if (!["spend", [_totalCost]] call FLO_fnc_opforResources) exitWith {
-    ["Insufficient resources for QRF deployment"] remoteExec ["hint", remoteExecutedOwner];
-    [false, []]
+// Try to spend resources for QRF
+if !(["spend", [_totalCost]] call FLO_fnc_opforResources) then {
+    _spawnCount = 0;
+    diag_log "[FLO][QRF] Insufficient resources for QRF deployment";
 };
 
 // Get spawn position
