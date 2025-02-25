@@ -36,9 +36,9 @@ private _newBatteriesCount = (1 + floor(_intensity/3)) min (_maxBatteries - _cur
 
 // Check resources for new batteries
 private _totalBatteryCost = _BATTERY_COST * _newBatteriesCount;
-if (!["spend", [_totalBatteryCost]] call FLO_fnc_opforResources) then {
-    _newBatteriesCount = 0;
+if !(["spend", [_totalBatteryCost]] call FLO_fnc_opforResources) exitWith {
     diag_log "[FLO][Artillery] Insufficient resources for new artillery batteries";
+    false
 };
 
 // Define artillery magazines
