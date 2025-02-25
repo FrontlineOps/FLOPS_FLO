@@ -134,8 +134,8 @@ if (isNil "FLO_OPFOR_Resources") then {
                     // Add accumulated resources to the system
                     FLO_OPFOR_Resources call ["addResources", [_totalResources]];
                     
-                    // Wait 5 minutes before next resource generation cycle
-                    sleep 300;
+                    // Wait 10 minutes before next resource generation cycle
+                    sleep 600;
                 };
             };
         }]
