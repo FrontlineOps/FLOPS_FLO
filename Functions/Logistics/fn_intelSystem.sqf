@@ -66,27 +66,24 @@ if (isNil "FLO_Intel_System") then {
         ["addIntel", {
             params ["_amount", "_source"];
             
-            // Apply radio tower bonus if any exist
-            private _radioTowers = _self call "updateRadioTowers";
+            private _radioTowers = _self call ["updateRadioTowers", []];
             private _bonus = 1 + (_radioTowers * _RADIO_TOWER_BONUS);
             
-            // Add small intel gain for intel items
             if (_source == "intel_item") then {
                 _amount = 0.005;
-                _bonus = 1; // No radio tower bonus for intel items
+                _bonus = 1;
             };
             
             private _adjustedAmount = _amount * _bonus;
-            private _current = _self call "getIntelLevel";
+            private _current = _self call ["getIntelLevel", []];
             private _new = ((_current + _adjustedAmount) min _MAX_INTEL_LEVEL) max _MIN_INTEL_LEVEL;
             
             _self set ["intelLevel", _new];
             _self set ["lastUpdate", time];
             
-            // Notify players of significant intel gains
             if (_adjustedAmount >= 10) then {
                 private _msg = format ["Significant intelligence gained from %1", _source];
-                ["notify", [_msg, 2]] call FLO_fnc_intelSystem;
+                _self call ["notify", [_msg, 2]];
             };
             
             _new
@@ -94,21 +91,18 @@ if (isNil "FLO_Intel_System") then {
         ["initDecayLoop", {
             [] spawn {
                 while {true} do {
-                    private _currentLevel = FLO_Intel_System call "getIntelLevel";
+                    private _currentLevel = FLO_Intel_System call ["getIntelLevel", []];
                     private _lastUpdate = FLO_Intel_System get "lastUpdate";
-                    private _timePassed = (time - _lastUpdate) / 60; // Convert to minutes
+                    private _timePassed = (time - _lastUpdate) / 60;
                     
-                    // Update radio tower count
-                    FLO_Intel_System call "updateRadioTowers";
+                    FLO_Intel_System call ["updateRadioTowers", []];
                     
-                    // Calculate decay
                     private _decay = _INTEL_DECAY_RATE * _timePassed;
                     private _newLevel = (_currentLevel - _decay) max _MIN_INTEL_LEVEL;
                     
                     FLO_Intel_System set ["intelLevel", _newLevel];
                     FLO_Intel_System set ["lastUpdate", time];
                     
-                    // Visual feedback based on intel level
                     private _intelText = switch (true) do {
                         case (_newLevel >= 75): {"High Intelligence Coverage"};
                         case (_newLevel >= 50): {"Moderate Intelligence Coverage"};
@@ -116,7 +110,6 @@ if (isNil "FLO_Intel_System") then {
                         default {"Minimal Intelligence Coverage"};
                     };
                     
-                    // Update intel status for all players
                     [_intelText, _newLevel] remoteExec ["hint", 0];
                     
                     sleep _DECAY_INTERVAL;
@@ -126,22 +119,20 @@ if (isNil "FLO_Intel_System") then {
         ["notify", {
             params ["_message", "_importance"];
             
-            // Get current intel level and radio towers
-            private _intelLevel = _self call "getIntelLevel";
-            private _radioTowers = _self call "getRadioTowers";
+            private _intelLevel = _self call ["getIntelLevel", []];
+            private _radioTowers = _self call ["getRadioTowers", []];
             
-            // Only broadcast if we have enough intel/radio coverage
             private _canBroadcast = switch (_importance) do {
-                case 3: { _intelLevel >= 75 || _radioTowers >= 3 }; // Critical intel
-                case 2: { _intelLevel >= 50 || _radioTowers >= 2 }; // Important intel
-                default { _intelLevel >= 25 || _radioTowers >= 1 }; // Regular intel
+                case 3: { _intelLevel >= 75 || _radioTowers >= 3 };
+                case 2: { _intelLevel >= 50 || _radioTowers >= 2 };
+                default { _intelLevel >= 25 || _radioTowers >= 1 };
             };
             
             if (_canBroadcast) then {
                 private _color = switch (_importance) do {
-                    case 3: { "#FF0000" }; // Red for critical
-                    case 2: { "#FFA500" }; // Orange for important
-                    default { "#00FF00" }; // Green for regular
+                    case 3: { "#FF0000" };
+                    case 2: { "#FFA500" };
+                    default { "#00FF00" };
                 };
                 
                 private _formattedMsg = format [
@@ -159,29 +150,26 @@ if (isNil "FLO_Intel_System") then {
         ["showNotification", {
             params ["_title", "_message", "_type"];
             
-            // Get current intel level and radio towers
-            private _intelLevel = _self call "getIntelLevel";
-            private _radioTowers = _self call "getRadioTowers";
+            private _intelLevel = _self call ["getIntelLevel", []];
+            private _radioTowers = _self call ["getRadioTowers", []];
             
-            // Define notification requirements based on type
             private _requirements = switch (_type) do {
-                case "warning": { [50, 2] }; // Requires 50 intel or 2 radio towers
-                case "intel": { [25, 1] };   // Requires 25 intel or 1 radio tower
-                case "success": { [0, 0] };  // Always shown
-                case "info": { [0, 0] };     // Always shown
-                default { [25, 1] };         // Default to intel requirements
+                case "warning": { [50, 2] };
+                case "intel": { [25, 1] };
+                case "success": { [0, 0] };
+                case "info": { [0, 0] };
+                default { [25, 1] };
             };
             
             _requirements params ["_requiredIntel", "_requiredTowers"];
             
-            // Check if we meet requirements
             if (_intelLevel >= _requiredIntel || _radioTowers >= _requiredTowers) then {
                 private _color = switch (_type) do {
-                    case "warning": { "#FF3619" };  // Red
-                    case "intel": { "#FACE00" };    // Yellow
-                    case "success": { "#00DB07" };  // Green
-                    case "info": { "#1AA3FF" };     // Blue
-                    default { "#FFFFFF" };          // White
+                    case "warning": { "#FF3619" };
+                    case "intel": { "#FACE00" };
+                    case "success": { "#00DB07" };
+                    case "info": { "#1AA3FF" };
+                    default { "#FFFFFF" };
                 };
                 
                 private _formattedMsg = format [
@@ -199,16 +187,18 @@ if (isNil "FLO_Intel_System") then {
         }]
     ];
     
-    FLO_Intel_System = createHashMapObject [_intelClass];
+    FLO_Intel_System = createHashMapObject [_intelClass, 0];
 };
 
 switch (_mode) do {
     case "init": {
-        [FLO_Intel_System, "initDecayLoop"] call {};
+        _self = FLO_Intel_System;
+        _self call ["initDecayLoop", []];
     };
     
     case "get": {
-        [FLO_Intel_System, "getIntelLevel"] call {}
+        _self = FLO_Intel_System;
+        _self call ["getIntelLevel", []]
     };
     
     case "add": {
@@ -216,7 +206,8 @@ switch (_mode) do {
             ["_amount", 0, [0]],
             ["_source", "", [""]]
         ];
-        [FLO_Intel_System, "addIntel", [_amount, _source]] call {}
+        _self = FLO_Intel_System;
+        _self call ["addIntel", [_amount, _source]]
     };
     
     case "notify": {
@@ -224,7 +215,8 @@ switch (_mode) do {
             ["_message", "", [""]],
             ["_importance", 1, [0]]
         ];
-        [FLO_Intel_System, "notify", [_message, _importance]] call {}
+        _self = FLO_Intel_System;
+        _self call ["notify", [_message, _importance]]
     };
     
     case "showNotification": {
@@ -233,6 +225,7 @@ switch (_mode) do {
             ["_message", "", [""]],
             ["_type", "info", [""]]
         ];
-        [FLO_Intel_System, "showNotification", [_title, _message, _type]] call {}
+        _self = FLO_Intel_System;
+        _self call ["showNotification", [_title, _message, _type]]
     };
 }; 

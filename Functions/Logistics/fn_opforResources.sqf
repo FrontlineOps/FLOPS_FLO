@@ -34,64 +34,76 @@ params [
 
 if (!isServer) exitWith {};
 
+// Debug logging
+diag_log format ["[FLO][Resources] Function called with mode: %1, params: %2", _mode, _params];
+diag_log format ["[FLO][Resources] FLO_OPFOR_Resources exists: %1", !isNil "FLO_OPFOR_Resources"];
+
+if (!isNil "FLO_OPFOR_Resources") then {
+    diag_log format ["[FLO][Resources] Current resources value: %1", FLO_OPFOR_Resources getOrDefault ["resources", "NOT_FOUND"]];
+};
+
 // Initialize OPFOR resources object if it doesn't exist
 if (isNil "FLO_OPFOR_Resources") then {
+    diag_log "[FLO][Resources] Creating new OPFOR Resources object";
+    
     private _resourceClass = [
         ["#type", "OPFORResources"],
-        ["#create", {
-            _self set ["resources", 0];
-            _self set ["lastUpdate", time];
-        }],
         ["resources", 0],
         ["lastUpdate", time],
+        ["#create", {
+            params ["_initialResources"];
+            _self set ["resources", _initialResources];
+            _self set ["lastUpdate", time];
+            diag_log format ["[FLO][Resources] Created new OPFOR Resources object with initial resources: %1", _initialResources];
+        }],
         ["getResources", {
-            _self getOrDefault ["resources", 0]
+            private _val = _self get "resources";
+            diag_log format ["[FLO][Resources] getResources called, returning: %1", _val];
+            _val
         }],
         ["addResources", {
             params ["_amount"];
-            private _current = _self getOrDefault ["resources", 0];
+            private _current = _self get "resources";
             private _new = _current + _amount;
             _self set ["resources", _new];
             _self set ["lastUpdate", time];
+            diag_log format ["[FLO][Resources] addResources: current(%1) + amount(%2) = new(%3)", _current, _amount, _new];
             _new
         }],
         ["spendResources", {
             params ["_amount"];
-            private _current = _self getOrDefault ["resources", 0];
+            private _current = _self get "resources";
+            diag_log format ["[FLO][Resources] spendResources: attempting to spend %1 from current %2", _amount, _current];
             if (_current >= _amount) then {
                 private _new = _current - _amount;
                 _self set ["resources", _new];
                 _self set ["lastUpdate", time];
+                diag_log format ["[FLO][Resources] spendResources: spent %1, new total: %2", _amount, _new];
                 true
             } else {
+                diag_log format ["[FLO][Resources] spendResources: failed to spend %1, insufficient funds (%2)", _amount, _current];
                 false
             }
         }],
         ["initResourceLoop", {
-            // Resource generation values per installation type
             private _resourceValues = createHashMapFromArray [
-                ["o_installation", 7],     // Military Outpost
-                ["n_support", 5],          // Military Service Post
-                ["o_support", 3],          // Military Road Post
-                ["n_installation", 15]     // Military Headquarters
+                ["o_installation", 7],
+                ["n_support", 5],
+                ["o_support", 3],
+                ["n_installation", 15]
             ];
 
             [] spawn {
                 while {true} do {
                     private _totalResources = 0;
-                    
-                    // Get all OPFOR installations
                     private _opforInstallations = allMapMarkers select {
                         markerColor _x in ["colorOPFOR", "ColorEAST"] && 
                         markerType _x in ["n_support", "o_support", "o_installation", "n_installation"]
                     };
                     
-                    // Calculate resources from each installation
                     {
                         private _markerType = markerType _x;
                         private _baseValue = _resourceValues getOrDefault [_markerType, 0];
-                        
-                        // Check if installation is under attack or contested
                         private _pos = getMarkerPos _x;
                         private _nearbyUnits = _pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], 500];
                         private _isContested = false;
@@ -102,41 +114,60 @@ if (isNil "FLO_OPFOR_Resources") then {
                             };
                         } forEach _nearbyUnits;
                         
-                        // Only add resources if not contested
                         if (!_isContested) then {
                             _totalResources = _totalResources + _baseValue;
                         };
                     } forEach _opforInstallations;
                     
-                    // Update OPFOR resources
-                    ["add", [_totalResources]] call FLO_fnc_opforResources;
-                    
-                    // Wait for next resource tick (5 minutes)
+                    FLO_OPFOR_Resources call ["addResources", [_totalResources]];
+                    diag_log format ["[FLO][Resources] Resource loop added %1 resources", _totalResources];
                     sleep 300;
                 };
             };
         }]
     ];
     
-    FLO_OPFOR_Resources = createHashMapObject [_resourceClass];
+    FLO_OPFOR_Resources = createHashMapObject [_resourceClass, 0];
+    diag_log format ["[FLO][Resources] Created OPFOR Resources HashMapObject: %1", FLO_OPFOR_Resources];
 };
 
-switch (_mode) do {
+// Debug log the current state
+diag_log format ["[FLO][Resources] Pre-switch state - Mode: %1, Resources: %2", 
+    _mode, 
+    if (!isNil "FLO_OPFOR_Resources") then { FLO_OPFOR_Resources getOrDefault ["resources", "NOT_FOUND"] } else { "OBJECT_NOT_FOUND" }
+];
+
+private _result = switch (_mode) do {
     case "init": {
-        [FLO_OPFOR_Resources, "initResourceLoop"] call {};
+        diag_log "[FLO][Resources] Initializing resource loop";
+        _self = FLO_OPFOR_Resources;
+        _self call ["initResourceLoop", []];
+        0
     };
     
     case "get": {
-        [FLO_OPFOR_Resources, "getResources"] call {}
+        _self = FLO_OPFOR_Resources;
+        private _resources = _self call ["getResources", []];
+        diag_log format ["[FLO][Resources] Get command returning: %1", _resources];
+        _resources
     };
     
     case "add": {
         _params params [["_amount", 0, [0]]];
-        [FLO_OPFOR_Resources, "addResources", [_amount]] call {}
+        _self = FLO_OPFOR_Resources;
+        private _newTotal = _self call ["addResources", [_amount]];
+        diag_log format ["[FLO][Resources] Add command returning: %1", _newTotal];
+        _newTotal
     };
     
     case "spend": {
         _params params [["_amount", 0, [0]]];
-        [FLO_OPFOR_Resources, "spendResources", [_amount]] call {}
+        _self = FLO_OPFOR_Resources;
+        private _success = _self call ["spendResources", [_amount]];
+        diag_log format ["[FLO][Resources] Spend command returning: %1", _success];
+        _success
     };
-}; 
+};
+
+diag_log format ["[FLO][Resources] Function returning: %1", _result];
+_result 

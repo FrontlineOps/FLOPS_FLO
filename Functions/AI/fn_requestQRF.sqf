@@ -34,9 +34,6 @@ private _resourceCosts = createHashMapFromArray [
     ["Tier1", 10]   // Light/Motorized
 ];
 
-// Get current OPFOR resources
-private _currentResources = ["get"] call FLO_fnc_opforResources;
-
 // Find nearest valid OPFOR outpost
 private _opforOutpostMarkers = allMapMarkers select {
     markerType _x in ["o_installation", "o_service", "o_support"]
@@ -90,9 +87,9 @@ private _spawnCount = switch (true) do {
 private _totalCost = _baseCost * _spawnCount;
 
 // Try to spend resources for QRF
-if !(["spend", [_totalCost]] call FLO_fnc_opforResources) then {
-    _spawnCount = 0;
+if !(["spend", [_totalCost]] call FLO_fnc_opforResources) exitWith {
     diag_log "[FLO][QRF] Insufficient resources for QRF deployment";
+    [false, []];
 };
 
 // Get spawn position
