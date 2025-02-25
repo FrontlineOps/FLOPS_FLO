@@ -34,18 +34,8 @@ params [
 
 if (!isServer) exitWith {};
 
-// Debug logging
-diag_log format ["[FLO][Resources] Function called with mode: %1, params: %2", _mode, _params];
-diag_log format ["[FLO][Resources] FLO_OPFOR_Resources exists: %1", !isNil "FLO_OPFOR_Resources"];
-
-if (!isNil "FLO_OPFOR_Resources") then {
-    diag_log format ["[FLO][Resources] Current resources value: %1", FLO_OPFOR_Resources getOrDefault ["resources", "NOT_FOUND"]];
-};
-
 // Initialize OPFOR resources object if it doesn't exist
 if (isNil "FLO_OPFOR_Resources") then {
-    diag_log "[FLO][Resources] Creating new OPFOR Resources object";
-    
     private _resourceClass = [
         ["#type", "OPFORResources"],
         ["resources", 0],
@@ -54,12 +44,9 @@ if (isNil "FLO_OPFOR_Resources") then {
             params ["_initialResources"];
             _self set ["resources", _initialResources];
             _self set ["lastUpdate", time];
-            diag_log format ["[FLO][Resources] Created new OPFOR Resources object with initial resources: %1", _initialResources];
         }],
         ["getResources", {
-            private _val = _self get "resources";
-            diag_log format ["[FLO][Resources] getResources called, returning: %1", _val];
-            _val
+            _self get "resources"
         }],
         ["addResources", {
             params ["_amount"];
@@ -67,21 +54,18 @@ if (isNil "FLO_OPFOR_Resources") then {
             private _new = _current + _amount;
             _self set ["resources", _new];
             _self set ["lastUpdate", time];
-            diag_log format ["[FLO][Resources] addResources: current(%1) + amount(%2) = new(%3)", _current, _amount, _new];
             _new
         }],
         ["spendResources", {
             params ["_amount"];
             private _current = _self get "resources";
-            diag_log format ["[FLO][Resources] spendResources: attempting to spend %1 from current %2", _amount, _current];
             if (_current >= _amount) then {
                 private _new = _current - _amount;
                 _self set ["resources", _new];
                 _self set ["lastUpdate", time];
-                diag_log format ["[FLO][Resources] spendResources: spent %1, new total: %2", _amount, _new];
                 true
             } else {
-                diag_log format ["[FLO][Resources] spendResources: failed to spend %1, insufficient funds (%2)", _amount, _current];
+                diag_log format ["[FLO][Resources] Failed to spend %1 resources (current: %2)", _amount, _current];
                 false
             }
         }],
@@ -120,7 +104,6 @@ if (isNil "FLO_OPFOR_Resources") then {
                     } forEach _opforInstallations;
                     
                     FLO_OPFOR_Resources call ["addResources", [_totalResources]];
-                    diag_log format ["[FLO][Resources] Resource loop added %1 resources", _totalResources];
                     sleep 300;
                 };
             };
@@ -128,18 +111,10 @@ if (isNil "FLO_OPFOR_Resources") then {
     ];
     
     FLO_OPFOR_Resources = createHashMapObject [_resourceClass, 0];
-    diag_log format ["[FLO][Resources] Created OPFOR Resources HashMapObject: %1", FLO_OPFOR_Resources];
 };
-
-// Debug log the current state
-diag_log format ["[FLO][Resources] Pre-switch state - Mode: %1, Resources: %2", 
-    _mode, 
-    if (!isNil "FLO_OPFOR_Resources") then { FLO_OPFOR_Resources getOrDefault ["resources", "NOT_FOUND"] } else { "OBJECT_NOT_FOUND" }
-];
 
 private _result = switch (_mode) do {
     case "init": {
-        diag_log "[FLO][Resources] Initializing resource loop";
         _self = FLO_OPFOR_Resources;
         _self call ["initResourceLoop", []];
         0
@@ -147,27 +122,20 @@ private _result = switch (_mode) do {
     
     case "get": {
         _self = FLO_OPFOR_Resources;
-        private _resources = _self call ["getResources", []];
-        diag_log format ["[FLO][Resources] Get command returning: %1", _resources];
-        _resources
+        _self call ["getResources", []]
     };
     
     case "add": {
         _params params [["_amount", 0, [0]]];
         _self = FLO_OPFOR_Resources;
-        private _newTotal = _self call ["addResources", [_amount]];
-        diag_log format ["[FLO][Resources] Add command returning: %1", _newTotal];
-        _newTotal
+        _self call ["addResources", [_amount]]
     };
     
     case "spend": {
         _params params [["_amount", 0, [0]]];
         _self = FLO_OPFOR_Resources;
-        private _success = _self call ["spendResources", [_amount]];
-        diag_log format ["[FLO][Resources] Spend command returning: %1", _success];
-        _success
+        _self call ["spendResources", [_amount]]
     };
 };
 
-diag_log format ["[FLO][Resources] Function returning: %1", _result];
 _result 
