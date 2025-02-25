@@ -34,17 +34,40 @@ params [
 
 if (!isServer) exitWith {};
 
-// Initialize OPFOR resources hashmap if it doesn't exist
+// Initialize OPFOR resources object if it doesn't exist
 if (isNil "FLO_OPFOR_Resources") then {
-    FLO_OPFOR_Resources = createHashMap;
-    FLO_OPFOR_Resources set ["resources", 0];
-    FLO_OPFOR_Resources set ["lastUpdate", time];
-};
-
-switch (_mode) do {
-    case "init": {
-        // Main resource generation loop
-        [] spawn {
+    private _resourceClass = [
+        ["#type", "OPFORResources"],
+        ["#create", {
+            _self set ["resources", 0];
+            _self set ["lastUpdate", time];
+        }],
+        ["resources", 0],
+        ["lastUpdate", time],
+        ["getResources", {
+            _self getOrDefault ["resources", 0]
+        }],
+        ["addResources", {
+            params ["_amount"];
+            private _current = _self getOrDefault ["resources", 0];
+            private _new = _current + _amount;
+            _self set ["resources", _new];
+            _self set ["lastUpdate", time];
+            _new
+        }],
+        ["spendResources", {
+            params ["_amount"];
+            private _current = _self getOrDefault ["resources", 0];
+            if (_current >= _amount) then {
+                private _new = _current - _amount;
+                _self set ["resources", _new];
+                _self set ["lastUpdate", time];
+                true
+            } else {
+                false
+            }
+        }],
+        ["initResourceLoop", {
             // Resource generation values per installation type
             private _resourceValues = createHashMapFromArray [
                 ["o_installation", 7],     // Military Outpost
@@ -53,69 +76,67 @@ switch (_mode) do {
                 ["n_installation", 15]     // Military Headquarters
             ];
 
-            while {true} do {
-                private _totalResources = 0;
-                
-                // Get all OPFOR installations
-                private _opforInstallations = allMapMarkers select {
-                    markerColor _x in ["colorOPFOR", "ColorEAST"] && 
-                    markerType _x in ["n_support", "o_support", "o_installation", "n_installation"]
-                };
-                
-                // Calculate resources from each installation
-                {
-                    private _markerType = markerType _x;
-                    private _baseValue = _resourceValues getOrDefault [_markerType, 0];
+            [] spawn {
+                while {true} do {
+                    private _totalResources = 0;
                     
-                    // Check if installation is under attack or contested
-                    private _pos = getMarkerPos _x;
-                    private _nearbyUnits = _pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], 500];
-                    private _isContested = false;
-                    
-                    {
-                        if (side _x == west) exitWith {
-                            _isContested = true;
-                        };
-                    } forEach _nearbyUnits;
-                    
-                    // Only add resources if not contested
-                    if (!_isContested) then {
-                        _totalResources = _totalResources + _baseValue;
+                    // Get all OPFOR installations
+                    private _opforInstallations = allMapMarkers select {
+                        markerColor _x in ["colorOPFOR", "ColorEAST"] && 
+                        markerType _x in ["n_support", "o_support", "o_installation", "n_installation"]
                     };
-                } forEach _opforInstallations;
-                
-                // Update OPFOR resources
-                ["add", [_totalResources]] call FLO_fnc_opforResources;
-                
-                // Wait for next resource tick (5 minutes)
-                sleep 300;
+                    
+                    // Calculate resources from each installation
+                    {
+                        private _markerType = markerType _x;
+                        private _baseValue = _resourceValues getOrDefault [_markerType, 0];
+                        
+                        // Check if installation is under attack or contested
+                        private _pos = getMarkerPos _x;
+                        private _nearbyUnits = _pos nearEntities [["Man", "Car", "Tank", "Ship", "LandVehicle"], 500];
+                        private _isContested = false;
+                        
+                        {
+                            if (side _x == west) exitWith {
+                                _isContested = true;
+                            };
+                        } forEach _nearbyUnits;
+                        
+                        // Only add resources if not contested
+                        if (!_isContested) then {
+                            _totalResources = _totalResources + _baseValue;
+                        };
+                    } forEach _opforInstallations;
+                    
+                    // Update OPFOR resources
+                    ["add", [_totalResources]] call FLO_fnc_opforResources;
+                    
+                    // Wait for next resource tick (5 minutes)
+                    sleep 300;
+                };
             };
-        };
+        }]
+    ];
+    
+    FLO_OPFOR_Resources = createHashMapObject [_resourceClass];
+};
+
+switch (_mode) do {
+    case "init": {
+        [FLO_OPFOR_Resources, "initResourceLoop"] call {};
     };
     
     case "get": {
-        FLO_OPFOR_Resources getOrDefault ["resources", 0]
+        [FLO_OPFOR_Resources, "getResources"] call {}
     };
     
     case "add": {
         _params params [["_amount", 0, [0]]];
-        private _current = FLO_OPFOR_Resources getOrDefault ["resources", 0];
-        private _new = _current + _amount;
-        FLO_OPFOR_Resources set ["resources", _new];
-        FLO_OPFOR_Resources set ["lastUpdate", time];
-        _new
+        [FLO_OPFOR_Resources, "addResources", [_amount]] call {}
     };
     
     case "spend": {
         _params params [["_amount", 0, [0]]];
-        private _current = FLO_OPFOR_Resources getOrDefault ["resources", 0];
-        if (_current >= _amount) then {
-            private _new = _current - _amount;
-            FLO_OPFOR_Resources set ["resources", _new];
-            FLO_OPFOR_Resources set ["lastUpdate", time];
-            true
-        } else {
-            false
-        };
+        [FLO_OPFOR_Resources, "spendResources", [_amount]] call {}
     };
 }; 
