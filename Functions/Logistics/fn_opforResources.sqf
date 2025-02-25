@@ -96,7 +96,9 @@ if (isNil "FLO_OPFOR_Resources") then {
             ];
 
             // Spawn continuous resource generation loop
-            [] spawn {
+            [_resourceValues] spawn {
+                params ["_resourceValues"];
+                
                 while {true} do {
                     private _totalResources = 0;
                     

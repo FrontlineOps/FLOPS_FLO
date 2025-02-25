@@ -111,7 +111,15 @@ if (isNil "FLO_Intel_System") then {
         // Initialize the intel decay loop
         // This runs continuously in the background
         ["initDecayLoop", {
-            [] spawn {
+            [_INTEL_DECAY_RATE, _RADIO_TOWER_BONUS, _MAX_INTEL_LEVEL, _MIN_INTEL_LEVEL, _DECAY_INTERVAL] spawn {
+                params [
+                    "_INTEL_DECAY_RATE",
+                    "_RADIO_TOWER_BONUS",
+                    "_MAX_INTEL_LEVEL",
+                    "_MIN_INTEL_LEVEL",
+                    "_DECAY_INTERVAL"
+                ];
+                
                 while {true} do {
                     // Get current intel state
                     private _currentLevel = FLO_Intel_System call ["getIntelLevel", []];
