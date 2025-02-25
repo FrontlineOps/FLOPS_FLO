@@ -3,6 +3,7 @@
     
     Description:
     Requests and spawns a Quick Reaction Force based on threat level and location.
+    Now requires and consumes OPFOR resources.
     
     Parameters:
     _targetPos - Position to respond to [Array or Object] - Can be position array or trigger/object
@@ -24,6 +25,14 @@ params [
 
 // Convert _targetPos to position array if it's an object
 _targetPos = if (_targetPos isEqualType objNull) then {getPos _targetPos} else {_targetPos};
+
+// Resource costs for different QRF tiers
+private _resourceCosts = createHashMapFromArray [
+    ["Tier4", 50],  // Heavy combined arms
+    ["Tier3", 35],  // Mechanized + Air support
+    ["Tier2", 20],  // Mechanized/Motorized
+    ["Tier1", 10]   // Light/Motorized
+];
 
 // Find nearest valid OPFOR outpost
 private _opforOutpostMarkers = allMapMarkers select {
@@ -60,6 +69,28 @@ private _AGGRSCORE = parseNumber (markerText ((allMapMarkers select {markerColor
 private _threatLevel = linearConversion [500, 2500, _radius, 0, 1, true];
 private _responseParams = [_threatLevel, _AGGRSCORE] call FLO_fnc_calculateQRFResponse;
 _responseParams params ["_tier", "_type"];
+
+// Calculate total resource cost based on tier and spawn count
+private _baseCost = _resourceCosts get _tier;
+private _spawnCount = switch (true) do {
+    case (_AGGRSCORE >= 15): { 18 };  // Maximum aggression - full BTG-sized response
+    case (_AGGRSCORE >= 13): { 15 };  // Very high aggression - reinforced battalion
+    case (_AGGRSCORE >= 11): { 12 };  // High aggression - battalion-sized
+    case (_AGGRSCORE >= 9): { 9 };    // Medium-high aggression - reinforced company
+    case (_AGGRSCORE >= 7): { 6 };    // Medium aggression - company-sized
+    case (_AGGRSCORE >= 5): { 4 };    // Low-medium aggression - reinforced platoon
+    case (_AGGRSCORE >= 3): { 2 };    // Low aggression - platoon-sized
+    default { 1 };                    // Minimal aggression - squad-sized
+};
+
+// Calculate total cost
+private _totalCost = _baseCost * _spawnCount;
+
+// Try to spend resources for QRF
+if !(["spend", [_totalCost]] call FLO_fnc_opforResources) exitWith {
+    diag_log "[FLO][QRF] Insufficient resources for QRF deployment";
+    [false, []];
+};
 
 // Get spawn position
 private _spawnPos = getMarkerPos _nearestOutpost;
@@ -146,18 +177,6 @@ private _fnc_addIntelToGroup = {
     {
         _x addItem selectRandom _intelItems;
     } forEach _selectedUnits;
-};
-
-// Spawn appropriate QRF based on tier
-private _spawnCount = switch (true) do {
-    case (_AGGRSCORE >= 15): { 18 };  // Maximum aggression - full BTG-sized response
-    case (_AGGRSCORE >= 13): { 15 };  // Very high aggression - reinforced battalion
-    case (_AGGRSCORE >= 11): { 12 };  // High aggression - battalion-sized
-    case (_AGGRSCORE >= 9): { 9 };    // Medium-high aggression - reinforced company
-    case (_AGGRSCORE >= 7): { 6 };    // Medium aggression - company-sized
-    case (_AGGRSCORE >= 5): { 4 };    // Low-medium aggression - reinforced platoon
-    case (_AGGRSCORE >= 3): { 2 };    // Low aggression - platoon-sized
-    default { 1 };                    // Minimal aggression - squad-sized
 };
 
 // Calculate spawn positions in a spiral pattern with safe distances
@@ -378,7 +397,7 @@ missionNamespace setVariable [_qrfVarName, []];
         if ([_elementApproachPos] call _fnc_hasRadioCoverage) then {
             // Announce reinforcements periodically
             if (_spawnIndex == 1) then {
-                [parseText "<t color='#FF3619' font='PuristaBold' align = 'right' shadow = '1' size='2'>! WARNING !</t><br /><t  color='#FF3619'  align = 'right' shadow = '1' size='1'>Enemy QRF Forces Inbound!</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+                ["showNotification", ["! WARNING !", "Enemy QRF Forces Inbound!", "warning"]] call FLO_fnc_intelSystem;
                 private _attackingAtGrid = mapGridPosition _elementApproachPos;
                 [[west,"HQ"], "Enemy QRF forces detected moving at grid " + _attackingAtGrid] remoteExec ["sideChat", 0];
             } else {
@@ -388,7 +407,7 @@ missionNamespace setVariable [_qrfVarName, []];
                         "More hostile units approaching!",
                         "Enemy reinforcements moving in!"
                     ];
-                    [_msg] remoteExec ["hint", 0];
+                    ["showNotification", ["! WARNING !", _msg, "warning"]] call FLO_fnc_intelSystem;
                 };
             };
         };

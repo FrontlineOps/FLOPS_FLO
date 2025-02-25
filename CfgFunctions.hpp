@@ -23,6 +23,13 @@ class FLO {
         class heliInsert            {};
     };
 
+    class Logistics {
+        file = "Functions\Logistics";
+
+        class opforResources {};
+        class intelSystem {};
+    };
+
     class Arsenal {
         file = "Functions\Arsenal";
 

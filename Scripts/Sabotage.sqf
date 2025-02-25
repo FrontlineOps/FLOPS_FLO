@@ -46,7 +46,9 @@ publicVariable "Lightsss";
 	//   _x enableGunLights "ForceOn";
   // } foreach (allUnits select {side _x == east}); 
 
- [parseText "<t color='#1AA3FF' font='PuristaBold' align = 'right' shadow = '1' size='2.5'>+ Region Power Disabled</t><br /><t  align = 'right' shadow = '1' size='1.5'>For the Next Hour</t>", [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+sleep 18;
+
+["showNotification", ["SUPPORT DISABLED", "Region Power Disabled For the Next Hour", "success"]] call FLO_fnc_intelSystem;
 
 PowerOFF = 1 ;
 publicVariable "PowerOFF";

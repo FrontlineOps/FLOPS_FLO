@@ -15,8 +15,8 @@ if (_chance23 > 1) then {
 							_mrkr setMarkerAlpha 0.6;
 							
 								sleep 1;
-								[parseText "<t color='#FACE00' font='PuristaBold' align = 'right' shadow = '1' size='2'>+ NEW INTEL</t><br /><t  align = 'right' shadow = '1' size='1'>Civilian Intel Received </t>", [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
-									_attackingAtGrid = mapGridPosition getMarkerPos _mrkr;
+								["showNotification", ["+ NEW INTEL", "Civilian Intel Received", "intel"]] call FLO_fnc_intelSystem;
+								_attackingAtGrid = mapGridPosition getMarkerPos _mrkr;
 								[[west,"HQ"], "Enemy Presence Confirmed at grid " + _attackingAtGrid] remoteExec ["sideChat", 0];
 			}else{
 
@@ -31,8 +31,8 @@ if (_chance23 > 1) then {
 							_mrkr setMarkerAlpha 0.6;
 
 								sleep 1;
-								[parseText "<t color='#FACE00' font='PuristaBold' align = 'right' shadow = '1' size='2'>+ NEW INTEL</t><br /><t  align = 'right' shadow = '1' size='1'>Civilian Intel Received </t>", [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
-									_attackingAtGrid = mapGridPosition getMarkerPos _mrkr;
+								["showNotification", ["+ NEW INTEL", "Civilian Intel Received", "intel"]] call FLO_fnc_intelSystem;
+								_attackingAtGrid = mapGridPosition getMarkerPos _mrkr;
 								[[west,"HQ"], "Enemy Presence Confirmed at grid " + _attackingAtGrid] remoteExec ["sideChat", 0];
 			};
 
@@ -51,8 +51,8 @@ if (_chance23 > 1) then {
 						_mrkr setMarkerAlpha 0.6;
 
 									sleep 1;
-									[parseText "<t color='#FACE00' font='PuristaBold' align = 'right' shadow = '1' size='2'>+ NEW INTEL</t><br /><t  align = 'right' shadow = '1' size='1'>Civilian Intel Received </t>", [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
-										_attackingAtGrid = mapGridPosition getMarkerPos _mrkr;
+									["showNotification", ["+ NEW INTEL", "Civilian Intel Received", "intel"]] call FLO_fnc_intelSystem;
+									_attackingAtGrid = mapGridPosition getMarkerPos _mrkr;
 									[[west,"HQ"], "Enemy Presence Confirmed at grid " + _attackingAtGrid] remoteExec ["sideChat", 0];
 					};
 	};

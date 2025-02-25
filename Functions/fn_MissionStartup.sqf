@@ -1,10 +1,6 @@
-
-
 if (!isServer) exitWith {};
 
-
 Centerposition = [worldSize / 2, worldsize / 2, 0];
-
 
 ["LOADING . . . "] remoteExec ["hint", 0];
 ///////// Init Weather //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,16 +19,13 @@ if (_OverC_Int >= 0.6) then {
 
 0 setOvercast _OverC_Int;
 
-
 forceWeatherChange;
 
 [[west,"HQ"], "Weather Initialized Successfully ..."] remoteExec ["sideChat", 0];
 
-
 ///////// Init FOBs //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 {  
-
 Centerposition = [worldSize / 2, worldsize / 2, 0];
  FOBB = nearestObjects [Centerposition, [F_HQ_01], 40000];
 publicVariable "FOBB";
@@ -42,12 +35,10 @@ publicVariable "FOBB";
  } ;
  } foreach FOBB;
 
-
- } remoteExec ["call", 0]; 
+} remoteExec ["call", 0]; 
 
 FOBB = nearestObjects [Centerposition, ["Land_Cargo_HQ_V3_F", "Land_Cargo_HQ_V1_F"], 40000];
 publicVariable "FOBB";
-
 
 { 
 	if (count (nearestObjects [ _x, [F_HQ_C_01], 20]) > 0) then { 
@@ -1216,3 +1207,10 @@ _x setVariable ["ACE_isEOD", true];
 
 [[west,"HQ"], "Mission StartUp Initialized Successfully ..."] remoteExec ["sideChat", 0];
 
+// Initialize OPFOR Resource System
+[] call FLO_fnc_opforResources;
+[[west,"HQ"], "OPFOR Resource System Initialized..."] remoteExec ["sideChat", 0];
+
+// Initialize Intel System
+[] call FLO_fnc_intelSystem;
+[[west,"HQ"], "Intelligence System Online"] remoteExec ["sideChat", 0];

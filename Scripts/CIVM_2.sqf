@@ -23,7 +23,7 @@ openMap true;
 
 sleep 5;
 
-[parseText "<t color='#1AA3FF' font='PuristaBold' align = 'right' shadow = '1' size='2.5'>Mission : Deliver Resources</t><br /><t  align = 'right' shadow = '1' size='2'>_ Transport the Cargo to the Destination</t>", [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+["showNotification", ["CIVILIAN MISSION", "Deliver Resources - Transport the Cargo to the Destination", "info"]] call FLO_fnc_intelSystem;
 
 //////GROUPS/////////////////////////////////////////////////////////////////////////////////////////
 
