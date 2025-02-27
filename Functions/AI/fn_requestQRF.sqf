@@ -73,11 +73,6 @@ _responseParams params ["_tier", "_type"];
 // Calculate total resource cost based on tier and spawn count
 private _baseCost = _resourceCosts get _tier;
 private _spawnCount = switch (true) do {
-    case (_AGGRSCORE >= 15): { 18 };  // Maximum aggression - full BTG-sized response
-    case (_AGGRSCORE >= 13): { 15 };  // Very high aggression - reinforced battalion
-    case (_AGGRSCORE >= 11): { 12 };  // High aggression - battalion-sized
-    case (_AGGRSCORE >= 9): { 9 };    // Medium-high aggression - reinforced company
-    case (_AGGRSCORE >= 7): { 6 };    // Medium aggression - company-sized
     case (_AGGRSCORE >= 5): { 4 };    // Low-medium aggression - reinforced platoon
     case (_AGGRSCORE >= 3): { 2 };    // Low aggression - platoon-sized
     default { 1 };                    // Minimal aggression - squad-sized
