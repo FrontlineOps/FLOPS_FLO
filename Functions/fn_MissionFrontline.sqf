@@ -22,7 +22,24 @@ if (isNil "OffensiveOperationUnderway") then {
 };
 
 // Create the FrontlineManager object
-private _frontlineManager = createHashMapObject [
+private _frontlineManagerDeclaration = [
+    ["#type", "FrontlineManager"],
+    
+    ["#create", {
+        // Constructor code
+        diag_log "[FLO] FrontlineManager initialized";
+    }],
+    
+    ["#delete", {
+        // Destructor code
+        diag_log "[FLO] FrontlineManager destroyed";
+    }],
+    
+    ["#str", {
+        // String representation
+        "FrontlineManager Object"
+    }],
+    
     ["_activationConditions", {
         private _self = _this;
         private _headlessClients = entities "HeadlessClient_F";
@@ -488,4 +505,5 @@ private _frontlineManager = createHashMapObject [
 ];
 
 // Run the frontline manager
+private _frontlineManager = createHashMapObject [_frontlineManagerDeclaration];
 _frontlineManager call ["run", []];
