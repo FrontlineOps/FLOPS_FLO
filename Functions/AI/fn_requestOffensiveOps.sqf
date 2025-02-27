@@ -678,6 +678,6 @@ missionNamespace setVariable [_offensiveOpsVarName, []];
 [{
     OffensiveOperationUnderway = false;
     diag_log "[FLO][OffensiveOps] Offensive operation complete, flag reset";
-}, [], 1800] call CBA_fnc_waitAndExecute; // Reset after 30 minutes
+}, [], 3600] call CBA_fnc_waitAndExecute; // Reset after 60 minutes
 
 true
