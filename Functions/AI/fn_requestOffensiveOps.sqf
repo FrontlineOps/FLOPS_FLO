@@ -16,12 +16,20 @@ params [
     ["_aggressionScore", 0, [0]]
 ];
 
+// Check if an offensive operation is already underway
+if (OffensiveOperationUnderway && !isNil "OffensiveOperationUnderway") exitWith {
+    diag_log "[FLO][OffensiveOps] Another offensive operation is already underway";
+    false
+};
+
 // Resource cost for offensive operations
 private _operationCost = 100 + (_aggressionScore * 10);
 
 // Try to spend resources for offensive operation
 if !(["spend", [_operationCost]] call FLO_fnc_opforResources) exitWith {
     diag_log "[FLO][OffensiveOps] Insufficient resources for offensive operation";
+    // Reset the flag if we can't afford the operation
+    OffensiveOperationUnderway = false;
     false
 };
 
@@ -88,21 +96,23 @@ _assaultMarkerName setMarkerSize [2.5, 2.5];
 _assaultMarkerName setMarkerAlpha 0.5;
 
 // Notify players
-["showNotification", ["! WARNING !", "Friendly Objective is Under Attack!", "warning"]] call FLO_fnc_intelSystem;
+["showNotification", ["! CRITICAL WARNING !", "Friendly Objective is Under Attack!", "warning"]] call FLO_fnc_intelSystem;
 private _attackingAtGrid = mapGridPosition getMarkerPos _assaultMarkerName;
-[[west,"HQ"], "Friendly Location Under Enemy attack at grid " + _attackingAtGrid] remoteExec ["sideChat", 0];
+[[west,"HQ"], "ALERT: Friendly Location Under Enemy attack at grid " + _attackingAtGrid] remoteExec ["sideChat", 0];
 
 // Calculate attack direction
 private _assaultAzimuth = (getMarkerPos _targetBluforMarker) getDir (getMarkerPos _sourceOpforMarker);
 
 // Start with recon if aggression is high enough
 if (_aggressionScore > 3) then {
+    ["showNotification", ["! INTELLIGENCE !", "Enemy reconnaissance aircraft spotted!", "info"]] call FLO_fnc_intelSystem;
     [getPos _targetBuilding] call FLO_fnc_airRecon;
     sleep 300;
 };
 
 // Artillery prep based on aggression
 if (_aggressionScore > 5) then {
+    ["showNotification", ["! WARNING !", "Enemy artillery fire incoming!", "warning"]] call FLO_fnc_intelSystem;
     [getPos _targetBuilding, _aggressionScore] call FLO_fnc_artilleryPrep;
     sleep 180;
 };
@@ -165,6 +175,7 @@ sleep 10;
 
 // Heavy reinforcements for high aggression
 if (_aggressionScore > 10) then {
+    ["showNotification", ["! WARNING !", "Enemy heavy reinforcements detected!", "warning"]] call FLO_fnc_intelSystem;
     [_targetBuilding] execVM "Scripts\VehiInsert_CSAT_3.sqf";
     
     private _patrolGroup3 = [
@@ -183,5 +194,11 @@ if (_aggressionScore > 10) then {
     private _waypoint3 = _patrolGroup3 addWaypoint [getMarkerPos _targetBluforMarker, 0];
     _waypoint3 setWaypointType "MOVE";
 };
+
+// Schedule the reset of the offensive operation flag after a delay
+[{
+    OffensiveOperationUnderway = false;
+    diag_log "[FLO][OffensiveOps] Offensive operation complete, flag reset";
+}, [], 1800] call CBA_fnc_waitAndExecute; // Reset after 30 minutes
 
 true 

@@ -157,15 +157,7 @@ if (!HC1Present && !HC2Present && !HC3Present) then {
 
 //Mission Commander System
 remoteExec ["FLO_fnc_MissionStartup", 2];
-[] spawn {
-    [[west,"HQ"], "Mission FrontLines System Activated ..."] remoteExec ["sideChat", 0];
-    while {true} do {
-        frontLineComplete = false;
-        call FLO_fnc_MissionFrontline;
-        waitUntil {frontLineComplete}; // wait until function has completed
-        sleep 300; // Loop every 5 minutes (this is plus the extra time wait inside MissionFrontline)
-    };
-};
+[] call FLO_fnc_MissionFrontline;
 
 //Saving System
 AutoSaveSwitchVal = "AutoSaveSwitch" call BIS_fnc_getParamValue;

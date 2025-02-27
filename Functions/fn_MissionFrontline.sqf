@@ -4,6 +4,8 @@
     Description:
     Manages OPFOR frontline operations including offensive operations, 
     establishing new outposts, and setting up roadblocks.
+    Uses OOP approach with HashMapObject for better organization and state management.
+    Runs as a continuous loop that manages its own timing.
     
     Parameters:
     None
@@ -14,77 +16,73 @@
 
 if (!isServer) exitWith {};
 
-// Check activation conditions for frontline operations
-private _activationConditions = {
-    private _headlessClients = entities "HeadlessClient_F";
-    private _humanPlayers = allPlayers - _headlessClients;
-    private _minPlayers = 4; // Adjust this number as needed
-    
-    // Check various conditions that could activate the mission
-    private _bunkerMarkersExist = count (allMapMarkers select {markerType _x == "loc_Bunker" && markerAlpha _x == 0.003}) > 0; // loc_Bunker markers are created if Players capture an Objective (Outpost/HQ)
-    private _sufficientPlayers = count _humanPlayers >= _minPlayers;
-    private _aggrScore = parseNumber (markerText ((allMapMarkers select {markerColor _x == "Color6_FD_F"}) select 0));
-    private _highAggression = _aggrScore >= 5;
-    
-    // Return true if any activation condition is met
-    (_bunkerMarkersExist && _sufficientPlayers) || 
-    (_highAggression && _sufficientPlayers)
+// Initialize global variable to track offensive operations
+if (isNil "OffensiveOperationUnderway") then {
+    OffensiveOperationUnderway = false;
 };
 
-// Wait for activation conditions to be met
-waitUntil {
-    sleep 120;
-    call _activationConditions
-};
-
-sleep 10;
-
-// Clean up any existing bunker markers
-private _bunkerMarkers = allMapMarkers select {markerType _x == "loc_Bunker" && markerAlpha _x == 0.003};
-{deleteMarker _x;} forEach _bunkerMarkers;
-
-// Get current aggression score
-private _aggressionScore = parseNumber (markerText ((allMapMarkers select {markerColor _x == "Color6_FD_F"}) select 0));
-
-// OPFOR Frontline becomes more aggressive as aggression increases
-// Adjust timing based on aggression level
-private _operationDelay = 900;
-if (_aggressionScore > 3) then {_operationDelay = 700;};
-if (_aggressionScore > 9) then {_operationDelay = 500;};
-if (_aggressionScore > 12) then {_operationDelay = 300;};
-sleep _operationDelay;
-
-// Check if players are still online
-private _headlessClients = entities "HeadlessClient_F";
-private _humanPlayers = allPlayers - _headlessClients;
-
-if (count _humanPlayers > 0) then {
-    // Determine operation type based on random chance
-    private _operationType = selectRandom [6, 7, 8, 9, 10, 11];
-
-    // Higher aggression means more aggressive operations
-    if (_aggressionScore > 7) then {
-        _operationType = selectRandom [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-    };
-
-    // Time factor - OPFOR prefers dawn/dusk operations
-    private _timeOfDay = dayTime;
-    private _weatherCondition = overcast;
-    private _playerCount = count _humanPlayers;
-    private _timeFactor = 0;
+// Create the FrontlineManager object
+private _frontlineManager = createHashMapObject [
+    ["_activationConditions", {
+        private _self = _this;
+        private _headlessClients = entities "HeadlessClient_F";
+        private _humanPlayers = allPlayers - _headlessClients;
+        private _minPlayers = 4; // Adjust this number as needed
+        
+        // Check various conditions that could activate the mission
+        private _bunkerMarkersExist = count (allMapMarkers select {markerType _x == "loc_Bunker" && markerAlpha _x == 0.003}) > 0; // loc_Bunker markers are created if Players capture an Objective (Outpost/HQ)
+        private _sufficientPlayers = count _humanPlayers >= _minPlayers;
+        private _aggrScore = parseNumber (markerText ((allMapMarkers select {markerColor _x == "Color6_FD_F"}) select 0));
+        private _highAggression = _aggrScore >= 5;
+        
+        // Return true if any activation condition is met
+        (_bunkerMarkersExist && _sufficientPlayers) || 
+        (_highAggression && _sufficientPlayers)
+    }],
     
-    if (_timeOfDay > 4 && _timeOfDay < 6) then {_timeFactor = 0.3}; // Dawn
-    if (_timeOfDay > 18 && _timeOfDay < 20) then {_timeFactor = 0.3}; // Dusk
-    if (_timeOfDay > 22 || _timeOfDay < 4) then {_timeFactor = 0.2}; // Night
+    ["_cleanupBunkerMarkers", {
+        private _bunkerMarkers = allMapMarkers select {markerType _x == "loc_Bunker" && markerAlpha _x == 0.003};
+        {deleteMarker _x;} forEach _bunkerMarkers;
+    }],
     
-    private _weatherFactor = _weatherCondition * 0.2;
-    private _playerFactor = (_playerCount / 10) min 0.2;
-    private _aggressionFactor = (_aggressionScore / 15) min 0.5;
-    private _offensiveProbability = _timeFactor + _weatherFactor + _playerFactor + _aggressionFactor;
+    ["_getAggressionScore", {
+        parseNumber (markerText ((allMapMarkers select {markerColor _x == "Color6_FD_F"}) select 0))
+    }],
     
-    // Adjust operation type based on calculated probability
-    if (random 1 < _offensiveProbability) then {
-        _operationType = 8 + floor(random 4); // Force offensive operation (8-11)
+    ["_calculateOperationDelay", {
+        params ["_self"];
+        private _aggressionScore = _self call ["_getAggressionScore", []];
+        private _operationDelay = 900;
+        
+        if (_aggressionScore > 3) then {_operationDelay = 700;};
+        if (_aggressionScore > 9) then {_operationDelay = 500;};
+        if (_aggressionScore > 12) then {_operationDelay = 300;};
+        
+        _operationDelay
+    }],
+    
+    ["_calculateOffensiveProbability", {
+        params ["_self", "_humanPlayers", "_aggressionScore"];
+        
+        // Time factor - OPFOR prefers dawn/dusk operations
+        private _timeOfDay = dayTime;
+        private _weatherCondition = overcast;
+        private _playerCount = count _humanPlayers;
+        private _timeFactor = 0;
+        
+        if (_timeOfDay > 4 && _timeOfDay < 6) then {_timeFactor = 0.3}; // Dawn
+        if (_timeOfDay > 18 && _timeOfDay < 20) then {_timeFactor = 0.3}; // Dusk
+        if (_timeOfDay > 22 || _timeOfDay < 4) then {_timeFactor = 0.2}; // Night
+        
+        private _weatherFactor = _weatherCondition * 0.2;
+        private _playerFactor = (_playerCount / 10) min 0.2;
+        private _aggressionFactor = (_aggressionScore / 15) min 0.5;
+        
+        _timeFactor + _weatherFactor + _playerFactor + _aggressionFactor
+    }],
+    
+    ["_launchOffensiveOperation", {
+        params ["_self", "_aggressionScore"];
         
         // Notify players that OPFOR is preparing an offensive
         ["showNotification", ["! INTELLIGENCE !", "Enemy is preparing a major offensive operation!", "warning"]] call FLO_fnc_intelSystem;
@@ -95,16 +93,20 @@ if (count _humanPlayers > 0) then {
         sleep _preparationTime;
         
         // Check if players are still online before launching
-        _humanPlayers = allPlayers - (entities "HeadlessClient_F");
+        private _humanPlayers = allPlayers - (entities "HeadlessClient_F");
         if (count _humanPlayers > 0) then {
+            // Set global flag that offensive operation is underway
+            OffensiveOperationUnderway = true;
+            
             // Launch offensive operation
             [_aggressionScore] call FLO_fnc_requestOffensiveOps;
         };
-    };
-
-    // Create new OPFOR outpost (5-7)
-    if ((_operationType > 4) && (_operationType < 8)) then {
-        // Find suitable locations for new outpost
+    }],
+    
+    ["_findSuitableLocations", {
+        params ["_self", "_locationType"];
+        
+        // Find suitable OPFOR and BLUFOR installations
         private _opforInstallations = allMapMarkers select {
             markerType _x in ["loc_Power", "o_support", "n_support", "loc_Ruin", "n_installation", "o_installation"]
         };
@@ -122,12 +124,12 @@ if (count _humanPlayers > 0) then {
                 _distanceMap pushBack _distance;
             };
         } forEach _opforInstallations;
-
+        
         _distanceMap sort true;
         private _closestDistance = _distanceMap select 0;
         private _sourceOpforMarker = "";
         private _targetBluforMarker = "";
-
+        
         // Find the specific markers that match this distance
         {
             for "_i" from 0 to count _bluforInstallations - 1 do {
@@ -138,16 +140,16 @@ if (count _humanPlayers > 0) then {
                 };
             };
         } forEach _opforInstallations;
-
+        
         // Calculate distance and find suitable location between installations
         private _actualDistance = (getMarkerPos _sourceOpforMarker) distance (getMarkerPos _targetBluforMarker);
         private _intermediateDistance = _actualDistance * 2 / 3;
-
+        
         // Find elevated positions (mounts) in the area between installations
         private _mountsNearOpfor = nearestLocations [(getMarkerPos _sourceOpforMarker), ["Mount"], _intermediateDistance];
         private _mountsNearBlufor = nearestLocations [(getMarkerPos _targetBluforMarker), ["Mount"], _intermediateDistance];
         private _mountsInBetween = _mountsNearOpfor arrayIntersect _mountsNearBlufor;
-
+        
         // Filter out positions with players nearby
         private _validPositions = _mountsInBetween select {
             private _position = _x;
@@ -160,20 +162,27 @@ if (count _humanPlayers > 0) then {
             diag_log "[FLO] WARNING: No valid positions found without players nearby, using original list";
             _validPositions = _mountsInBetween;
         };
-
+        
+        // Return the results
+        [_validPositions, _sourceOpforMarker, _targetBluforMarker]
+    }],
+    
+    ["_createOutpost", {
+        params ["_self", "_validPositions"];
+        
         // Select a random position for the outpost
         private _selectedPosition = selectRandom _validPositions;
-
+        
         // Create marker for new outpost
         private _outpostMarkerName = "AssltOutpost" + (str ([0, 0, 0] getPos [(10 + (random 150)), (0 + (random 360))]));
         publicVariable "_outpostMarkerName";
-
+        
         createMarker [_outpostMarkerName, (locationPosition _selectedPosition)];
         _outpostMarkerName setMarkerType "o_support";
         _outpostMarkerName setMarkerColor "colorOPFOR";
         _outpostMarkerName setMarkerSize [1.2, 1.2];
         _outpostMarkerName setMarkerAlpha 1;
-
+        
         // Create trigger for outpost initialization
         private _outpostTrigger = createTrigger ["EmptyDetector", (locationPosition _selectedPosition), false];
         _outpostTrigger setTriggerArea [2000, 2000, 0, false, 100];
@@ -247,81 +256,25 @@ if (count _humanPlayers > 0) then {
         ["showNotification", ["! WARNING !", "Enemy Deployed New Military Installation!", "warning"]] call FLO_fnc_intelSystem;
         private _outpostGrid = mapGridPosition getMarkerPos _outpostMarkerName;
         [[west,"HQ"], "Enemy Deployed New Military Installation at grid " + _outpostGrid] remoteExec ["sideChat", 0];
-    };
-
-    // Create new roadblock (1-4)
-    if (_operationType < 5) then {
-        // Find suitable locations for new roadblock
-        private _opforInstallations = allMapMarkers select {
-            markerType _x in ["loc_Power", "o_support", "n_support", "loc_Ruin", "n_installation", "o_installation"]
-        };
+    }],
+    
+    ["_createRoadblock", {
+        params ["_self", "_validPositions"];
         
-        private _bluforInstallations = allMapMarkers select {
-            markerType _x == "b_installation" &&
-            (markerColor _x == "ColorYellow" || markerColor _x == "colorBLUFOR" || markerColor _x == "colorWEST")
-        };
-
-        // Calculate distances between installations
-        private _distanceMap = [];
-        {
-            for "_i" from 0 to count _bluforInstallations - 1 do {
-                private _distance = getMarkerPos _x distanceSqr (getMarkerPos (_bluforInstallations select _i));
-                _distanceMap pushBack _distance;
-            };
-        } forEach _opforInstallations;
-
-        _distanceMap sort true;
-        private _closestDistance = _distanceMap select 0;
-        private _sourceOpforMarker = "";
-        private _targetBluforMarker = "";
-
-        // Find the specific markers that match this distance
-        {
-            for "_i" from 0 to count _bluforInstallations - 1 do {
-                private _distance = getMarkerPos _x distanceSqr (getMarkerPos (_bluforInstallations select _i));
-                if (_distance == _closestDistance) then {
-                    _targetBluforMarker = _bluforInstallations select _i;
-                    _sourceOpforMarker = _x;
-                };
-            };
-        } forEach _opforInstallations;
-
-        // Calculate distance and find suitable location between installations
-        private _actualDistance = (getMarkerPos _sourceOpforMarker) distance (getMarkerPos _targetBluforMarker);
-        private _intermediateDistance = _actualDistance * 2 / 3;
-
-        // Find elevated positions (mounts) in the area between installations
-        private _mountsNearOpfor = nearestLocations [(getMarkerPos _sourceOpforMarker), ["Mount"], _intermediateDistance];
-        private _mountsNearBlufor = nearestLocations [(getMarkerPos _targetBluforMarker), ["Mount"], _intermediateDistance];
-        private _mountsInBetween = _mountsNearOpfor arrayIntersect _mountsNearBlufor;
-
-        // Filter out positions with players nearby
-        private _validPositions = _mountsInBetween select {
-            private _position = _x;
-            private _positionCoords = locationPosition _position;
-            private _nearPlayers = allPlayers select {(_x distance _positionCoords) < 1000 && {side _x isEqualTo west}};
-            count _nearPlayers isEqualTo 0
-        };
-
-        if (_validPositions isEqualTo []) then {
-            diag_log "[FLO] WARNING: No valid positions found without players nearby, using original list";
-            _validPositions = _mountsInBetween;
-        };
-
         // Select a random position for the roadblock
         private _selectedPosition = selectRandom _validPositions;
         private _positionCoords = locationPosition _selectedPosition;
-
+        
         // Create marker for new roadblock
         private _roadblockMarkerName = "AssltOutpost" + (str ([0, 0, 0] getPos [(10 + (random 150)), (0 + (random 360))]));
         publicVariable "_roadblockMarkerName";
-
+        
         createMarker [_roadblockMarkerName, _positionCoords];
         _roadblockMarkerName setMarkerType "o_service";
         _roadblockMarkerName setMarkerColor "colorOPFOR";
         _roadblockMarkerName setMarkerSize [0.8, 0.8];
         _roadblockMarkerName setMarkerAlpha 1;
-
+        
         // Create trigger for roadblock initialization
         private _roadblockTrigger = createTrigger ["EmptyDetector", _positionCoords, false];
         _roadblockTrigger setTriggerArea [2000, 2000, 0, false, 100];
@@ -440,13 +393,99 @@ if (count _humanPlayers > 0) then {
         ["showNotification", ["! WARNING !", "Enemy Deployed New Military Installation!", "warning"]] call FLO_fnc_intelSystem;
         private _roadblockGrid = mapGridPosition getMarkerPos _roadblockMarkerName;
         [[west,"HQ"], "Enemy Deployed New Military Installation at grid " + _roadblockGrid] remoteExec ["sideChat", 0];
-    };
-};
+    }],
+    
+    ["_cleanupAssaultMarkers", {
+        private _assaultMarkers = allMapMarkers select {markerType _x == "mil_marker_noShadow" && markerAlpha _x == 0.5};
+        {deleteMarker _x;} forEach _assaultMarkers;
+    }],
+    
+    ["_executeOperation", {
+        params ["_self"];
+        
+        // Clean up any existing bunker markers
+        _self call ["_cleanupBunkerMarkers", []];
+        
+        // Get current aggression score
+        private _aggressionScore = _self call ["_getAggressionScore", []];
+        
+        // Calculate operation delay based on aggression
+        private _operationDelay = _self call ["_calculateOperationDelay", []];
+        sleep _operationDelay;
+        
+        // Check if players are still online
+        private _headlessClients = entities "HeadlessClient_F";
+        private _humanPlayers = allPlayers - _headlessClients;
+        
+        if (count _humanPlayers > 0) then {
+            // Determine operation type based on random chance
+            private _operationType = selectRandom [6, 7, 8, 9, 10, 11];
+            
+            // Higher aggression means more aggressive operations
+            if (_aggressionScore > 7) then {
+                _operationType = selectRandom [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+            };
+            
+            // Calculate offensive probability
+            private _offensiveProbability = _self call ["_calculateOffensiveProbability", [_humanPlayers, _aggressionScore]];
+            
+            // Determine if we should launch an offensive operation
+            if ((random 1 < _offensiveProbability) && !OffensiveOperationUnderway) then {
+                _operationType = 8 + floor(random 4); // Force offensive operation (8-11)
+                _self call ["_launchOffensiveOperation", [_aggressionScore]];
+            } else {
+                // If offensive operation is underway or probability check failed,
+                // force either outpost or roadblock
+                if (_operationType > 7) then {
+                    _operationType = selectRandom [1, 2, 3, 4, 5, 6, 7];
+                };
+                
+                // Create new OPFOR outpost (5-7)
+                if ((_operationType > 4) && (_operationType < 8)) then {
+                    private _locationResults = _self call ["_findSuitableLocations", ["outpost"]];
+                    _locationResults params ["_validPositions", "_sourceOpforMarker", "_targetBluforMarker"];
+                    _self call ["_createOutpost", [_validPositions]];
+                };
+                
+                // Create new roadblock (1-4)
+                if (_operationType < 5) then {
+                    private _locationResults = _self call ["_findSuitableLocations", ["roadblock"]];
+                    _locationResults params ["_validPositions", "_sourceOpforMarker", "_targetBluforMarker"];
+                    _self call ["_createRoadblock", [_validPositions]];
+                };
+            };
+        };
+        
+        sleep 10;
+        
+        // Clean up assault markers
+        _self call ["_cleanupAssaultMarkers", []];
+    }],
+    
+    ["run", {
+        params ["_self"];
+        
+        // Announce system activation
+        [[west,"HQ"], "Mission FrontLines System Activated ..."] remoteExec ["sideChat", 0];
+        
+        // Main loop - runs continuously
+        while {true} do {
+            // Wait for activation conditions to be met
+            waitUntil {
+                sleep 120;
+                _self call ["_activationConditions", []]
+            };
+            
+            sleep 10;
+            
+            // Execute the frontline operation
+            _self call ["_executeOperation", []];
+            
+            // Wait before starting the next cycle
+            sleep 300; // 5 minute base delay between operations
+        };
+    }]
+];
 
-sleep 10;
-
-// Clean up assault markers
-private _assaultMarkers = allMapMarkers select {markerType _x == "mil_marker_noShadow" && markerAlpha _x == 0.5};
-{deleteMarker _x;} forEach _assaultMarkers;
-
-frontLineComplete = true;
+// Run the frontline manager
+_frontlineManager call ["run", []];
