@@ -67,10 +67,39 @@ if (count _humanPlayers > 0) then {
         _operationType = selectRandom [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
     };
 
-    // Full-scale assault (8-11)
-    if (_operationType > 7) then {
-        // Launch offensive operation
-        [_aggressionScore] call FLO_fnc_requestOffensiveOps;
+    // Time factor - OPFOR prefers dawn/dusk operations
+    private _timeOfDay = dayTime;
+    private _weatherCondition = overcast;
+    private _playerCount = count _humanPlayers;
+    private _timeFactor = 0;
+    
+    if (_timeOfDay > 4 && _timeOfDay < 6) then {_timeFactor = 0.3}; // Dawn
+    if (_timeOfDay > 18 && _timeOfDay < 20) then {_timeFactor = 0.3}; // Dusk
+    if (_timeOfDay > 22 || _timeOfDay < 4) then {_timeFactor = 0.2}; // Night
+    
+    private _weatherFactor = _weatherCondition * 0.2;
+    private _playerFactor = (_playerCount / 10) min 0.2;
+    private _aggressionFactor = (_aggressionScore / 15) min 0.5;
+    private _offensiveProbability = _timeFactor + _weatherFactor + _playerFactor + _aggressionFactor;
+    
+    // Adjust operation type based on calculated probability
+    if (random 1 < _offensiveProbability) then {
+        _operationType = 8 + floor(random 4); // Force offensive operation (8-11)
+        
+        // Notify players that OPFOR is preparing an offensive
+        ["showNotification", ["! INTELLIGENCE !", "Enemy is preparing a major offensive operation!", "warning"]] call FLO_fnc_intelSystem;
+        [[west,"HQ"], "INTELLIGENCE: We have reports of enemy forces mobilizing for a major operation."] remoteExec ["sideChat", 0];
+        
+        // Add a delay before the actual attack to build tension
+        private _preparationTime = 300 + random 600;
+        sleep _preparationTime;
+        
+        // Check if players are still online before launching
+        _humanPlayers = allPlayers - (entities "HeadlessClient_F");
+        if (count _humanPlayers > 0) then {
+            // Launch offensive operation
+            [_aggressionScore] call FLO_fnc_requestOffensiveOps;
+        };
     };
 
     // Create new OPFOR outpost (5-7)
@@ -210,31 +239,6 @@ if (count _humanPlayers > 0) then {
 			[thisTrigger] execVM 'Scripts\Outpost_CSAT.sqf';
 
 			"",""""];
-
-			_trgA = createTrigger ['EmptyDetector', (getPos thisTrigger), false];
-			_trgA setTriggerArea [500, 500, 0, false, 60];
-			_trgA setTriggerInterval 3;
-			_trgA setTriggerTimeout [1, 1, 1, true];
-			_trgA setTriggerActivation ['WEST', 'PRESENT', false];
-			_trgA setTriggerStatements [
-			""this"",""
-
-			[thisTrigger] execVM 'Scripts\HeliInsert_CSAT.sqf';
-
-			"",""""];
-
-			_trgA = createTrigger ['EmptyDetector', (getPos thisTrigger), false];
-			_trgA setTriggerArea [500, 500, 0, false, 60];
-			_trgA setTriggerInterval 3;
-			_trgA setTriggerTimeout [1, 1, 1, true];
-			_trgA setTriggerActivation ['WEST', 'PRESENT', false];
-			_trgA setTriggerStatements [
-			""this"",""
-
-			[thisTrigger] execVM 'Scripts\VehiInsert_CSAT.sqf';
-
-			"",""""];
-
 
 			", ""
         ];
