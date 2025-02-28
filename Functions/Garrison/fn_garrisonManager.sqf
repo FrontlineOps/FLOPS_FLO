@@ -85,7 +85,7 @@ if (isNil "FLO_Garrison_Manager") then {
                 markerColor _x in ["colorOPFOR", "ColorEAST"] && 
                 markerType _x in ["o_support", "n_support", "n_installation", "o_installation", "loc_Ruin", "loc_Power", "o_recon", "o_service", "o_antiair"] &&
                 !(_x in _processedMarkers) &&
-                !(_garrisons hasKey _x)
+                !((_garrisons) getOrDefault [_x, false])
             };
             
             {
@@ -307,7 +307,7 @@ if (isNil "FLO_Garrison_Manager") then {
             params ["_marker", "_amount"];
             
             private _garrisons = _self get "garrisons";
-            if (!(_garrisons hasKey _marker)) exitWith {
+            if (!((_garrisons) getOrDefault [_marker, false])) exitWith {
                 diag_log format ["[FLO][Garrison] Error: No garrison at %1 to reinforce", _marker];
                 false
             };
@@ -388,7 +388,7 @@ if (isNil "FLO_Garrison_Manager") then {
             params ["_marker"];
             
             private _garrisons = _self get "garrisons";
-            if (!(_garrisons hasKey _marker)) exitWith {
+            if (!((_garrisons) getOrDefault [_marker, false])) exitWith {
                 []
             };
             
