@@ -103,6 +103,27 @@ if (isNil "FLO_Garrison_Manager") then {
                 
                 // If players are nearby and marker not already processed, spawn garrison
                 if (_nearPlayers) then {
+                    // Check if there's an unactivated garrison with queued reinforcements
+                    private _queuedGarrison = false;
+                    private _additionalUnits = 0;
+                    
+                    if (_marker in keys _garrisons) then {
+                        private _garrisonData = _garrisons get _marker;
+                        
+                        // Check if this garrison has no active units but queued reinforcements
+                        if (count (_garrisonData select 0) == 0) then {
+                            _queuedGarrison = true;
+                            
+                            // Get any queued reinforcements to include in spawn
+                            _additionalUnits = _garrisonData param [5, 0];
+                            
+                            // Remove the inactive garrison entry
+                            _garrisons deleteAt _marker;
+                            
+                            diag_log format ["[FLO][Garrison] Found queued garrison at %1 with %2 additional units", _marker, _additionalUnits];
+                        };
+                    };
+                    
                     // Determine garrison size and vehicle presence based on marker type
                     private _size = 0;
                     private _withVehicles = false;
@@ -148,6 +169,12 @@ if (isNil "FLO_Garrison_Manager") then {
                             _size = 4;
                             _withVehicles = false;
                         };
+                    };
+                    
+                    // Add any queued reinforcements to the size
+                    if (_additionalUnits > 0) then {
+                        _size = _size + _additionalUnits;
+                        diag_log format ["[FLO][Garrison] Adjusted garrison size at %1 from standard to %2 including reinforcements", _marker, _size];
                     };
                     
                     if (_size > 0) then {
@@ -294,21 +321,96 @@ if (isNil "FLO_Garrison_Manager") then {
                 };
             } forEach _vehicles;
             
-            // Set up garrison behavior
-            [_group, _marker] call BIS_fnc_taskDefend;
+            // Enhanced garrison behavior - find buildings and suitable positions
+            private _nearBuildings = _pos nearObjects ["Building", 150];
+            private _buildingPositions = [];
+            
+            // Collect all valid building positions
+            {
+                private _positions = _x buildingPos -1;
+                if (count _positions > 0) then {
+                    _buildingPositions append _positions;
+                };
+            } forEach _nearBuildings;
+            
+            // Only keep a reasonable number of positions
+            if (count _buildingPositions > 30) then {
+                _buildingPositions resize 30;
+            };
+            
+            // Split the group based on buildings available and garrison size
+            if (count _buildingPositions > 3 && count _spawnedUnits > 3) then {
+                // Garrison units - 2/3 of units go to buildings
+                private _garrisonUnits = floor ((count _spawnedUnits) * 0.6);
+                private _garrisonGroup = createGroup [east, true];
+                
+                for "_i" from 1 to (_garrisonUnits min count _buildingPositions) do {
+                    if (count _spawnedUnits > 0) then {
+                        private _unit = _spawnedUnits deleteAt 0;
+                        [_unit] joinSilent _garrisonGroup;
+                        
+                        // Move to building position
+                        private _bPos = selectRandom _buildingPositions;
+                        _buildingPositions = _buildingPositions - [_bPos];
+                        _unit doMove _bPos;
+                        _unit setPos _bPos;
+                        
+                        // Set unit behavior for garrison
+                        _unit disableAI "PATH";
+                        _unit setUnitPos (selectRandom ["UP", "MIDDLE"]);
+                    };
+                };
+                
+                // Set garrison group behavior
+                _garrisonGroup setCombatMode "RED";
+                _garrisonGroup setBehaviour "AWARE";
+                
+                // Create patrol group with remaining units
+                if (count _spawnedUnits > 0) then {
+                    private _patrolGroup = createGroup [east, true];
+                    
+                    {
+                        [_x] joinSilent _patrolGroup;
+                    } forEach _spawnedUnits;
+                    
+                    // Set patrol path
+                    [_patrolGroup, _pos, 150] call BIS_fnc_taskPatrol;
+                    
+                    // Set patrol behavior
+                    _patrolGroup setCombatMode "RED";
+                    _patrolGroup setBehaviour "AWARE";
+                    _patrolGroup setSpeedMode "LIMITED";
+                };
+            } else {
+                // Fall back to standard defensive behavior if not enough buildings
+                [_group, _pos, 100, 2, 0.2, 0.3] call BIS_fnc_taskDefend;
+            };
             
             // Store in garrisons hashmap
             private _garrisons = _self get "garrisons";
-            _garrisons set [_marker, [_spawnedUnits, _spawnedVehicles, _group, time]];
+            
+            // Extended garrison data structure:
+            // [units, vehicles, group, timestamp, virtualStrength, queuedReinforcements, originalSize]
+            _garrisons set [_marker, [
+                _spawnedUnits,                // Actual spawned units
+                _spawnedVehicles,             // Spawned vehicles
+                _group,                       // Main group
+                time,                         // Creation timestamp
+                0,                            // Virtual strength (reinforcements available but not yet spawned)
+                0,                            // Queued reinforcements (for inactive garrisons)
+                _size                         // Original intended size
+            ]];
             
             // Update total units count
             _self set ["totalUnits", (_self get "totalUnits") + count _spawnedUnits];
+            
+            diag_log format ["[FLO][Garrison] Created garrison at %1 with %2 units and %3 vehicles", _marker, count _spawnedUnits, count _spawnedVehicles];
             
             // Return spawned units
             _spawnedUnits
         }],
         
-        // Reinforce an existing garrison
+        // Reinforce an existing garrison - ONLY UPDATES TRACKED COUNT, NEVER SPAWNS UNITS
         ["reinforceGarrison", {
             params ["_marker", "_amount"];
             
@@ -321,43 +423,39 @@ if (isNil "FLO_Garrison_Manager") then {
             private _garrisonData = _garrisons get _marker;
             _garrisonData params ["_units", "_vehicles", "_group", "_timestamp"];
             
-            // Check if we need to reinforce dead units
-            private _aliveUnits = _units select {alive _x};
-            private _deadCount = count _units - count _aliveUnits;
+            // Check if this garrison is active (has spawned units)
+            private _isActive = count (_units select {alive _x}) > 0;
             
-            // Calculate how many units to add
-            private _toAdd = _amount max _deadCount;
-            if (_toAdd <= 0) exitWith {
-                diag_log format ["[FLO][Garrison] No reinforcement needed for %1", _marker];
-                true
+            // Calculate reinforcement data - never spawn actual units
+            private _reinforcementCount = _amount;
+            
+            // Update the tracked count only - NO ACTUAL UNIT SPAWNING
+            if (_isActive) then {
+                // Garrison is active - we're just tracking that reinforcements are available
+                diag_log format ["[FLO][Garrison] Reinforcement available for active garrison at %1: +%2 units (tracked only)", _marker, _reinforcementCount];
+                
+                // Update the "virtual strength" of the garrison (used to decide when/if to generate physical units)
+                private _virtualStrength = _garrisonData param [4, 0]; // Get virtual strength, default 0
+                _virtualStrength = _virtualStrength + _reinforcementCount;
+                
+                // Update garrison data with new virtual strength
+                _garrisonData set [4, _virtualStrength];
+                _garrisons set [_marker, _garrisonData];
+            } else {
+                // Garrison is not active - just update the data structure for later spawning
+                diag_log format ["[FLO][Garrison] Reinforcement queued for inactive garrison at %1: +%2 units", _marker, _reinforcementCount];
+                
+                // Store reinforcement count for when garrison activates
+                private _queuedReinforcements = _garrisonData param [5, 0]; // Get queued reinforcements, default 0
+                _queuedReinforcements = _queuedReinforcements + _reinforcementCount;
+                
+                // Update garrison data with new queued reinforcements
+                _garrisonData set [5, _queuedReinforcements];
+                _garrisons set [_marker, _garrisonData];
             };
             
-            // Add reinforcements
-            private _pos = getMarkerPos _marker;
-            private _newUnits = [];
-            
-            // Get available unit types from global variables
-            private _availableUnits = East_Units;
-            
-            // Add the specified number of units
-            for "_i" from 1 to _toAdd do {
-                private _unitType = selectRandom _availableUnits;
-                private _unit = _group createUnit [_unitType, _pos, [], 50, "NONE"];
-                _newUnits pushBack _unit;
-            };
-            
-            // Ensure all new units are in the EAST group
-            {
-                if (side group _x != east) then {
-                    [_x] joinSilent _group;
-                };
-            } forEach _newUnits;
-            
-            // Update garrison data
-            _garrisons set [_marker, [_aliveUnits + _newUnits, _vehicles, _group, time]];
-            
-            // Update total units count
-            _self set ["totalUnits", (_self get "totalUnits") + count _newUnits - _deadCount];
+            // Update total units count (only for tracking purposes)
+            _self set ["totalUnits", (_self get "totalUnits") + _reinforcementCount];
             
             true
         }],
@@ -373,19 +471,34 @@ if (isNil "FLO_Garrison_Manager") then {
                 private _data = _garrisons get _marker;
                 _data params ["_units", "_vehicles", "_group", "_timestamp"];
                 
+                // Get virtual strength and queued reinforcements (if any)
+                private _virtualStrength = _data param [4, 0];
+                private _queuedReinforcements = _data param [5, 0];
+                
                 // Check for alive units
                 private _aliveUnits = _units select {alive _x};
                 private _aliveVehicles = _vehicles select {alive _x};
                 
-                if (count _aliveUnits == 0) then {
-                    // All units dead, clean up
+                if (count _aliveUnits == 0 && _virtualStrength == 0 && _queuedReinforcements == 0) then {
+                    // All units dead and no reinforcements queued, clean up
                     {deleteVehicle _x} forEach _vehicles;
                     _garrisons deleteAt _marker;
                     diag_log format ["[FLO][Garrison] Garrison at %1 wiped out, removed", _marker];
                 } else {
                     // Update garrison data with alive units only
-                    _garrisons set [_marker, [_aliveUnits, _aliveVehicles, _group, _timestamp]];
-                    _totalCount = _totalCount + count _aliveUnits;
+                    _data set [0, _aliveUnits];
+                    _data set [1, _aliveVehicles];
+                    _data set [3, time]; // Update timestamp
+                    _garrisons set [_marker, _data];
+                    
+                    // Count both physical and virtual units for total
+                    _totalCount = _totalCount + count _aliveUnits + _virtualStrength + _queuedReinforcements;
+                    
+                    // Log info if garrison has virtual/queued reinforcements
+                    if (_virtualStrength > 0 || _queuedReinforcements > 0) then {
+                        diag_log format ["[FLO][Garrison] Garrison at %1: %2 active units, %3 virtual strength, %4 queued", 
+                            _marker, count _aliveUnits, _virtualStrength, _queuedReinforcements];
+                    };
                 };
             } forEach keys _garrisons;
             
