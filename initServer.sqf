@@ -157,7 +157,9 @@ if (!HC1Present && !HC2Present && !HC3Present) then {
 
 //Mission Commander System
 remoteExec ["FLO_fnc_MissionStartup", 2];
-[] call FLO_fnc_MissionFrontline;
+[] spawn { 
+    [] call FLO_fnc_MissionFrontline;
+};
 
 //Saving System
 AutoSaveSwitchVal = "AutoSaveSwitch" call BIS_fnc_getParamValue;
