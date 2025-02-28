@@ -112,7 +112,7 @@ if (isNil "FLO_Logistics_Network") then {
             
             // Initialize supply level if not exist
             private _supplyLevels = _self get "supplyLevels";
-            if (!((_supplyLevels) getOrDefault [_targetMarker, false])) then {
+            if (!(_targetMarker in keys _supplyLevels)) then {
                 _supplyLevels set [_targetMarker, 0];
             };
             
@@ -196,7 +196,7 @@ if (isNil "FLO_Logistics_Network") then {
                 private _outpost = _x;
                 
                 // Skip if already has a route
-                if ((_supplyRoutes) getOrDefault [_outpost, false]) then {
+                if (_outpost in keys _supplyRoutes) then {
                     // Update existing route
                     private _routeData = _supplyRoutes get _outpost;
                     _routeData params ["_source", "_quality", "_distance", "_timestamp"];
