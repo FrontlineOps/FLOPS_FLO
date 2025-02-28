@@ -271,6 +271,15 @@ if (isNil "FLO_Garrison_Manager") then {
                 };
             } forEach _composition;
             
+            // Ensure group is properly set to EAST
+            if (side _group != east) then {
+                private _eastGroup = createGroup [east, true];
+                {
+                    [_x] joinSilent _eastGroup;
+                } forEach units _group;
+                _group = _eastGroup;
+            };
+            
             // Spawn vehicles
             private _spawnedVehicles = [];
             {
@@ -330,12 +339,19 @@ if (isNil "FLO_Garrison_Manager") then {
             // Get available unit types from global variables
             private _availableUnits = East_Units;
             
-            // Simply create the requested number of units
+            // Add the specified number of units
             for "_i" from 1 to _toAdd do {
-                private _type = selectRandom _availableUnits;
-                private _unit = _group createUnit [_type, _pos, [], 50, "NONE"];
+                private _unitType = selectRandom _availableUnits;
+                private _unit = _group createUnit [_unitType, _pos, [], 50, "NONE"];
                 _newUnits pushBack _unit;
             };
+            
+            // Ensure all new units are in the EAST group
+            {
+                if (side group _x != east) then {
+                    [_x] joinSilent _group;
+                };
+            } forEach _newUnits;
             
             // Update garrison data
             _garrisons set [_marker, [_aliveUnits + _newUnits, _vehicles, _group, time]];

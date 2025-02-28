@@ -127,6 +127,15 @@ private _result = switch (_mode) do {
         
         private _group = group driver _veh;
         
+        // Ensure group is properly set to EAST
+        if (side _group != east) then {
+            private _eastGroup = createGroup [east, true];
+            {
+                [_x] joinSilent _eastGroup;
+            } forEach units _group;
+            _group = _eastGroup;
+        };
+        
         // Configure patrol behavior
         [_group, _pos, _radius] call BIS_fnc_taskPatrol;
         
@@ -237,6 +246,16 @@ private _result = switch (_mode) do {
         
         // Configure defensive behavior
         private _group = group driver _veh;
+        
+        // Ensure group is properly set to EAST
+        if (side _group != east) then {
+            private _eastGroup = createGroup [east, true];
+            {
+                [_x] joinSilent _eastGroup;
+            } forEach units _group;
+            _group = _eastGroup;
+        };
+        
         _group setCombatMode "RED";
         _group setBehaviour "COMBAT";
         
