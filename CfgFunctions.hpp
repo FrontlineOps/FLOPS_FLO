@@ -21,6 +21,7 @@ class FLO {
         class calculateQRFResponse  {};
         class requestQRF            {};
         class heliInsert            {};
+        class requestOffensiveOps   {};
     };
 
     class Logistics {
@@ -34,5 +35,13 @@ class FLO {
         file = "Functions\Arsenal";
 
         class restrictedArsenal {};
+    };
+    
+    class Garrison {
+        file = "Functions\Garrison";
+        
+        class garrisonManager     {};
+        class logisticsNetwork    {};
+        class vehicleGarrison     {};
     };
 };
