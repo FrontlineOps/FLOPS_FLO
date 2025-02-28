@@ -214,22 +214,19 @@ if (isNil "FLO_Garrison_Manager") then {
             // Generate compositions based on size
             switch (true) do {
                 case (_size <= 4): { 
-                    _composition = [
-                        [selectRandom _officerUnits, 1],
-                        [selectRandom _availableUnits, 3]
-                    ];
+                    for "_i" from 1 to 4 do {
+                        _composition pushBack [selectRandom _availableUnits, 1];
+                    };
                 };
                 case (_size <= 8): {
-                    _composition = [
-                        [selectRandom _officerUnits, 1],
-                        [selectRandom _availableUnits, 7]
-                    ];
+                    for "_i" from 1 to 8 do {
+                        _composition pushBack [selectRandom _availableUnits, 1];
+                    };
                 };
                 default {
-                    _composition = [
-                        [selectRandom _officerUnits, 2],
-                        [selectRandom _availableUnits, 12]
-                    ];
+                    for "_i" from 1 to 13 do {
+                        _composition pushBack [selectRandom _availableUnits, 1];
+                    };
                 };
             };
             
