@@ -27,21 +27,21 @@ class FLO {
     class Logistics {
         file = "Functions\Logistics";
 
-        class opforResources {};
-        class intelSystem {};
+        class opforResources        {};
+        class intelSystem           {};
+        class logisticsNetwork      {};
     };
 
     class Arsenal {
         file = "Functions\Arsenal";
 
-        class restrictedArsenal {};
+        class restrictedArsenal     {};
     };
     
     class Garrison {
         file = "Functions\Garrison";
         
         class garrisonManager     {};
-        class logisticsNetwork    {};
         class vehicleGarrison     {};
     };
 };
