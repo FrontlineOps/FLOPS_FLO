@@ -4,6 +4,7 @@
     Description:
     Finalizes the flipping of an objective to a new controlling side.
     Creates or updates markers and respawn points based on the capturing side.
+    Also sets up counter-attack triggers when BLUFOR captures an objective.
     
     Parameters:
     _trigger - The trigger that activated the finalization [Object]
@@ -115,8 +116,22 @@ if (_capturingSide == "west") then {
     // Show notification
     ["TaskSucceeded", ["", format ["%1 Captured", _objectiveType]]] call BIS_fnc_showNotification;
     
-    // Set up QRF trigger for OPFOR counter-attack with cooldown period
-    // Add a delay before allowing the QRF trigger to be active
+    // Set up OPFOR counter-attack system
+    // 1. Create the main capture trigger that detects when OPFOR enters the area
+    private _captureTrigger = createTrigger ["EmptyDetector", _position, false];
+    _captureTrigger setTriggerArea [120, 120, 0, false, 200];
+    _captureTrigger setTriggerActivation ["EAST SEIZED", "PRESENT", true];
+    _captureTrigger setTriggerTimeout [10, 10, 10, true];
+    _captureTrigger setTriggerStatements [
+        "this", 
+        format [
+            "[thisTrigger, '%1', 'east'] call FLO_fnc_flipObjective;",
+            _objectiveType
+        ],
+        ""
+    ];
+    
+    // 2. Create a separate delayed QRF trigger for counter-attacks
     [_position, _objectiveType] spawn {
         params ["_position", "_objectiveType"];
         
@@ -142,29 +157,9 @@ if (_capturingSide == "west") then {
                 "this && (({_x isKindOf 'Man'} count thisList > 0) or ({_x isKindOf 'LandVehicle'} count thisList > 0)) && {random 100 < 30}", // 30% chance to trigger
                 format [
                     "
-                    // Request QRF forces to attack the position with proper radius parameter
-                    [thisTrigger, 500] spawn {
-                        params ['_triggerObj', '_searchRadius'];
-                        // Wait a short time before sending QRF so players can prepare
-                        sleep (30 + random 60);
-                        
-                        // Only proceed if objective is still BLUFOR controlled
-                        private _objPos = getPos _triggerObj;
-                        private _nearMarkers = allMapMarkers select {markerType _x == 'b_installation' && getMarkerPos _x distance _objPos < 50};
-                        if (count _nearMarkers > 0) then {
-                            [_objPos, _searchRadius] call FLO_fnc_requestQRF;
-                            [[EAST, 'HQ'], 'We are sending reinforcements to capture the objective.'] remoteExec ['sideChat', 0];
-                            
-                            // Add a delay before flipping the objective
-                            [_triggerObj, '%1', 'east'] spawn {
-                                params ['_trigger', '_objectiveType', '_side'];
-                                sleep 120; // Give QRF time to engage before starting flip
-                                if (!isNull _trigger) then {
-                                    [_trigger, _objectiveType, _side] call FLO_fnc_flipObjective;
-                                };
-                            };
-                        };
-                    };
+                    // Request QRF forces to attack the position
+                    [thisTrigger, 500] call FLO_fnc_requestQRF;
+                    [[EAST, 'HQ'], 'We are sending forces to attack %1'] remoteExec ['sideChat', 0];
                     ",
                     _objectiveType
                 ],
@@ -185,6 +180,20 @@ if (_capturingSide == "west") then {
     
     // Notify players
     [playerSide, "HQ"] commandChat format ["All Forces Fall Back. We Lost the %1", toUpper _objectiveType];
+    
+    // Add trigger for BLUFOR to capture
+    private _captureTrigger = createTrigger ["EmptyDetector", _position, false];
+    _captureTrigger setTriggerArea [120, 120, 0, false, 200];
+    _captureTrigger setTriggerActivation ["WEST SEIZED", "PRESENT", true];
+    _captureTrigger setTriggerTimeout [10, 10, 10, true];
+    _captureTrigger setTriggerStatements [
+        "this", 
+        format [
+            "[thisTrigger, '%1', 'west'] call FLO_fnc_flipObjective;",
+            _objectiveType
+        ],
+        ""
+    ];
 };
 
 // Return success
