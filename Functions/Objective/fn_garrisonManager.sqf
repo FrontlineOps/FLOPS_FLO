@@ -92,7 +92,7 @@ if (isNil "FLO_Garrison_Manager") then {
         // Initialize garrison system and start maintenance loop
         ["initialize", {
             // Load saved garrison sizes if available
-            [_self, "loadGarrisonSizes"] call {};
+            _self call ["loadGarrisonSizes", []];
             
             // Start the maintenance loop
             [] spawn {
