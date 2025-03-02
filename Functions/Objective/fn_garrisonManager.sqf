@@ -461,6 +461,40 @@ if (isNil "FLO_Garrison_Manager") then {
                         [_unit] joinSilent _group;
                     };
                     
+                    // Store the marker on the unit for QRF reference
+                    _unit setVariable ["FLO_Garrison_Marker", _marker, false];
+                    
+                    // Random chance to add QRF trigger EventHandler
+                    // Officers always have QRF ability, regular units have a random chance
+                    private _isOfficer = (_officerUnits findIf {_type == _x}) >= 0;
+                    if (_isOfficer || (random 1 < 0.25)) then { // 25% chance for regular units
+                        _unit addEventHandler ["Killed", {
+                            params ["_unit", "_killer"];
+                            
+                            // Only trigger QRF if killed by BLUFOR
+                            if (side _killer == west) then {
+                                private _unitPos = getPos _unit;
+                                private _markerData = _unit getVariable ["FLO_Garrison_Marker", ""];
+                                
+                                // Random chance to actually call QRF based on unit type
+                                private _isOfficer = _unit getVariable ["FLO_IsOfficer", false];
+                                private _qrfChance = if (_isOfficer) then {0.8} else {0.4}; // 80% for officers, 40% for others
+                                
+                                if (_markerData != "" && random 1 < _qrfChance) then {
+                                    diag_log format ["[FLO][Garrison] Unit killed at %1 triggered QRF request (officer: %2)", _markerData, _isOfficer];
+                                    [_unitPos, 500] call FLO_fnc_requestQRF;
+                                };
+                            };
+                        }];
+                        
+                        // Store officer status for QRF chance calculation
+                        _unit setVariable ["FLO_IsOfficer", _isOfficer, false];
+                        
+                        if (_isOfficer) then {
+                            diag_log format ["[FLO][Garrison] Officer unit %1 assigned QRF trigger capability", _unit];
+                        };
+                    };
+                    
                     _spawnedUnits pushBack _unit;
                 };
             } forEach _composition;
@@ -525,6 +559,34 @@ if (isNil "FLO_Garrison_Manager") then {
                     // Update our units and vehicles tracking
                     _spawnedUnits append (crew _veh);
                     _spawnedVehicles pushBack _veh;
+                    
+                    // Add QRF EventHandler to vehicle crew with higher chance
+                    {
+                        // Store the marker on the crew member for QRF reference
+                        _x setVariable ["FLO_Garrison_Marker", _marker, false];
+                        
+                        // Vehicle crews have higher chance to call QRF (35%)
+                        if (random 1 < 0.35) then {
+                            // Store crew status for QRF chance calculation - vehicle crews are treated as semi-officers
+                            _x setVariable ["FLO_IsOfficer", true, false];
+                            
+                            _x addEventHandler ["Killed", {
+                                params ["_unit", "_killer"];
+                                
+                                // Only trigger QRF if killed by BLUFOR
+                                if (side _killer == west) then {
+                                    private _unitPos = getPos _unit;
+                                    private _markerData = _unit getVariable ["FLO_Garrison_Marker", ""];
+                                    
+                                    // 60% chance for vehicle crew to actually call QRF (higher than regular infantry)
+                                    if (_markerData != "" && random 1 < 0.6) then {
+                                        diag_log format ["[FLO][Garrison] Vehicle crew killed at %1 triggered QRF request", _markerData];
+                                        [_unitPos, 500] call FLO_fnc_requestQRF;
+                                    };
+                                };
+                            }];
+                        };
+                    } forEach (crew _veh);
                     
                     // Verify crew is EAST
                     {
