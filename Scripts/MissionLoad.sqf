@@ -112,15 +112,6 @@ for "_x" from 0 to _CrewSelCnt do { _unit = _Group createunit [_crewType,[0,0,0]
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 sleep 2 ;
 
-// Execute registered load event handlers at the end of the script
-if (!isNil "FLO_MissionLoad_EventHandlers") then {
-    {
-        // Call each event handler
-        [] call _x;
-    } forEach FLO_MissionLoad_EventHandlers;
-    diag_log format ["[MissionLoad] Executed %1 registered load event handlers", count FLO_MissionLoad_EventHandlers];
-};
-
 MissionLoadedLitterally = 1;
 publicVariable "MissionLoadedLitterally";
 

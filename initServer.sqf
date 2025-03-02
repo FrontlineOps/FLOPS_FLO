@@ -200,7 +200,7 @@ diag_log "[FLO] Logistics network initialized";
 // Start the dynamic garrison spawning system
 [] spawn {
     while {true} do {
-        // Check for nearby OPFOR markers and spawn garrisons if players are nearby (within 1000m)
+        // Check for nearby OPFOR markers and spawn garrisons if players are nearby (within 1500m)
         private _spawnedCount = ["checkAndSpawn", [1500]] call FLO_fnc_garrisonManager;
         
         if (_spawnedCount > 0) then {

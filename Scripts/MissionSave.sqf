@@ -2,15 +2,6 @@ if (isServer) then {
 
 [[west,"HQ"], "Saving Mission ..."] remoteExec ["sideChat", 0];
 
-// Execute registered save event handlers
-if (!isNil "FLO_MissionSave_EventHandlers") then {
-    {
-        // Call each event handler
-        [] call _x;
-    } forEach FLO_MissionSave_EventHandlers;
-    diag_log format ["[MissionSave] Executed %1 registered save event handlers", count FLO_MissionSave_EventHandlers];
-};
-
 sleep 5;
 
 _missionTag = missionName;

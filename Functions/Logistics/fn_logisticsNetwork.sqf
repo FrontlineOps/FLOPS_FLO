@@ -126,10 +126,10 @@ if (isNil "FLO_Logistics_Network") then {
         ["getSupplyDepots", {
             private _depots = [];
             
-            // Find all OPFOR headquarters and outposts
+            // Find all OPFOR headquarters and outposts that can serve as supply depots
             private _opforInstallations = allMapMarkers select {
                 markerColor _x in ["colorOPFOR", "ColorEAST"] && 
-                markerType _x in ["n_installation", "o_installation"]
+                markerType _x in ["n_support", "o_installation", "n_installation"]
             };
             
             // Check each installation if it's a valid supply depot
@@ -152,17 +152,21 @@ if (isNil "FLO_Logistics_Network") then {
                 };
             } forEach _opforInstallations;
             
+            diag_log format ["[FLO][Logistics] Found %1 valid supply depots", count _depots];
             _depots
         }],
         
         // Get all frontline outposts that need supplies
         ["getFrontlineOutposts", {
             private _outposts = [];
+            private _priorityOutposts = []; // High priority outposts (o_support and n_support)
+            private _secondaryOutposts = []; // Secondary priority outposts
             
-            // Find all OPFOR outposts and roadblocks
+            // Find all OPFOR positions that can receive supplies
             private _opforPositions = allMapMarkers select {
                 markerColor _x in ["colorOPFOR", "ColorEAST"] && 
-                markerType _x in ["o_support", "n_support", "o_installation"]
+                markerType _x in ["o_support", "n_support", "o_installation", "n_installation", 
+                                  "loc_Power", "o_recon", "o_service", "o_antiair", "loc_Ruin"]
             };
             
             // Check for frontline positions
@@ -173,13 +177,25 @@ if (isNil "FLO_Logistics_Network") then {
                 // Check for nearby BLUFOR areas to determine if it's frontline
                 private _nearbyMarkers = allMapMarkers select {
                     markerColor _x in ["colorBLUFOR", "ColorWEST"] && 
-                    (getMarkerPos _x) distance _pos < 2000
+                    (getMarkerPos _x) distance _pos < 3000
                 };
                 
                 if (count _nearbyMarkers > 0) then {
-                    _outposts pushBack _marker;
+                    // Sort outposts by priority
+                    private _markerType = markerType _marker;
+                    if (_markerType in ["o_support", "n_support"]) then {
+                        _priorityOutposts pushBack _marker;
+                    } else {
+                        _secondaryOutposts pushBack _marker;
+                    };
                 };
             } forEach _opforPositions;
+            
+            // Combine lists with priority outposts first
+            _outposts = _priorityOutposts + _secondaryOutposts;
+            
+            diag_log format ["[FLO][Logistics] Found %1 outposts (%2 high priority) that need supplies", 
+                count _outposts, count _priorityOutposts];
             
             _outposts
         }],
@@ -268,6 +284,12 @@ if (isNil "FLO_Logistics_Network") then {
                     // Calculate supply delivery based on quality and distance
                     private _supplyAmount = _baseAllocation * _quality;
                     
+                    // Priority multiplier for o_support and n_support
+                    private _markerType = markerType _target;
+                    if (_markerType in ["o_support", "n_support"]) then {
+                        _supplyAmount = _supplyAmount * 1.5; // 50% more supplies for priority outposts
+                    };
+                    
                     // Longer routes are more expensive
                     if (_distance > 3000) then {
                         _supplyAmount = _supplyAmount * 0.7;
@@ -281,18 +303,32 @@ if (isNil "FLO_Logistics_Network") then {
                     // Adjust resource usage
                     _resourcesUsed = _resourcesUsed + _supplyAmount;
                     
+                    // Determine reinforcement threshold based on marker type
+                    private _reinforcementThreshold = 80;
+                    if (_markerType in ["o_support", "n_support"]) then {
+                        _reinforcementThreshold = 70; // Lower threshold for priority outposts
+                    };
+                    
                     // If supply level high enough, reinforce garrison
-                    if (_newSupply >= 80) then {
+                    if (_newSupply >= _reinforcementThreshold) then {
                         // Spend supply to reinforce
                         _supplyLevels set [_target, _newSupply - 40]; // Reduce supply level after reinforcing
                         
-                        // Add some units to garrison based on outpost size
+                        // Add some units to garrison based on outpost size and type
                         private _markerSize = getMarkerSize _target;
                         private _size = (_markerSize select 0) max (_markerSize select 1);
                         private _reinforceAmount = round (_size / 50) max 2;
                         
+                        // Bonus reinforcements for priority outposts
+                        if (_markerType in ["o_support", "n_support"]) then {
+                            _reinforceAmount = _reinforceAmount + 2;
+                        };
+                        
                         // Call garrison reinforce function
                         ["reinforce", [_target, _reinforceAmount]] call FLO_fnc_garrisonManager;
+                        
+                        diag_log format ["[FLO][Logistics] Reinforcing %1 with %2 units (priority: %3)", 
+                            _target, _reinforceAmount, _markerType in ["o_support", "n_support"]];
                     };
                 } forEach keys _supplyRoutes;
                 
@@ -308,6 +344,13 @@ if (isNil "FLO_Logistics_Network") then {
                 // Check if target marker still exists
                 if (getMarkerPos _target isEqualTo [0,0,0]) then {
                     _toDelete pushBack _target;
+                    continue;
+                };
+                
+                // Check if the marker changed sides (captured by BLUFOR)
+                if (markerColor _target in ["colorBLUFOR", "ColorWEST"]) then {
+                    _toDelete pushBack _target;
+                    diag_log format ["[FLO][Logistics] Route removed - target %1 was captured by BLUFOR", _target];
                 };
             } forEach keys _supplyRoutes;
             
@@ -319,7 +362,36 @@ if (isNil "FLO_Logistics_Network") then {
             // Update timestamp
             _self set ["lastUpdate", time];
             
-            diag_log format ["[FLO][Logistics] Supply network updated. Active routes: %1", count keys _supplyRoutes];
+            // Log detailed statistics
+            if (count keys _supplyRoutes > 0) then {
+                // Count routes by target marker type
+                private _routesByType = createHashMap;
+                {
+                    private _targetMarker = _x;
+                    private _targetType = markerType _targetMarker;
+                    
+                    private _count = _routesByType getOrDefault [_targetType, 0];
+                    _routesByType set [_targetType, _count + 1];
+                } forEach keys _supplyRoutes;
+                
+                // Build log message
+                private _logDetails = "";
+                {
+                    private _type = _x;
+                    private _count = _routesByType get _type;
+                    _logDetails = _logDetails + format ["%1: %2, ", _type, _count];
+                } forEach keys _routesByType;
+                
+                // Remove trailing comma and space if needed
+                if (_logDetails != "") then {
+                    _logDetails = _logDetails select [0, count _logDetails - 2];
+                };
+                
+                diag_log format ["[FLO][Logistics] Supply network updated. %1 active routes. By type: %2", 
+                    count keys _supplyRoutes, _logDetails];
+            } else {
+                diag_log "[FLO][Logistics] Supply network updated. No active routes.";
+            };
         }],
         
         // Get supply level for a marker
