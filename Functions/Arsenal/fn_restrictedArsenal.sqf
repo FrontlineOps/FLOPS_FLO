@@ -54,7 +54,11 @@ private _rifles = [
     "MMG_02_sand_RCO_LP_F",
     "hgun_P07_F",
     "hgun_P07_snds_F",
-    "hgun_Pistol_heavy_01_MRD_F"
+    "hgun_Pistol_heavy_01_MRD_F",
+    "Aegis_MMG_FNMAG_240_F",
+    "arifle_SCAR_black_F",
+    "Aegis_arifle_SR25_MR_blk_F",
+    "Aegis_arifle_SR25_MR_snd_F"
 ];
 
 private _launchers = [
@@ -75,6 +79,7 @@ private _attachments = [
     "optic_SOS",
     "optic_LRPS",
     "optic_AMS_snd",
+    "optic_AMS",
     "optic_DMS",
     "optic_MRD",
     "optic_Arco",
@@ -185,6 +190,7 @@ private _navigationItems = [
     "Binocular",
     "Rangefinder",
     "Laserdesignator",
+    "TFAR_anprc152",
     "ACE_MX2A",
     "ACE_Vector"
 ];
@@ -241,6 +247,13 @@ private _magazines = [
     "150Rnd_556x45_Drum_Sand_Mag_F",
     "30Rnd_556x45_Stanag_Sand_red",
     "30Rnd_556x45_Stanag_Sand_Tracer_Red",
+    "Aegis_20Rnd_762x51_SMAG",
+    "Aegis_20Rnd_762x51_Green_SMAG",
+    "Aegis_20Rnd_762x51_Red_SMAG",
+    "Aegis_20Rnd_762x51_Yellow_SMAG",
+    "Aegis_200Rnd_762x51_MAG_Red_F",
+    "Aegis_200Rnd_762x51_MAG_Red_Tracer_F",
+    "20Rnd_762x51_Mag",
     // Launcher Magazines
     "Titan_AA",
     "Titan_AT",
