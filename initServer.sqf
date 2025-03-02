@@ -193,8 +193,9 @@ diag_log "[FLO] Garrison system initialized";
 diag_log "[FLO] Logistics network initialized";
 
 // Initialize the objective flip system
-private _objectivesSetup = [["o_support"], ["o_installation"]] call FLO_fnc_setupCaptureSystem;
-diag_log format ["[FLO] Objective flip system initialized with %1 objectives", _objectivesSetup];
+// WIP - Not working currently
+// private _objectivesSetup = [["o_support"], ["o_installation"]] call FLO_fnc_setupCaptureSystem;
+// diag_log format ["[FLO] Objective flip system initialized with %1 objectives", _objectivesSetup];
 
 // Start the dynamic garrison spawning system
 [] spawn {
