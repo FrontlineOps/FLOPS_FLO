@@ -7,204 +7,31 @@ _AGGRSCORE = parseNumber (markerText _mrkr) ;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 sleep 3;
-
-	
-_objectLoc = nearestobjects [getPos _thisFactoryTrigger, ["O_MBT_02_cannon_F"], 100] ; 
-
+_objectLoc = nearestobjects [getPos _thisFactoryTrigger, ["O_MBT_02_cannon_F"], 100]; 
 {  
-_x hideObject true ; 
-sleep 1;
+	_x hideObject true ; 
+	sleep 1;
 
-_dir = getDirVisual _x ;
-_pos = position _x ;
+	_dir = getDirVisual _x ;
+	_pos = position _x ;
 
-_NewVeh = createVehicle [selectRandom East_Ground_Vehicles_Heavy, [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"] ;
-	_NewVeh setDir _dir ;
-	_NewVeh setVehicleLock "LOCKED";
+	_NewVeh = createVehicle [selectRandom East_Ground_Vehicles_Heavy, [0,0, (500 + random 2000)], [], 0, "CAN_COLLIDE"] ;
+		_NewVeh setDir _dir ;
+		_NewVeh setVehicleLock "LOCKED";
 
-deleteVehicle _x ;
+	deleteVehicle _x ;
 
-_NewVeh setVehiclePosition [ _pos, [], 0, "CAN_COLLIDE"];
+	_NewVeh setVehiclePosition [ _pos, [], 0, "CAN_COLLIDE"];
 
 
-sleep 1;
-	_NewVeh addEventHandler ["Killed", {
-["ScoreAdded", ["Enemy Armor Sabotaged", 10]] remoteExec ["BIS_fnc_showNotification", 0];
-[10] execVM "Scripts\Reward.sqf"; 
- playMusic "EventTrack01_F_Curator"; 
- execVM 'Scripts\ArmorDis.sqf';
-}];
-
+	sleep 1;
+		_NewVeh addEventHandler ["Killed", {
+	["ScoreAdded", ["Enemy Armor Sabotaged", 10]] remoteExec ["BIS_fnc_showNotification", 0];
+	[10] execVM "Scripts\Reward.sqf"; 
+	playMusic "EventTrack01_F_Curator"; 
+	execVM 'Scripts\ArmorDis.sqf';
+	}];
 } forEach _objectLoc;
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-_poss = [(getpos _thisFactoryTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";
-
-_poss = [(getpos _thisFactoryTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-
-
-_poss = [(getpos _thisFactoryTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-((units G) select 0) disableAI "PATH";
-
-_poss = [(getpos _thisFactoryTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-
-
-_poss = [(getpos _thisFactoryTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-G = [_poss, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup; 
-
-
-PRL = [getPos _thisFactoryTrigger, East, selectRandom East_Groups] call BIS_fnc_spawnGroup;
-[PRL, getPos _thisFactoryTrigger, 50] call BIS_fnc_taskPatrol;
-
-
-
-
-//////Watchpost////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-if (count ( (getPos _thisFactoryTrigger) nearRoads 150 ) > 0) then {
-
-_nearRoad = selectRandom ( (getPos _thisFactoryTrigger) nearRoads 150 ) ; 
-_V = createVehicle [ selectRandom East_Ground_Vehicles_Light, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-
-_Group = createVehicleCrew _V; 
-_VC = createGroup East;
-{[_x] join _VC} forEach units _Group;
-
-sleep 3;
-_nearRoad2 =_thisFactoryTrigger nearRoads 1500 ; 
-_nearRoad1 = _thisFactoryTrigger nearRoads 800 ; 
-
-_nearRoadleft = _nearRoad2 - _nearRoad1;
-_nearRoad0 = selectRandom _nearRoadleft; 
-I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
-I1_WP_0 SetWaypointType "MOVE";
-I1_WP_0 setWaypointBehaviour "SAFE";
-I1_WP_0 setWaypointSpeed "LIMITED";
-
-I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
-I1_WP_00 SetWaypointType "MOVE";
-I1_WP_00 setWaypointBehaviour "SAFE";
-I1_WP_00 setWaypointSpeed "LIMITED";
-
-I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
-I1_WP_1 SetWaypointType "CYCLE";
-I1_WP_1 setWaypointBehaviour "SAFE";
-I1_WP_1 setWaypointSpeed "LIMITED";
-
-if (_AGGRSCORE > 10) then {
-_nearRoad = selectRandom ( (getPos _thisFactoryTrigger) nearRoads 150 ) ; 
-_V = createVehicle [ selectRandom East_Ground_Vehicles_Light, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"]; 
-
-_Group = createVehicleCrew _V; 
-_VC = createGroup East;
-{[_x] join _VC} forEach units _Group;
-
-sleep 3;
-_nearRoad2 =_thisFactoryTrigger nearRoads 1500 ; 
-_nearRoad1 = _thisFactoryTrigger nearRoads 800 ; 
-
-_nearRoadleft = _nearRoad2 - _nearRoad1;
-_nearRoad0 = selectRandom _nearRoadleft; 
-I1_WP_0 = _VC addWaypoint [getPos _nearRoad0, 0];
-I1_WP_0 SetWaypointType "MOVE";
-I1_WP_0 setWaypointBehaviour "SAFE";
-I1_WP_0 setWaypointSpeed "LIMITED";
-
-I1_WP_00 = _VC addWaypoint [getPos _nearRoad, 0];
-I1_WP_00 SetWaypointType "MOVE";
-I1_WP_00 setWaypointBehaviour "SAFE";
-I1_WP_00 setWaypointSpeed "LIMITED";
-
-I1_WP_1 = _VC addWaypoint [getPos _nearRoad, 3];
-I1_WP_1 SetWaypointType "CYCLE";
-I1_WP_1 setWaypointBehaviour "SAFE";
-I1_WP_1 setWaypointSpeed "LIMITED";
-};
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-_allBuildings = nearestObjects [(getpos _thisFactoryTrigger), ["House"], 100];  
-_allPositionBuildings = _allBuildings select {count (_x buildingPos -1) > 1}; 
-
-if (count _allPositionBuildings > 0) then {
-_allBuildings = nearestObjects [(getpos _thisFactoryTrigger), ["House"], 100];  
-_allPositionBuildings = _allBuildings select {count (_x buildingPos -1) > 1}; 
-_allPositions = [];  
-_allPositionBuildings apply {_allPositions append (_x buildingPos -1)};  
-_rndPosX = selectRandom _allPositions;  
-G = [_rndPosX, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-
-_rndPosX = selectRandom _allPositions;  
-G = [_rndPosX, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "PATH";
-_rndPosX = selectRandom _allPositions;  
-G = [_rndPosX, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "PATH";
-_rndPosX = selectRandom _allPositions;  
-G = [_rndPosX, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-
-_rndPosX = selectRandom _allPositions;  
-G = [_rndPosX, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-((units G) select 0) disableAI "PATH";
-_rndPosX = selectRandom _allPositions;  
-G = [_rndPosX, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-
-_rndPosX = selectRandom _allPositions;  
-G = [_rndPosX, East,[selectRandom East_Units]] call BIS_fnc_spawnGroup;     
-};
-
-
-
-//////Assault////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-if (_AGGRSCORE > 5) then {
-			_AssltDestMrks = allMapMarkers select {markerType _x == "b_installation"  && (markerColor _x == "ColorYellow" or  markerColor _x == "colorBLUFOR")};  
-			_M = [_AssltDestMrks,  _thisFactoryTrigger] call BIS_fnc_nearestPosition;
-			
-PRL = [_thisFactoryTrigger getPos [(50 +(random 20)), (0 + (random 360))], East, selectRandom East_Groups] call BIS_fnc_spawnGroup;
-
-_W_1 = PRL addWaypoint [(getMarkerPos _M), 0];
-_W_1 SetWaypointType "MOVE";
-_W_1 setWaypointBehaviour "SAFE";
-};
-
-if (_AGGRSCORE > 10) then {
-			_AssltDestMrks = allMapMarkers select {markerType _x == "b_installation"  && (markerColor _x == "ColorYellow" or  markerColor _x == "colorBLUFOR")};  
-			_M = [_AssltDestMrks,  _thisFactoryTrigger] call BIS_fnc_nearestPosition;
-			
-PRL = [_thisFactoryTrigger getPos [(50 +(random 20)), (0 + (random 360))], East, selectRandom East_Groups] call BIS_fnc_spawnGroup;
-
-_W_1 = PRL addWaypoint [(getMarkerPos _M), 0];
-_W_1 SetWaypointType "MOVE";
-_W_1 setWaypointBehaviour "SAFE";
-};
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-sleep 5;
-
-
-
-// {
-
-// _nvg = hmd _x;
-//  _x unassignItem _nvg;
-//  _x removeItem _nvg;
-// 	  _x addPrimaryWeaponItem "acc_flashlight";
-// 	  _x assignItem "acc_flashlight";
-// 	  _x enableGunLights "ForceOn";
-//   } foreach (allUnits select {side _x == east}); 
 
 sleep 10;
 

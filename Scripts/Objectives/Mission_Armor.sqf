@@ -1,112 +1,105 @@
+/*
+    Script: Mission_Armor.sqf
+    
+    Description:
+    Creates enemy armor vehicles based on current aggression score.
+    
+    Parameters:
+    0: _triggerObject - The trigger that activated this script
+*/
 
-/////////////////////Enemy Armor////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-_thisArmorTrigger = _this select 0;
+private _triggerObject = _this select 0;
+private _triggerPos = getPos _triggerObject;
 
+// Find suitable spawn location (preferably on a road)
+private _spawnLocation = _triggerObject;
+private _nearbyRoads = _triggerPos nearRoads 300;
+if (count _nearbyRoads > 0) then {
+    _spawnLocation = selectRandom _nearbyRoads;
+};
 
-_Chance = selectRandom [1, 2, 3]; 
+// Get current aggression score from marker
+private _aggrMarkers = allMapMarkers select {markerColor _x == "Color6_FD_F"};
+private _aggrScore = 0;
+if (count _aggrMarkers > 0) then {
+    _aggrScore = parseNumber (markerText (_aggrMarkers select 0));
+};
 
-if ( count ((getpos _thisArmorTrigger) nearRoads 300) > 0)  then {
-ARMLC = selectRandom ((getpos _thisArmorTrigger) nearRoads 300) ;
-}else{
-ARMLC = _this select 0;
-} ; 
- 
+// Create the primary group that will contain all vehicle crews
+private _mainGroup = createGroup East;
 
-trgARM = 0;
+// Function to create and setup a vehicle
+private _fnc_createArmoredVehicle = {
+    params ["_spawnPos", "_direction"];
+    
+    // Create vehicle with some randomization in position
+    private _randomPos = _spawnPos getRelPos [70 + random 30, random 360];
+    private _vehicle = createVehicle [selectRandom East_Ground_Vehicles_Heavy, _randomPos, [], 4, "NONE"];
+    
+    // Set vehicle direction if provided
+    if (!isNil "_direction") then {
+        _vehicle setDir _direction;
+    };
+    
+    // Create crew and add them to the main group
+    private _crewGroup = createVehicleCrew _vehicle;
+    {[_x] join _mainGroup} forEach units _crewGroup;
+    
+    // Configure vehicle settings
+    _vehicle disableAI "LIGHTS";
+    _vehicle setPilotLight true;
+    
+    // Add killed event handler only for the first vehicle
+    if (isNil "trgARM") then {
+        trgARM = 0; // Initialize tracking variable
+        
+        _vehicle addEventHandler ["Killed", {
+            private _armorMarkers = allMapMarkers select {markerType _x == "o_armor"};
+            private _nearestMarker = [_armorMarkers, (_this select 0)] call BIS_fnc_nearestPosition;
+            
+            deleteMarker _nearestMarker;
+            
+            [100, "ARMOR PATROL"] execVM "Scripts\NOtification.sqf";
+            [100] execVM "Scripts\Reward.sqf";
+            [] execVM "Scripts\DangerPlus.sqf";
+        }];
+    };
+    
+    _vehicle // Return the created vehicle
+};
 
-_mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
-_mrkr = _mrkrs select 0;
-_AGGRSCORE = parseNumber (markerText _mrkr) ;  
-//////Vehicles/////////////////////////////////////////////////////////////////////////////////////////
-	
+// Create initial vehicles (always spawn at least 2)
+private _direction = 0;
+private _road = _spawnLocation;
 
+// Try to get road direction if available
+if (_road isEqualType objNull && {isNull _road isEqualTo false}) then {
+    private _connectedRoads = roadsConnectedTo _road;
+    if (count _connectedRoads > 0) then {
+        _direction = _road getDir (_connectedRoads select 0);
+    };
+};
 
-_V0 = createVehicle [ selectRandom East_Ground_Vehicles_Heavy, (ARMLC getRelPos [(70 +(random 30)), (0 + (random 360))]), [], 4, "NONE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V0 setDir _dir;
-_Group = createVehicleCrew _V0; 
-_VC0 = createGroup East;
-{[_x] join _VC0} forEach units _Group;
+// Spawn first vehicle (with event handler)
+[_spawnLocation, _direction] call _fnc_createArmoredVehicle;
 
-_V0 disableAI "LIGHTS"; 
-_V0 setPilotLight true;
+// Spawn second vehicle
+[_spawnLocation, _direction] call _fnc_createArmoredVehicle;
 
-_V0 addEventHandler ["Killed", { 
-_MMarks = allMapMarkers select { markerType _x == "o_armor"};
-_M = [_MMarks, (_this select 0)] call BIS_fnc_nearestPosition;
+// Spawn additional vehicles based on aggression score
+if (_aggrScore > 5) then {
+    // Spawn two more vehicles at aggression > 5
+    [_spawnLocation, _direction] call _fnc_createArmoredVehicle;
+    [_spawnLocation, _direction] call _fnc_createArmoredVehicle;
+};
 
-deleteMarker _M ; 
-  
-  				[100, "AROMR PATROL"] execVM "Scripts\NOtification.sqf" ;
+if (_aggrScore > 10) then {
+    // Spawn two more vehicles at aggression > 10
+    [_spawnLocation, _direction] call _fnc_createArmoredVehicle;
+    [_spawnLocation, _direction] call _fnc_createArmoredVehicle;
+};
 
-
-[100] execVM "Scripts\Reward.sqf";
-[] execVM "Scripts\DangerPlus.sqf";
-
-}];
-
-
-_nearRoad = selectRandom ( (getpos ARMLC) nearRoads 140 ) ; 
-_V1 = createVehicle [ selectRandom East_Ground_Vehicles_Heavy, (ARMLC getRelPos [(70 +(random 30)), (0 + (random 360))]), [], 4, "NONE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V1 setDir _dir;
-_VC1 = createVehicleCrew _V1; 	
-_V1 disableAI "LIGHTS"; 
-_V1 setPilotLight true;
-{[_x] join _VC0} forEach units _VC1; 
-
-
-if (_AGGRSCORE > 5) then {
-_nearRoad = selectRandom ( (getpos ARMLC) nearRoads 140 ) ; 
-_V1 = createVehicle [ selectRandom East_Ground_Vehicles_Heavy, (ARMLC getRelPos [(70 +(random 30)), (0 + (random 360))]), [], 4, "NONE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V1 setDir _dir;
-_VC1 = createVehicleCrew _V1; 	
-_V1 disableAI "LIGHTS"; 
-_V1 setPilotLight true;
-{[_x] join _VC0} forEach units _VC1; 
-
-_nearRoad = selectRandom ( (getpos ARMLC) nearRoads 70 ) ; 
-_V1 = createVehicle [ selectRandom East_Ground_Vehicles_Heavy, (ARMLC getRelPos [(70 +(random 30)), (0 + (random 360))]), [], 4, "NONE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V1 setDir _dir;
-_VC1 = createVehicleCrew _V1; 	
-_V1 disableAI "LIGHTS"; 
-_V1 setPilotLight true;
-{[_x] join _VC0} forEach units _VC1; 
-	
-	};
-
-if (_AGGRSCORE > 10) then {
-	
-_nearRoad = selectRandom ( (getpos ARMLC) nearRoads 70 ) ; 
-_V2= createVehicle [ selectRandom East_Ground_Vehicles_Heavy, (ARMLC getRelPos [(70 +(random 30)), (0 + (random 360))]), [], 4, "NONE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V2 setDir _dir;
-_VC2 = createVehicleCrew _V2; 
-_V2 disableAI "LIGHTS"; 
-_V2 setPilotLight true;
-{[_x] join _VC0} forEach units _VC2; 		
-	
-_nearRoad = selectRandom ( (getpos ARMLC) nearRoads 70 ) ; 
-_V2= createVehicle [ selectRandom East_Ground_Vehicles_Heavy, (ARMLC getRelPos [(70 +(random 30)), (0 + (random 360))]), [], 4, "NONE"]; 
-_nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
-_dir = _nearRoad getDir _nextRoad;
-_V2 setDir _dir;
-_VC2 = createVehicleCrew _V2; 
-_V2 disableAI "LIGHTS"; 
-_V2 setPilotLight true;
-{[_x] join _VC0} forEach units _VC2; 	
-
-	};
-
-
-[_VC0, _thisArmorTrigger getPos [(70 +(random 90)), (0 + (random 360))], 50] call BIS_fnc_taskPatrol;
-
+// Set patrol waypoints for the entire group
+[_mainGroup, _triggerPos getPos [70 + random 90, random 360], 50] call BIS_fnc_taskPatrol;
 
 sleep 3;

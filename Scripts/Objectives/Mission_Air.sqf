@@ -1,70 +1,78 @@
-private _thisAirTrigger = _this select 0;
+/*
+    Script: Mission_Air.sqf
+    
+    Description:
+    Creates enemy air patrols based on the current aggression score.
+    
+    Parameters:
+    0: _triggerObject - The trigger that activated this script
+*/
 
-private _mrkrs = allMapMarkers select {markerColor _x == "Color6_FD_F"};
-private _mrkr = _mrkrs select 0;
-private _AGGRSCORE = parseNumber (markerText _mrkr);  
+private _triggerObject = _this select 0;
+private _triggerPos = getPos _triggerObject;
 
-// Create Air Patrol
-private _V = createVehicle [ selectRandom (FLO_configCache get "vehicles" select 6), (getpos _thisAirTrigger) getPos [100, 0], [], 100, "FLY"]; 
-_V addEventHandler ["Killed", { 
-	private _MMarks = allMapMarkers select { markerType _x == "o_plane"};
-	private _M = [_MMarks,  (_this select 0)] call BIS_fnc_nearestPosition;
-
-	deleteMarker _M ; 
-
-	[50, "AIR PATROL"] execVM "Scripts\NOtification.sqf" ;
-
-	[50] execVM "Scripts\Reward.sqf";
-	[] execVM "Scripts\DangerPlus.sqf";
-}];
-
-private _Group = createVehicleCrew _V; 
-private _VC = createGroup East;
-{[_x] join _VC} forEach units _Group;
-
-_V flyInHeight 700; 
-_V disableAI "LIGHTS"; 
-_V setPilotLight true;
-_V setCollisionLight true; 
-
-[_VC, (getPos _thisAirTrigger), 3000] call BIS_fnc_taskPatrol;
-
-private _V = createVehicle [ selectRandom (FLO_configCache get "vehicles" select 6), (getpos _thisAirTrigger) getPos [100, 60], [], 100, "FLY"]; 
-private _Group = createVehicleCrew _V; 
-private _VC = createGroup East;
-{[_x] join _VC} forEach units _Group;
-
-_V flyInHeight 700; 
-_V disableAI "LIGHTS"; 
-_V setPilotLight true;
-_V setCollisionLight true; 
-
-[_VC, (getPos _thisAirTrigger), 5000] call BIS_fnc_taskPatrol;
-
-if (_AGGRSCORE > 5) then {
-	private _V = createVehicle [ selectRandom (FLO_configCache get "vehicles" select 6), (getpos _thisAirTrigger) getPos [100, 120], [], 100, "FLY"]; 
-	private _Group = createVehicleCrew _V; 
-	private _VC = createGroup East;
-	{[_x] join _VC} forEach units _Group;
-
-	_V flyInHeight 700; 
-	_V disableAI "LIGHTS"; 
-	_V setPilotLight true;
-	_V setCollisionLight true; 
-
-	[_VC, (getPos _thisAirTrigger), 3000] call BIS_fnc_taskPatrol;
+// Get current aggression score from marker
+private _aggrMarkers = allMapMarkers select {markerColor _x == "Color6_FD_F"};
+private _aggrScore = 0;
+if (count _aggrMarkers > 0) then {
+    _aggrScore = parseNumber (markerText (_aggrMarkers select 0));
 };
-	
-if (_AGGRSCORE > 10) then {
-	private _V = createVehicle [ selectRandom (FLO_configCache get "vehicles" select 6), (getpos _thisAirTrigger) getPos [100, 180], [], 100, "FLY"]; 
-	private _Group = createVehicleCrew _V; 
-	private _VC = createGroup East;
-	{[_x] join _VC} forEach units _Group;
 
-	_V flyInHeight 700; 
-	_V disableAI "LIGHTS"; 
-	_V setPilotLight true;
-	_V setCollisionLight true; 
+// Function to create and setup an aircraft
+private _fnc_createAircraft = {
+    params ["_spawnPos", "_heading", "_patrolRadius", ["_isFirstAircraft", false]];
+    
+    // Create aircraft
+    private _aircraft = createVehicle [
+        selectRandom (FLO_configCache get "vehicles" select 6), 
+        _spawnPos getPos [100, _heading], 
+        [], 
+        100, 
+        "FLY"
+    ];
+    
+    // Add killed event handler only for the first aircraft
+    if (_isFirstAircraft) then {
+        _aircraft addEventHandler ["Killed", { 
+            private _airMarkers = allMapMarkers select {markerType _x == "o_plane"};
+            private _nearestMarker = [_airMarkers, (_this select 0)] call BIS_fnc_nearestPosition;
+            
+            deleteMarker _nearestMarker;
+            
+            [50, "AIR PATROL"] execVM "Scripts\NOtification.sqf";
+            [50] execVM "Scripts\Reward.sqf";
+            [] execVM "Scripts\DangerPlus.sqf";
+        }];
+    };
+    
+    // Create crew and group
+    private _crewGroup = createVehicleCrew _aircraft;
+    private _group = createGroup East;
+    {[_x] join _group} forEach units _crewGroup;
+    
+    // Configure aircraft settings
+    _aircraft flyInHeight 700;
+    _aircraft disableAI "LIGHTS";
+    _aircraft setPilotLight true;
+    _aircraft setCollisionLight true;
+    
+    // Set patrol waypoints
+    [_group, _spawnPos, _patrolRadius] call BIS_fnc_taskPatrol;
+    
+    _aircraft // Return the created aircraft
+};
 
-	[_VC, (getPos _thisAirTrigger), 5000] call BIS_fnc_taskPatrol;
+// Create first aircraft (with event handler)
+[_triggerPos, 0, 3000, true] call _fnc_createAircraft;
+
+// Create second aircraft
+[_triggerPos, 60, 5000] call _fnc_createAircraft;
+
+// Create additional aircraft based on aggression score
+if (_aggrScore > 5) then {
+    [_triggerPos, 120, 3000] call _fnc_createAircraft;
+};
+
+if (_aggrScore > 10) then {
+    [_triggerPos, 180, 5000] call _fnc_createAircraft;
 };
