@@ -192,11 +192,15 @@ diag_log "[FLO] Garrison system initialized";
 ["init", []] call FLO_fnc_logisticsNetwork;
 diag_log "[FLO] Logistics network initialized";
 
+// Initialize the objective flip system
+private _objectivesSetup = [["o_support"], ["o_installation"]] call FLO_fnc_setupCaptureSystem;
+diag_log format ["[FLO] Objective flip system initialized with %1 objectives", _objectivesSetup];
+
 // Start the dynamic garrison spawning system
 [] spawn {
     while {true} do {
         // Check for nearby OPFOR markers and spawn garrisons if players are nearby (within 1000m)
-        private _spawnedCount = ["checkAndSpawn", [1000]] call FLO_fnc_garrisonManager;
+        private _spawnedCount = ["checkAndSpawn", [1500]] call FLO_fnc_garrisonManager;
         
         if (_spawnedCount > 0) then {
             diag_log format ["[FLO] Dynamic spawning created %1 new garrisons", _spawnedCount];

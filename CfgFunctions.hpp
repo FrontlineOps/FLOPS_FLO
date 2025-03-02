@@ -38,10 +38,19 @@ class FLO {
         class restrictedArsenal     {};
     };
     
-    class Garrison {
-        file = "Functions\Garrison";
+    class Objective {
+        file = "Functions\Objective";
         
-        class garrisonManager     {};
-        class vehicleGarrison     {};
+        class garrisonManager         {};
+        class vehicleGarrison         {};
+        class finalizeObjectiveFlip   {};
+        class flipObjective           {};
+        class setupCaptureSystem      {};
+    };
+
+    class Utilities {
+        file = "Functions\Utilities";
+
+        class findNearestMarker   {};
     };
 };

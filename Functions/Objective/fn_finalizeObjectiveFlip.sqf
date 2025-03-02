@@ -30,6 +30,25 @@ if (isNull _trigger) exitWith {
 
 private _position = getPos _trigger;
 
+// Check if objective is in cooldown period - prevent infinite loop of captures
+if (!isNil "FLO_Objective_Cooldowns") then {
+    private _objectiveKey = format ["%1_%2", _objectiveType, _position];
+    private _lastCaptureTime = FLO_Objective_Cooldowns getOrDefault [_objectiveKey, 0];
+    
+    if (time - _lastCaptureTime < 300) exitWith {
+        diag_log format ["[FLO][Outpost] Objective at %1 is in cooldown period, cannot be flipped yet", _position];
+        false
+    };
+    
+    // Update the last capture time
+    FLO_Objective_Cooldowns set [_objectiveKey, time];
+} else {
+    // Initialize the cooldown tracking system if it doesn't exist
+    FLO_Objective_Cooldowns = createHashMap;
+    private _objectiveKey = format ["%1_%2", _objectiveType, _position];
+    FLO_Objective_Cooldowns set [_objectiveKey, time];
+};
+
 // Get current markers that might need to be deleted/updated
 private _currentMarkerType = if (_capturingSide == "west") then {
     // If BLUFOR is capturing, we need to find OPFOR markers
@@ -78,12 +97,12 @@ if (_capturingSide == "west") then {
     _respawnMarker setMarkerText "FOB";
     
     // Update objective count for mission completion if needed
-    if (!isNil "BIS_WL_oneMoreObjectiveCaptured" && !isNil "BIS_WL_objectivesToCapture") then {
-        BIS_WL_oneMoreObjectiveCaptured = BIS_WL_oneMoreObjectiveCaptured + 1;
-        publicVariable "BIS_WL_oneMoreObjectiveCaptured";
+    if (!isNil "FLO_oneMoreObjectiveCaptured" && !isNil "FLO_objectivesToCapture") then {
+        FLO_oneMoreObjectiveCaptured = FLO_oneMoreObjectiveCaptured + 1;
+        publicVariable "FLO_oneMoreObjectiveCaptured";
         
         // Check for mission completion
-        if (BIS_WL_oneMoreObjectiveCaptured >= BIS_WL_objectivesToCapture) then {
+        if (FLO_oneMoreObjectiveCaptured >= FLO_objectivesToCapture) then {
             ["END1", true] call BIS_fnc_endMission;
         };
     };
@@ -96,19 +115,63 @@ if (_capturingSide == "west") then {
     // Show notification
     ["TaskSucceeded", ["", format ["%1 Captured", _objectiveType]]] call BIS_fnc_showNotification;
     
-    // Set up QRF trigger for OPFOR counter-attack
-    private _qrfTrigger = createTrigger ["EmptyDetector", _position, false];
-    _qrfTrigger setTriggerArea [1000, 1000, 0, false, 200];
-    _qrfTrigger setTriggerTimeout [7, 7, 7, true];
-    _qrfTrigger setTriggerActivation ["WEST", "PRESENT", false];
-    _qrfTrigger setTriggerStatements [
-        "this && (({_x isKindOf 'Man'} count thisList > 0) or ({_x isKindOf 'LandVehicle'} count thisList > 0))",
-        format [
-            "[thisTrigger, '%1', 'east'] call FLO_fnc_flipObjective;",
-            _objectiveType
-        ],
-        ""
-    ];
+    // Set up QRF trigger for OPFOR counter-attack with cooldown period
+    // Add a delay before allowing the QRF trigger to be active
+    [_position, _objectiveType] spawn {
+        params ["_position", "_objectiveType"];
+        
+        // Wait before enabling QRF - this prevents immediate counter-attacks
+        sleep 180;
+        
+        // Only proceed if the objective is still under BLUFOR control
+        private _currentMarkers = allMapMarkers select {markerType _x == "b_installation"};
+        private _objectiveStillBlufor = false;
+        
+        {
+            if (getMarkerPos _x distance _position < 20 && markerColor _x == "colorBLUFOR") exitWith {
+                _objectiveStillBlufor = true;
+            };
+        } forEach _currentMarkers;
+        
+        if (_objectiveStillBlufor) then {
+            private _qrfTrigger = createTrigger ["EmptyDetector", _position, false];
+            _qrfTrigger setTriggerArea [1000, 1000, 0, false, 200];
+            _qrfTrigger setTriggerTimeout [30, 30, 30, true]; // Longer timeout
+            _qrfTrigger setTriggerActivation ["WEST", "PRESENT", false];
+            _qrfTrigger setTriggerStatements [
+                "this && (({_x isKindOf 'Man'} count thisList > 0) or ({_x isKindOf 'LandVehicle'} count thisList > 0)) && {random 100 < 30}", // 30% chance to trigger
+                format [
+                    "
+                    // Request QRF forces to attack the position with proper radius parameter
+                    [thisTrigger, 500] spawn {
+                        params ['_triggerObj', '_searchRadius'];
+                        // Wait a short time before sending QRF so players can prepare
+                        sleep (30 + random 60);
+                        
+                        // Only proceed if objective is still BLUFOR controlled
+                        private _objPos = getPos _triggerObj;
+                        private _nearMarkers = allMapMarkers select {markerType _x == 'b_installation' && getMarkerPos _x distance _objPos < 50};
+                        if (count _nearMarkers > 0) then {
+                            [_objPos, _searchRadius] call FLO_fnc_requestQRF;
+                            [[EAST, 'HQ'], 'We are sending reinforcements to capture the objective.'] remoteExec ['sideChat', 0];
+                            
+                            // Add a delay before flipping the objective
+                            [_triggerObj, '%1', 'east'] spawn {
+                                params ['_trigger', '_objectiveType', '_side'];
+                                sleep 120; // Give QRF time to engage before starting flip
+                                if (!isNull _trigger) then {
+                                    [_trigger, _objectiveType, _side] call FLO_fnc_flipObjective;
+                                };
+                            };
+                        };
+                    };
+                    ",
+                    _objectiveType
+                ],
+                ""
+            ];
+        };
+    };
     
 } else {
     // OPFOR captured
@@ -122,20 +185,6 @@ if (_capturingSide == "west") then {
     
     // Notify players
     [playerSide, "HQ"] commandChat format ["All Forces Fall Back. We Lost the %1", toUpper _objectiveType];
-    
-    // Set up trigger for BLUFOR counter-attack
-    private _counterTrigger = createTrigger ["EmptyDetector", _position, false];
-    _counterTrigger setTriggerArea [1000, 1000, 0, false, 200];
-    _counterTrigger setTriggerTimeout [7, 7, 7, true];
-    _counterTrigger setTriggerActivation ["WEST", "PRESENT", false];
-    _counterTrigger setTriggerStatements [
-        "this && (({_x isKindOf 'Man'} count thisList > 0) or ({_x isKindOf 'LandVehicle'} count thisList > 0))",
-        format [
-            "[thisTrigger, '%1', 'west'] call FLO_fnc_flipObjective;",
-            _objectiveType
-        ],
-        ""
-    ];
 };
 
 // Return success

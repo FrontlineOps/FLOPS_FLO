@@ -16,7 +16,7 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=16656;
+		nextID=16663;
 	};
 	class Camera
 	{
@@ -27,7 +27,7 @@ class EditorData
 	};
 };
 binarizationWanted=0;
-sourceName="BSP_CO_Altis";
+sourceName="FLO";
 addons[]=
 {
 	"A3_Structures_F_EPA_Walls",

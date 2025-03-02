@@ -26,9 +26,11 @@
 if (!isServer) exitWith {};
 
 params [
-    ["_mode", "init", [""]],
+    ["_mode", "", [""]],
     ["_params", [], [[]]]
 ];
+
+private _result = false;
 
 // Initialize the Garrison Manager object if it doesn't exist
 if (isNil "FLO_Garrison_Manager") then {
@@ -533,11 +535,11 @@ if (isNil "FLO_Garrison_Manager") then {
 };
 
 // Execute the requested mode
-private _result = switch (_mode) do {
+switch (_mode) do {
     // Initialize the garrison system
     case "init": {
         FLO_Garrison_Manager call ["initialize", []];
-        FLO_Garrison_Manager
+        _result = FLO_Garrison_Manager;
     };
     
     // Spawn a new garrison
@@ -548,7 +550,7 @@ private _result = switch (_mode) do {
             ["_withVehicles", false, [false]]
         ];
         
-        FLO_Garrison_Manager call ["spawnGarrison", [_marker, _size, _withVehicles]]
+        _result = FLO_Garrison_Manager call ["spawnGarrison", [_marker, _size, _withVehicles]];
     };
     
     // Reinforce an existing garrison
@@ -558,12 +560,13 @@ private _result = switch (_mode) do {
             ["_amount", 4, [0]]
         ];
         
-        FLO_Garrison_Manager call ["reinforceGarrison", [_marker, _amount]]
+        _result = FLO_Garrison_Manager call ["reinforceGarrison", [_marker, _amount]];
     };
     
     // Maintain all garrisons
     case "maintain": {
-        FLO_Garrison_Manager call ["maintainGarrisons", []]
+        FLO_Garrison_Manager call ["maintainGarrisons", []];
+        _result = true;
     };
     
     // Check markers near players and spawn garrisons if needed
@@ -572,7 +575,12 @@ private _result = switch (_mode) do {
             ["_activationDistance", 1500, [0]]
         ];
         
-        FLO_Garrison_Manager call ["checkNearbyGarrisons", [_activationDistance]]
+        _result = FLO_Garrison_Manager call ["checkNearbyGarrisons", [_activationDistance]];
+    };
+    
+    default {
+        diag_log format ["[FLO][Garrison] Error: Unknown mode '%1'", _mode];
+        _result = false;
     };
 };
 

@@ -16,14 +16,30 @@
     [allMapMarkers select {markerType _x == "o_support"}, getPos player, 500] call FLO_fnc_findNearestMarker;
 */
 
+// Make sure we're called with proper parameters
+if (_this isEqualType objNull) exitWith {
+    diag_log "[FLO][Utilities] Error: fn_findNearestMarker called with object instead of array";
+    ""
+};
+
+if (!(_this isEqualType [])) exitWith {
+    diag_log format ["[FLO][Utilities] Error: fn_findNearestMarker called with incorrect parameter type: %1", typeName _this];
+    ""
+};
+
 params [
     ["_markers", [], [[]]],
-    ["_position", [0,0,0], [[]]],
+    ["_position", [0,0,0], [[], objNull]],
     ["_maxDistance", 10000, [0]]
 ];
 
+// Handle if position is an object
+if (_position isEqualType objNull) then {
+    _position = getPos _position;
+};
+
 if (_markers isEqualTo [] || _position isEqualTo [0,0,0]) exitWith {
-    diag_log "[FLO][Outpost] Error: Invalid parameters for finding nearest marker";
+    diag_log "[FLO][Utilities] Error: Invalid parameters for finding nearest marker";
     ""
 };
 

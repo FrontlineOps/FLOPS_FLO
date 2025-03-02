@@ -24,9 +24,11 @@
 if (!isServer) exitWith {};
 
 params [
-    ["_mode", "init", [""]],
+    ["_mode", "", [""]],
     ["_params", [], [[]]]
 ];
+
+private _result = false;
 
 // Initialize the Logistics Network object if it doesn't exist
 if (isNil "FLO_Logistics_Network") then {
@@ -334,11 +336,11 @@ if (isNil "FLO_Logistics_Network") then {
 };
 
 // Execute the requested mode
-private _result = switch (_mode) do {
+switch (_mode) do {
     // Initialize the logistics network
     case "init": {
         FLO_Logistics_Network call ["initialize", []];
-        FLO_Logistics_Network
+        _result = FLO_Logistics_Network;
     };
     
     // Force an update of all supply routes
@@ -353,7 +355,7 @@ private _result = switch (_mode) do {
             ["_targetMarker", "", [""]]
         ];
         
-        FLO_Logistics_Network call ["calculateSupplyRoute", [_sourceMarker, _targetMarker]]
+        _result = FLO_Logistics_Network call ["calculateSupplyRoute", [_sourceMarker, _targetMarker]]
     };
     
     // Get current supply level for a marker
@@ -362,7 +364,7 @@ private _result = switch (_mode) do {
             ["_marker", "", [""]]
         ];
         
-        FLO_Logistics_Network call ["getMarkerSupplyLevel", [_marker]]
+        _result = FLO_Logistics_Network call ["getMarkerSupplyLevel", [_marker]]
     };
 };
 

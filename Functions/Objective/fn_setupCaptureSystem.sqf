@@ -36,7 +36,9 @@ private _objectivesSetUp = 0;
 // Process outpost markers
 {
     private _markerType = _x;
-    private _outpostMarkers = allMapMarkers select {markerType _x == _markerType};
+    private _outpostMarkers = allMapMarkers select {markerType _x == _markerType && markerColor _x in ["colorOPFOR", "ColorEAST"]};
+    
+    diag_log format ["[FLO][Outpost] Found %1 outpost markers of type %2", count _outpostMarkers, _markerType];
     
     {
         private _marker = _x;
@@ -72,7 +74,9 @@ private _objectivesSetUp = 0;
 // Process city markers
 {
     private _markerType = _x;
-    private _cityMarkers = allMapMarkers select {markerType _x == _markerType};
+    private _cityMarkers = allMapMarkers select {markerType _x == _markerType && markerColor _x in ["colorOPFOR", "ColorEAST"]};
+    
+    diag_log format ["[FLO][Outpost] Found %1 city markers of type %2", count _cityMarkers, _markerType];
     
     {
         private _marker = _x;

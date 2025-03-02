@@ -28,6 +28,19 @@ if (isNull _trigger) exitWith {
     false
 };
 
+private _position = getPos _trigger;
+
+// Check if objective is in cooldown period
+if (!isNil "FLO_Objective_Cooldowns") then {
+    private _objectiveKey = format ["%1_%2", _objectiveType, _position];
+    private _lastCaptureTime = FLO_Objective_Cooldowns getOrDefault [_objectiveKey, 0];
+    
+    if (time - _lastCaptureTime < 300) exitWith {
+        diag_log format ["[FLO][Outpost] Objective at %1 is in cooldown period, cannot be flipped yet", _position];
+        false
+    };
+};
+
 // Get relevant marker types and colors based on objective type
 private _markerType = switch (_objectiveType) do {
     case "outpost": { "o_support" };
@@ -75,6 +88,9 @@ if (_capturingSide == "west") then {
         "this",
         format [
             "
+            // Send QRF to recapture the position immediately when OPFOR seizes it
+            [getPos thisTrigger, 500] call FLO_fnc_requestQRF;
+            
             [parseText '<t color=""#FF3619"" font=""PuristaBold"" align = ""right"" shadow = ""1"" size=""2"">SITREP</t><br /><t color=""#7c7c7c""  align = ""right"" shadow = ""1"" size=""0.8"">Enemy Forces Dominating the Battle,</t><br /><t color=""#7c7c7c"" align = ""right"" shadow = ""1"" size=""0.8"">Keep Up the Fight, We Must Defend and Take Back the %1,</t>', [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ['BIS_fnc_textTiles', 0];
             
             _allMarks = allMapMarkers select {markerType _x == '%2'};
@@ -83,6 +99,7 @@ if (_capturingSide == "west") then {
             
             _attackingAtGrid = mapGridPosition getMarkerPos _objMarker;
             [[west,'HQ'], 'Enemy Forces Dominating the Battle at grid ' + _attackingAtGrid] remoteExec ['sideChat', 0];
+            [[EAST, 'HQ'], 'Reinforcements moving to secure the position.'] remoteExec ['sideChat', EAST];
             
             [thisTrigger, '%3', 'east'] call FLO_fnc_finalizeObjectiveFlip;
             ",
@@ -100,7 +117,7 @@ if (_capturingSide == "west") then {
         ]
     ];
     
-    // Set timeout to finalize capture if still in control
+    // Set timeout to finalize capture if still in control (increased to 120 seconds)
     [_trigger, _objectiveType, _capturingSide] spawn {
         params ["_trigger", "_objectiveType", "_capturingSide"];
         sleep 120;
@@ -137,39 +154,15 @@ if (_capturingSide == "west") then {
     private _attackingAtGrid = mapGridPosition getMarkerPos _objectiveMarker;
     [[west, "HQ"], format ["Enemy Forces Dominating the Battle at grid %1", _attackingAtGrid]] remoteExec ["sideChat", 0];
     
-    // Create a new trigger for BLUFOR counter-attack
-    private _counterTrigger = createTrigger ["EmptyDetector", _position, false];
-    _counterTrigger setTriggerArea [120, 120, 0, false, 200];
-    _counterTrigger setTriggerTimeout [10, 10, 10, true];
-    _counterTrigger setTriggerActivation ["WEST SEIZED", "PRESENT", true];
-    _counterTrigger setTriggerStatements [
-        "this",
-        format [
-            "
-            [parseText '<t color=""#1AA3FF"" font=""PuristaBold"" align = ""right"" shadow = ""1"" size=""2"">SITREP</t><br /><t color=""#959393"" align = ""right"" shadow = ""1"" size=""0.8"">Friendly Forces Dominating the Battle,</t><br /><t color=""#959393"" align = ""right"" shadow = ""1"" size=""0.8"">Keep Up the Fight, We will Recapture the %1,</t>', [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ['BIS_fnc_textTiles', 0];
-            
-            _allMarks = allMapMarkers select {markerType _x == '%2'};
-            _objMarker = [_allMarks, thisTrigger] call FLO_fnc_findNearestMarker;
-            _objMarker setMarkerColor 'ColorGrey';
-            
-            _attackingAtGrid = mapGridPosition getMarkerPos _objMarker;
-            [[west,'HQ'], 'Friendly Forces Dominating the Battle at grid ' + _attackingAtGrid] remoteExec ['sideChat', 0];
-            
-            [thisTrigger, '%3', 'west'] call FLO_fnc_finalizeObjectiveFlip;
-            ",
-            _objectiveType,
-            _markerType,
-            _objectiveType
-        ],
-        format [
-            "
-            _allMarks = allMapMarkers select {markerType _x == '%1'};
-            _objMarker = [_allMarks, thisTrigger] call FLO_fnc_findNearestMarker;
-            _objMarker setMarkerColor 'colorOPFOR';
-            ",
-            _markerType
-        ]
-    ];
+    // Send additional reinforcements as this is an active OPFOR attack
+    [_position, 500] spawn {
+        params ["_pos", "_searchRadius"];
+        sleep 20;
+        [_pos, _searchRadius] call FLO_fnc_requestQRF;
+    };
+    
+    // No counter-attack trigger for BLUFOR needed since BLUFOR is player-controlled
+    // Players will naturally decide when to counter-attack OPFOR positions
     
     // Set timeout to finalize capture if still in control
     [_trigger, _objectiveType, _capturingSide] spawn {

@@ -125,37 +125,37 @@ if (_AGGRSCORE > 10) then {
     [thisOutpostTrigger, _StrtM] execVM "Scripts\VehiInsert_CSAT_2.sqf";    
 };
 
-// Create Enemy Garrison
-_poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-_G = [_poss, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup; 
-((units _G) select 0) disableAI "PATH";
-    _G deleteGroupWhenEmpty true;
+// // Create Enemy Garrison
+// _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
+// _G = [_poss, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup; 
+// ((units _G) select 0) disableAI "PATH";
+//     _G deleteGroupWhenEmpty true;
 
-_poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-_G = [_poss, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup; 
-    _G deleteGroupWhenEmpty true;
+// _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
+// _G = [_poss, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup; 
+//     _G deleteGroupWhenEmpty true;
 
-if (_AGGRSCORE > 5) then {
-    _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-    _G = [_poss, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup; 
-    ((units _G) select 0) disableAI "PATH";
-    _G deleteGroupWhenEmpty true;
+// if (_AGGRSCORE > 5) then {
+//     _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
+//     _G = [_poss, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup; 
+//     ((units _G) select 0) disableAI "PATH";
+//     _G deleteGroupWhenEmpty true;
 
-    _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-    _G = [_poss, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup; 
-    _G deleteGroupWhenEmpty true;
-};
+//     _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
+//     _G = [_poss, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup; 
+//     _G deleteGroupWhenEmpty true;
+// };
 
-if (_AGGRSCORE > 10) then {
-    _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-    _G = [_poss, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup; 
-    ((units _G) select 0) disableAI "PATH";
-    _G deleteGroupWhenEmpty true;
+// if (_AGGRSCORE > 10) then {
+//     _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
+//     _G = [_poss, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup; 
+//     ((units _G) select 0) disableAI "PATH";
+//     _G deleteGroupWhenEmpty true;
 
-    _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
-    _G = [_poss, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup; 
-    _G deleteGroupWhenEmpty true;
-};
+//     _poss = [(getpos thisOutpostTrigger), 10, 80, 5, 1 , 0] call BIS_fnc_findSafePos;
+//     _G = [_poss, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup; 
+//     _G deleteGroupWhenEmpty true;
+// };
 
 
 // Create Ambient Enemy Vehicle
@@ -210,22 +210,22 @@ _allPositions = [];
 _allBuildings apply {_allPositions append (_x buildingPos -1)};  
 
 
-_G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;         
-    _G deleteGroupWhenEmpty true;
-_G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;     
-    _G deleteGroupWhenEmpty true;
-if (_AGGRSCORE > 5) then {
-    _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;         
-    _G deleteGroupWhenEmpty true;
-    _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;  
-    _G deleteGroupWhenEmpty true;
-};
-if (_AGGRSCORE > 10) then {
-    _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;         
-    _G deleteGroupWhenEmpty true;
-    _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;  
-    _G deleteGroupWhenEmpty true;
-};
+// _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;         
+//     _G deleteGroupWhenEmpty true;
+// _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;     
+//     _G deleteGroupWhenEmpty true;
+// if (_AGGRSCORE > 5) then {
+//     _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;         
+//     _G deleteGroupWhenEmpty true;
+//     _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;  
+//     _G deleteGroupWhenEmpty true;
+// };
+// if (_AGGRSCORE > 10) then {
+//     _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;         
+//     _G deleteGroupWhenEmpty true;
+//     _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;  
+//     _G deleteGroupWhenEmpty true;
+// };
 
 
 private _HeavGuns =  nearestObjects [(getpos thisOutpostTrigger), ["O_G_HMG_02_high_F", "O_G_Mortar_01_F"], 200];
@@ -236,68 +236,68 @@ private _HeavGuns =  nearestObjects [(getpos thisOutpostTrigger), ["O_G_HMG_02_h
 } forEach _HeavGuns;
 
 
-if (count nearestObjects [(getpos thisOutpostTrigger), (FLO_configCache get "bunkers"), 200] > 0) then {
+// if (count nearestObjects [(getpos thisOutpostTrigger), (FLO_configCache get "bunkers"), 200] > 0) then {
 
-    _allBuildings = nearestObjects [(getpos thisOutpostTrigger), (FLO_configCache get "bunkers"), 200];  
-    _allPositions = [];  
-    _allBuildings apply {_allPositions append (_x buildingPos -1)}; 
+//     _allBuildings = nearestObjects [(getpos thisOutpostTrigger), (FLO_configCache get "bunkers"), 200];  
+//     _allPositions = [];  
+//     _allBuildings apply {_allPositions append (_x buildingPos -1)}; 
  
-    _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;  
-    ((units _G) select 0) disableAI "PATH";   
-    _G deleteGroupWhenEmpty true;
-    _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;     
-    _G deleteGroupWhenEmpty true;     
+//     _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;  
+//     ((units _G) select 0) disableAI "PATH";   
+//     _G deleteGroupWhenEmpty true;
+//     _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;     
+//     _G deleteGroupWhenEmpty true;     
 
-    if (_AGGRSCORE > 5) then {
-        _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;  
-        ((units _G) select 0) disableAI "PATH";   
-        _G deleteGroupWhenEmpty true;
-        _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;     
-        _G deleteGroupWhenEmpty true;     
-    };
+//     if (_AGGRSCORE > 5) then {
+//         _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;  
+//         ((units _G) select 0) disableAI "PATH";   
+//         _G deleteGroupWhenEmpty true;
+//         _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;     
+//         _G deleteGroupWhenEmpty true;     
+//     };
 
-    if (_AGGRSCORE > 10) then {
-        _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;     
-        ((units _G) select 0) disableAI "PATH";
-        _G deleteGroupWhenEmpty true;
-        _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;     
-        _G deleteGroupWhenEmpty true;
-    };
-};
+//     if (_AGGRSCORE > 10) then {
+//         _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;     
+//         ((units _G) select 0) disableAI "PATH";
+//         _G deleteGroupWhenEmpty true;
+//         _G = [selectRandom _allPositions, East,(FLO_configCache get "units")] call BIS_fnc_spawnGroup;     
+//         _G deleteGroupWhenEmpty true;
+//     };
+// };
 
-// Create Triggers for Capture Zone
-_trg = createTrigger ["EmptyDetector", getPos thisOutpostTrigger, false];  
-_trg setTriggerArea [1000, 1000, 0, false, 200];  
-_trg setTriggerTimeout [2, 2, 2, true];
-_trg setTriggerActivation ["WEST", "PRESENT", false];  
-_trg setTriggerStatements [  
-"this",  "[thisTrigger, 600] execVM 'Scripts\ZONEs.sqf';", ""]; 
+// // Create Triggers for Capture Zone
+// _trg = createTrigger ["EmptyDetector", getPos thisOutpostTrigger, false];  
+// _trg setTriggerArea [1000, 1000, 0, false, 200];  
+// _trg setTriggerTimeout [2, 2, 2, true];
+// _trg setTriggerActivation ["WEST", "PRESENT", false];  
+// _trg setTriggerStatements [  
+// "this",  "[thisTrigger, 600] execVM 'Scripts\ZONEs.sqf';", ""]; 
   
   
-_trg = createTrigger ["EmptyDetector", getPos thisOutpostTrigger, false];  
-_trg setTriggerArea [120, 120, 0, false, 200];  
-_trg setTriggerTimeout [10, 10, 10, true];
-_trg setTriggerActivation ["WEST SEIZED", "PRESENT", true];  
-_trg setTriggerStatements [  
-"this",  "  
+// _trg = createTrigger ["EmptyDetector", getPos thisOutpostTrigger, false];  
+// _trg setTriggerArea [120, 120, 0, false, 200];  
+// _trg setTriggerTimeout [10, 10, 10, true];
+// _trg setTriggerActivation ["WEST SEIZED", "PRESENT", true];  
+// _trg setTriggerStatements [  
+// "this",  "  
 
-[parseText '<t color=""#1AA3FF"" font=""PuristaBold"" align = ""right"" shadow = ""1"" size=""2"">SITREP</t><br /><t color=""#959393"" align = ""right"" shadow = ""1"" size=""0.8"">Friendly Forces Dominating the Battle,</t><br /><t color=""#959393"" align = ""right"" shadow = ""1"" size=""0.8"">Keep Up the Fight, We will Capture and Secure the Outpost,</t>', [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ['BIS_fnc_textTiles', 0];
-_allMarks = allMapMarkers select {markerType _x == 'o_support'};  
-_FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
-                    _FOBMrk setMarkerColor 'ColorGrey' ;    
-                                _attackingAtGrid = mapGridPosition getMarkerPos _FOBMrk;
-                            [[west,'HQ'], 'Friendly Forces Dominating the Battle at grid ' + _attackingAtGrid] remoteExec ['sideChat', 0];
+// [parseText '<t color=""#1AA3FF"" font=""PuristaBold"" align = ""right"" shadow = ""1"" size=""2"">SITREP</t><br /><t color=""#959393"" align = ""right"" shadow = ""1"" size=""0.8"">Friendly Forces Dominating the Battle,</t><br /><t color=""#959393"" align = ""right"" shadow = ""1"" size=""0.8"">Keep Up the Fight, We will Capture and Secure the Outpost,</t>', [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ['BIS_fnc_textTiles', 0];
+// _allMarks = allMapMarkers select {markerType _x == 'o_support'};  
+// _FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
+//                     _FOBMrk setMarkerColor 'ColorGrey' ;    
+//                                 _attackingAtGrid = mapGridPosition getMarkerPos _FOBMrk;
+//                             [[west,'HQ'], 'Friendly Forces Dominating the Battle at grid ' + _attackingAtGrid] remoteExec ['sideChat', 0];
 
-[thisTrigger] execVM 'Scripts\Outpost_CSAT_CAPTURE_West.sqf';
+// [thisTrigger] execVM 'Scripts\Outpost_CSAT_CAPTURE_West.sqf';
 
-", "
+// ", "
 
 
-_allMarks = allMapMarkers select {markerType _x == 'o_support'};  
-_FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
-                    _FOBMrk setMarkerColor 'colorOPFOR' ;    
+// _allMarks = allMapMarkers select {markerType _x == 'o_support'};  
+// _FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
+//                     _FOBMrk setMarkerColor 'colorOPFOR' ;    
 
-"]; 
+// "]; 
 
 // Create Intel
 [thisOutpostTrigger, 200] execVM "Scripts\INTLitems.sqf";
