@@ -174,6 +174,44 @@ if (AutoSaveSwitchVal == 1) then {
     };
 };
 
+// Initialize Intel System
+[] call FLO_fnc_intelSystem;
+diag_log "[FLO] Intelligence System initialized";
+
+// Initialize the resource system if not already done
+if (isNil {["get", []] call FLO_fnc_opforResources}) then {
+    ["init", []] call FLO_fnc_opforResources;
+    diag_log "[FLO] Resource system initialized";
+};
+
+// Initialize the garrison management system
+["init", []] call FLO_fnc_garrisonManager;
+diag_log "[FLO] Garrison system initialized";
+
+// Initialize the logistics network
+["init", []] call FLO_fnc_logisticsNetwork;
+diag_log "[FLO] Logistics network initialized";
+
+// Initialize the objective flip system
+// WIP - Not working currently
+// private _objectivesSetup = [["o_support"], ["o_installation"]] call FLO_fnc_setupCaptureSystem;
+// diag_log format ["[FLO] Objective flip system initialized with %1 objectives", _objectivesSetup];
+
+// Start the dynamic garrison spawning system
+[] spawn {
+    while {true} do {
+        // Check for nearby OPFOR markers and spawn garrisons if players are nearby (within 1500m)
+        private _spawnedCount = ["checkAndSpawn", [1500]] call FLO_fnc_garrisonManager;
+        
+        if (_spawnedCount > 0) then {
+            diag_log format ["[FLO] Dynamic spawning created %1 new garrisons", _spawnedCount];
+        };
+        
+        // Wait 30 seconds before next check
+        sleep 30;
+    };
+};
+
 FLO_configCache = createHashMapFromArray [
     ["helipads", ["Land_HelipadCircle_F","Land_HelipadCivil_F","Heli_H_rescue","Land_HelipadRescue_F","Land_HelipadSquare_F","HeliHRescue","Heli_H_civil","HeliHCivil","HeliH"]],
     ["tyres", ["Land_Tyre_F"]],

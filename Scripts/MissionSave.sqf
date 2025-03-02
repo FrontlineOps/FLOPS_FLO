@@ -1,11 +1,8 @@
-
 if (isServer) then { 
 
 [[west,"HQ"], "Saving Mission ..."] remoteExec ["sideChat", 0];
 
-
 sleep 5;
-
 
 _missionTag = missionName;
 _missionTag = [_missionTag] call BIS_fnc_filterString;

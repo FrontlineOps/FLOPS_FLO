@@ -211,25 +211,32 @@ _mustRestore = false;
         private _types = _grpData select 2;
         private _isPatrol = _grpData select 3;
         
-        private _grp = [_pos, _side, _types] call BIS_fnc_spawnGroup;
-        _grp deleteGroupWhenEmpty true;
+        // Check if this is a garrison group (index 5 would contain the marker name)
+        private _isGarrison = count _grpData > 5 && {_grpData select 5 != ""};
         
-        if (_side isEqualto independent) then {
-            [_grp] execVM "Scripts\Civ_Relations_Ind.sqf";
-        };
-        
-        if (_isPatrol) then {
-            [_grp, _pos, 50 + random 200] call BIS_fnc_taskPatrol;
-        } else {
-            private _buildings = nearestObjects [_pos, ["House", "Strategic"], 20];
-            private _positions = [];
-            {_positions append (_x buildingPos -1)} forEach _buildings;
-            if (count _positions > 0) then {
-                (units _grp select 0) setPos (selectRandom _positions);
+        // Standard restoration for non-garrison groups
+        if (!_isGarrison) then {
+            private _grp = [_pos, _side, _types] call BIS_fnc_spawnGroup;
+            _grp deleteGroupWhenEmpty true;
+            
+            if (_side isEqualto independent) then {
+                [_grp] execVM "Scripts\Civ_Relations_Ind.sqf";
             };
+            
+            if (_isPatrol) then {
+                [_grp, _pos, 50 + random 200] call BIS_fnc_taskPatrol;
+            } else {
+                private _buildings = nearestObjects [_pos, ["House", "Strategic"], 20];
+                private _positions = [];
+                {_positions append (_x buildingPos -1)} forEach _buildings;
+                if (count _positions > 0) then {
+                    (units _grp select 0) setPos (selectRandom _positions);
+                };
+            };
+            
+            [_pos, 20] execVM "Scripts\INTLitems.sqf";
         };
         
-        [_pos, 20] execVM "Scripts\INTLitems.sqf";
         _keysToRemove pushBack _key;    
     };
 } forEach keys VS_VirtualizedGroups;
@@ -242,13 +249,33 @@ _mustRestore = false;
     private _grp = _x;
     private _units = units _grp;
     if (count _units > 0) then {
-        private _key = format ["ENM_%1", getPosATL leader _grp];
-        VS_VirtualizedGroups set [_key, [
-            side _grp,
-            getPosATL leader _grp,
-            _units apply {typeOf _x},
-            count _units > 1
-        ]];
+        // Check if this is a garrison group
+        private _garrisonCheck = ["isGarrisonGroup", [_grp]] call FLO_fnc_garrisonManager;
+        private _isGarrisonGroup = _garrisonCheck select 0;
+        private _garrisonMarker = _garrisonCheck select 1;
+        
+        // Generate a unique key for this group
+        private _key = format ["ENM_%1_%2", getPosATL leader _grp, random 999999];
+        
+        // Store additional information for garrison groups
+        if (_isGarrisonGroup) then {
+            diag_log format ["[CDVS] Virtualizing garrison group at %1", _garrisonMarker];
+            VS_VirtualizedGroups set [_key, [
+                side _grp,
+                getPosATL leader _grp,
+                _units apply {typeOf _x},
+                count _units > 1,
+                true, // Is garrisoned
+                _garrisonMarker // Marker reference
+            ]];
+        } else {
+            VS_VirtualizedGroups set [_key, [
+                side _grp,
+                getPosATL leader _grp,
+                _units apply {typeOf _x},
+                count _units > 1
+            ]];
+        };
         
         {deleteVehicle _x} forEach _units;
         deleteGroup _grp;

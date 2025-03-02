@@ -237,6 +237,14 @@ profileNamespace setVariable [_MarkerDataName, _MarkerDataHash];
 
 [[west,"HQ"], "BattleField Saved Successfully ..."] remoteExec ["sideChat", 0];
 
+// Save garrisons state before finalizing the mission save
+private _garrisonSaveResult = ["saveGarrisonSizes", []] call FLO_fnc_garrisonManager;
+if (_garrisonSaveResult) then {
+    [[west,"HQ"], "Garrison states saved successfully..."] remoteExec ["sideChat", 0];
+} else {
+    [[west,"HQ"], "Warning: Failed to save garrison states"] remoteExec ["sideChat", 0];
+};
+
 saveProfileNamespace;
 
 [[west,"HQ"], "Mission Saved !"] remoteExec ["sideChat", 0];

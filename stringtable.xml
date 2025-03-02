@@ -4,16 +4,16 @@
     <!-- Chinese Traditional localization by dustin902001: https://github.com/dustin902001 | Updated: 2018-12-05 -->
     <!-- Portuguese localization by AngusDLX: https://github.com/AngusDLX | Updated: 2018-08-25 -->
     <Key ID="STR_KPPLM_ACTIONOPEN">
-        <English>-- B.S.P Player Menu --</English>
-        <Chinese>-- B.S.P 玩家選單 --</Chinese>
-        <German>-- B.S.P Spielermenü --</German>
-        <Portuguese>-- B.S.P Menu do Jogador --</Portuguese>
+        <English>-- FLO Player Menu --</English>
+        <Chinese>-- FLO 玩家選單 --</Chinese>
+        <German>-- FLO Spielermenü --</German>
+        <Portuguese>-- FLO Menu do Jogador --</Portuguese>
     </Key>
     <Key ID="STR_KPPLM_TITLE">
-        <English>B.S.P Player Menu</English>
-        <Chinese>B.S.P 玩家選單</Chinese>
-        <German>B.S.P Spielermenü</German>
-        <Portuguese>B.S.P Menu do Jogador</Portuguese>
+        <English>FLO Player Menu</English>
+        <Chinese>FLO 玩家選單</Chinese>
+        <German>FLO Spielermenü</German>
+        <Portuguese>FLO Menu do Jogador</Portuguese>
     </Key>
     <Key ID="STR_KPPLM_LABELPLAYER">
         <English>Player Information</English>
@@ -219,7 +219,7 @@
         <Portuguese>Sistema de níveis desativado</Portuguese>
     </Key>
     <Key ID="STR_KPPLM_VERSION">
-        <English>B.S.P Player Menu v1.0.2\nby KeyStone</English>
-        <German>B.S.P Spielermenü v1.0.2\nvon KeyStone</German>
+        <English>FLO Player Menu v1.0.2\nby KeyStone</English>
+        <German>FLO Spielermenü v1.0.2\nvon KeyStone</German>
     </Key>
 </Project>

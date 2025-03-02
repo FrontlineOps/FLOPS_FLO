@@ -932,7 +932,7 @@ _trg setTriggerStatements [
 				_attackingAtGrid = mapGridPosition getMarkerPos _FOBMrk;
 				[[west,'HQ'], 'Enemy Forces Dominating the Battle at grid ' + _attackingAtGrid] remoteExec ['sideChat', 0];					
 				
-				[thisTrigger] execVM 'Scripts\Outpost_CSAT_CAPTURE_East.sqf';
+				[thisTrigger] execVM 'Scripts\Objectives\Outpost_CSAT_CAPTURE_East.sqf';
 
 ", "
 
@@ -1206,11 +1206,3 @@ _x setVariable ["ACE_isEOD", true];
 	//{[_x] execVM "Scripts\LDTInit.sqf" ;} forEach (allUnits select {side _x == west}) ; 
 
 [[west,"HQ"], "Mission StartUp Initialized Successfully ..."] remoteExec ["sideChat", 0];
-
-// Initialize OPFOR Resource System
-[] call FLO_fnc_opforResources;
-[[west,"HQ"], "OPFOR Resource System Initialized..."] remoteExec ["sideChat", 0];
-
-// Initialize Intel System
-[] call FLO_fnc_intelSystem;
-[[west,"HQ"], "Intelligence System Online"] remoteExec ["sideChat", 0];

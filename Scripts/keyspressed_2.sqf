@@ -36,7 +36,7 @@ _trgA = createTrigger ["EmptyDetector", _pos];
 _trgA setTriggerArea [1500, 1500, 0, false, 60];
 _trgA setTriggerTimeout [2, 2, 2, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
-_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Town_CSAT.sqf'; ", ""];
+_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Objectives\Town_CSAT.sqf'; ", ""];
 
 	}; 
 
@@ -57,7 +57,7 @@ _trgA setTriggerArea [500, 500, 0, false, 60];
 _trgA setTriggerTimeout [1, 1, 1, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
 _trgA setTriggerStatements [
-"this"," [thisTrigger] execVM 'Scripts\Recon_CSAT.sqf'; ", ""];
+"this"," [thisTrigger] execVM 'Scripts\Objectives\Recon_CSAT.sqf'; ", ""];
 
 _trgA = createTrigger ["EmptyDetector", _pos getPos [(1000 + (random 3500)),(0 + (random 350))]];
 _trgA setTriggerArea [500, 500, 0, false, 60];
@@ -81,13 +81,13 @@ _trgA = createTrigger ["EmptyDetector", _pos];
 _trgA setTriggerArea [1500, 1500, 0, false, 60];
 _trgA setTriggerTimeout [17, 17, 17, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
-_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Capital_CSAT.sqf';", ""];
+_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Objectives\Capital_CSAT.sqf';", ""];
 
 _trgA = createTrigger ["EmptyDetector", _pos getPos [(1000 + (random 3500)),(0 + (random 350))]];
 _trgA setTriggerArea [500, 500, 0, false, 60];
 _trgA setTriggerTimeout [1, 1, 1, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
-_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Recon_CSAT.sqf';", ""];
+_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Objectives\Recon_CSAT.sqf';", ""];
 
 _trgA = createTrigger ["EmptyDetector", _pos getPos [(1000 + (random 3500)),(0 + (random 350))]];
 _trgA setTriggerArea [500, 500, 0, false, 60];
@@ -140,14 +140,14 @@ _ARRAY = [ _COM ] call LARs_fnc_getCompObjects;
     _trgA setTriggerInterval 20;
     _trgA setTriggerActivation ["WEST", "PRESENT", false];
     _trgA setTriggerStatements [
-        "this","[thisTrigger] execVM 'Scripts\Outpost_CSAT.sqf';", ""];
+        "this","[thisTrigger] execVM 'Scripts\Objectives\Outpost_CSAT.sqf';", ""];
 				 
 _trgA = createTrigger ["EmptyDetector", _pos getPos [(1000 + (random 3500)),(0 + (random 350))]];
 _trgA setTriggerArea [1000, 1000, 0, false, 200];
 _trgA setTriggerInterval 20;
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
 _trgA setTriggerStatements [
-"this","[thisTrigger] execVM 'Scripts\Recon_CSAT.sqf';", ""];
+"this","[thisTrigger] execVM 'Scripts\Objectives\Recon_CSAT.sqf';", ""];
 
 _trgA = createTrigger ["EmptyDetector", _pos getPos [(1000 + (random 3500)),(0 + (random 350))]];
 _trgA setTriggerArea [1000, 1000, 0, false, 200];
@@ -189,13 +189,13 @@ _trgA = createTrigger ["EmptyDetector", _pos];
 _trgA setTriggerArea [2000, 2000, 0, false, 60];
 _trgA setTriggerTimeout [15, 15, 15, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
-_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\BOutpost_CSAT.sqf';", ""];
+_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Objectives\BOutpost_CSAT.sqf';", ""];
 
 _trgA = createTrigger ["EmptyDetector", _pos getPos [(1000 + (random 3500)),(0 + (random 350))]];
 _trgA setTriggerArea [500, 500, 0, false, 60];
 _trgA setTriggerTimeout [1, 1, 1, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
-_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Recon_CSAT.sqf';", ""];
+_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Objectives\Recon_CSAT.sqf';", ""];
 
 _trgA = createTrigger ["EmptyDetector", _pos getPos [(1000 + (random 3500)),(0 + (random 350))]];
 _trgA setTriggerArea [500, 500, 0, false, 60];
@@ -234,7 +234,7 @@ _trgA setTriggerArea [1000, 1000, 0, false, 30];
 _trgA setTriggerTimeout [3, 3, 3, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
 _trgA setTriggerStatements [
-"this","[thisTrigger] execVM 'Scripts\RoadBlock_CSAT.sqf';", ""];
+"this","[thisTrigger] execVM 'Scripts\Objectives\RoadBlock_CSAT.sqf';", ""];
 				 
 				 };		
 	
@@ -265,13 +265,13 @@ _trgA setTriggerArea [2000, 2000, 0, false, 60];
 _trgA setTriggerTimeout [9, 9, 9, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
 _trgA setTriggerStatements [
-"this","[thisTrigger] execVM 'Scripts\Factory_CSAT.sqf';", ""];
+"this","[thisTrigger] execVM 'Scripts\Objectives\Factory_CSAT.sqf';", ""];
 
 _trgA = createTrigger ["EmptyDetector", _pos getPos [(1000 + (random 3500)),(0 + (random 350))]];
 _trgA setTriggerArea [500, 500, 0, false, 60];
 _trgA setTriggerTimeout [1, 1, 1, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
-_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Recon_CSAT.sqf';", ""];
+_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Objectives\Recon_CSAT.sqf';", ""];
 
 _trgA = createTrigger ["EmptyDetector", _pos getPos [(1000 + (random 3500)),(0 + (random 350))]];
 _trgA setTriggerArea [500, 500, 0, false, 60];
@@ -305,7 +305,7 @@ _trgA setTriggerArea [2000, 2000, 0, false, 60];
 _trgA setTriggerTimeout [7, 7, 7, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
 _trgA setTriggerStatements [
-"this","[thisTrigger] execVM 'Scripts\AAA_CSAT.sqf';", ""];
+"this","[thisTrigger] execVM 'Scripts\Objectives\AAA_CSAT.sqf';", ""];
 
 	};	
 	
@@ -329,7 +329,7 @@ _trgA = createTrigger ["EmptyDetector", _pos];
 _trgA setTriggerArea [1500, 1500, 0, false, 60];
 _trgA setTriggerTimeout [7, 7, 7, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
-_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Mission_Radar.sqf';", ""];
+_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Objectives\Mission_Radar.sqf';", ""];
 				 		
 	};
 
@@ -341,7 +341,7 @@ _trgA = createTrigger ["EmptyDetector", _pos];
 _trgA setTriggerArea [2500, 2500, 0, false, 200];
 _trgA setTriggerTimeout [2, 2, 2, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
-_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Mission_Armor.sqf';", ""];
+_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Objectives\Mission_Armor.sqf';", ""];
 
 				 		
 	};	
@@ -366,7 +366,7 @@ _trgA = createTrigger ["EmptyDetector", _pos];
 _trgA setTriggerArea [2000, 2000, 0, false, 2000];
 _trgA setTriggerTimeout [1, 1, 1, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
-_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Mission_Air.sqf';", ""];
+_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Objectives\Mission_Air.sqf';", ""];
 				 		
 	};	
 
@@ -459,7 +459,7 @@ _trgA = createTrigger ["EmptyDetector", _pos];
 _trgA setTriggerArea [2000, 2000, 0, false, 60];
 _trgA setTriggerTimeout [5, 5, 5, true];
 _trgA setTriggerActivation ["WEST", "PRESENT", false];
-_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\RadioTower_CSAT.sqf';", ""];
+_trgA setTriggerStatements ["this","[thisTrigger] execVM 'Scripts\Objectives\RadioTower_CSAT.sqf';", ""];
  		
 	};	
 

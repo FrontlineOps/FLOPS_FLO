@@ -79,7 +79,7 @@ _triggers = _alltriggers select {(getMarkerPos _InsVillMrk) distance (getPos _x)
 				_trgA setTriggerStatements [
 				"this","
 
-				[thisTrigger] execVM 'Scripts\Town_CSAT.sqf';
+				[thisTrigger] execVM 'Scripts\Objectives\Town_CSAT.sqf';
 
 				", ""];				
 			};
@@ -172,7 +172,7 @@ _InsVillMrk = selectRandom _InsVillMrks ;
 				_trgA setTriggerStatements [
 				"this","
 
-				[thisTrigger] execVM 'Scripts\Town_CSAT.sqf';
+				[thisTrigger] execVM 'Scripts\Objectives\Town_CSAT.sqf';
 				
 				", ""];				
 		}else{
