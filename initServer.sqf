@@ -192,23 +192,130 @@ diag_log "[FLO] Garrison system initialized";
 ["init", []] call FLO_fnc_logisticsNetwork;
 diag_log "[FLO] Logistics network initialized";
 
-// Initialize the objective flip system
-// WIP - Not working currently
-// private _objectivesSetup = [["o_support"], ["o_installation"]] call FLO_fnc_setupCaptureSystem;
-// diag_log format ["[FLO] Objective flip system initialized with %1 objectives", _objectivesSetup];
+// Initialize the Task Force system
+["init", []] call FLO_fnc_TaskForceSystem;
+diag_log "[FLO] Task Force system initialized";
 
-// Start the dynamic garrison spawning system
+// Start a background process to automatically create defensive lines
 [] spawn {
+    // Wait a bit for other systems to initialize
+    sleep 120;
+    
     while {true} do {
-        // Check for nearby OPFOR markers and spawn garrisons if players are nearby (within 1500m)
-        private _spawnedCount = ["checkAndSpawn", [1500]] call FLO_fnc_garrisonManager;
+        // Get all potential frontline markers
+        private _frontlineMarkers = [];
         
-        if (_spawnedCount > 0) then {
-            diag_log format ["[FLO] Dynamic spawning created %1 new garrisons", _spawnedCount];
+        // First try to find markers that are explicitly marked as frontline
+        private _explicitFrontlineMarkers = allMapMarkers select {
+            markerType _x == "mil_flag" && 
+            markerColor _x == "ColorEAST"
         };
         
-        // Wait 30 seconds before next check
-        sleep 30;
+        if (count _explicitFrontlineMarkers > 0) then {
+            _frontlineMarkers = _explicitFrontlineMarkers;
+        } else {
+            // If no explicit markers, calculate frontline from OPFOR and BLUFOR positions
+            private _opforMarkers = allMapMarkers select {
+                markerColor _x in ["colorOPFOR", "ColorEAST"] && 
+                markerType _x in ["o_support", "n_support", "o_installation", "n_installation"]
+            };
+            
+            private _bluforMarkers = allMapMarkers select {
+                markerColor _x in ["colorBLUFOR", "ColorWEST", "ColorYellow"] && 
+                markerType _x in ["b_installation", "b_support"]
+            };
+            
+            // Find OPFOR markers closest to BLUFOR territory
+            {
+                private _opforPos = getMarkerPos _x;
+                private _distanceToBlufor = 999999;
+                private _closestBlufor = "";
+                
+                {
+                    private _bluforPos = getMarkerPos _x;
+                    private _distance = _opforPos distance _bluforPos;
+                    
+                    if (_distance < _distanceToBlufor) then {
+                        _distanceToBlufor = _distance;
+                        _closestBlufor = _x;
+                    };
+                } forEach _bluforMarkers;
+                
+                // If an OPFOR marker is within a reasonable range of BLUFOR, consider it frontline
+                if (_distanceToBlufor < 2500) then {
+                    _frontlineMarkers pushBack _x;
+                };
+            } forEach _opforMarkers;
+        };
+        
+        // If frontline markers found, create or reinforce defense lines
+        if (count _frontlineMarkers > 0) then {
+            // Get the aggression level to determine strength of defense
+            private _aggressionMarkers = allMapMarkers select {markerColor _x == "Color6_FD_F"};
+            private _aggrScore = 5; // Default medium aggression
+            
+            if (count _aggressionMarkers > 0) then {
+                _aggrScore = parseNumber (markerText (_aggressionMarkers select 0));
+            };
+            
+            private _defenseStrength = switch (true) do {
+                case (_aggrScore < 4): {"light"};
+                case (_aggrScore < 9): {"medium"};
+                default {"heavy"};
+            };
+            
+            // Get current resources
+            private _currentResources = ["get", []] call FLO_fnc_opforResources;
+            
+            // Calculate the number of defense lines to create/reinforce based on resources
+            private _maxLinesToProcess = floor (_currentResources / 25);
+            _maxLinesToProcess = _maxLinesToProcess min 3; // Cap at 3 lines per cycle
+            
+            if (_maxLinesToProcess > 0) then {
+                // Process a random selection of frontline markers
+                private _markersToProcess = [];
+                
+                if (count _frontlineMarkers <= _maxLinesToProcess) then {
+                    _markersToProcess = _frontlineMarkers;
+                } else {
+                    // Select a random subset
+                    for "_i" from 1 to _maxLinesToProcess do {
+                        private _randomMarker = selectRandom _frontlineMarkers;
+                        _markersToProcess pushBack _randomMarker;
+                        _frontlineMarkers = _frontlineMarkers - [_randomMarker];
+                    };
+                };
+                
+                // Process each selected marker
+                {
+                    // Determine if we should create a new line or reinforce an existing one
+                    private _taskForceMarkers = allMapMarkers select {
+                        markerType _x == "mil_triangle" && 
+                        markerColor _x == "ColorEAST" &&
+                        markerAlpha _x == 0.6 &&
+                        getMarkerPos _x distance (getMarkerPos _x) < 1000
+                    };
+                    
+                    if (count _taskForceMarkers > 0) then {
+                        // Reinforce existing line
+                        ["reinforceDefenseLine", [_x, _defenseStrength]] call FLO_fnc_TaskForceDefenseLine;
+                    } else {
+                        // Create new line
+                        private _depth = switch (_defenseStrength) do {
+                            case "light": {1};
+                            case "medium": {2};
+                            case "heavy": {3};
+                            default {1};
+                        };
+                        
+                        ["createDefenseLine", [_x, _depth, _defenseStrength]] call FLO_fnc_TaskForceDefenseLine;
+                    };
+                } forEach _markersToProcess;
+            };
+        };
+        
+        // Wait before next cycle
+        sleep 600; // 10 minutes
     };
 };
 
