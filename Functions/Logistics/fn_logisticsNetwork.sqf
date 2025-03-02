@@ -176,7 +176,7 @@ if (isNil "FLO_Logistics_Network") then {
                 
                 // Check for nearby BLUFOR areas to determine if it's frontline
                 private _nearbyMarkers = allMapMarkers select {
-                    markerColor _x in ["colorBLUFOR", "ColorWEST"] && 
+                    markerColor _x in ["colorBLUFOR", "ColorWEST", "ColorYellow"] && 
                     (getMarkerPos _x) distance _pos < 3000
                 };
                 
