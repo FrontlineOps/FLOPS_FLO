@@ -89,7 +89,7 @@ if (count (_triggerPos nearRoads 150) > 0) then {
         private _connectedRoad = (roadsConnectedTo _road) select 0;
         if (!isNil "_connectedRoad") then {
             private _dir = _road getDir _connectedRoad;
-            [_road, _dir] execVM "Scripts\WatchPostBB.sqf";
+            [_road, _dir] execVM "Scripts\Objectives\WatchPostBB.sqf";
         };
     };
     
@@ -178,7 +178,7 @@ _trg setTriggerStatements [
     _FOBMrk setMarkerColor 'ColorGrey';
     _attackingAtGrid = mapGridPosition getMarkerPos _FOBMrk;
     [[west,'HQ'], 'Friendly Forces Dominating the Battle at grid ' + _attackingAtGrid] remoteExec ['sideChat', 0];
-    [thisTrigger] execVM 'Scripts\City_CSAT_CAPTURE_West.sqf';
+    [thisTrigger] execVM 'Scripts\Objectives\City_CSAT_CAPTURE_West.sqf';
     ",
     ""
 ];

@@ -18,5 +18,5 @@ _triggers = _alltriggers select {getPos _x distance _thisCaptureTrigger < 50};
 				_trgA setTriggerArea [1500, 1500, 0, false, 60];
 				_trgA setTriggerTimeout [7, 7, 7, true];
 				_trgA setTriggerActivation ["WEST", "PRESENT", false];
-				_trgA setTriggerStatements ["this",  "[thisTrigger] execVM 'Scripts\City_CSAT.sqf';",""]; 
+				_trgA setTriggerStatements ["this",  "[thisTrigger] execVM 'Scripts\Objectives\City_CSAT.sqf';",""]; 
 

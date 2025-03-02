@@ -262,7 +262,7 @@ private _frontlineManagerDeclaration = [
 			_trgA setTriggerStatements [
 			""this"",""
 
-			[thisTrigger] execVM 'Scripts\Outpost_CSAT.sqf';
+			[thisTrigger] execVM 'Scripts\Objectives\Outpost_CSAT.sqf';
 
 			"",""""];
 
@@ -399,7 +399,7 @@ private _frontlineManagerDeclaration = [
 				_trgA setTriggerStatements [
 				""this"",""
 
-				[thisTrigger] execVM 'Scripts\RoadBlock_CSAT.sqf';
+				[thisTrigger] execVM 'Scripts\Objectives\RoadBlock_CSAT.sqf';
 
 				"",""""];
 

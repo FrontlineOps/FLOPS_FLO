@@ -668,7 +668,7 @@ _trg setTriggerArea [1000, 1000, 0, false, 200];
 _trgA setTriggerTimeout [2, 2, 2, true];
 _trg setTriggerActivation ["WEST", "PRESENT", false];  
 _trg setTriggerStatements [  
-"this",  "[thisTrigger, 1500] execVM 'Scripts\ZONEs.sqf';", ""]; 
+"this",  "[thisTrigger, 1500] execVM 'Scripts\Objectives\ZONEs.sqf';", ""]; 
  
  
    
@@ -686,7 +686,7 @@ _FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
 									_attackingAtGrid = mapGridPosition getMarkerPos _FOBMrk;
 								[[west,'HQ'], 'Friendly Forces Dominating the Battle at grid ' + _attackingAtGrid] remoteExec ['sideChat', 0];
 
-[thisTrigger] execVM 'Scripts\Outpost_CSAT_CAPTURE_West.sqf';
+[thisTrigger] execVM 'Scripts\Objectives\Outpost_CSAT_CAPTURE_West.sqf';
 
 ", "
 

@@ -30,7 +30,7 @@ private _fnc_spawnResourceBox = {
 private _fnc_spawnWatchPost = {
     params ["_road", "_dir"];
     if (!isNull _road) then {
-        [_road, _dir] execVM "Scripts\WatchPostBB.sqf";
+        [_road, _dir] execVM "Scripts\Objectives\WatchPostBB.sqf";
     };
 };
 
@@ -296,7 +296,7 @@ private _fnc_createTrigger = {
     [1000, 1000, 0, false, 200],
     2,
     ["WEST", "PRESENT", false],
-    ["this", "[thisTrigger, 2000] execVM 'Scripts\ZONEs.sqf';", ""]
+    ["this", "[thisTrigger, 2000] execVM 'Scripts\Objectives\ZONEs.sqf';", ""]
 ] call _fnc_createTrigger;
 
 // Create CQB trigger

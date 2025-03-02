@@ -8,7 +8,7 @@ _posit = getPos _thisCaptureWestTrigger ;
 		
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-sleep 120 ;
+sleep 180 ;
 
 if !(isNull _thisCaptureWestTrigger) then {
 
@@ -17,6 +17,7 @@ _mrkr = _mrkrs select 0;
 _AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 if (triggerActivated _thisCaptureWestTrigger) then {
+	
 
 				_POWs = allUnits select {(alive _x) && ((side _x) == east) && (position _x inArea  _thisCaptureWestTrigger)}  ;
 				_POWsShuffled = _POWs call BIS_fnc_arrayShuffle ;
@@ -49,7 +50,7 @@ if (triggerActivated _thisCaptureWestTrigger) then {
 				(_this select 0) switchMove '';
 									[(_this select 0), ''] remoteExec ['playMove', (_this select 0)];		
 				(_this select 0) setBehaviour 'AWARE';
-								(_this select 0) setCaptive true ;	
+				(_this select 0) setCaptive true ;			
 				[(_this select 0)] joinSilent player;
 				removeAllActions (_this select 0);
 				},
@@ -74,7 +75,7 @@ if (triggerActivated _thisCaptureWestTrigger) then {
 				(_this select 0) enableAI 'ANIM';
 				(_this select 0) enableAI 'PATH';
 				(_this select 0) switchMove '';
-													[(_this select 0), ''] remoteExec ['playMove', (_this select 0)];		
+									[(_this select 0), ''] remoteExec ['playMove', (_this select 0)];		
 				(_this select 0) setBehaviour 'AWARE';
 				removeAllActions (_this select 0);
 				_x removeAllEventHandlers 'Killed';
@@ -95,22 +96,24 @@ if (triggerActivated _thisCaptureWestTrigger) then {
 
 				} foreach _POWsF;
 
-				_MMarks = allMapMarkers select { markerType _x == 'o_support' or markerType _x == 'n_support'};
+				_MMarks = allMapMarkers select { markerType _x == 'o_installation' or markerType _x == 'n_installation'};
 				_M = [_MMarks,  _thisCaptureWestTrigger] call BIS_fnc_nearestPosition;
 
-
-				if (markerType _M == 'o_support') then {
-				[50, 'OUTPOST'] execVM 'Scripts\NOtification.sqf' ;
-				[50] execVM 'Scripts\Reward.sqf';
-				[] execVM 'Scripts\DangerPlus.sqf';
-				};
-				
-				if (markerType _M == 'n_support') then {		
-				[100, 'COMMANDPOST'] execVM 'Scripts\NOtification.sqf' ;
+				if (markerType _M == 'o_installation') then {
+				[100, 'CITY'] execVM 'Scripts\NOtification.sqf' ;
 				[100] execVM 'Scripts\Reward.sqf';
 				[] execVM 'Scripts\DangerPlus.sqf';
+				[] execVM 'Scripts\ReputationPlus.sqf';
+				};
+				
+				if (markerType _M == 'n_installation') then {
+				[200, 'CAPITAL'] execVM 'Scripts\NOtification.sqf' ;
+				[200] execVM 'Scripts\Reward.sqf';
 				[] execVM 'Scripts\DangerPlus.sqf';
-				};				
+				[] execVM 'Scripts\DangerPlus.sqf';				
+				[] execVM 'Scripts\ReputationPlus.sqf';
+				[] execVM 'Scripts\ReputationPlus.sqf';
+				};
 
 				deleteMarker _M ; 
 				
@@ -132,22 +135,22 @@ if (triggerActivated _thisCaptureWestTrigger) then {
 				_mrkr setMarkerType 'loc_Bunker';
 				_mrkr setMarkerAlpha 0.003;
 			};		
-	
-	
-				_markerName = 'respawn_west' + (str (getPos _thisCaptureWestTrigger));  
+
+				_markerName = 'respawn_west' + (str (getPos _thisCaptureWestTrigger)) ;  
 				_mrkr = createMarker [_markerName, getPos _thisCaptureWestTrigger] ;
 				_mrkr setMarkerType 'b_installation'; 
-				_mrkr setMarkerColor 'colorBLUFOR';
+				_mrkr setMarkerColor 'ColorWEST';
 				_mrkr setMarkerSize [1.3, 1.3]; 
 				
+
+			
 				_alltriggers = allMissionObjects "EmptyDetector";
 				_triggers = _alltriggers select {getPos _x distance _thisCaptureWestTrigger < 10};
 				{ deleteVehicle _x; } forEach _triggers ;
+								
 				
-
-
 _trg = createTrigger ["EmptyDetector", _posit, false];  
-_trg setTriggerArea [120, 120, 0, false, 200];  
+_trg setTriggerArea [220, 220, 0, false, 200];  
 _trg setTriggerTimeout [10, 10, 10, true];
 _trg setTriggerActivation ["EAST SEIZED", "PRESENT", true];  
 _trg setTriggerStatements [  
@@ -160,21 +163,19 @@ _trg setTriggerStatements [
 				_attackingAtGrid = mapGridPosition getMarkerPos _FOBMrk;
 				[[west,'HQ'], 'Enemy Forces Dominating the Battle at grid ' + _attackingAtGrid] remoteExec ['sideChat', 0];					
 				
-				[thisTrigger] execVM 'Scripts\Outpost_CSAT_CAPTURE_East.sqf';
+				[thisTrigger] execVM 'Scripts\Objectives\City_CSAT_CAPTURE_East.sqf';
 
 ", "
 
 				_allMarks = allMapMarkers select {markerType _x == 'b_installation'};  
 				_FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
-				_FOBMrk setMarkerColor 'colorBLUFOR' ;		
+				_FOBMrk setMarkerColor 'ColorWEST' ;		
 
 "];				
 
 
-				[_trg, 2000] call FLO_fnc_requestQRF;
-
+				[_trg, 3000] call FLO_fnc_requestQRF;
 
 
 		};		
 };
-

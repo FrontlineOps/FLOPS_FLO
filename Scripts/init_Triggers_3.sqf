@@ -36,7 +36,7 @@ _trgA setTriggerActivation ['WEST', 'PRESENT', false];
 _trgA setTriggerStatements [
 ""this && (({_x isKindOf 'Man'} count thisList >0) or ({_x isKindOf 'LandVehicle'} count thisList >0) or ({_x isKindOf 'Tank'} count thisList >0) or ({_x isKindOf 'Car'} count thisList >0))"",""
 
-[thisTrigger] execVM 'Scripts\Recon_CSAT.sqf';
+[thisTrigger] execVM 'Scripts\Objectives\Recon_CSAT.sqf';
 
 "",""""];
 
@@ -122,7 +122,7 @@ _trgA setTriggerActivation ["WEST", "PRESENT", false];
 _trgA setTriggerStatements [
 "this","
 
-[thisTrigger] execVM 'Scripts\Mission_Armor.sqf';
+[thisTrigger] execVM 'Scripts\Objectives\Mission_Armor.sqf';
 
 ", ""];
 
@@ -149,7 +149,7 @@ _TERR = nearestTerrainObjects [(getMarkerpos _x), ["FOREST", "House", "TREE", "S
 		_trgA setTriggerStatements [
 		"this && (({_x isKindOf 'Man'} count thisList >0) or ({_x isKindOf 'LandVehicle'} count thisList >0) or ({_x isKindOf 'Tank'} count thisList >0) or ({_x isKindOf 'Car'} count thisList >0))","
 
-		[thisTrigger] execVM 'Scripts\RadioTower_CSAT.sqf';
+		[thisTrigger] execVM 'Scripts\Objectives\RadioTower_CSAT.sqf';
 
 		", ""];
 			

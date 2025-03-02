@@ -89,7 +89,7 @@ private _sortedMounts = [_allMounts, [], {-([locationPosition _x] call _scorePos
     if ([_mountPos] call _isSuitablePosition) then {
         private _score = [_mountPos] call _scorePosition;
         if (_score > 0.5) then { // Only place if reasonably facing enemies
-            [_x, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
+            [_x, selectRandom _allWatchposts] execVM "Scripts\Objectives\WatchPost.sqf";
             (_zoneData get "watchpostPositions") pushBack _mountPos;
         };
     };
@@ -104,7 +104,7 @@ if ((_zoneData get "aggrScore") > 5) then {
             private _sortedMounts = [_validMounts, [], {-([locationPosition _x] call _scorePosition)}] call BIS_fnc_sortBy;
             private _mount = _sortedMounts select 0;
             if ([locationPosition _mount] call _scorePosition > 0.5) then {
-                [_mount, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
+                [_mount, selectRandom _allWatchposts] execVM "Scripts\Objectives\WatchPost.sqf";
                 (_zoneData get "watchpostPositions") pushBack (locationPosition _mount);
             };
         };
@@ -116,7 +116,7 @@ if ((_zoneData get "aggrScore") > 5) then {
             private _sortedMounts = [_validMounts, [], {-([locationPosition _x] call _scorePosition)}] call BIS_fnc_sortBy;
             private _mount = _sortedMounts select 0;
             if ([locationPosition _mount] call _scorePosition > 0.5) then {
-                [_mount, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
+                [_mount, selectRandom _allWatchposts] execVM "Scripts\Objectives\WatchPost.sqf";
                 (_zoneData get "watchpostPositions") pushBack (locationPosition _mount);
             };
         };
@@ -132,7 +132,7 @@ if ((_zoneData get "aggrScore") > 10) then {
                 private _sortedMounts = [_validMounts, [], {-([locationPosition _x] call _scorePosition)}] call BIS_fnc_sortBy;
                 private _mount = _sortedMounts select 0;
                 if ([locationPosition _mount] call _scorePosition > 0.5) then {
-                    [_mount, selectRandom _allWatchposts] execVM "Scripts\WatchPost.sqf";
+                    [_mount, selectRandom _allWatchposts] execVM "Scripts\Objectives\WatchPost.sqf";
                     (_zoneData get "watchpostPositions") pushBack (locationPosition _mount);
                 };
             };

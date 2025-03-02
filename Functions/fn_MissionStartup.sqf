@@ -932,7 +932,7 @@ _trg setTriggerStatements [
 				_attackingAtGrid = mapGridPosition getMarkerPos _FOBMrk;
 				[[west,'HQ'], 'Enemy Forces Dominating the Battle at grid ' + _attackingAtGrid] remoteExec ['sideChat', 0];					
 				
-				[thisTrigger] execVM 'Scripts\Outpost_CSAT_CAPTURE_East.sqf';
+				[thisTrigger] execVM 'Scripts\Objectives\Outpost_CSAT_CAPTURE_East.sqf';
 
 ", "
 
