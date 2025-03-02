@@ -1,4 +1,4 @@
 # FLO_ALTIS
 FLO : Frontline Operations: Altis
 
-STABLE VERSION: 1.0.8
+STABLE VERSION: 1.5.1
