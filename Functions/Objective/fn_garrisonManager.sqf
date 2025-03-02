@@ -6,13 +6,15 @@
     Uses OOP approach with HashMapObject for better organization and state management.
     
     Parameters:
-    _mode - The function mode to execute ["init", "spawn", "reinforce", "maintain", "checkAndSpawn"] (String)
+    _mode - The function mode to execute ["init", "spawn", "reinforce", "maintain", "checkAndSpawn", "saveGarrisonSizes", "loadGarrisonSizes"] (String)
     _params - Parameters based on mode (Array)
         init: [] - No parameters needed
         spawn: [_marker, _size, _withVehicles] - Create a new garrison at marker
         reinforce: [_marker, _amount] - Add units to existing garrison
         maintain: [] - Run maintenance on all garrisons
         checkAndSpawn: [_activationDistance] - Check all markers and spawn garrisons near players
+        saveGarrisonSizes: [] - Save current garrison sizes to profileNamespace
+        loadGarrisonSizes: [] - Load garrison sizes from profileNamespace
     
     Returns:
     Based on mode:
@@ -21,6 +23,8 @@
         reinforce: Boolean - Success of reinforcement
         maintain: Nothing
         checkAndSpawn: Number - Count of newly spawned garrisons
+        saveGarrisonSizes: Boolean - Success of save operation
+        loadGarrisonSizes: Boolean - Success of load operation
 */
 
 if (!isServer) exitWith {};
@@ -45,6 +49,7 @@ if (isNil "FLO_Garrison_Manager") then {
         ["totalUnits", 0],
         ["processedMarkers", []],
         ["markerSizeLimits", createHashMap], // New property to store min/max sizes for marker types
+        ["garrisonSizes", createHashMap],    // New property to store saved garrison sizes
         
         // Constructor - Called when object is created
         ["#create", {
@@ -52,6 +57,7 @@ if (isNil "FLO_Garrison_Manager") then {
             _self set ["lastUpdate", time];
             _self set ["totalUnits", 0];
             _self set ["processedMarkers", []];
+            _self set ["garrisonSizes", createHashMap];
             
             // Define size limits for each marker type [baseSize, maxSize]
             private _sizeLimits = createHashMap;
@@ -85,6 +91,9 @@ if (isNil "FLO_Garrison_Manager") then {
         
         // Initialize garrison system and start maintenance loop
         ["initialize", {
+            // Load saved garrison sizes if available
+            [_self, "loadGarrisonSizes"] call {};
+            
             // Start the maintenance loop
             [] spawn {
                 while {true} do {
@@ -99,6 +108,60 @@ if (isNil "FLO_Garrison_Manager") then {
             };
         }],
         
+        // Save garrison sizes to profileNamespace
+        ["saveGarrisonSizes", {
+            private _missionTag = missionName;
+            _missionTag = [_missionTag] call BIS_fnc_filterString;
+            private _garrisonSizesDataName = _missionTag + "_garrisonSizes";
+            
+            private _garrisonSizes = createHashMap;
+            private _garrisons = _self get "garrisons";
+            
+            // For each garrison, store its current size
+            {
+                private _marker = _x;
+                private _garrisonData = _garrisons get _marker;
+                
+                if (!isNil "_garrisonData") then {
+                    // The structure of garrisonData is [_units, _group, _vehicles, _garrison, _size, _queuedReinforcements]
+                    private _size = _garrisonData param [4, 0];
+                    
+                    // Only save if size is greater than 0
+                    if (_size > 0) then {
+                        _garrisonSizes set [_marker, _size];
+                    };
+                };
+            } forEach keys _garrisons;
+            
+            // Save to profileNamespace
+            profileNamespace setVariable [_garrisonSizesDataName, _garrisonSizes];
+            saveProfileNamespace;
+            
+            // Store in object for quick access
+            _self set ["garrisonSizes", _garrisonSizes];
+            
+            diag_log format ["[FLO][Garrison] Saved sizes for %1 garrisons", count keys _garrisonSizes];
+            true
+        }],
+        
+        // Load garrison sizes from profileNamespace
+        ["loadGarrisonSizes", {
+            private _missionTag = missionName;
+            _missionTag = [_missionTag] call BIS_fnc_filterString;
+            private _garrisonSizesDataName = _missionTag + "_garrisonSizes";
+            
+            private _savedGarrisonSizes = profileNamespace getVariable [_garrisonSizesDataName, createHashMap];
+            
+            if (count keys _savedGarrisonSizes > 0) then {
+                _self set ["garrisonSizes", _savedGarrisonSizes];
+                diag_log format ["[FLO][Garrison] Loaded sizes for %1 garrisons", count keys _savedGarrisonSizes];
+                true
+            } else {
+                diag_log "[FLO][Garrison] No saved garrison sizes found";
+                false
+            };
+        }],
+        
         // Check for markers near players and spawn garrisons if needed
         ["checkNearbyGarrisons", {
             params ["_activationDistance"];
@@ -106,6 +169,7 @@ if (isNil "FLO_Garrison_Manager") then {
             private _spawnCount = 0;
             private _processedMarkers = _self get "processedMarkers";
             private _garrisons = _self get "garrisons";
+            private _garrisonSizes = _self get "garrisonSizes";
             
             // Get all players (except headless clients)
             private _allPlayers = allPlayers - entities "HeadlessClient_F";
@@ -164,6 +228,13 @@ if (isNil "FLO_Garrison_Manager") then {
                     private _size = _baseSize;
                     private _withVehicles = false;
                     
+                    // Check if we have a saved size for this garrison
+                    if (_marker in keys _garrisonSizes) then {
+                        _size = (_garrisonSizes get _marker) min _maxSize;
+                        diag_log format ["[FLO][Garrison] Using saved size for garrison at %1: %2 (base: %3, max: %4)", 
+                            _marker, _size, _baseSize, _maxSize];
+                    };
+                    
                     // Determine vehicle presence based on marker type
                     switch (_markerType) do {
                         case "n_installation": { _withVehicles = true; };
@@ -207,12 +278,11 @@ if (isNil "FLO_Garrison_Manager") then {
                             };
                         };
                         
-                        diag_log format ["[FLO][Garrison] Created garrison at %1 near players (Type: %2, Size: %3, Vehicles: %4)", _marker, _markerType, _size, _withVehicles];
-                        
-                        // Mark as processed and increment count
-                        _processedMarkers pushBack _marker;
                         _spawnCount = _spawnCount + 1;
                     };
+                    
+                    // Add to processed markers
+                    _processedMarkers pushBack _marker;
                 };
             } forEach _opforMarkers;
             
@@ -737,10 +807,50 @@ switch (_mode) do {
         _result = FLO_Garrison_Manager call ["checkNearbyGarrisons", [_activationDistance]];
     };
     
+    // Save garrison sizes to profileNamespace
+    case "saveGarrisonSizes": {
+        _result = FLO_Garrison_Manager call ["saveGarrisonSizes", []];
+    };
+    
+    // Load garrison sizes from profileNamespace
+    case "loadGarrisonSizes": {
+        _result = FLO_Garrison_Manager call ["loadGarrisonSizes", []];
+    };
+    
     default {
         diag_log format ["[FLO][Garrison] Error: Unknown mode '%1'", _mode];
         _result = false;
     };
+};
+
+// Add hook to mission save process
+[] spawn {
+    // Wait for mission system to initialize
+    sleep 10;
+    
+    // Add event handler for mission save
+    if (isNil "FLO_MissionSave_EventHandlers") then {
+        FLO_MissionSave_EventHandlers = [];
+    };
+    
+    FLO_MissionSave_EventHandlers pushBack {
+        // Save garrison sizes when mission is saved
+        ["saveGarrisonSizes", []] call FLO_fnc_garrisonManager;
+        diag_log "[FLO][Garrison] Triggered save of garrison sizes due to mission save";
+    };
+    
+    // Add event handler for mission load
+    if (isNil "FLO_MissionLoad_EventHandlers") then {
+        FLO_MissionLoad_EventHandlers = [];
+    };
+    
+    FLO_MissionLoad_EventHandlers pushBack {
+        // Load garrison sizes when mission is loaded
+        ["loadGarrisonSizes", []] call FLO_fnc_garrisonManager;
+        diag_log "[FLO][Garrison] Triggered load of garrison sizes due to mission load";
+    };
+    
+    diag_log "[FLO][Garrison] Added hooks to mission save/load system";
 };
 
 _result 
