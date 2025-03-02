@@ -190,6 +190,7 @@ private _navigationItems = [
     "Binocular",
     "Rangefinder",
     "Laserdesignator",
+    "TFAR_anprc152",
     "ACE_MX2A",
     "ACE_Vector"
 ];
