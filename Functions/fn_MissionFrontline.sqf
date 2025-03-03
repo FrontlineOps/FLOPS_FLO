@@ -30,16 +30,6 @@ private _frontlineManagerDeclaration = [
         diag_log "[FLO] FrontlineManager initialized";
     }],
     
-    ["#delete", {
-        // Destructor code
-        diag_log "[FLO] FrontlineManager destroyed";
-    }],
-    
-    ["#str", {
-        // String representation
-        "FrontlineManager Object"
-    }],
-    
     ["_activationConditions", {
         private _self = _this;
         private _headlessClients = entities "HeadlessClient_F";
@@ -79,7 +69,11 @@ private _frontlineManagerDeclaration = [
     }],
     
     ["_calculateOffensiveProbability", {
-        params ["_self", "_humanPlayers", "_aggressionScore"];
+        params ["_self", "_aggressionScore"];
+        
+        // Get current players excluding headless clients
+        private _headlessClients = entities "HeadlessClient_F";
+        private _humanPlayers = allPlayers - _headlessClients;
         
         // Time factor - OPFOR prefers dawn/dusk operations
         private _timeOfDay = dayTime;
@@ -444,7 +438,7 @@ private _frontlineManagerDeclaration = [
             };
             
             // Calculate offensive probability
-            private _offensiveProbability = _self call ["_calculateOffensiveProbability", [_humanPlayers, _aggressionScore]];
+            private _offensiveProbability = _self call ["_calculateOffensiveProbability", [_aggressionScore]];
             
             // Determine if we should launch an offensive operation
             if ((random 1 < _offensiveProbability) && !OffensiveOperationUnderway) then {
