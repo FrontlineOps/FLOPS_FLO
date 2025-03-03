@@ -28,19 +28,34 @@ params [
     ["_params", [], [[]]]
 ];
 
-// Only execute on server to prevent multiple intel systems running
-if (!isServer) exitWith {};
-
 // System configuration constants
 private _INTEL_DECAY_RATE = 0.1;        // Intel points lost per minute
 private _RADIO_TOWER_BONUS = 0.2;       // Multiplier for intel gain per radio tower
 private _MAX_INTEL_LEVEL = 100;         // Maximum intel level
 private _MIN_INTEL_LEVEL = 0;           // Minimum intel level
 private _DECAY_INTERVAL = 60;           // Seconds between decay checks
+private _BROADCAST_INTERVAL = 10;        // Seconds between client broadcasts
 
-// Initialize intel system if it doesn't exist
-// This uses HashMapObject for OOP-style intel management
-if (isNil "FLO_Intel_System") then {
+// Initialize client-side notification handler
+if (!isServer) then {
+    if (isNil "FLO_Intel_NotificationHandler") then {
+        FLO_Intel_NotificationHandler = true;
+        ["FLO_Intel_Notification", "onEachFrame", {
+            private _notification = missionNamespace getVariable ["FLO_Intel_Notification", []];
+            if (count _notification > 0) then {
+                _notification params ["_msg", "_timestamp"];
+                if (time - _timestamp < 5) then {
+                    [parseText _msg, [0, 0.5, 1, 1], nil, 5, 1.7, 0] call BIS_fnc_textTiles;
+                };
+            };
+        }] call BIS_fnc_addStackedEventHandler;
+    };
+    // Exit here for clients after setting up notification handler
+    if (_mode != "showNotification") exitWith {};
+};
+
+// Initialize intel system if it doesn't exist (server only)
+if (isServer && isNil "FLO_Intel_System") then {
     private _intelClass = [
         // Class identifier
         ["#type", "IntelSystem"],
@@ -108,17 +123,19 @@ if (isNil "FLO_Intel_System") then {
             _new
         }],
         
-        // Initialize the intel decay loop
-        // This runs continuously in the background
+        // Initialize the intel decay loop with optimized broadcasting
         ["initDecayLoop", {
-            [_INTEL_DECAY_RATE, _RADIO_TOWER_BONUS, _MAX_INTEL_LEVEL, _MIN_INTEL_LEVEL, _DECAY_INTERVAL] spawn {
+            [_INTEL_DECAY_RATE, _RADIO_TOWER_BONUS, _MAX_INTEL_LEVEL, _MIN_INTEL_LEVEL, _DECAY_INTERVAL, _BROADCAST_INTERVAL] spawn {
                 params [
                     "_INTEL_DECAY_RATE",
                     "_RADIO_TOWER_BONUS",
                     "_MAX_INTEL_LEVEL",
                     "_MIN_INTEL_LEVEL",
-                    "_DECAY_INTERVAL"
+                    "_DECAY_INTERVAL",
+                    "_BROADCAST_INTERVAL"
                 ];
+                
+                private _lastBroadcast = time;
                 
                 while {true} do {
                     // Get current intel state
@@ -136,22 +153,27 @@ if (isNil "FLO_Intel_System") then {
                     FLO_Intel_System set ["intelLevel", _newLevel];
                     FLO_Intel_System set ["lastUpdate", time];
                     
-                    // Update players with current intel coverage level
-                    private _intelText = switch (true) do {
-                        case (_newLevel >= 75): {"High Intelligence Coverage"};
-                        case (_newLevel >= 50): {"Moderate Intelligence Coverage"};
-                        case (_newLevel >= 25): {"Limited Intelligence Coverage"};
-                        default {"Minimal Intelligence Coverage"};
-                    };
-                    
-                    [_intelText, _newLevel] remoteExec ["hint", 0];
-                    
+                    // Broadcast updates to clients less frequently
+                    if (time - _lastBroadcast >= _BROADCAST_INTERVAL) then {
+                        // Update players with current intel coverage level
+                        private _intelText = switch (true) do {
+                            case (_newLevel >= 75): {"High Intelligence Coverage"};
+                            case (_newLevel >= 50): {"Moderate Intelligence Coverage"};
+                            case (_newLevel >= 25): {"Limited Intelligence Coverage"};
+                            default {"Minimal Intelligence Coverage"};
+                        };
+                        
+                        // Use more efficient broadcasting
+                        missionNamespace setVariable ["FLO_Intel_Level", [_intelText, _newLevel], true];
+                        
+                        _lastBroadcast = time;
+                    };  
                     sleep _DECAY_INTERVAL;
                 };
             };
         }],
         
-        // Broadcast intel messages based on current intel level and radio tower control
+        // Optimize notification broadcasting
         ["notify", {
             params ["_message", "_importance"];
             
@@ -173,14 +195,15 @@ if (isNil "FLO_Intel_System") then {
                     default { "#00FF00" };  // Green for regular
                 };
                 
-                // Format and display message
+                // Format message
                 private _formattedMsg = format [
                     "<t color='%1' font='PuristaBold' align='right' shadow='1' size='1.2'>INTELLIGENCE UPDATE</t><br/><t align='right' shadow='1' size='1'>%2</t>",
                     _color,
                     _message
                 ];
                 
-                [parseText _formattedMsg, [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+                // Queue notification for efficient broadcasting
+                missionNamespace setVariable ["FLO_Intel_Notification", [_formattedMsg, time], true];
                 true
             } else {
                 false
@@ -232,7 +255,7 @@ if (isNil "FLO_Intel_System") then {
         }]
     ];
     
-    // Create the intel management object with initial intel of 0
+    // Create the intel management object and make it public
     FLO_Intel_System = createHashMapObject [_intelClass, 0];
 };
 

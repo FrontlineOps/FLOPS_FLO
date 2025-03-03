@@ -24,7 +24,7 @@ _trgA setTriggerActivation ['WEST', 'PRESENT', false];
 _trgA setTriggerStatements [
 ""this && (({_x isKindOf 'Man'} count thisList >0) or ({_x isKindOf 'LandVehicle'} count thisList >0) or ({_x isKindOf 'Tank'} count thisList >0) or ({_x isKindOf 'Car'} count thisList >0))"",""
 
-[thisTrigger] execVM 'Scripts\City_CSAT.sqf';
+[thisTrigger] execVM 'Scripts\Objectives\City_CSAT.sqf';
 
 "",""""];
 

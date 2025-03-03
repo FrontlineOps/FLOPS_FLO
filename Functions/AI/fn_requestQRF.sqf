@@ -128,15 +128,27 @@ _approachPos = [_approachPos, 0, 200, 10, 0, 0.2, 0, [], [_approachPos, _approac
 private _fnc_createVehicleWithCrew = {
     params ["_vehType", "_spawnPos"];
     
-    // Find nearest road
+    // Add debug logging
+    //diag_log format ["[FLO][QRF] Creating vehicle of type %1 at position %2", _vehType, _spawnPos];
+    
+    // Find nearest road within a reasonable distance
     private _nearRoads = _spawnPos nearRoads 1500;
     private _spawnPosRoad = if (count _nearRoads > 0) then {
-        getPos (_nearRoads select 0)
+        private _road = selectRandom (_nearRoads select [0, (count _nearRoads) min 10]);
+        getPos _road
     } else {
+        // If no road found, use original position but ensure it's safe
+        private _safePosParams = [_spawnPos, 0, 150, 10, 0, 0.25, 0, [], [_spawnPos, _spawnPos]];
+        _spawnPos = _safePosParams call BIS_fnc_findSafePos;
         _spawnPos
     };
     
+    // Add debug logging for final spawn position
+    //diag_log format ["[FLO][QRF] Final vehicle spawn position (after road check): %1", _spawnPosRoad];
+    
     private _veh = createVehicle [_vehType, _spawnPosRoad, [], 0, "NONE"];
+    _veh setDir (_veh getDir _targetPos);
+    
     private _group = createGroup [EAST, true];
     createVehicleCrew _veh;
     
@@ -158,6 +170,9 @@ private _fnc_createVehicleWithCrew = {
     {
         _x addItem selectRandom _intelItems;
     } forEach _selectedCrew;
+    
+    // Add debug logging for created vehicle
+    //diag_log format ["[FLO][QRF] Vehicle created successfully at %1 with group %2", getPos _veh, _group];
     
     [_veh, _group, _maxCargo]
 };
@@ -252,6 +267,9 @@ private _fnc_hasRadioCoverage = {
 private _qrfVarName = format ["FLO_QRF_Groups_%1", floor random 999999];
 missionNamespace setVariable [_qrfVarName, []];
 
+// Store spawn position in a variable that will be accessible inside the spawn
+private _originalSpawnPos = getMarkerPos _nearestOutpost;
+
 // Spawn the loop to handle delays properly
 [
     _spawnCount,
@@ -260,7 +278,7 @@ missionNamespace setVariable [_qrfVarName, []];
     _fnc_hasRadioCoverage,
     _AGGRSCORE,
     _targetPos,
-    _spawnPos,
+    _originalSpawnPos,  // Pass the original spawn position
     _insertType,
     _fnc_delayedSpawn,
     _fnc_createVehicleWithCrew,
@@ -276,7 +294,7 @@ missionNamespace setVariable [_qrfVarName, []];
         "_fnc_hasRadioCoverage",
         "_AGGRSCORE",
         "_targetPos",
-        "_spawnPos",
+        "_spawnPos",  // Receive the spawn position
         "_insertType",
         "_fnc_delayedSpawn",
         "_fnc_createVehicleWithCrew",
@@ -285,6 +303,9 @@ missionNamespace setVariable [_qrfVarName, []];
         "_dir",
         "_qrfVarName"
     ];
+
+    // Add debug logging
+    //diag_log format ["[FLO][QRF] Spawn Position: %1", _spawnPos];
     
     private _groups = [];
     
@@ -381,6 +402,9 @@ missionNamespace setVariable [_qrfVarName, []];
     for "_spawnIndex" from 1 to _spawnCount do {
         // Get spawn position for this element
         private _elementApproachPos = _spawnPositions select (_spawnIndex - 1);
+        
+        // Debug logging for each spawn
+        //diag_log format ["[FLO][QRF] Spawning group %1 at position %2", _spawnIndex, _spawnPos];
         
         // Add delay between spawns
         if (_spawnIndex > 1) then {
