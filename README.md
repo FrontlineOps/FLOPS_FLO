@@ -122,7 +122,6 @@ select Faction, Starting Aggression levels, Starting Civilian Relations, and Mor
 
 ### Resource System
 - Adjust OPFOR resource generation in `Functions/Logistics/fn_opforResources.sqf`
-- Configure resource costs in `FLO_configCache`
 
 ### Intel System
 - Modify intel decay rates and bonuses in `Functions/Logistics/fn_intelSystem.sqf`
