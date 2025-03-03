@@ -125,7 +125,7 @@ if (isNil "FLO_TaskForce_System") then {
                     case "fireteam": {1};
                     case "squad": {2};
                     case "platoon": {3};
-                    case "company": {5};
+                    case "company": {6};
                     default {2};
                 };
                 
@@ -151,8 +151,8 @@ if (isNil "FLO_TaskForce_System") then {
                 private _sizeMultiplier = switch (toLower _size) do {
                     case "fireteam": {1};
                     case "squad": {2};
-                    case "platoon": {4};
-                    case "company": {8};
+                    case "platoon": {3};
+                    case "company": {4};
                     default {2}; // Default to squad size
                 };
                 
