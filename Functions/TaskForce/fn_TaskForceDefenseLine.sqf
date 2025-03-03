@@ -104,32 +104,108 @@ switch (_mode) do {
             };
         };
         
-        // Find suitable positions for defense line
-        private _linePositions = [];
+        // Find direction toward BLUFOR territory
+        // First, find all BLUFOR markers that could indicate their territory
+        private _bluforMarkers = allMapMarkers select {
+            markerColor _x in ["colorBLUFOR", "ColorWEST", "ColorYellow"] &&
+            markerType _x in ["b_installation", "b_support", "respawn_west", "b_hq"]
+        };
         
-        // Direction from OPFOR base to frontline
-        private _basePos = getMarkerPos _baseMarker;
-        private _direction = _basePos getDir _frontlinePos;
+        // Get the average BLUFOR position (center of their territory)
+        private _bluforPositions = _bluforMarkers apply {getMarkerPos _x};
+        private _averageBluforPos = [0,0,0];
+        
+        if (count _bluforPositions > 0) then {
+            {
+                _averageBluforPos = _averageBluforPos vectorAdd _x;
+            } forEach _bluforPositions;
+            _averageBluforPos = _averageBluforPos vectorMultiply (1 / count _bluforPositions);
+        } else {
+            // If no BLUFOR markers, use the frontline position as reference
+            _averageBluforPos = _frontlinePos;
+        };
+        
+        // Direction from frontline to BLUFOR territory
+        private _bluforDirection = _frontlinePos getDir _averageBluforPos;
+        
+        // CRITICAL FIX: We first need to find where OPFOR is relative to the frontline
+        private _opforBasePos = getMarkerPos _baseMarker;
+        private _directionToOpfor = _frontlinePos getDir _opforBasePos;
+        
+        // DEBUG
+        diag_log format ["[FLO][DefenseLine] Frontline position: %1", _frontlinePos];
+        diag_log format ["[FLO][DefenseLine] BLUFOR direction from frontline: %1", _bluforDirection];
+        diag_log format ["[FLO][DefenseLine] OPFOR base position: %1", _opforBasePos];
+        diag_log format ["[FLO][DefenseLine] Direction to OPFOR from frontline: %1", _directionToOpfor];
         
         // Calculate terrain-aware positions for the defense line
-        private _totalWidth = 300; // Width of the defense line
-        private _positionsPerLine = 3; // How many positions in each line
+        private _totalWidth = 800; // INCREASED from 600 to 800 - even wider defense line
+        private _positionsPerLine = 5; // Increased from 3 to 5 positions per line
         private _spacing = _totalWidth / (_positionsPerLine - 1);
+        
+        // Initialize the array to store all line positions
+        private _linePositions = [];
+        
+        diag_log format ["[FLO][DefenseLine] Creating defense line facing direction %1 toward BLUFOR", _bluforDirection];
         
         // Create multiple lines based on depth
         for "_lineIndex" from 0 to (_depth - 1) do {
-            // Calculate distance for this line (closer to frontline with each step)
-            private _lineDistance = 300 + (_lineIndex * 150); // Staggered lines
+            // CRITICAL FIX: We need to move TOWARD OPFOR from the frontline, not just away from BLUFOR
+            // This ensures we're on the OPFOR side of the frontline
+            private _lineDistance = 250 + (_lineIndex * 200); // Reduced distance for better positioning
             
-            // Calculate base position for this line 
-            private _lineBasePos = _frontlinePos getPos [_lineDistance, (_direction + 180) mod 360];
+            // Calculate base position for this line - moving TOWARD OPFOR base
+            private _lineBasePos = _frontlinePos getPos [_lineDistance, _directionToOpfor];
             
-            // Calculate left edge position (perpendicular to frontline direction)
-            private _leftPos = _lineBasePos getPos [_totalWidth / 2, (_direction - 90) mod 360];
+            diag_log format ["[FLO][DefenseLine] Line %1 base position: %2 (distance %3 toward OPFOR)", 
+                _lineIndex, _lineBasePos, _lineDistance];
+            
+            // Calculate left edge position (perpendicular to the line between OPFOR and BLUFOR)
+            // We need this line to be parallel to the frontline, which should be perpendicular to BLUFOR direction
+            private _perpendicularLeft = (_bluforDirection - 90) mod 360;
+            private _leftPos = _lineBasePos getPos [_totalWidth / 2, _perpendicularLeft];
             
             // Create positions along the line
             for "_i" from 0 to (_positionsPerLine - 1) do {
-                private _posTemp = _leftPos getPos [_i * _spacing, (_direction + 90) mod 360];
+                private _posTemp = _leftPos getPos [_i * _spacing, (_perpendicularLeft + 180) mod 360];
+                
+                // Add some randomness to prevent perfect line formations
+                _posTemp = _posTemp getPos [30 + random 70, random 360];
+                
+                // CRITICAL FIX: Check if position is in water and find land if needed
+                if (surfaceIsWater _posTemp) then {
+                    diag_log format ["[FLO][DefenseLine] Warning: Initial position is in water: %1", _posTemp];
+                    
+                    // Try to find a non-water position nearby
+                    private _attempts = 0;
+                    private _maxAttempts = 10;
+                    private _foundLand = false;
+                    private _searchRadius = 100;
+                    
+                    while {_attempts < _maxAttempts && !_foundLand} do {
+                        // Increase search radius with each attempt
+                        _searchRadius = _searchRadius + (_attempts * 50);
+                        
+                        // Use BIS_fnc_findSafePos to get a position on land
+                        private _landPos = [_posTemp, 0, _searchRadius, 10, 0, 0.1, 0, [], [_posTemp, _posTemp]] call BIS_fnc_findSafePos;
+                        
+                        // Check if position is valid and on land
+                        if (!(_landPos isEqualTo [_posTemp, _posTemp]) && !surfaceIsWater _landPos) then {
+                            _posTemp = _landPos;
+                            _foundLand = true;
+                            diag_log format ["[FLO][DefenseLine] Found land position: %1 (after %2 attempts)", _posTemp, _attempts + 1];
+                        };
+                        
+                        _attempts = _attempts + 1;
+                    };
+                    
+                    // If we couldn't find land, use the frontline position (fallback)
+                    if (!_foundLand) then {
+                        diag_log format ["[FLO][DefenseLine] Warning: Could not find land position after %1 attempts", _maxAttempts];
+                        // Move toward OPFOR base from frontline to ensure we're on land
+                        _posTemp = _frontlinePos getPos [100 + random 200, _directionToOpfor];
+                    };
+                };
                 
                 // Find suitable position near this point (check for roads, suitable terrain, etc.)
                 // If elevated position, it's better
@@ -162,19 +238,46 @@ switch (_mode) do {
             
             if (_taskForceId != "") then {
                 // Deploy immediately at the position (defensive posture)
+                // Pass the blufor direction as an additional parameter through the marker name
+                // Format: "position|direction"
+                diag_log format ["[FLO][DefenseLine] Deploying task force at %1 with blufor direction %2", 
+                    _x, _bluforDirection];
+                
                 ["deployTaskForce", [_taskForceId, _x, true]] call FLO_fnc_TaskForceSystem;
                 
                 // Add to result
                 _taskForceIds pushBack _taskForceId;
                 
-                diag_log format ["[FLO][DefenseLine] Created %1 Task Force (%2) at position %3", 
-                    _type, _size, _x];
+                diag_log format ["[FLO][DefenseLine] Created %1 Task Force (%2) at position %3 facing direction %4", 
+                    _type, _size, _x, _bluforDirection];
             };
         } forEach _linePositions;
         
         diag_log format ["[FLO][DefenseLine] Created defense line at %1 with %2 Task Forces", 
             _frontlineMarker, count _taskForceIds];
             
+        // Create marker to show defense line
+        // private _defenseMarker = createMarker [format ["defense_line_%1", _frontlineMarker], _frontlinePos];
+        // _defenseMarker setMarkerShape "RECTANGLE";
+        // _defenseMarker setMarkerBrush "DiagGrid";
+        // _defenseMarker setMarkerColor "ColorRed";
+        // _defenseMarker setMarkerAlpha 0.5;
+        // _defenseMarker setMarkerSize [_totalWidth / 2, 350]; // Even deeper marker
+        
+        // // CRITICAL FIX: Direction needs to be perpendicular to the BLUFOR direction
+        // // This ensures the rectangle is oriented correctly
+        // private _markerDir = (_bluforDirection + 90) mod 360;
+        // _defenseMarker setMarkerDir _markerDir;
+        
+        // Create arrow marker pointing toward BLUFOR
+        // private _arrowMarker = createMarker [format ["defense_arrow_%1", _frontlineMarker], _frontlinePos];
+        // _arrowMarker setMarkerType "hd_arrow";
+        // _arrowMarker setMarkerColor "ColorRed";
+        // _arrowMarker setMarkerAlpha 0.7;
+        // _arrowMarker setMarkerSize [1, 1.5];
+        // _arrowMarker setMarkerDir _bluforDirection;
+        // _arrowMarker setMarkerText "DEFENSIVE LINE";
+        
         _result = _taskForceIds;
     };
     

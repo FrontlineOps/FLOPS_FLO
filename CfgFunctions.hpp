@@ -59,5 +59,6 @@ class FLO {
         file = "Functions\Utilities";
 
         class findNearestMarker   {};
+        class log                 {};
     };
 };
