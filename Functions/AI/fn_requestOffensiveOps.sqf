@@ -521,9 +521,15 @@ missionNamespace setVariable [_offensiveOpsVarName, []];
                     // Create and add infantry to APC
                     private _mechInfGroup = createGroup EAST;
                     for "_i" from 1 to _mechMaxCargo do {
-                        private _unitType = selectRandom (FLO_configCache get "units");
+                        // 5% chance to add a fire observer, otherwise use regular infantry
+                        private _unitType = if (random 1 < 0.05) then {
+                            selectRandom (FLO_configCache get "fireObservers")
+                        } else {
+                            selectRandom (FLO_configCache get "units")
+                        };
+                        
                         private _unit = _mechInfGroup createUnit [_unitType, _spawnPos, [], 0, "NONE"];
-                        if (_unitType == "I_RadioOperator_F") then {
+                        if (_unitType in (FLO_configCache get "fireObservers")) then {
                             [_unit, EAST] call FLO_fnc_fireObserver;
                         };
                         _unit assignAsCargo _mechVeh;
@@ -556,9 +562,15 @@ missionNamespace setVariable [_offensiveOpsVarName, []];
                     // Create and add infantry to APC
                     private _mechInfGroup = createGroup EAST;
                     for "_i" from 1 to _mechMaxCargo do {
-                        private _unitType = selectRandom (FLO_configCache get "units");
+                        // 5% chance to add a fire observer, otherwise use regular infantry
+                        private _unitType = if (random 1 < 0.05) then {
+                            selectRandom (FLO_configCache get "fireObservers")
+                        } else {
+                            selectRandom (FLO_configCache get "units")
+                        };
+                        
                         private _unit = _mechInfGroup createUnit [_unitType, _spawnPos, [], 0, "NONE"];
-                        if (_unitType == "I_RadioOperator_F") then {
+                        if (_unitType in (FLO_configCache get "fireObservers")) then {
                             [_unit, EAST] call FLO_fnc_fireObserver;
                         };
                         _unit assignAsCargo _mechVeh;
@@ -591,9 +603,15 @@ missionNamespace setVariable [_offensiveOpsVarName, []];
                     // Create and add infantry
                     private _infGroup = createGroup EAST;
                     for "_i" from 1 to _maxCargo do {
-                        private _unitType = selectRandom (FLO_configCache get "units");
+                        // 5% chance to add a fire observer, otherwise use regular infantry
+                        private _unitType = if (random 1 < 0.05) then {
+                            selectRandom (FLO_configCache get "fireObservers")
+                        } else {
+                            selectRandom (FLO_configCache get "units")
+                        };
+                        
                         private _unit = _infGroup createUnit [_unitType, _spawnPos, [], 0, "NONE"];
-                        if (_unitType == "I_RadioOperator_F") then {
+                        if (_unitType in (FLO_configCache get "fireObservers")) then {
                             [_unit, EAST] call FLO_fnc_fireObserver;
                         };
                         _unit assignAsCargo _veh;
@@ -621,9 +639,15 @@ missionNamespace setVariable [_offensiveOpsVarName, []];
                     // Create and add infantry
                     private _infGroup = createGroup EAST;
                     for "_i" from 1 to _maxCargo do {
-                        private _unitType = selectRandom (FLO_configCache get "units");
+                        // 5% chance to add a fire observer, otherwise use regular infantry
+                        private _unitType = if (random 1 < 0.05) then {
+                            selectRandom (FLO_configCache get "fireObservers")
+                        } else {
+                            selectRandom (FLO_configCache get "units")
+                        };
+                        
                         private _unit = _infGroup createUnit [_unitType, _spawnPos, [], 0, "NONE"];
-                        if (_unitType == "I_RadioOperator_F") then {
+                        if (_unitType in (FLO_configCache get "fireObservers")) then {
                             [_unit, EAST] call FLO_fnc_fireObserver;
                         };
                         _unit assignAsCargo _veh;

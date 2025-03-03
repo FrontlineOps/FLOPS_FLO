@@ -8,6 +8,7 @@ East_Air_Heli = ["RHS_Ka52_vvsc",  "RHS_Mi24P_vdv"];
 East_Air_Jet = ["rhs_mig29sm_vvsc", "RHS_Su25SM_vvsc"]; 
 
 East_Units = ["rhs_vdv_flora_efreitor","rhs_vdv_flora_rifleman","rhs_vdv_flora_LAT","rhs_vdv_flora_marksman","rhs_vdv_flora_medic","rhs_vdv_flora_machinegunner","rhs_vdv_flora_grenadier","rhs_vdv_flora_at","rhs_vdv_flora_engineer","rhs_vdv_flora_marksman"];
+East_FireObserver = ["rhs_vdv_des_officer"];
 East_Units_Officers = ["rhs_vdv_des_officer", "rhs_vdv_flora_officer"];
 
 East_Groups = [

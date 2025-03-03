@@ -3,10 +3,10 @@
     
     Description:
     Handles the AI Fire Observer system for artillery control
-    Only works with units manually defined as Fire Observer
+    Only works with units defined as Fire Observers in FLO_configCache
     
     Parameters:
-    _unit - The Radio Operator unit [Object]
+    _unit - The Fire Observer unit [Object]
     _side - Side of the Fire Observer [Side]
     
     Returns:
@@ -15,10 +15,9 @@
 
 params ["_unit", "_side"];
 
-// Exit if not a Radio Operator
-// Change I_RadioOperator_F to whatever unit you want to manually define as Fire Observer
-// QuickRF.sqf reference for the unit that will call this function 
-if (typeOf _unit != "I_RadioOperator_F") exitWith { false };
+// Exit if not a Fire Observer unit
+// Check if unit type is in the fireObservers array from FLO_configCache
+if !(typeOf _unit in (FLO_configCache get "fireObservers")) exitWith { false };
 
 // Initialize global Fire Observer settings if not exists
 if (isNil "FLO_fireObservers") then {

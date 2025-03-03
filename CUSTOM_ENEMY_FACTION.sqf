@@ -71,11 +71,10 @@ East_Units = [
     "I_Soldier_AT_F",                                            // AT Specialist
     "I_Soldier_AA_F",                                            // AA Specialist
     "Aegis_I_HeavyGunner_F",                                     // Heavy gunner
-
-    "I_RadioOperator_F"                                          // RTO | Fire Observer
 ];
 //publicVariable "East_Units";
 
+East_FireObserver = ["I_RadioOperator_F"];
 East_Units_Officers = ["I_officer_F"];
 //publicVariable "East_Units_Officers";
 

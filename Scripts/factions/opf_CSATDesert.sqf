@@ -1,18 +1,9 @@
 
 E_Officer = "O_officer_F";
 
-E_Assault_Eng = "O_engineer_F";
-E_Assault_TL = "O_Soldier_TL_F";
-E_Assault_SL = "O_Soldier_SL_F";
-E_Assault_Eod = "O_soldier_exp_F";
-E_Assault_Mrk = "O_Soldier_M_F";
-E_Assault_LAT = "O_soldier_LAT_F";
-E_Assault_AT = "O_soldier_AT_F";
-E_Assault_AA = "O_soldier_AA_F";
-E_Assault_Amm = "O_Soldier_A_F";
-E_Assault_Mg = "O_soldier_AR_F";
-E_Assault_Med = "O_medic_F";
-E_Assault_Uav= "O_soldier_UAV_F";
+East_Units = ["O_T_Soldier_TL_F","O_T_Soldier_F","O_T_Soldier_LAT_F","O_T_Soldier_M_F","O_T_Medic_F","O_T_Soldier_AR_F","O_T_Soldier_GL_F", "O_T_Soldier_AT_F","O_T_Soldier_Exp_F"];
+East_FireObserver = ["O_T_Soldier_TL_F"];
+East_Units_Officers = ["O_officer_F","O_T_Officer_F"];
 
 
 E_Sniper = "O_Sniper_F";
