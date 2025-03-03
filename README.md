@@ -134,6 +134,108 @@ select Faction, Starting Aggression levels, Starting Civilian Relations, and Mor
 - Configure view distance in `initServer.sqf`
 - Adjust dynamic spawning ranges in garrison manager
 
+### Arsenal Customization
+The mission uses a restricted arsenal system (`fn_restrictedArsenal.sqf`) that works with both ACE and vanilla arsenals. You can customize available equipment in the following categories:
+
+#### Weapons and Attachments
+```sqf
+// Modify these arrays in fn_restrictedArsenal.sqf
+private _rifles = [
+    "arifle_MX_F",
+    "arifle_MXC_F",
+    // ... add or remove weapons
+];
+
+private _launchers = [
+    "launch_B_Titan_F",
+    // ... add or remove launchers
+];
+
+private _attachments = [
+    "optic_Hamr",
+    "acc_flashlight",
+    // ... add or remove attachments
+];
+```
+
+#### Equipment
+```sqf
+private _uniforms = [
+    "U_B_CombatUniform_mcam",
+    // ... add or remove uniforms
+];
+
+private _vests = [
+    "V_PlateCarrier1_rgr",
+    // ... add or remove vests
+];
+
+private _headgear = [
+    "H_HelmetB",
+    // ... add or remove headgear
+];
+
+private _backpacks = [
+    "B_AssaultPack_mcamo",
+    // ... add or remove backpacks
+];
+```
+
+#### Items and Equipment
+```sqf
+private _medicalItems = [
+    "kat_AFAK",
+    // ... add or remove medical items
+];
+
+private _toolItems = [
+    "ACE_CableTie",
+    // ... add or remove tools
+];
+
+private _navigationItems = [
+    "ItemMap",
+    "ItemGPS",
+    // ... add or remove navigation items
+];
+```
+
+#### Ammunition and Explosives
+```sqf
+private _magazines = [
+    "30Rnd_65x39_caseless_mag",
+    // ... add or remove magazines
+];
+
+private _grenades = [
+    "HandGrenade",
+    "SmokeShell",
+    // ... add or remove grenades
+];
+```
+
+#### Implementation Notes:
+1. The arsenal system automatically:
+   - Works with both ACE and vanilla arsenals
+   - Applies to all arsenal boxes, FOBs, and OPs
+   - Updates dynamically when new FOBs/OPs are created
+
+2. Mod Compatibility:
+   - Supports ACE items and medical equipment
+   - Compatible with TFAR radio systems
+   - Works with KAT Advanced Medical items
+   - Supports custom mod items (just add their classnames)
+
+3. To add new items:
+   - Find the appropriate category in `fn_restrictedArsenal.sqf`
+   - Add the classname to the corresponding array
+   - Items will be available in all arsenals automatically
+
+4. Performance Optimization:
+   - Arsenal restrictions are applied only once per box
+   - Uses efficient event handlers to manage updates
+   - Prevents duplicate initialization
+
 ## Contributing
 
 Feel free to contribute improvements or report issues on our GitHub repository.
