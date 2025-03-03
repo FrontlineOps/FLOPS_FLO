@@ -23,7 +23,10 @@ A dynamic frontline operations mission for Arma 3 that creates an evolving battl
 ### Faction Customization
 
 #### OPFOR Forces Setup
-Create a new faction file in `Scripts/factions/` (e.g., `opf_custom.sqf`) with the following structure:
+- There are two ways to make factions. 
+1. For people using it for individual Unit/Community Usage. I recommend using the files:
+- `CUSTOM_CIVILIAN_FACTION, CUSTOM_FRIENDLY_FACTION, CUSTOM_ENEMY_FACTION`
+2. Create a new faction file in `Scripts/factions/` (e.g., `opf_custom.sqf`) with the following structure. This is useful for people wanting to contribute to the Github by adding new factions that be used by everyone.
 
 ```sqf
 // Vehicle Arrays
