@@ -192,11 +192,9 @@ if (AutoSaveSwitchVal == 1) then {
 [] call FLO_fnc_intelSystem;
 diag_log "[FLO] Intelligence System initialized";
 
-// Initialize the resource system if not already done
-if (isNil {["get", []] call FLO_fnc_opforResources}) then {
-    ["init", []] call FLO_fnc_opforResources;
-    diag_log "[FLO] Resource system initialized";
-};
+// Initialize the resource system
+["init", []] call FLO_fnc_opforResources;
+diag_log "[FLO] Resource system initialized";
 
 // Initialize the garrison management system
 ["init", []] call FLO_fnc_garrisonManager;
