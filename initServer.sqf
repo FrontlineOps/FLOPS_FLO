@@ -60,6 +60,7 @@ FLO_configCache = createHashMapFromArray [
     ["tyres", ["Land_Tyre_F"]],
     ["vehicles", [East_Air_Heli, East_Ground_Transport, East_Ground_Vehicles_Light, East_Ground_Vehicles_Heavy, East_Ground_Vehicles_Ambient, East_Air_Transport, East_Air_Jet, East_Ground_Artillery, East_Air_Drone]],
     ["units", East_Units],
+    ["fireObservers", East_FireObserver],
     ["buildings", ["House", "Land_MilOffices_V1_F", "Land_Cargo_Tower_V3_F", "Land_Cargo_Tower_V2_F", "Land_Cargo_Tower_V1_F", "Land_Cargo_HQ_V3_F", "Land_Cargo_HQ_V2_F", "Land_Cargo_HQ_V1_F", "Land_Cargo_House_V3_F", "Land_Cargo_House_V1_F"]],
     ["SOVbuildings", ["Sign_Pointer_Cyan_F", "Land_Garbage_square3_F", "Land_Garbage_line_F", "Sign_Pointer_Yellow_F", "Sign_Sphere10cm_F", "Land_vn_controltower_01_f", "Sign_Pointer_Blue_F", "Land_InvisibleBarrier_F", "Land_HelipadEmpty_F",
     "O_Radar_System_02_F", "O_G_Mortar_01_F", "O_G_HMG_02_high_F", "Land_TripodScreen_01_large_black_F", "Land_vn_b_prop_mapstand_01", "MapBoard_altis_F", "Land_Laptop_device_F", "Land_Map_Malden_F",

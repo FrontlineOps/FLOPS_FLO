@@ -8,7 +8,9 @@ East_Air_Heli = ["I_C_Heli_Light_01_civil_F"];
 East_Air_Jet = ["I_C_Heli_Light_01_civil_F"]; 
 
 East_Units = ["I_C_Soldier_Para_8_F","I_C_Soldier_Para_7_F","I_C_Soldier_Para_6_F","I_C_Soldier_Para_5_F","I_C_Soldier_Para_4_F","I_C_Soldier_Para_3_F","I_C_Soldier_Para_2_F", "I_C_Soldier_Para_1_F"];
-East_Units_Officers = ["I_C_Soldier_base_unarmed_F"];
+East_FireObserver = ["I_C_Soldier_Para_4_F"];
+East_Units_Officers = ["I_C_Soldier_Para_4_F"];
+
 
 East_Groups = [
 (configfile >> "CfgGroups" >> "Indep" >> "IND_C_F" >> "Infantry" >> "ParaShockTeam"),

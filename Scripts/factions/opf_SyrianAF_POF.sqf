@@ -8,4 +8,5 @@ East_Air_Heli = ["rhsgref_ins_Mi8amt"];
 East_Air_Jet = ["rhsgref_ins_Mi8amt"]; 
 
 East_Units = ["LOP_SYR_Infantry_AT_Asst","LOP_SYR_Infantry_AT","LOP_SYR_Infantry_Corpsman","LOP_SYR_Infantry_Engineer","LOP_SYR_Infantry_Grenadier","LOP_SYR_Infantry_MG_Asst","LOP_SYR_Infantry_MG","LOP_SYR_Infantry_SL","LOP_SYR_Infantry_Marksman","LOP_SYR_Infantry_TL"];
+East_FireObserver = ["LOP_SYR_Infantry_TL"];
 East_Units_Officers = ["LOP_SYR_Infantry_SL"];

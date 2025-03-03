@@ -8,6 +8,7 @@ East_Air_Heli = ["O_Heli_Light_02_dynamicLoadout_F",  "O_Heli_Attack_02_dynamicL
 East_Air_Jet = ["O_T_VTOL_02_infantry_dynamicLoadout_F", "O_Plane_CAS_02_dynamicLoadout_F"]; 
 
 East_Units = ["O_T_Soldier_TL_F","O_T_Soldier_F","O_T_Soldier_LAT_F","O_T_Soldier_M_F","O_T_Medic_F","O_T_Soldier_AR_F","O_T_Soldier_GL_F", "O_T_Soldier_AT_F","O_T_Soldier_Exp_F"];
+East_FireObserver = ["O_T_Soldier_TL_F"];
 East_Units_Officers = ["O_officer_F","O_T_Officer_F"];
 
 East_Groups = [

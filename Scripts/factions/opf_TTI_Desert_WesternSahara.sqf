@@ -8,6 +8,7 @@ East_Air_Heli = ["O_Heli_Light_02_dynamicLoadout_F"];
 East_Air_Jet = ["O_Heli_Light_02_dynamicLoadout_F"]; 
 
 East_Units = ["O_Tura_watcher_lxWS","O_Tura_deserter_lxWS","O_Tura_enforcer_lxWS","O_Tura_hireling_lxWS","O_Tura_scout_lxWS","O_Tura_medic2_lxWS","O_Tura_thug_lxWS"];
+East_FireObserver = ["O_Tura_watcher_lxWS"];
 East_Units_Officers = ["O_SFIA_officer_lxWS"];
 
 East_Groups = [
