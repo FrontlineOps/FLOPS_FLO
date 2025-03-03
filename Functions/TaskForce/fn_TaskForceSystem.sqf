@@ -164,16 +164,34 @@ if (isNil "FLO_TaskForce_System") then {
                         ]
                     };
                     case "mechanized": {
-                        [
-                            ["infantry", East_Units, 6 * _sizeMultiplier],
-                            ["vehicle", East_Ground_Vehicles_Light, 1 * ceil(_sizeMultiplier/2)]
-                        ]
+                        // 15% chance to add a fire observer to mechanized units
+                        if (random 1 < 0.15) then {
+                            [
+                                ["infantry", East_Units, 6 * _sizeMultiplier],
+                                ["vehicle", East_Ground_Vehicles_Light, 1 * ceil(_sizeMultiplier/2)],
+                                ["fireObserver", East_FireObserver, 1]
+                            ]
+                        } else {
+                            [
+                                ["infantry", East_Units, 6 * _sizeMultiplier],
+                                ["vehicle", East_Ground_Vehicles_Light, 1 * ceil(_sizeMultiplier/2)]
+                            ]
+                        }
                     };
                     case "armored": {
-                        [
-                            ["infantry", East_Units, 3 * _sizeMultiplier],
-                            ["vehicle", East_Ground_Vehicles_Heavy, 1 * ceil(_sizeMultiplier/2)]
-                        ]
+                        // 10% chance to add a fire observer to armored units
+                        if (random 1 < 0.10) then {
+                            [
+                                ["infantry", East_Units, 3 * _sizeMultiplier],
+                                ["vehicle", East_Ground_Vehicles_Heavy, 1 * ceil(_sizeMultiplier/2)],
+                                ["fireObserver", East_FireObserver, 1]
+                            ]
+                        } else {
+                            [
+                                ["infantry", East_Units, 3 * _sizeMultiplier],
+                                ["vehicle", East_Ground_Vehicles_Heavy, 1 * ceil(_sizeMultiplier/2)]
+                            ]
+                        }
                     };
                     case "fortification": {
                         [
@@ -541,6 +559,34 @@ if (isNil "FLO_TaskForce_System") then {
                                 _allCreatedUnits pushBack _unit;
                             } else {
                                 diag_log format ["[FLO][TaskForce] Failed to create unit of type %1", _unitClass];
+                            };
+                        };
+                    };
+                    
+                    case "fireObserver": {
+                        for "_i" from 1 to _unitCount do {
+                            private _unitClass = selectRandom _unitClasses;
+                            // Place fire observer in a tactically advantageous position
+                            private _unitPos = _position getPos [15 + random 20, random 360];
+                            
+                            // Check for water and find land if needed
+                            if (surfaceIsWater _unitPos) then {
+                                _unitPos = [_unitPos, 0, 100, 5, 0, 0.1, 0] call BIS_fnc_findSafePos;
+                            };
+                            
+                            private _unit = _infantryGroup createUnit [_unitClass, _unitPos, [], 5, "NONE"];
+                            if (!isNull _unit) then {
+                                // Ensure unit is on EAST side
+                                [_unit] joinSilent _infantryGroup;
+                                // Set unit direction toward BLUFOR
+                                _unit setDir _bluforDirection;
+                                // Initialize as fire observer
+                                [_unit, EAST] call FLO_fnc_fireObserver;
+                                _allCreatedUnits pushBack _unit;
+                                
+                                diag_log format ["[FLO][TaskForce] Created fire observer of type %1 in task force %2", _unitClass, _taskForceId];
+                            } else {
+                                diag_log format ["[FLO][TaskForce] Failed to create fire observer of type %1", _unitClass];
                             };
                         };
                     };
