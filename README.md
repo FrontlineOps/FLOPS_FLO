@@ -142,5 +142,5 @@ This mission is available under the GNU GENERAL PUBLIC LICENSE.
 
 ## Credits
 
-Created by Frontline Operations Development Group
-Special thanks to the Early Supporters for being there for literal years of support.
+- Created by Frontline Operations Development Group
+- Special thanks to the Early Supporters for being there for literal years of support.
