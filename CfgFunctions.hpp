@@ -20,12 +20,37 @@ class FLO {
         class fireObserver          {};
         class calculateQRFResponse  {};
         class requestQRF            {};
+        class requestOffensiveOps   {};
         class heliInsert            {};
+    };
+
+    class Logistics {
+        file = "Functions\Logistics";
+
+        class opforResources        {};
+        class intelSystem           {};
+        class logisticsNetwork      {};
     };
 
     class Arsenal {
         file = "Functions\Arsenal";
 
-        class restrictedArsenal {};
+        class restrictedArsenal     {};
+    };
+    
+    class Objective {
+        file = "Functions\Objective";
+        
+        class garrisonManager         {};
+        class vehicleGarrison         {};
+        class finalizeObjectiveFlip   {};
+        class flipObjective           {};
+        class setupCaptureSystem      {};
+    };
+
+    class Utilities {
+        file = "Functions\Utilities";
+
+        class findNearestMarker   {};
     };
 };

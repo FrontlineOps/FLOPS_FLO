@@ -90,7 +90,7 @@ private _objectLocTAAA = allMapMarkers select { markerType _x == "o_antiair"};
         _trg setTriggerActivation ["WEST", "PRESENT", false];
         _trg setTriggerStatements [
             "this && (({_x isKindOf 'Man'} count thisList >0) or ({_x isKindOf 'LandVehicle'} count thisList >0) or ({_x isKindOf 'Tank'} count thisList >0) or ({_x isKindOf 'Car'} count thisList >0))",
-            "[thisTrigger] execVM 'Scripts\Insurgents_Init.sqf'; [thisTrigger] execVM 'Scripts\AAA_CSAT.sqf';",
+            "[thisTrigger] execVM 'Scripts\Insurgents_Init.sqf'; [thisTrigger] execVM 'Scripts\Objectives\AAA_CSAT.sqf';",
             ""
         ];
     };
@@ -121,7 +121,7 @@ _trgA setTriggerActivation ['WEST', 'PRESENT', false];
 _trgA setTriggerStatements [
 ""this && (({_x isKindOf 'Man'} count thisList >0) or ({_x isKindOf 'LandVehicle'} count thisList >0) or ({_x isKindOf 'Tank'} count thisList >0) or ({_x isKindOf 'Car'} count thisList >0))"",""
 
-[thisTrigger] execVM 'Scripts\Capital_CSAT.sqf';
+[thisTrigger] execVM 'Scripts\Objectives\Capital_CSAT.sqf';
 
 "",""""];
 
@@ -132,7 +132,7 @@ _trgA setTriggerActivation ['WEST', 'PRESENT', false];
 _trgA setTriggerStatements [
 ""this && (({_x isKindOf 'Man'} count thisList >0) or ({_x isKindOf 'LandVehicle'} count thisList >0) or ({_x isKindOf 'Tank'} count thisList >0) or ({_x isKindOf 'Car'} count thisList >0))"",""
 
-[thisTrigger] execVM 'Scripts\Recon_CSAT.sqf';
+[thisTrigger] execVM 'Scripts\Objectives\Recon_CSAT.sqf';
 
 "",""""];
 
@@ -288,7 +288,7 @@ _trgA setTriggerActivation ['WEST', 'PRESENT', false];
 _trgA setTriggerStatements [
 ""this && (({_x isKindOf 'Man'} count thisList >0) or ({_x isKindOf 'LandVehicle'} count thisList >0) or ({_x isKindOf 'Tank'} count thisList >0) or ({_x isKindOf 'Car'} count thisList >0))"",""
 
-[thisTrigger] execVM 'Scripts\Outpost_CSAT.sqf';
+[thisTrigger] execVM 'Scripts\Objectives\Outpost_CSAT.sqf';
 
 "",""""];
 
@@ -300,7 +300,7 @@ _trgA setTriggerActivation ['WEST', 'PRESENT', false];
 _trgA setTriggerStatements [
 ""this && (({_x isKindOf 'Man'} count thisList >0) or ({_x isKindOf 'LandVehicle'} count thisList >0) or ({_x isKindOf 'Tank'} count thisList >0) or ({_x isKindOf 'Car'} count thisList >0))"",""
 
-[thisTrigger] execVM 'Scripts\Recon_CSAT.sqf';
+[thisTrigger] execVM 'Scripts\Objectives\Recon_CSAT.sqf';
 
 "",""""];
 
@@ -465,7 +465,7 @@ _trgA setTriggerActivation ['WEST', 'PRESENT', false];
 _trgA setTriggerStatements [
 ""this"",""
 
-[thisTrigger] execVM 'Scripts\RoadBlock_CSAT.sqf';
+[thisTrigger] execVM 'Scripts\Objectives\RoadBlock_CSAT.sqf';
 
 "",""""];
 

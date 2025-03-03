@@ -194,7 +194,7 @@ _trg setTriggerArea [1000, 1000, 0, false, 200];
 _trgA setTriggerTimeout [2, 2, 2, true];
 _trg setTriggerActivation ["WEST", "PRESENT", false];  
 _trg setTriggerStatements [  
-"this",  "[thisTrigger, 750] execVM 'Scripts\ZONEs.sqf';", ""]; 
+"this",  "[thisTrigger, 750] execVM 'Scripts\Objectives\ZONEs.sqf';", ""]; 
 
 
 //   {

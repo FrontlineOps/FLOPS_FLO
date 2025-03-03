@@ -59,10 +59,10 @@ _mrkr setMarkerText "Convoy End" ;
 _mrkr setMarkerSize [1.5, 1.5] ;
 _mrkr setMarkerAlpha 0.7 ;  
 
-	[parseText "<t color='#FF3619' font='PuristaBold' align = 'right' shadow = '1' size='2'>! WARNING !</t><br /><t  color='#FF3619'  align = 'right' shadow = '1' size='1'>Intel Suggests Enemy Support Convoy Incoming, ETA 10 Mikes</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+	["showNotification", ["! WARNING !", "Intel Suggests Enemy Support Convoy Preparing to Move!", "warning"]] call FLO_fnc_intelSystem;
 
 	sleep 600 ;
-		[parseText "<t color='#FF3619' font='PuristaBold' align = 'right' shadow = '1' size='2'>! WARNING !</t><br /><t  color='#FF3619'  align = 'right' shadow = '1' size='1'>Enemy Support Convoy Mobolizing To the AO,</t>", [0, 0.5, 1, 1], nil, 13, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+		["showNotification", ["! WARNING !", "Enemy Support Convoy Mobilizing To Reinforce Their Forces!", "warning"]] call FLO_fnc_intelSystem;
 
 
 	ConVLocc = 1 ;

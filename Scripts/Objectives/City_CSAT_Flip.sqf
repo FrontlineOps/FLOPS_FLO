@@ -68,7 +68,7 @@ _FOBMrk = [_allMarks,  thisTrigger] call BIS_fnc_nearestPosition;
 									_attackingAtGrid = mapGridPosition getMarkerPos _FOBMrk;
 								[[west,'HQ'], 'Friendly Forces Dominating the Battle at grid ' + _attackingAtGrid] remoteExec ['sideChat', 0];
 
-[thisTrigger] execVM 'Scripts\City_CSAT_CAPTURE_West.sqf';
+[thisTrigger] execVM 'Scripts\Objectives\City_CSAT_CAPTURE_West.sqf';
 
 ", "
 

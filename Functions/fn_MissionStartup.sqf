@@ -1,10 +1,6 @@
-
-
 if (!isServer) exitWith {};
 
-
 Centerposition = [worldSize / 2, worldsize / 2, 0];
-
 
 ["LOADING . . . "] remoteExec ["hint", 0];
 ///////// Init Weather //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,16 +19,13 @@ if (_OverC_Int >= 0.6) then {
 
 0 setOvercast _OverC_Int;
 
-
 forceWeatherChange;
 
 [[west,"HQ"], "Weather Initialized Successfully ..."] remoteExec ["sideChat", 0];
 
-
 ///////// Init FOBs //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 {  
-
 Centerposition = [worldSize / 2, worldsize / 2, 0];
  FOBB = nearestObjects [Centerposition, [F_HQ_01], 40000];
 publicVariable "FOBB";
@@ -42,12 +35,10 @@ publicVariable "FOBB";
  } ;
  } foreach FOBB;
 
-
- } remoteExec ["call", 0]; 
+} remoteExec ["call", 0]; 
 
 FOBB = nearestObjects [Centerposition, ["Land_Cargo_HQ_V3_F", "Land_Cargo_HQ_V1_F"], 40000];
 publicVariable "FOBB";
-
 
 { 
 	if (count (nearestObjects [ _x, [F_HQ_C_01], 20]) > 0) then { 
@@ -941,7 +932,7 @@ _trg setTriggerStatements [
 				_attackingAtGrid = mapGridPosition getMarkerPos _FOBMrk;
 				[[west,'HQ'], 'Enemy Forces Dominating the Battle at grid ' + _attackingAtGrid] remoteExec ['sideChat', 0];					
 				
-				[thisTrigger] execVM 'Scripts\Outpost_CSAT_CAPTURE_East.sqf';
+				[thisTrigger] execVM 'Scripts\Objectives\Outpost_CSAT_CAPTURE_East.sqf';
 
 ", "
 
@@ -1215,4 +1206,3 @@ _x setVariable ["ACE_isEOD", true];
 	//{[_x] execVM "Scripts\LDTInit.sqf" ;} forEach (allUnits select {side _x == west}) ; 
 
 [[west,"HQ"], "Mission StartUp Initialized Successfully ..."] remoteExec ["sideChat", 0];
-

@@ -8,52 +8,6 @@ private _aggrScore = parseNumber (markerText ((allMapMarkers select {markerColor
     _x hideObjectGlobal true;
 } forEach (nearestTerrainObjects [getPos _trigger, ["House", "TREE", "SMALL TREE", "BUSH", "ROCK", "ROCKS"], 15]);
 
-// Function to spawn group with optional static position
-private _fnc_spawnGroup = {
-    params ["_spawnPos", ["_isStatic", false]];
-    private _group = [_spawnPos, EAST, [selectRandom East_Units]] call BIS_fnc_spawnGroup;
-    _group deleteGroupWhenEmpty true;
-    if (_isStatic) then {
-        (units _group) select 0 disableAI "PATH";
-    };
-    _group
-};
-
-// Function to spawn patrol group
-private _fnc_spawnPatrol = {
-    params ["_spawnPos", "_patrolCenter", "_radius"];
-    private _units = [];
-    for "_i" from 1 to 4 do {
-        _units pushBack (selectRandom East_Units);
-    };
-    private _group = [_spawnPos, EAST, _units] call BIS_fnc_spawnGroup;
-    [_group, _patrolCenter, _radius] call BIS_fnc_taskPatrol;
-    _group
-};
-
-// Spawn perimeter groups based on aggression score
-private _spawnPositions = [];
-for "_i" from 1 to 2 do {
-    _spawnPositions pushBack (_trigger getPos [random 70, random 360]);
-};
-
-{
-    [_x, true] call _fnc_spawnGroup;
-    [_x] call _fnc_spawnGroup;
-} forEach _spawnPositions;
-
-if (_aggrScore > 5) then {
-    private _pos = _trigger getPos [random 70, random 360];
-    [_pos, true] call _fnc_spawnGroup;
-    [_pos] call _fnc_spawnGroup;
-};
-
-if (_aggrScore > 10) then {
-    private _pos = _trigger getPos [random 70, random 360];
-    [_pos, true] call _fnc_spawnGroup;
-    [_pos] call _fnc_spawnGroup;
-};
-
 // Get building positions
 private _buildings = nearestObjects [getPos _trigger, ["House", "Land_BagBunker_Large_F", "Land_BagBunker_Small_F", "Land_Cargo_House_V3_F", "Land_Cargo_House_V1_F"], 50];
 private _positions = [];
@@ -84,43 +38,6 @@ if (count _positions > 0) then {
         _positions deleteAt (_positions find _intelPos);
         ["Intel_01", _intelPos, [0,0,0], random 360, false, false, true] call LARs_fnc_spawnComp;
     };
-
-    // Spawn building groups
-    for "_i" from 1 to 5 do {
-        if (count _positions == 0) exitWith {};
-        private _unitPos = selectRandom _positions;
-        _positions deleteAt (_positions find _unitPos);
-        [_unitPos, _i mod 2 == 0] call _fnc_spawnGroup;
-    };
-
-    if (_aggrScore > 5) then {
-        for "_i" from 1 to 3 do {
-            if (count _positions == 0) exitWith {};
-            private _unitPos = selectRandom _positions;
-            _positions deleteAt (_positions find _unitPos);
-            [_unitPos, _i mod 2 == 0] call _fnc_spawnGroup;
-        };
-    };
-
-    if (_aggrScore > 10) then {
-        for "_i" from 1 to 3 do {
-            if (count _positions == 0) exitWith {};
-            private _unitPos = selectRandom _positions;
-            _positions deleteAt (_positions find _unitPos);
-            [_unitPos, _i mod 2 == 0] call _fnc_spawnGroup;
-        };
-    };
-};
-
-// Spawn patrols
-[_trigger getPos [10 + random 40, random 360], getPos _trigger, 100 + random 300] call _fnc_spawnPatrol;
-
-if (_aggrScore > 5) then {
-    [_trigger getPos [10 + random 40, random 360], getPos _trigger, 100 + random 300] call _fnc_spawnPatrol;
-};
-
-if (_aggrScore > 10) then {
-    [_trigger getPos [10 + random 40, random 360], getPos _trigger, 100 + random 300] call _fnc_spawnPatrol;
 };
 
 // Create surrender trigger

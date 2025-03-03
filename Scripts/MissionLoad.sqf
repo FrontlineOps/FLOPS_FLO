@@ -1,4 +1,3 @@
-
 if (isServer) then { 
 
 MissionLoadedLitterally = 0 ; 
@@ -113,7 +112,7 @@ for "_x" from 0 to _CrewSelCnt do { _unit = _Group createunit [_crewType,[0,0,0]
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 sleep 2 ;
 
-MissionLoadedLitterally = 1 ;
+MissionLoadedLitterally = 1;
 publicVariable "MissionLoadedLitterally";
 
 }; 

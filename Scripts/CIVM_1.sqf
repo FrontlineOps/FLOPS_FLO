@@ -1,5 +1,3 @@
-
-
 _Chance = selectRandom [1, 2, 3]; 
 _mrkrs = allMapMarkers select {markerColor _x == "Color4_FD_F"};
 _mrkr = _mrkrs select 0;
@@ -20,10 +18,8 @@ openMap true;
  
 sleep 5;
 
-[parseText "<t color='#1AA3FF' font='PuristaBold' align = 'right' shadow = '1' size='2.5'>Mission : Repair Vehicle</t><br /><t  align = 'right' shadow = '1' size='2'>_ Find and Repair the Dammaged Vehicle</t>", [0, 0.5, 1, 1], nil, 5, 1.7, 0] remoteExec ["BIS_fnc_textTiles", 0];
+["showNotification", ["CIVILIAN MISSION", "Repair Vehicle - Find and Repair the Damaged Vehicle", "info"]] call FLO_fnc_intelSystem;
 
-
- 
 _V = createVehicle [ selectRandom CivVehArray, getpos _nearRoad, [], 4, "NONE"]; 
 _nextRoad = ( roadsConnectedTo _nearRoad ) select 0;
 _dir = _nearRoad getDir _nextRoad;

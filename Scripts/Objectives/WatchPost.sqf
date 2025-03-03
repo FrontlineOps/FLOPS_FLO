@@ -68,27 +68,6 @@ private _positions = [];
     _positions append (_x buildingPos -1);
 } forEach _buildings;
 
-// Spawn patrol groups
-private _spawnPatrolGroup = {
-    params ["_pos", "_radius"];
-    private _group = [
-        _pos getPos [10 + random 10, random 360],
-        East,
-        [selectRandom East_Units, selectRandom East_Units]
-    ] call BIS_fnc_spawnGroup;
-    
-    [_group, _pos, _radius] call BIS_fnc_taskPatrol;
-    _group deleteGroupWhenEmpty true;
-    (_watchpostData get "groups") pushBack _group;
-    _group
-};
-
-[_watchpostData get "position", 50] call _spawnPatrolGroup;
-
-if (_aggrScore > 5) then {
-    [_watchpostData get "position", 100] call _spawnPatrolGroup;
-};
-
 // Spawn static defenders
 private _spawnStaticDefender = {
     params ["_pos", "_disablePath"];
@@ -102,7 +81,7 @@ private _spawnStaticDefender = {
 };
 
 // Spawn initial defenders
-for "_i" from 1 to 3 do {
+for "_i" from 1 to 6 do {
     if !(_positions isEqualTo []) then {
         [selectRandom _positions, true] call _spawnStaticDefender;
     };
@@ -110,7 +89,7 @@ for "_i" from 1 to 3 do {
 
 // Spawn additional defenders based on aggression score
 if (_aggrScore > 5) then {
-    for "_i" from 1 to 3 do {
+    for "_i" from 1 to 6 do {
         private _pos = if (_positions isEqualTo []) then {
             _watchpostData get "position" getPos [10 + random 10, random 360]
         } else {

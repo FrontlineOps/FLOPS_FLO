@@ -18,82 +18,12 @@ private _CRT = [
     "Box_East_Wps_F", "Box_IND_Wps_F"
 ];
 
-// Function to spawn resource boxes
-private _fnc_spawnResourceBox = {
-    params ["_triggerPos"];
-    private _pos = _triggerPos getPos [10 + random 250, random 360];
-    private _box = createVehicle ["CargoNet_01_box_F", [_pos # 0, _pos # 1, (_pos # 2) + 6], [], 2, "NONE"];
-    _box allowDamage false;
-};
-
 // Function to spawn watch posts
 private _fnc_spawnWatchPost = {
     params ["_road", "_dir"];
     if (!isNull _road) then {
-        [_road, _dir] execVM "Scripts\WatchPostBB.sqf";
+        [_road, _dir] execVM "Scripts\Objectives\WatchPostBB.sqf";
     };
-};
-
-// Function to create patrol group
-private _fnc_createPatrolGroup = {
-    params ["_spawnPos", "_patrolPos", "_radius"];
-    private _group = [_spawnPos, East, [selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units"), selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
-    [_group, _patrolPos, _radius] call BIS_fnc_taskPatrol;
-    _group deleteGroupWhenEmpty true;
-    
-    private _leader = leader _group;
-    _leader addEventHandler ["Killed", {
-        params ["_unit"];
-        private _QRF = selectRandom ["Scripts\HeliInsert_CSAT.sqf", "Scripts\VehiInsert_CSAT.sqf"];
-        [_unit] execVM _QRF;
-        private _flare = "F_20mm_Red" createVehicle [getPos _unit # 0, getPos _unit # 1, 120];
-        _flare setVelocity [0,0,-0.1];
-    }];
-    
-    _group
-};
-
-// Function to spawn vehicle patrol
-private _fnc_spawnVehiclePatrol = {
-    params ["_triggerPos", "_vehType"];
-    
-    private _nearRoad = selectRandom (_triggerPos nearRoads 150);
-    if (isNull _nearRoad) exitWith {};
-    
-    private _veh = createVehicle [_vehType, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
-    private _crewGroup = createVehicleCrew _veh;
-    private _vehGroup = createGroup East;
-    {[_x] join _vehGroup} forEach units _crewGroup;
-    
-    sleep 3;
-    
-    private _wp0Pos = [_veh, 70, 300, 1, 0, 1, 0] call BIS_fnc_findSafePos;
-    private _wp0Road = (_wp0Pos nearRoads 200) # 0;
-    
-    {
-        private _wp = _vehGroup addWaypoint [getPos _x, 0];
-        _wp setWaypointType "MOVE";
-        _wp setWaypointBehaviour "SAFE";
-        _wp setWaypointSpeed "LIMITED";
-    } forEach [_wp0Road, _nearRoad];
-    
-    private _wpCycle = _vehGroup addWaypoint [getPos _nearRoad, 3];
-    _wpCycle setWaypointType "CYCLE";
-};
-
-// Function to create garrison unit
-private _fnc_createGarrisonUnit = {
-    params ["_building"];
-    private _posAGL = ASLToAGL getPosASL _building;
-    private _group = [_posAGL, East, [selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
-    private _unit = (units _group) # 0;
-    
-    [_unit, 10, _posAGL, "ATL"] call BIS_fnc_setHeight;
-    _unit setUnitPos "MIDDLE";
-    _unit disableAI "PATH";
-    _group deleteGroupWhenEmpty true;
-    
-    _group
 };
 
 // Function to setup single HQ
@@ -109,14 +39,6 @@ private _fnc_setupHQ = {
     // Create supply boxes
     for "_i" from 1 to 2 do {
         createVehicle [selectRandom _CRT, selectRandom (_building buildingPos -1), [], 0, "NONE"];
-    };
-    
-    // Spawn garrison units
-    for "_i" from 1 to 3 do {
-        private _group = [selectRandom (_building buildingPos -1), East, [selectRandom (FLO_configCache get "units")]] call BIS_fnc_spawnGroup;
-        private _unit = (units _group) # 0;
-        _unit disableAI "PATH";
-        _group deleteGroupWhenEmpty true;
     };
 };
 
@@ -158,69 +80,6 @@ if (count (_triggerPos nearRoads 300) > 0) then {
             private _nextRoad = (roadsConnectedTo _nearRoad) # 0;
             [_nearRoad, _nearRoad getDir _nextRoad] call _fnc_spawnWatchPost;
         };
-    };
-};
-
-// Spawn initial patrol groups
-{
-    private _spawnPos = _triggerPos getPos [10 + random 90, random 360];
-    private _patrolPos = _triggerPos getPos [10 + random 90, random 360];
-    [_spawnPos, _patrolPos, 300] call _fnc_createPatrolGroup;
-} forEach [1,2];
-
-// Spawn additional groups based on aggression
-if (_AGGRSCORE > 5) then {
-    private _spawnPos = _triggerPos getPos [10 + random 90, random 360];
-    private _patrolPos = _triggerPos getPos [10 + random 90, random 360];
-    [_spawnPos, _patrolPos, 400] call _fnc_createPatrolGroup;
-};
-
-if (_AGGRSCORE > 10) then {
-    private _spawnPos = _triggerPos getPos [10 + random 90, random 360];
-    private _patrolPos = _triggerPos getPos [10 + random 90, random 360];
-    [_spawnPos, _patrolPos, 500] call _fnc_createPatrolGroup;
-};
-
-// Spawn vehicles if logistics are enabled
-if (LOGDIS == 0 && {count (_triggerPos nearRoads 150) > 0}) then {
-    private _fnc_createVehicle = {
-        params ["_vehType"];
-        private _nearRoad = selectRandom (_triggerPos nearRoads 150);
-        private _veh = createVehicle [_vehType, (_nearRoad getRelPos [0, 0]), [], 2, "NONE"];
-        
-        private _crewGroup = createVehicleCrew _veh;
-        private _vehGroup = createGroup East;
-        {[_x] join _vehGroup} forEach units _crewGroup;
-        
-        sleep 3;
-        
-        private _wp0Pos = [_veh, 70, 300, 1, 0, 1, 0] call BIS_fnc_findSafePos;
-        private _wp0Road = (_wp0Pos nearRoads 200) # 0;
-        
-        {
-            private _wp = _vehGroup addWaypoint [getPos _x, 0];
-            _wp setWaypointType "MOVE";
-            _wp setWaypointBehaviour "SAFE";
-            _wp setWaypointSpeed "LIMITED";
-        } forEach [_wp0Road, _nearRoad];
-        
-        private _wpCycle = _vehGroup addWaypoint [getPos _nearRoad, 3];
-        _wpCycle setWaypointType "CYCLE";
-    };
-    
-    // Spawn initial vehicles
-    [selectRandom (FLO_configCache get "vehicles" select 3)] call _fnc_createVehicle;
-    [selectRandom (FLO_configCache get "vehicles" select 2)] call _fnc_createVehicle;
-    
-    // Additional vehicles based on aggression
-    if (_AGGRSCORE > 5) then {
-        [selectRandom (FLO_configCache get "vehicles" select 3)] call _fnc_createVehicle;
-        [selectRandom (FLO_configCache get "vehicles" select 2)] call _fnc_createVehicle;
-    };
-    
-    if (_AGGRSCORE > 10) then {
-        [selectRandom (FLO_configCache get "vehicles" select 3)] call _fnc_createVehicle;
-        [selectRandom (FLO_configCache get "vehicles" select 2)] call _fnc_createVehicle;
     };
 };
 
@@ -296,7 +155,7 @@ private _fnc_createTrigger = {
     [1000, 1000, 0, false, 200],
     2,
     ["WEST", "PRESENT", false],
-    ["this", "[thisTrigger, 2000] execVM 'Scripts\ZONEs.sqf';", ""]
+    ["this", "[thisTrigger, 2000] execVM 'Scripts\Objectives\ZONEs.sqf';", ""]
 ] call _fnc_createTrigger;
 
 // Create CQB trigger
