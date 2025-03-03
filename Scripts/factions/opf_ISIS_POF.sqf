@@ -10,4 +10,5 @@ East_Ground_Artillery = ["O_MBT_02_arty_F"];
 East_Air_Drone = ["O_UAV_01_F"];
 
 East_Units = ["LOP_ISTS_OPF_Infantry_Engineer","LOP_ISTS_OPF_Infantry_Corpsman","LOP_ISTS_OPF_Infantry_TL","LOP_ISTS_OPF_Infantry_Rifleman_5","LOP_ISTS_OPF_Infantry_AR_Asst_2","LOP_ISTS_OPF_Infantry_AR_2","LOP_ISTS_OPF_Infantry_AR","LOP_ISTS_OPF_Infantry_AR","LOP_ISTS_OPF_Infantry_SL","LOP_ISTS_OPF_Infantry_Rifleman","LOP_ISTS_OPF_Infantry_Rifleman"];
+East_FireObserver = ["LOP_ISTS_OPF_Infantry_TL"];
 East_Units_Officers = ["LOP_ISTS_OPF_Infantry_SL"];

@@ -10,6 +10,7 @@ East_Ground_Artillery = ["O_MBT_02_arty_F"];
 East_Air_Drone = ["O_UAV_01_F"]; 
 
 East_Units = ["O_Tura_watcher_lxWS","O_Tura_deserter_lxWS","O_Tura_enforcer_lxWS","O_Tura_hireling_lxWS","O_Tura_scout_lxWS","O_Tura_medic2_lxWS","O_Tura_thug_lxWS"];
+East_FireObserver = ["O_Tura_watcher_lxWS"];
 East_Units_Officers = ["O_SFIA_officer_lxWS"];
 
 East_Groups = [

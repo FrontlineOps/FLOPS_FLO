@@ -10,6 +10,7 @@ East_Ground_Artillery = ["O_MBT_02_arty_F"];
 East_Air_Drone = ["O_UAV_01_F"]; 
 
 East_Units = ["vn_o_men_nva_65_21", "vn_o_men_nva_65_25", "vn_o_men_nva_65_22", "vn_o_men_nva_65_24",  "vn_o_men_nva_65_22","vn_o_men_nva_65_12","vn_o_men_nva_65_09","vn_o_men_nva_65_13","vn_o_men_nva_65_05","vn_o_men_nva_65_06","vn_o_men_nva_65_14", "vn_o_men_nva_65_14"];
+East_FireObserver = ["vn_o_men_nva_65_21"];
 East_Units_Officers = ["vn_o_men_nva_65_01"];
 
 East_Groups = [];

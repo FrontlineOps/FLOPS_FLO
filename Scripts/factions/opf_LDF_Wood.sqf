@@ -10,6 +10,7 @@ East_Ground_Artillery = ["O_MBT_02_arty_F"];
 East_Air_Drone = ["O_UAV_01_F"]; 
 
 East_Units = ["I_E_Soldier_F","I_E_Soldier_A_F","I_E_Soldier_AR_F","I_E_Soldier_lite_F","I_E_soldier_M_F","I_E_Soldier_SL_F","I_E_Soldier_LAT2_F", "I_E_RadioOperator_F", "I_E_Soldier_Exp_F"];
+East_FireObserver = ["I_E_RadioOperator_F"];
 East_Units_Officers = ["I_E_Officer_F"];
 
 East_Groups = [

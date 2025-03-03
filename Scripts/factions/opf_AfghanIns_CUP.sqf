@@ -10,6 +10,7 @@ East_Ground_Artillery = ["O_MBT_02_arty_F"];
 East_Air_Drone = ["O_UAV_01_F"];
 
 East_Units = ["CUP_O_TK_INS_Soldier_TL","CUP_O_TK_INS_Soldier_MG","CUP_O_TK_INS_Soldier_GL","CUP_O_TK_INS_Soldier_AT","CUP_O_TK_INS_Soldier","CUP_O_TK_INS_Soldier_MG","CUP_O_TK_INS_Soldier_AR","CUP_O_TK_INS_Sniper", "CUP_O_TK_INS_Soldier_Enfield", "CUP_O_TK_INS_Soldier_FNFAL"];
+East_FireObserver = ["CUP_O_TK_INS_Soldier_TL"];
 East_Units_Officers = ["Opf_I_I_Soldier_Base_unarmed_F"];
 
 East_Groups = [

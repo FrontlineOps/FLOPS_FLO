@@ -10,6 +10,7 @@ East_Ground_Artillery = ["O_MBT_02_arty_F"];
 East_Air_Drone = ["O_UAV_01_F"]; 
 
 East_Units = ["rhs_vdv_des_efreitor","rhs_vdv_des_rifleman","rhs_vdv_des_LAT","rhs_vdv_des_marksman","rhs_vdv_des_medic","rhs_vdv_des_arifleman","rhs_vdv_des_grenadier","rhs_vdv_des_at","rhs_vdv_des_engineer","rhs_vdv_des_marksman"];
+East_FireObserver = ["rhs_vdv_des_officer"];
 East_Units_Officers = ["rhs_vdv_des_officer"];
 
 East_Groups = [

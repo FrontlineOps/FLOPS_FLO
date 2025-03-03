@@ -69,6 +69,8 @@ East_Units = [
 ];
 //publicVariable "East_Units";
 
+East_FireObserver = ["O_RadioOperator_F"];
+
 East_Units_Officers = ["O_officer_F"];
 //publicVariable "East_Units_Officers";
 

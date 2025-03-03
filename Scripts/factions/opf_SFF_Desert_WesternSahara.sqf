@@ -10,6 +10,7 @@ East_Ground_Artillery = ["O_MBT_02_arty_F"];
 East_Air_Drone = ["O_UAV_01_F"]; 
 
 East_Units = ["O_SFIA_Soldier_universal_lxWS","O_SFIA_Soldier_TL_lxWS","O_SFIA_Soldier_AAA_lxWS","O_SFIA_Soldier_AAT_lxWS","O_SFIA_Soldier_AR_lxWS","O_SFIA_medic_lxWS","O_SFIA_exp_lxWS","O_SFIA_Soldier_GL_lxWS","O_SFIA_soldier_aa_lxWS","O_SFIA_soldier_at_lxWS","O_SFIA_repair_lxWS","O_SFIA_soldier_lxWS","O_SFIA_sharpshooter_lxWS"];
+East_FireObserver = ["O_SFIA_Soldier_TL_lxWS"];
 East_Units_Officers = ["O_SFIA_officer_lxWS"];
 
 East_Groups = [
