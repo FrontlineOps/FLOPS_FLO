@@ -267,7 +267,7 @@ if (isNil "FLO_Logistics_Network") then {
             } forEach _outposts;
             
             // Calculate supply distribution based on resource availability
-            private _availableResources = ["get", []] call FLO_fnc_opforResources;
+            private _availableResources = FLO_OPFOR_Resources call ["getResources", []];
             private _routeCount = count _supplyRoutes;
             
             if (_routeCount > 0 && _availableResources > 0) then {
@@ -333,7 +333,7 @@ if (isNil "FLO_Logistics_Network") then {
                 } forEach keys _supplyRoutes;
                 
                 // Spend the resources used
-                ["spend", [round _resourcesUsed]] call FLO_fnc_opforResources;
+                FLO_OPFOR_Resources call ["spendResources", [_resourcesUsed]];
             };
             
             // Clean up any invalid routes
