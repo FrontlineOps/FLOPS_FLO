@@ -1,4 +1,3 @@
-
 if (ConVLocc == 0) then {
 	
 	
@@ -82,7 +81,7 @@ V0 = createVehicle [ selectRandom East_Ground_Vehicles_Light, (_nearRoad getRelP
 _azimuth = (getMarkerPos "ConvoyStrt") getDir (getMarkerPos "ConvoyDest") ;
 V0 setDir _azimuth;
 _SCount = [(typeOf V0), true] call BIS_fnc_crewCount;
-CGM = [getPosATL _nearRoad, east, _SCount] call BIS_fnc_spawnGroup;
+missionNamespace setVariable ["CGM", [getPosATL _nearRoad, east, _SCount] call BIS_fnc_spawnGroup, true];
 {_x moveInAny V0} foreach units CGM;  
 V0 setUnloadInCombat [true, false];	
 

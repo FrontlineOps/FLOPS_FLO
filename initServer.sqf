@@ -127,34 +127,43 @@ waitUntil {!isNil "EtVInitialized"};
             private _RoadMrks = allMapMarkers select {markerType _x == "mil_dot" && markerColor _x == "colorCivilian" && markerAlpha _x == 0.3};
             {deleteMarker _x} forEach _RoadMrks;
 
-            {deleteWaypoint((waypoints CGM) select 0);} forEach waypoints CGM;
+            // Get the CGM from missionNamespace
+            private _CGM = missionNamespace getVariable ["CGM", grpNull];
+            
+            // Make sure CGM exists before proceeding
+            if (!isNull _CGM) then {
+                {deleteWaypoint((waypoints _CGM) select 0);} forEach waypoints _CGM;
 
-            (calculatePath ["wheeled_APC", "safe", position V0, position (selectRandom ((getMarkerPos "ConvoyDest") nearRoads 500))]) addEventHandler ["PathCalculated", {
-                private _posesArr = _this select 1;
-                private _posesArrCnt = count _posesArr;
-                private _posesArrCntndd = round (_posesArrCnt / 10);
-                private _indexed = [1,2,3,4,5,6,7,8,9];
+                (calculatePath ["wheeled_APC", "safe", position V0, position (selectRandom ((getMarkerPos "ConvoyDest") nearRoads 500))]) addEventHandler ["PathCalculated", {
+                    private _posesArr = _this select 1;
+                    private _posesArrCnt = count _posesArr;
+                    private _posesArrCntndd = round (_posesArrCnt / 10);
+                    private _indexed = [1,2,3,4,5,6,7,8,9];
+                    private _CGM = missionNamespace getVariable ["CGM", grpNull];
 
-                {
-                    private _Waypos = _posesArr select (_x * _posesArrCntndd);
-                    private _wp = CGM addWaypoint [_Waypos, 0];
-                    _wp SetWaypointType "MOVE";
-                    _wp setWaypointBehaviour "SAFE";
-                    _wp setWaypointSpeed "LIMITED";
-                } forEach _indexed;
+                    {
+                        private _Waypos = _posesArr select (_x * _posesArrCntndd);
+                        private _wp = _CGM addWaypoint [_Waypos, 0];
+                        _wp SetWaypointType "MOVE";
+                        _wp setWaypointBehaviour "SAFE";
+                        _wp setWaypointSpeed "LIMITED";
+                    } forEach _indexed;
 
-                {
-                    private _marker = createMarkerLocal [(str position V0) + str _forEachIndex, _x];
-                    _marker setMarkerTypeLocal "mil_dot";
-                    _marker setMarkerSizeLocal [0.5, 0.5];
-                    _marker setMarkerColorLocal "colorCivilian";
-                    _marker setMarkerAlpha 0.3;
-                } forEach (_this select 1);
-            }];
-            sleep 2;
-            CGM setFormation "WEDGE";
-            sleep 2;
-            CGM setFormation "COLUMN";
+                    {
+                        private _marker = createMarkerLocal [(str position V0) + str _forEachIndex, _x];
+                        _marker setMarkerTypeLocal "mil_dot";
+                        _marker setMarkerSizeLocal [0.5, 0.5];
+                        _marker setMarkerColorLocal "colorCivilian";
+                        _marker setMarkerAlpha 0.3;
+                    } forEach (_this select 1);
+                }];
+                sleep 2;
+                _CGM setFormation "WEDGE";
+                sleep 2;
+                _CGM setFormation "COLUMN";
+            } else {
+                diag_log "ERROR: CGM is null in convoy loop";
+            };
         };
 
         private _BluezoneMarks = allMapMarkers select { markerType _x == "b_installation" && (markerColor _x == "colorBLUFOR" or markerColor _x == "ColorWEST") };
