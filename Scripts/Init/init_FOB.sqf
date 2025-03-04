@@ -75,7 +75,7 @@ _HOS = nearestobjects [thisTrigger,East_Units_Officers,10] select 0 ;
 deleteVehicle _HOS ; 
 	[] execVM 'Scripts\INTL.sqf';
 	[125, 'ENEMY OFFICER'] execVM 'Scripts\NOtification.sqf' ;
-[125] execVM 'Scripts\Reward.sqf';
+[125] call FLO_fnc_addReward;
 
  ", ""]; 
 
@@ -90,7 +90,7 @@ _TFOBH setTriggerStatements [
 "  
 _HOS = nearestobjects [thisTrigger,East_Units,10] select 0 ;    
 deleteVehicle _HOS ; 
-[25] execVM 'Scripts\Reward.sqf';
+[25] call FLO_fnc_addReward;
 [] execVM 'Scripts\INTL.sqf';
 	[25, 'ENEMY SOLDIER'] execVM 'Scripts\NOtification.sqf' ;
 
@@ -110,7 +110,7 @@ _CIVIL = (nearestObjects [thisTrigger ,['Man'], 7] select {(alive _x) && ((side 
   
 if ( _CIVIL getUnitTrait 'engineer' == true) then {
 	[15, 'INSURGENT'] execVM 'Scripts\NOtification.sqf' ;
-	[15] execVM 'Scripts\Reward.sqf';
+	[15] call FLO_fnc_addReward;
 
 	deleteVehicle _CIVIL ; 
 	[] execVM 'Scripts\INTL_Civ.sqf';	
@@ -136,7 +136,7 @@ _TFOBA setTriggerStatements [
 _RES = nearestobjects [thisTrigger,['CargoNet_01_box_F'],10] select 0 ;    
 deleteVehicle _RES ; 
 	[60, 'RESOURCE'] execVM 'Scripts\NOtification.sqf' ;
-[60] execVM 'Scripts\Reward.sqf';
+[60] call FLO_fnc_addReward;
 
  ", ""]; 
 

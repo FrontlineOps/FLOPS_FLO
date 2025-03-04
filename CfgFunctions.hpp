@@ -60,5 +60,6 @@ class FLO {
 
         class findNearestMarker   {};
         class log                 {};
+        class addReward         {};
     };
 };

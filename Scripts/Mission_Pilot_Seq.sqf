@@ -14,7 +14,7 @@ _anim =  selectRandom [
 ];
 
 				[50, 'INTEL'] execVM 'Scripts\NOtification.sqf' ;
-				[50] execVM 'Scripts\Reward.sqf';
+				[50] call FLO_fnc_addReward;
 
 _CRT = [
 "Box_IND_WpsSpecial_F",
@@ -377,7 +377,7 @@ _M = [_MMarks,  (_this select 0)] call BIS_fnc_nearestPosition;
 
 deleteMarker _M ; 
 
-[50] execVM "Scripts\Reward.sqf";
+[50] call FLO_fnc_addReward;
 [(_this select 0), 1500] call FLO_fnc_requestQRF;
 				[50, "CAPTURED PILOT"] execVM "Scripts\NOtification.sqf" ;
 

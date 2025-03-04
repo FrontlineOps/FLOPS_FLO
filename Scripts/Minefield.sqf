@@ -59,7 +59,7 @@ for "_i" from 1 to _mineCount do {
             };
 
             [100, "MINEFIELD"] execVM "Scripts\NOtification.sqf";
-            [100] execVM "Scripts\Reward.sqf";
+            [100] call FLO_fnc_addReward;
             [] execVM "Scripts\ReputationPlus.sqf";
             execVM "Scripts\Civ_Relations.sqf";
 

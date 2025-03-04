@@ -173,7 +173,7 @@ _Veh = nearestObjects [(_this select 0),["LandVehicle"],100] select 0;
  doGetOut _x;  
 _x allowDammage true;
  } foreach units group ((crew _Veh) select 0); 
- [50] execVM 'Scripts\Reward.sqf';
+ [50] call FLO_fnc_addReward;
 deleteMarker 'ConvoyStrt' ;
 deleteMarker 'ConvoyDest' ;
 
@@ -288,7 +288,7 @@ _TRGT setTriggerActivation ["NONE", "PRESENT", false];
 _TRGT setTriggerStatements [  
 "!alive V0 && !alive V1 && !alive V2 && !alive V3 && !alive V4 && !alive V5 && !alive V6", 
 " 
- [100] execVM 'Scripts\Reward.sqf';
+ [100] call FLO_fnc_addReward;
 
 				[100, 'SUPPORT CONVOY'] execVM 'Scripts\NOtification.sqf' ;
  
