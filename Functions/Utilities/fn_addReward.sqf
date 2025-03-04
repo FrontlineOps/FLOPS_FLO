@@ -4,7 +4,6 @@
  * Description:
  * Adds specified amount to the player's reward/money counter.
  * The money value is stored in a marker with color "Color2_FD_F".
- * Maximum money is capped at 2000.
  *
  * Parameters:
  * _this select 0: NUMBER - The amount to add to the reward counter
@@ -40,11 +39,6 @@ if (_markerText != "") then {
 
 // Calculate new money value
 private _NewMoney = _Money + _RWRD;
-
-// Cap money at 2000
-if (_NewMoney > 2000) then {
-    _NewMoney = 2000;
-};
 
 // Update marker text
 _mrkr setMarkerText str _NewMoney;
