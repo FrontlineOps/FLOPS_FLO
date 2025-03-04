@@ -83,29 +83,32 @@ execVM "R3F_LOG\init.sqf";
 execVM "Scripts\EtV.sqf";
 waitUntil {!isNil "EtVInitialized"};
 
-/* 
-   Function: _executeAndWait
-   Execute array of sqf scripts and wait for each on of them to finish before continuing iteration.
+// private _executeAndWait= {
+//     params ["_script"];
+//     {
+//         private _handle = execVM _x;
+//         waitUntil {sleep 1; scriptDone _handle };
+//     } forEach _script;
+// };
 
-   Example:
-   (start code)
-   // Example usage
-   [param] call _executeAndWait;
-   (end)
+// // Faster method - compile and execute immediately
+// private _fastExecute = {
+//     params ["_scripts"];
+//     {
+//         diag_log format ["[FLO] Compiling and executing trigger script: %1", _x];
+//         call compileFinal preprocessFileLineNumbers _x;
+//         diag_log format ["[FLO] Completed trigger script: %1", _x];
+//     } forEach _scripts;
+// };
 
-   Parameters:
-   param - Array of sqf scripts.
-*/
-private _executeAndWait= {
-    params ["_script"];
-    {
-        private _handle = execVM _x;
-        waitUntil {sleep 1; scriptDone _handle };
-    } forEach _script;
-};
+// // Execute triggers using the faster method
+// [["Scripts\Init\init_Triggers_1.sqf", "Scripts\Init\init_Triggers_2.sqf", "Scripts\Init\init_Triggers_3.sqf"]] call _fastExecute;
 
-// Execute triggers
-[["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"]] call _executeAndWait;
+// Parallel execution
+{
+    0 spawn compileFinal preprocessFileLineNumbers _x;
+} forEach ["Scripts\Init\init_Triggers_1.sqf", "Scripts\Init\init_Triggers_2.sqf", "Scripts\Init\init_Triggers_3.sqf"];
+
 
 //Resource Loops//Convoy Loops//Radio Tower Loops
 [] spawn {  

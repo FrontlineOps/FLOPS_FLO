@@ -281,7 +281,7 @@ false
 "_caller distance _target < 40",  
 {},
 {},
-{ { null = execVM "Scripts\init_Weather.sqf" ;} remoteExec ["call", 2];},
+{ { null = execVM "Scripts\Init\init_Weather.sqf" ;} remoteExec ["call", 2];},
 {},
 [],
 5,

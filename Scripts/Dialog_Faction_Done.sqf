@@ -119,7 +119,7 @@ if !_is_debug then
 		if (PresenceName == "75% _ Long Campaign") then {EnemyPrec = 1.5};
 		if (PresenceName == "100% _ Dedi Servers with HCs") then {EnemyPrec = 1};
 
-		ZonMarkers = execVM "Scripts\init_Markers.sqf";
+		ZonMarkers = execVM "Scripts\Init\init_Markers.sqf";
 		waitUntil { scriptDone ZonMarkers };
 
 	StartingLocationDone = true;
@@ -202,7 +202,7 @@ else {
 
 	EnemyPrec = 2;
 
-	ZonMarkers = execVM "Scripts\init_Markers.sqf";
+	ZonMarkers = execVM "Scripts\Init\init_Markers.sqf";
 	waitUntil { scriptDone ZonMarkers };
 
 	StartingLocationDone = true;
