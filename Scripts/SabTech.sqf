@@ -32,7 +32,7 @@ _CRVEH setdamage 1;
 
 				[30, "TECHNOLOGY"] execVM "Scripts\NOtification.sqf" ;
 
-[30] execVM "Scripts\Reward.sqf";
+[30] call FLO_fnc_addReward;
 
  
  sleep 6 ;

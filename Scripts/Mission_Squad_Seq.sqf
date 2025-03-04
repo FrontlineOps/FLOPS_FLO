@@ -5,7 +5,7 @@ _mrkr = _mrkrs select 0;
 _AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 				[50, 'INTEL'] execVM 'Scripts\NOtification.sqf' ;
-				[50] execVM 'Scripts\Reward.sqf';
+				[50] call FLO_fnc_addReward;
 
 _CRT = [
 "Box_IND_WpsSpecial_F",
@@ -328,7 +328,7 @@ if (count _humanPlayers == 1 ) then {
 			
 [50, 'MISSING SQUAD'] execVM 'Scripts\NOtification.sqf' ;
 [thisTrigger, 1500] call FLO_fnc_requestQRF;
-[50] execVM 'Scripts\Reward.sqf';
+[50] call FLO_fnc_addReward;
  ", ""]; 
  
 }; 

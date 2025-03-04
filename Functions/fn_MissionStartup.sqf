@@ -125,7 +125,7 @@ publicVariable "FOBB";
 		_HOS = nearestobjects [thisTrigger,East_Units_Officers,10] select 0 ;    
 		deleteVehicle _HOS ; 
 			[] execVM 'Scripts\INTL.sqf';	
-		[125] execVM 'Scripts\Reward.sqf';
+		[125] call FLO_fnc_addReward;
 			[125, 'ENEMY OFFICER'] execVM 'Scripts\NOtification.sqf' ;
 
 		", ""]; 
@@ -142,7 +142,7 @@ publicVariable "FOBB";
 		_HOS = nearestobjects [thisTrigger,East_Units,10] select 0 ;    
 		deleteVehicle _HOS ; 
 			[] execVM 'Scripts\INTL.sqf';	
-		[50] execVM 'Scripts\Reward.sqf';
+		[50] call FLO_fnc_addReward;
 			[50, 'ENEMY SOLDIER'] execVM 'Scripts\NOtification.sqf' ;
 
 		", ""]; 
@@ -162,7 +162,7 @@ publicVariable "FOBB";
 		
 		if ( _CIVIL getUnitTrait 'engineer' == true) then {
 			[50, 'INSURGENT'] execVM 'Scripts\NOtification.sqf' ;
-			[50] execVM 'Scripts\Reward.sqf';
+			[50] call FLO_fnc_addReward;
 			deleteVehicle _CIVIL ; 
 			[] execVM 'Scripts\INTL_Civ.sqf';	
 			[] execVM 'Scripts\ReputationPlus.sqf';
@@ -524,7 +524,7 @@ _TFOBH setTriggerStatements [
 "  
 _HOS = nearestobjects [thisTrigger,East_Units_Officers,10] select 0 ;    
 deleteVehicle _HOS ; 
-[125] execVM 'Scripts\Reward.sqf';
+[125] call FLO_fnc_addReward;
 [] execVM 'Scripts\INTL.sqf';
 	[125, 'ENEMY OFFICER'] execVM 'Scripts\NOtification.sqf' ;
 
@@ -542,7 +542,7 @@ _TFOBH setTriggerStatements [
 _HOS = nearestobjects [thisTrigger,East_Units,10] select 0 ;    
 deleteVehicle _HOS ; 
 
-[50] execVM 'Scripts\Reward.sqf';
+[50] call FLO_fnc_addReward;
 [] execVM 'Scripts\INTL.sqf';
 	[50, 'ENEMY SOLDIER'] execVM 'Scripts\NOtification.sqf' ;
 
@@ -562,7 +562,7 @@ _CIVIL = (nearestObjects [thisTrigger ,['Man'], 7] select {(alive _x) && ((side 
   
 if ( _CIVIL getUnitTrait 'engineer' == true) then {
 	[50, 'INSURGENT'] execVM 'Scripts\NOtification.sqf' ;
-	[50] execVM 'Scripts\Reward.sqf';
+	[50] call FLO_fnc_addReward;
 	deleteVehicle _CIVIL ; 
 	[] execVM 'Scripts\INTL_Civ.sqf';	
 	[] execVM 'Scripts\ReputationPlus.sqf';
@@ -853,7 +853,7 @@ TWRs = nearestobjects [(getMarkerPos _x), ["Land_TTowerBig_2_F", "Land_TTowerBig
 				  
 				[30, "RADIO TOWER"] execVM "Scripts\NOtification.sqf" ;
 
-				[30] execVM "Scripts\Reward.sqf";
+				[30] call FLO_fnc_addReward;
 				 execVM "Scripts\COMDIS.sqf";
 				}];
 		};

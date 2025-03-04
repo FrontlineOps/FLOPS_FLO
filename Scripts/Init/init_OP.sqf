@@ -73,7 +73,7 @@ _TFOBH setTriggerStatements [
     "  
         _HOS = nearestobjects [thisTrigger,East_Units_Officers,10] select 0 ;    
         deleteVehicle _HOS ; 
-        [125] execVM 'Scripts\Reward.sqf';
+        [125] call FLO_fnc_addReward;
         [] execVM 'Scripts\INTL.sqf';
         [125, 'ENEMY OFFICER'] execVM 'Scripts\NOtification.sqf' ;
     ", 
@@ -90,7 +90,7 @@ _TFOBH setTriggerStatements [
     "  
         _HOS = nearestobjects [thisTrigger,East_Units,10] select 0 ;    
         deleteVehicle _HOS ; 
-        [50] execVM 'Scripts\Reward.sqf';
+        [50] call FLO_fnc_addReward;
         [] execVM 'Scripts\INTL.sqf';
         [50, 'ENEMY SOLDIER'] execVM 'Scripts\NOtification.sqf' ;
     ", 
@@ -108,7 +108,7 @@ _CIVTRG setTriggerStatements [
         _CIVIL = (nearestObjects [thisTrigger ,['Man'], 7] select {(alive _x) && ((side _x) == civilian)}) select 0 ;
         if (_CIVIL getUnitTrait 'engineer' == true) then {
             [50, 'INSURGENT'] execVM 'Scripts\NOtification.sqf' ;
-            [50] execVM 'Scripts\Reward.sqf';
+            [50] call FLO_fnc_addReward;
             deleteVehicle _CIVIL ; 
             [] execVM 'Scripts\INTL_Civ.sqf';	
             [] execVM 'Scripts\ReputationPlus.sqf';

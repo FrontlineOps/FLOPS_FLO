@@ -101,14 +101,14 @@ if (triggerActivated _thisCaptureWestTrigger) then {
 
 				if (markerType _M == 'o_installation') then {
 				[100, 'CITY'] execVM 'Scripts\NOtification.sqf' ;
-				[100] execVM 'Scripts\Reward.sqf';
+				[100] call FLO_fnc_addReward;
 				[] execVM 'Scripts\DangerPlus.sqf';
 				[] execVM 'Scripts\ReputationPlus.sqf';
 				};
 				
 				if (markerType _M == 'n_installation') then {
 				[200, 'CAPITAL'] execVM 'Scripts\NOtification.sqf' ;
-				[200] execVM 'Scripts\Reward.sqf';
+				[200] call FLO_fnc_addReward;
 				[] execVM 'Scripts\DangerPlus.sqf';
 				[] execVM 'Scripts\DangerPlus.sqf';				
 				[] execVM 'Scripts\ReputationPlus.sqf';

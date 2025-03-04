@@ -519,7 +519,7 @@ deleteMarker _M ;
 
 				[40, "AA SITE"] execVM "Scripts\NOtification.sqf" ;
 
-[40] execVM "Scripts\Reward.sqf";
+[40] call FLO_fnc_addReward;
 
 				_markerName = 'AssaultMark' + (str [(0 + (random 1000)), (0 + (random 1000)), 0]);  
 				_mrkr = createMarker [_markerName, [(0 + (random 1000)), (0 + (random 1000)), 0]]; 

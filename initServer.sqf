@@ -167,7 +167,7 @@ waitUntil {!isNil "EtVInitialized"};
         };
 
         private _BluezoneMarks = allMapMarkers select { markerType _x == "b_installation" && (markerColor _x == "colorBLUFOR" or markerColor _x == "ColorWEST") };
-        { [1] execVM 'Scripts\Reward.sqf'; } foreach _BluezoneMarks;
+        { [1] call FLO_fnc_addReward; } foreach _BluezoneMarks;
     };
 };
 
