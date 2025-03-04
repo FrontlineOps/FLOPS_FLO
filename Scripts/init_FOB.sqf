@@ -48,30 +48,6 @@ false,
 false
 ] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
 
-
-
-[ FOBB,
-"<img size=2 color='#59ff58' image='Screens\FOBA\iconParachute_ca.paa'/><t font='PuristaBold' color='#59ff58'>H.A.L.O (250)",
-"Screens\FOBA\b_hq.paa",
-"Screens\FOBA\b_hq.paa",
-"true",       
-"_caller distance _target < 40",  
-{},
-{},
-{
-	
-[player] execVM "Scripts\HALO1.sqf"; 
-
-},
-{},
-[],
-5,
-2,
-false,
-false
-] remoteExec ["BIS_fnc_holdActionAdd",0,true];   
-
-
 [FOBB,[
 	"<img size=2 color='#7CC2FF' image='Screens\FOBA\b_hq.paa'/><t font='PuristaBold' color='#7CC2FF'>REQUEST MENU",
 	"Scripts\Dialog_Request.sqf",
