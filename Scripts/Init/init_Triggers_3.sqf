@@ -193,7 +193,7 @@ _TERR = nearestTerrainObjects [(getMarkerpos _x), ["FOREST", "House", "TREE", "S
 					
 
 				
-				[30, "RADIO TOWER"] execVM "Scripts\NOtification.sqf" ;
+				[30, "RADIO TOWER"] call FLO_fnc_notification ;
 
 				[30] call FLO_fnc_addReward;
 				execVM "Scripts\COMDIS.sqf";

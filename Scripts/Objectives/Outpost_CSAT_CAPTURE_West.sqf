@@ -100,13 +100,13 @@ if (triggerActivated _thisCaptureWestTrigger) then {
 
 
 				if (markerType _M == 'o_support') then {
-				[50, 'OUTPOST'] execVM 'Scripts\NOtification.sqf' ;
+				[50, 'OUTPOST'] call FLO_fnc_notification ;
 				[50] call FLO_fnc_addReward;
 				[] execVM 'Scripts\DangerPlus.sqf';
 				};
 				
 				if (markerType _M == 'n_support') then {		
-				[100, 'COMMANDPOST'] execVM 'Scripts\NOtification.sqf' ;
+				[100, 'COMMANDPOST'] call FLO_fnc_notification ;
 				[100] call FLO_fnc_addReward;
 				[] execVM 'Scripts\DangerPlus.sqf';
 				[] execVM 'Scripts\DangerPlus.sqf';

@@ -171,7 +171,7 @@ _x allowDammage true;
 deleteMarker 'ConvoyStrt' ;
 deleteMarker 'ConvoyDest' ;
 
-				[50, "SUPPORT CONVOY"] execVM "Scripts\NOtification.sqf" ;
+				[50, "SUPPORT CONVOY"] call FLO_fnc_notification ;
 
 
 if (alive V0) then {
@@ -284,7 +284,7 @@ _TRGT setTriggerStatements [
 " 
  [100] call FLO_fnc_addReward;
 
-				[100, 'SUPPORT CONVOY'] execVM 'Scripts\NOtification.sqf' ;
+				[100, 'SUPPORT CONVOY'] call FLO_fnc_notification ;
  
  	ConVLocc = 0 ;
 	publicVariable 'ConVLocc';

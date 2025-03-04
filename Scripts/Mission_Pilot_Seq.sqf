@@ -13,7 +13,7 @@ _anim =  selectRandom [
 "Acts_AidlPsitMstpSsurWnonDnon05"
 ];
 
-				[50, 'INTEL'] execVM 'Scripts\NOtification.sqf' ;
+				[50, 'INTEL'] call FLO_fnc_notification ;
 				[50] call FLO_fnc_addReward;
 
 _CRT = [
@@ -379,7 +379,7 @@ deleteMarker _M ;
 
 [50] call FLO_fnc_addReward;
 [(_this select 0), 1500] call FLO_fnc_requestQRF;
-				[50, "CAPTURED PILOT"] execVM "Scripts\NOtification.sqf" ;
+				[50, "CAPTURED PILOT"] call FLO_fnc_notification ;
 
 
 [(_this select 0),(_this select 2)] remoteExec ["bis_fnc_holdActionRemove",[0,-2] select isDedicated,true];

@@ -37,7 +37,7 @@ publicVariable "MapBooard";
 
 				[(_this select 0), 1000] call FLO_fnc_requestQRF;
 
-								[30, "RECON SITE"] execVM "Scripts\NOtification.sqf" ;
+								[30, "RECON SITE"] call FLO_fnc_notification ;
 
 				[30] call FLO_fnc_addReward;
 				[] execVM "Scripts\DangerMinus.sqf";					

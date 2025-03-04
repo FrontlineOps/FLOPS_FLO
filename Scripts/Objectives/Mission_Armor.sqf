@@ -59,7 +59,7 @@ private _fnc_createArmoredVehicle = {
             
             deleteMarker _nearestMarker;
             
-            [100, "ARMOR PATROL"] execVM "Scripts\NOtification.sqf";
+            [100, "ARMOR PATROL"] call FLO_fnc_notification;
             [100] call FLO_fnc_addReward;
             [] execVM "Scripts\DangerPlus.sqf";
         }];

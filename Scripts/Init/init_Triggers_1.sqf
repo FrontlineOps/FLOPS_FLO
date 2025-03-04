@@ -517,7 +517,7 @@ _M = [_MMarks, (_this select 0)] call BIS_fnc_nearestPosition;
 
 deleteMarker _M ; 
 
-				[40, "AA SITE"] execVM "Scripts\NOtification.sqf" ;
+				[40, "AA SITE"] call FLO_fnc_notification ;
 
 [40] call FLO_fnc_addReward;
 
