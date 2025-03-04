@@ -1166,7 +1166,6 @@ lbSetValue [2103, _index, 250];
 lbSetPictureRight [2103, _index, "Screens\FOBA\Radar_ca.paa"]; 
 (findDisplay 1599 displayCtrl 2103) lbSetPictureRightColor [_index, [0.2,0.6,0.99,1]];
 };
-};
 
 //////INFORMATION/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
