@@ -32,6 +32,13 @@ class FLO {
         class logisticsNetwork      {};
     };
 
+    class TaskForce {
+        file = "Functions\TaskForce";
+
+        class TaskForceSystem      {};
+        class TaskForceDefenseLine {};
+    };
+
     class Arsenal {
         file = "Functions\Arsenal";
 
@@ -52,5 +59,6 @@ class FLO {
         file = "Functions\Utilities";
 
         class findNearestMarker   {};
+        class log                 {};
     };
 };

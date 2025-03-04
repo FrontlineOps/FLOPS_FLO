@@ -62,66 +62,17 @@ waitUntil {!isNil "EtVInitialized"};
 // Misc
 if (isClass (configfile >> "CfgVehicles" >> "Box_cTab_items") == true ) then { player addItem "ItemAndroid"; player addItem "ItemcTab"; };
 
-call compileScript ["Scripts\init\init_CommsMenu.sqf"];
+// call compileScript ["Scripts\init\init_CommsMenu.sqf"];
 
-[player,'MENU_COMMS_UAV_RECON',nil,nil,''] call BIS_fnc_addCommMenuItem;	
-[player,'MENU_COMMS_SUPPLYDROP',nil,nil,''] call BIS_fnc_addCommMenuItem;
-[player,'MENU_COMMS_INF',nil,nil,''] call BIS_fnc_addCommMenuItem;	
+// [player,'MENU_COMMS_UAV_RECON',nil,nil,''] call BIS_fnc_addCommMenuItem;	
+// [player,'MENU_COMMS_SUPPLYDROP',nil,nil,''] call BIS_fnc_addCommMenuItem;
+// [player,'MENU_COMMS_INF',nil,nil,''] call BIS_fnc_addCommMenuItem;	
 // [player,'MENU_COMMS_GRD',nil,nil,''] call BIS_fnc_addCommMenuItem;	
 // [player,'MENU_COMMS_CAS_HELI',nil,nil,''] call BIS_fnc_addCommMenuItem;	
-[player,'MENU_COMMS_ARTI',nil,nil,''] call BIS_fnc_addCommMenuItem;	
-
-
-// Headless Clients / Everyone
-HC1Present = if (isNil "HC_1") then {false} else {true}; 
-HC2Present = if (isNil "HC_2") then {false} else {true}; 
-HC3Present = if (isNil "HC_3") then {false} else {true}; 
+// [player,'MENU_COMMS_ARTI',nil,nil,''] call BIS_fnc_addCommMenuItem;	
 
 waitUntil {(MarLOCC == 1) || (count (allMapMarkers select {markerType _x == "b_installation"}) > 0) || (count (allMapMarkers select {markerType _x == "b_unknown"}) > 0)};
-
-/* 
-   Function: _executeAndWait
-   Execute array of sqf scripts and wait for each on of them to finish before continuing iteration.
-
-   Example:
-   (start code)
-   // Example usage
-   [param] call _executeAndWait;
-   (end)
-
-   Parameters:
-   param - Array of sqf scripts.
-*/
-/* 
-private _executeAndWait= {
-    params ["_script"];
-    {
-        private _handle = execVM _x;
-        waitUntil {sleep 1; scriptDone _handle };
-    } forEach _script;
-};
-*/
-
-//TODO: If we have performance issues in the future we can do this
-// Directly assign triggers to headless clients
-// if (HC1Present) then {
-//     if (player == HC_1) then {
-//         [["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"]] call _executeAndWait;
-//     };
-// };
-
-// if (HC2Present) then {
-//     if (player == HC_2) then {
-//         ["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"] call _executeAndWait;
-//     };
-// };
-
-// if (HC3Present) then {
-//     if (player == HC_3) then {
-//         ["Scripts\init_Triggers_1.sqf", "Scripts\init_Triggers_2.sqf", "Scripts\init_Triggers_3.sqf"] call _executeAndWait;
-//     };
-// };
-
+// Wait until JIP or trigger 1, 2, & 3 is activated
 waitUntil {(didJIP) || (TRG1LOCC == 1)};
 waitUntil {(didJIP) || (TRG2LOCC == 1)};
 waitUntil {(didJIP) || (TRG3LOCC == 1)};
