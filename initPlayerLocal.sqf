@@ -62,15 +62,6 @@ waitUntil {!isNil "EtVInitialized"};
 // Misc
 if (isClass (configfile >> "CfgVehicles" >> "Box_cTab_items") == true ) then { player addItem "ItemAndroid"; player addItem "ItemcTab"; };
 
-// call compileScript ["Scripts\init\init_CommsMenu.sqf"];
-
-// [player,'MENU_COMMS_UAV_RECON',nil,nil,''] call BIS_fnc_addCommMenuItem;	
-// [player,'MENU_COMMS_SUPPLYDROP',nil,nil,''] call BIS_fnc_addCommMenuItem;
-// [player,'MENU_COMMS_INF',nil,nil,''] call BIS_fnc_addCommMenuItem;	
-// [player,'MENU_COMMS_GRD',nil,nil,''] call BIS_fnc_addCommMenuItem;	
-// [player,'MENU_COMMS_CAS_HELI',nil,nil,''] call BIS_fnc_addCommMenuItem;	
-// [player,'MENU_COMMS_ARTI',nil,nil,''] call BIS_fnc_addCommMenuItem;	
-
 waitUntil {(MarLOCC == 1) || (count (allMapMarkers select {markerType _x == "b_installation"}) > 0) || (count (allMapMarkers select {markerType _x == "b_unknown"}) > 0)};
 // Wait until JIP or trigger 1, 2, & 3 is activated
 waitUntil {(didJIP) || (TRG1LOCC == 1)};
