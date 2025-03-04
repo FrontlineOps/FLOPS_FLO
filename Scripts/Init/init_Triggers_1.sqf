@@ -43,7 +43,7 @@ private _objectLocTMine = allMapMarkers select { markerType _x == 'loc_mine' };
             private _westPresent = _units findIf {side _x == west} > -1;
 
             if (_westPresent) then {
-                [_pos] execVM "Scripts\Minefield.sqf";
+                [_pos] execVM "Scripts\Objectives\Minefield.sqf";
                 _executed = true; // Set flag to prevent re-execution
                 breakOut "ExecMinefield";
                 break; // Exit the loop immediately
