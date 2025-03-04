@@ -3,7 +3,7 @@ private _mrkr = _mrkrs select 0;
 private _AGGRSCORE = parseNumber (markerText _mrkr) ;  
 
 // Init Minefields
-[] execVM 'Scripts\Minefield_B.sqf';
+[] execVM 'Scripts\Objectives\Minefield_B.sqf';
 
 // Init Intel Creation Items
 [] spawn {
