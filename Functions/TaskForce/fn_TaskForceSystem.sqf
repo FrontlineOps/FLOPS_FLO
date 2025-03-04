@@ -439,6 +439,20 @@ if (isNil "FLO_TaskForce_System") then {
                 false
             };
             
+            // Check if any player is within 700 meters of the deployment position
+            private _tooCloseToPlayer = false;
+            {
+                if (_x distance _position < 700) exitWith {
+                    _tooCloseToPlayer = true;
+                    diag_log format ["[FLO][TaskForce] Task Force %1 deployment canceled - too close to player (%2m)", _taskForceId, _x distance _position];
+                };
+            } forEach allPlayers;
+            
+            if (_tooCloseToPlayer) exitWith {
+                diag_log format ["[FLO][TaskForce] Task Force %1 deployment canceled - position %2 is within 700m of a player", _taskForceId, _position];
+                false
+            };
+            
             _taskForceData params [
                 "_id",
                 "_basePos",
