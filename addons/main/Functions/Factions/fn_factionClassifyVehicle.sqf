@@ -99,7 +99,7 @@ if (_className isKindOf "Helicopter") exitWith {
 };
 
 if (_className isKindOf "Plane") exitWith {
-    ["airJet"]
+    if (_isDrone) then { _cats } else { ["airJet"] }
 };
 
 if (_className isKindOf "Ship") exitWith {
