@@ -5,7 +5,7 @@ mainprefix = "z"
 [version]
 major = 3
 minor = 0
-patch = 7
+patch = 8
 git_hash = 0
 
 [hemtt.launch.default]
