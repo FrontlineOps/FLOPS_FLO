@@ -36,24 +36,11 @@ private _vectorUp = vectorUp _entity;
 private _centerHeight = _entity getVariable ["IDS_Logistics_CenterHeight", 0];
 
 // Get original netId if this was a picked-up entity
-private _originalNetId = _entity getVariable ["IDS_Logistics_OriginalNetId", ""];
+private _originalNetId = IDS_Logistics_originalNetId;
 
-// Remove the local preview entity
-deleteVehicle _entity;
-
-// Finalize entity on the server - works for both new and existing entities
-// Include the center height information to prevent sinking
+// Submit the exact preview geometry, then release only local placement resources.
 [_originalNetId, _className, _finalPos, _finalDir, _vectorUp, player, _centerHeight] remoteExecCall ["IDS_Logistics_fnc_finalizeEntity", 2];
-
-// Clean up event handlers
-if (!isNil "IDS_Logistics_scrollHandler") then { (findDisplay 46) displayRemoveEventHandler ["MouseZChanged", IDS_Logistics_scrollHandler]; };
-if (!isNil "IDS_Logistics_keyDownHandler") then { (findDisplay 46) displayRemoveEventHandler ["KeyDown", IDS_Logistics_keyDownHandler]; };
-if (!isNil "IDS_Logistics_keyUpHandler") then { (findDisplay 46) displayRemoveEventHandler ["KeyUp", IDS_Logistics_keyUpHandler]; };
-if (!isNil "IDS_Logistics_dirUpdateEH") then { removeMissionEventHandler ["EachFrame", IDS_Logistics_dirUpdateEH]; };
-
-// Reset global state variables
-IDS_Logistics_isHolding = false;
-IDS_Logistics_currentEntity = objNull;
+[false] call IDS_Logistics_fnc_cleanupPlacement;
 
 // Provide user feedback
 ["Entity placed: " + _className, 2] call IDS_Logistics_fnc_cameraHint;

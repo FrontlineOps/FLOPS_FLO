@@ -30,6 +30,14 @@
  * [player, true] call IDS_Logistics_fnc_initBuildCamera          // Enable camera without build menu
  */
 
+if (!hasInterface) exitWith { false };
+if (IDS_Logistics_CameraActive) then {
+    [IDS_Logistics_CameraSession] call IDS_Logistics_fnc_closeBuildCamera;
+};
+IDS_Logistics_CameraSession = IDS_Logistics_CameraSession + 1;
+private _session = IDS_Logistics_CameraSession;
+uiNamespace setVariable ["IDS_Logistics_CameraDisplay", findDisplay 46];
+
 // ---- CAMERA CONFIGURATION SETUP ----
 
 // Parse parameters
@@ -85,6 +93,7 @@ if (_pHeight < 0) then { _pZ = _pZ + _pHeight };
 private _local = "camconstruct" camCreate [_pX, _pY, _pZ + 2];
 
 IDS_Logistics_Camera = _local;
+IDS_Logistics_CameraActive = true;
 _local camCommand "MANUAL ON";
 _local cameraEffect ["INTERNAL", "BACK"];
 showCinemaBorder false;
@@ -400,41 +409,10 @@ IDS_Logistics_MouseClicks pushBack ((findDisplay 46) displayAddEventHandler ["Mo
         true;
     };
 
-    // Right click - Cancel placement or return picked up entity
+    // Right click releases both preview and handlers, including a missing preview.
     if (_button == 1) then {
-        if (IDS_Logistics_isHolding && !isNull IDS_Logistics_currentEntity) then {
-            // Check if this is a picked up entity
-            private _isPickedUp = false;
-            private _originalNetId = "";
-
-            // Safely get variables with default values
-            {
-                private _var = IDS_Logistics_currentEntity getVariable [_x, nil];
-                if (!isNil "_var") then {
-                    switch (_x) do {
-                        case "IDS_Logistics_isPickedUp": { _isPickedUp = _var };
-                        case "IDS_Logistics_OriginalNetId": { _originalNetId = _var };
-                    };
-                };
-            } forEach ["IDS_Logistics_isPickedUp", "IDS_Logistics_OriginalNetId"];
-
-            if (_isPickedUp && {_originalNetId != ""}) then {
-                // Tell server to restore the original entity
-                [_originalNetId, false] remoteExecCall ["IDS_Logistics_fnc_toggleEntityVisibility", 2];
-
-                // Delete the local preview
-                deleteVehicle IDS_Logistics_currentEntity;
-                IDS_Logistics_currentEntity = objNull;
-                IDS_Logistics_isHolding = false;
-
-                ["Entity returned to original position", 2] call IDS_Logistics_fnc_cameraHint;
-            } else {
-                // This is a new entity being placed, delete it
-                deleteVehicle IDS_Logistics_currentEntity;
-                IDS_Logistics_currentEntity = objNull;
-                IDS_Logistics_isHolding = false;
-                ["Placement cancelled", 2] call IDS_Logistics_fnc_cameraHint;
-            };
+        if ([true] call IDS_Logistics_fnc_cleanupPlacement) then {
+            ["Placement cancelled", 2] call IDS_Logistics_fnc_cameraHint;
         };
         true;
     };
@@ -442,76 +420,12 @@ IDS_Logistics_MouseClicks pushBack ((findDisplay 46) displayAddEventHandler ["Mo
 }]);
 
 // Add escape key handler for exiting build mode
-_keyDown = (findDisplay 46) displayAddEventHandler ["KeyDown", {
+IDS_Logistics_cameraKeyDownHandler = (findDisplay 46) displayAddEventHandler ["KeyDown", {
     params ["_displayOrControl", "_key", "_shift", "_ctrl", "_alt"];
 
-    // Escape key - Exit build mode
-    if (_key == 1) then {
-        if (!isNull IDS_Logistics_Camera) then {
-            // Temporarily disable user input to prevent escape menu
-            disableUserInput true;
-
-            // Store last position before cleanup
-            IDS_Logistics_CameraLastPos = position IDS_Logistics_Camera;
-
-            // Clean up any held entity
-            if (IDS_Logistics_isHolding && !isNull IDS_Logistics_currentEntity) then {
-                deleteVehicle IDS_Logistics_currentEntity;
-                IDS_Logistics_currentEntity = objNull;
-                IDS_Logistics_isHolding = false;
-            };
-
-            // Clean up cursor arrow
-            if (!isNil "IDS_Logistics_CursorArrow") then {
-                deleteVehicle IDS_Logistics_CursorArrow;
-                IDS_Logistics_CursorArrow = nil;
-            };
-
-            // Clean up boundary arrows
-            {
-                private _arrow = missionNamespace getVariable [format ["IDS_Logistics_BoundaryArrow_%1", _x], objNull];
-                if (!isNull _arrow) then {
-                    deleteVehicle _arrow;
-                    missionNamespace setVariable [format ["IDS_Logistics_BoundaryArrow_%1", _x], nil];
-                };
-            } forEach [0, 90, 180, 270];
-
-            // Remove event handlers
-            if (!isNil "IDS_Logistics_DistanceCheckEH") then {
-                removeMissionEventHandler ["EachFrame", IDS_Logistics_DistanceCheckEH];
-                IDS_Logistics_DistanceCheckEH = nil;
-            };
-            if (!isNil "IDS_Logistics_BoundaryEH") then {
-                removeMissionEventHandler ["EachFrame", IDS_Logistics_BoundaryEH];
-                IDS_Logistics_BoundaryEH = nil;
-            };
-
-            // Clean up camera and effects
-            player cameraEffect ["TERMINATE", "BACK"];
-            if (!isNil "IDS_Logistics_CameraColorEffect") then {
-                ppEffectDestroy IDS_Logistics_CameraColorEffect;
-                IDS_Logistics_CameraColorEffect = nil;
-            };
-            camDestroy IDS_Logistics_Camera;
-
-            // Reset all global variables
-            IDS_Logistics_Camera = nil;
-            IDS_Logistics_CameraVision = nil;
-            IDS_Logistics_HintVisible = nil;
-            IDS_Logistics_isHolding = false;
-            IDS_Logistics_currentEntity = objNull;
-            IDS_Logistics_lastViewDir = nil;
-            IDS_Logistics_ShowCenterCursor = nil;
-            IDS_Logistics_CameraTerrainSnap = nil;
-            IDS_Logistics_BuildMenuDisabled = nil;
-
-            ["Build mode exited", 2] call IDS_Logistics_fnc_cameraHint;
-
-            // Re-enable user input
-            disableUserInput false;
-            true;
-        };
-        true;
+    if (_key == 1) exitWith {
+        [IDS_Logistics_CameraSession] call IDS_Logistics_fnc_closeBuildCamera;
+        true
     };
 
     if (_key in (actionKeys 'nightvision')) then {
@@ -566,93 +480,13 @@ _keyDown = (findDisplay 46) displayAddEventHandler ["KeyDown", {
     false;
 }];
 
-// ---- CAMERA CLEANUP HANDLER ----
-
-//--- Wait until destroy is forced or camera auto-destroyed
-[_local, _keyDown] spawn {
-    params ["_local", "_keyDown"];
-
-    waitUntil { isNull _local };
-
-    // Store last position before cleanup
-    if (!isNil "IDS_Logistics_Camera") then {
-        IDS_Logistics_CameraLastPos = position IDS_Logistics_Camera;
+// The worker captures its owner; cleanup from an older session cannot touch a new one.
+[_local, _session, player] spawn {
+    params ["_camera", "_session", "_player"];
+    waitUntil {
+        isNull _camera || {!alive _player} || {player isNotEqualTo _player} || {isNull findDisplay 46}
     };
-
-    // Clean up any held entity
-    if (!isNull IDS_Logistics_currentEntity) then {
-        deleteVehicle IDS_Logistics_currentEntity;
-        IDS_Logistics_currentEntity = objNull;
-    };
-
-    // Clean up cursor arrow
-    if (!isNil "IDS_Logistics_CursorArrow") then {
-        deleteVehicle IDS_Logistics_CursorArrow;
-        IDS_Logistics_CursorArrow = nil;
-    };
-
-    // Clean up boundary arrows
-    {
-        private _arrow = missionNamespace getVariable [format ["IDS_Logistics_BoundaryArrow_%1", _x], objNull];
-        if (!isNull _arrow) then {
-            deleteVehicle _arrow;
-            missionNamespace setVariable [format ["IDS_Logistics_BoundaryArrow_%1", _x], nil];
-        };
-    } forEach [0, 90, 180, 270];
-
-    // Remove all event handlers
-    (findDisplay 46) displayRemoveEventHandler ["KeyDown", _keyDown];
-
-    if (!isNil "IDS_Logistics_MouseClicks") then {
-        {
-            (findDisplay 46) displayRemoveEventHandler ["MouseButtonDown", _x];
-        } forEach IDS_Logistics_MouseClicks;
-        IDS_Logistics_MouseClicks = nil;
-    };
-
-    if (!isNil "IDS_Logistics_scrollHandler") then {
-        (findDisplay 46) displayRemoveEventHandler ["MouseZChanged", IDS_Logistics_scrollHandler];
-        IDS_Logistics_scrollHandler = nil;
-    };
-    if (!isNil "IDS_Logistics_keyDownHandler") then {
-        (findDisplay 46) displayRemoveEventHandler ["KeyDown", IDS_Logistics_keyDownHandler];
-        IDS_Logistics_keyDownHandler = nil;
-    };
-    if (!isNil "IDS_Logistics_keyUpHandler") then {
-        (findDisplay 46) displayRemoveEventHandler ["KeyUp", IDS_Logistics_keyUpHandler];
-        IDS_Logistics_keyUpHandler = nil;
-    };
-    if (!isNil "IDS_Logistics_dirUpdateEH") then {
-        removeMissionEventHandler ["EachFrame", IDS_Logistics_dirUpdateEH];
-        IDS_Logistics_dirUpdateEH = nil;
-    };
-    if (!isNil "IDS_Logistics_DistanceCheckEH") then {
-        removeMissionEventHandler ["EachFrame", IDS_Logistics_DistanceCheckEH];
-        IDS_Logistics_DistanceCheckEH = nil;
-    };
-    if (!isNil "IDS_Logistics_BoundaryEH") then {
-        removeMissionEventHandler ["EachFrame", IDS_Logistics_BoundaryEH];
-        IDS_Logistics_BoundaryEH = nil;
-    };
-
-    // Clean up camera and effects
-    player cameraEffect ["TERMINATE", "BACK"];
-    if (!isNil "IDS_Logistics_CameraColorEffect") then {
-        ppEffectDestroy IDS_Logistics_CameraColorEffect;
-        IDS_Logistics_CameraColorEffect = nil;
-    };
-    camDestroy _local;
-
-    // Reset all global variables
-    IDS_Logistics_Camera = nil;
-    IDS_Logistics_CameraVision = nil;
-    IDS_Logistics_HintVisible = nil;
-    IDS_Logistics_isHolding = false;
-    IDS_Logistics_currentEntity = objNull;
-    IDS_Logistics_lastViewDir = nil;
-    IDS_Logistics_ShowCenterCursor = nil;
-    IDS_Logistics_CameraTerrainSnap = nil;
-    IDS_Logistics_BuildMenuDisabled = nil;
+    [_session] call IDS_Logistics_fnc_closeBuildCamera;
 };
 
 // Display camera controls info

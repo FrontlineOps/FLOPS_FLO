@@ -26,7 +26,7 @@
 
 // This function should run on the server only
 if (!isServer) exitWith {
-    diag_log "IDS_Logistics_fnc_finalizeEntity: Must be executed on server";
+    ["IDS_LOGISTICS", 2, "Rejected placement outside server"] call FLO_fnc_log;
 };
 
 params [
@@ -44,27 +44,23 @@ if (_originalNetId != "") then {
     private _existingEntity = objectFromNetId _originalNetId;
     
     if (!isNull _existingEntity) then {
+        private _visibilityState = _existingEntity getVariable ["IDS_Logistics_VisibilityState", []];
+        private _requestOwner = if (isRemoteExecuted) then { remoteExecutedOwner } else { clientOwner };
+        if (_visibilityState isNotEqualTo [] && {(_visibilityState select 0) != _requestOwner}) exitWith {
+            ["IDS_LOGISTICS", 2, "Rejected reposition: another client owns the placement"] call FLO_fnc_log;
+        };
         // Set new position - use setPosASL for precise positioning
         _existingEntity setPosASL _finalPos;
         _existingEntity setDir _finalDir;
         _existingEntity setVectorUp _vectorUp;
         
-        // Re-enable collisions and simulation
-        [_player, _existingEntity] remoteExecCall ["enableCollisionWith", owner _player, false];
-        _existingEntity enableSimulationGlobal true;
-
-        _existingEntity addEventHandler ["Killed", {
-            params ["_unit", "_killer", "_instigator", "_useEffects"];
-            [_unit] call IDS_Logistics_fnc_onEntityKilled;
-        }];
-        
-        // Make entity visible again
+        // Pickup disables collision only on the local preview. Restore the original's
+        // visibility/simulation snapshot without changing its locality or registration.
         [_originalNetId, false] call IDS_Logistics_fnc_toggleEntityVisibility;
-
-        // Add entity to placed entities array
-        IDS_Logistics_PlacedEntities pushBack _existingEntity;
+        [_existingEntity] call IDS_Logistics_fnc_registerEntity;
+        ["IDS_LOGISTICS", 3, "Existing structure repositioned"] call FLO_fnc_log;
     } else {
-        diag_log format ["IDS Logistics: Error - Could not find entity with NetID %1", _originalNetId];
+        ["IDS_LOGISTICS", 2, "Rejected reposition: original structure no longer exists"] call FLO_fnc_log;
     };
 } else {
     // Create a new entity
@@ -75,17 +71,12 @@ if (_originalNetId != "") then {
     _entity setDir _finalDir;
     _entity setVectorUp _vectorUp;
     
-    _entity addEventHandler ["Killed", {
-        params ["_unit", "_killer", "_instigator", "_useEffects"];
-        [_unit] call IDS_Logistics_fnc_onEntityKilled;
-    }];
-
-    // Add entity to placed entities array
-    IDS_Logistics_PlacedEntities pushBack _entity;
+    [_entity] call IDS_Logistics_fnc_registerEntity;
 
     // Get entity configuration and set variable
     private _entityConfig = [_className] call IDS_Logistics_fnc_getEntityConfig;
     _entityConfig params ["_entityClassName", "_entityCategory", "_entityCost"];
     _entity setVariable ["IDS_Logistics_EntityCost", _entityCost, true];
     _entity setVariable ["IDS_Logistics_isPlacedEntity", true, true];
+    ["IDS_LOGISTICS", 3, format ["Structure placed class=%1 registered=%2", _className, count IDS_Logistics_PlacedEntities]] call FLO_fnc_log;
 };

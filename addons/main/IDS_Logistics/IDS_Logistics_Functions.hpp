@@ -4,6 +4,8 @@ class IDS_Logistics {
         file = "\z\flo\addons\main\IDS_Logistics\functions";
 
         class cameraHint {};
+        class cleanupPlacement {};
+        class closeBuildCamera {};
         class getEntityConfig {};
         class getEntityCategories {};
         class getEntitiesByCategory {};
@@ -20,6 +22,9 @@ class IDS_Logistics {
 
         class finalizeEntity {};
         class onEntityKilled {};
+        class registerEntity {};
+        class releaseEntity {};
+        class releasePlayerPlacements {};
         class toggleEntityVisibility {};
     };
 

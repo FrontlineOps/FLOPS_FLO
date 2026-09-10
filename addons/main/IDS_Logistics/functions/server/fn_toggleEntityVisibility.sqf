@@ -16,26 +16,39 @@
  * @return {Nothing}
  */
 
+if (!isServer) exitWith { false };
 params [
     ["_netId", "", [""]],
-    ["_hide", true, [true]]
+    ["_hide", true, [true]],
+    ["_requester", objNull, [objNull]]
 ];
 
-if (_netId == "") exitWith { diag_log "IDS Logistics Error: Attempted to toggle visibility with empty netId"; };
+if (_netId == "") exitWith { false };
 
 // Find entity by netId
 private _entity = objectFromNetId _netId;
 
-if (isNull _entity) exitWith { diag_log format ["IDS Logistics Error: Entity with netId %1 not found", _netId]; };
+if (isNull _entity) exitWith { false };
+
+private _state = _entity getVariable ["IDS_Logistics_VisibilityState", []];
+private _requestOwner = if (isRemoteExecuted) then { remoteExecutedOwner } else { clientOwner };
+if (_state isNotEqualTo [] && {(_state select 0) != _requestOwner}) exitWith {
+    ["IDS_LOGISTICS", 2, "Rejected visibility change: another client owns the placement"] call FLO_fnc_log;
+    false
+};
 
 if (_hide) then {
+    if (_state isNotEqualTo []) exitWith {};
+    _entity setVariable ["IDS_Logistics_VisibilityState", [_requestOwner, isObjectHidden _entity, simulationEnabled _entity, _requester]];
+    IDS_Logistics_ManipulatedEntities pushBackUnique _entity;
     _entity hideObjectGlobal true;
     _entity enableSimulationGlobal false;
 } else {
-    _entity hideObjectGlobal false;
-    _entity enableSimulationGlobal true;
+    if (_state isEqualTo []) exitWith {};
+    [_entity] call IDS_Logistics_fnc_releaseEntity;
 };
 
 if (!isNil "FLO_fnc_netDebugRecord") then {
     ["idsVisibilityToggles", 1] call FLO_fnc_netDebugRecord;
 };
+true
