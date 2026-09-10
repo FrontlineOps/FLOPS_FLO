@@ -52,6 +52,8 @@ for "_i" from 0 to _segments do {
             _lastLandBefore = +_prevSample;
         };
         _lastWater = +_sample;
+        // The exit must follow the last crossing, including when land separates crossings.
+        _firstLandAfter = [];
     } else {
         if (_crossesWater && {_firstLandAfter isEqualTo []}) then {
             _firstLandAfter = +_sample;
