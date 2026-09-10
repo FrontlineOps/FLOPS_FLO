@@ -37,12 +37,6 @@ _net set ["_loopStarted", true];
                 [_net] call FLO_fnc_logisticsNetworkRefreshManagedSide;
                 ["LOGISTICS", 3, format ["Logistics side context resolved: %1", _net get "_managedSideKey"]] call FLO_fnc_log;
 
-                if (isNil {_net get "_initialComposition"}) then {
-                    private _comp = [_net] call FLO_fnc_logisticsNetworkGetComposition;
-                    _net set ["_initialComposition", _comp];
-                    ["LOGISTICS", 3, format ["Captured initial composition: %1", _comp]] call FLO_fnc_log;
-                };
-
                 if ((_net get "_loopPfhId") >= 0) exitWith {};
 
                 private _interval = _net get "CHECK_INTERVAL";

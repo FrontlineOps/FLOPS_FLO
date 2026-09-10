@@ -161,6 +161,11 @@ if (_savedState isNotEqualTo false) then {
     if (_savedNextDispatchAt > time && {(_savedNextDispatchAt - time) <= _maxDelay}) then {
         _dispatchDelay = _savedNextDispatchAt - time;
     };
+} else {
+    // Phase 4 has finished creating forces before Phase 5 publishes networks.
+    private _composition = [_network] call FLO_fnc_logisticsNetworkGetComposition;
+    _network set ["_initialComposition", _composition];
+    ["LOGISTICS", 3, format ["Captured initial composition: side=%1 types=%2", _managedSideKey, count _composition]] call FLO_fnc_log;
 };
 
 _network set ["_stats", _stats];

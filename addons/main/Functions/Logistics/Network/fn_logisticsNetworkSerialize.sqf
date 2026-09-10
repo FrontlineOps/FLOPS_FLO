@@ -4,8 +4,10 @@ params ["_network"];
 
 private _initialComposition = _network get "_initialComposition";
 private _stats = _network get "_stats";
-if !(_initialComposition isEqualType createHashMap && {_stats isEqualType createHashMap}) then {
-    throw format ["Logistics network %1 is not ready to serialize", _network get "_managedSideKey"];
+if (isNil "_initialComposition" || {isNil "_stats"} || {!(_initialComposition isEqualType createHashMap && {_stats isEqualType createHashMap})}) then {
+    private _error = format ["Logistics network %1 is not ready to serialize: initial composition and stats must be initialized HashMaps", _network get "_managedSideKey"];
+    ["LOGISTICS", 1, _error] call FLO_fnc_log;
+    throw _error;
 };
 
 private _serializedNodes = createHashMap;
