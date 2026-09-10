@@ -335,11 +335,14 @@ class FLO {
     class Base {
         file = "\z\flo\addons\main\Functions\Base";
 
+        class baseBindTerminal {};
+        class baseCleanupOwnedAssets {};
         class baseConfigureContainerActions {};
         class baseConfigureMainActions {};
         class baseCountSiegeForces {};
         class baseCreateMarker {};
         class baseCreateTriggers {};
+        class baseDiscoverTerminal {};
         class baseDeployAddWebEventHandler {};
         class baseDeployBuildSnapshot {};
         class baseDeployClaimFirstFOB {};

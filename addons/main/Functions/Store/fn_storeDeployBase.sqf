@@ -98,6 +98,7 @@ private _screen = createVehicle [_screenClass, _screenPos, [], 0, "CAN_COLLIDE"]
 _screen setDir ((getDir _base) + ([180, 45] select _isCOP));
 _screen setVariable ["FLO_BaseSide", _side, true];
 _screen setVariable ["FLO_BaseType", _label, true];
+[_base, _screen] call FLO_fnc_baseBindTerminal;
 
 if (_isCOP) then {
     [_base] call FLO_fnc_initializeOP;

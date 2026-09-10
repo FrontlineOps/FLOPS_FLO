@@ -23,8 +23,6 @@ if !(_baseSide in [west, east]) then {
 private _label = _config get "siegeLabel";
 private _maxHoldTime = _config get "holdoutTime";
 private _areaRadius = _config get "holdoutRadius";
-private _cleanupRadius = _config get "cleanupRadius";
-private _cleanupObjectTypes = _config get "cleanupObjectTypes";
 private _markerVariable = _config get "markerVariable";
 private _markerSize = _config get "siegeMarkerSize";
 private _checkInterval = 5;
@@ -86,15 +84,7 @@ if (_lost) then {
     [format ["%1 has fallen to enemy forces!", _label], "error", false, 0] call FLO_fnc_sendNotification;
     ["BASE", 2, format ["%1 lost after %2-second siege", _label, _maxHoldTime]] call FLO_fnc_log;
 
-    { deleteVehicle _x } forEach (nearestObjects [_base, _cleanupObjectTypes, _cleanupRadius]);
-
-    private _markerName = _base getVariable [_markerVariable, ""];
-    if (_markerName != "") then { deleteMarker _markerName };
-
-    private _nearbyTriggers = (allMissionObjects "EmptyDetector") select {
-        position _x distance _base < _cleanupRadius
-    };
-    { deleteVehicle _x } forEach _nearbyTriggers;
+    [_base, _markerVariable] call FLO_fnc_baseCleanupOwnedAssets;
 
     if (!isNull _base) then { _base setDamage 1 };
 };

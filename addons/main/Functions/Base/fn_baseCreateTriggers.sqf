@@ -43,6 +43,7 @@ try {
         ", ""
     ];
     _civTrigger attachTo [_building, [0, 0, 0]];
+    _civTrigger setVariable ["FLO_BaseOwner", _building];
     _triggers pushBack _civTrigger;
 
     [_type, 3, format["Created %1 triggers", count _triggers]] call FLO_fnc_log;
@@ -50,4 +51,5 @@ try {
     [_type, 1, format["Failed to create triggers: %1", _exception]] call FLO_fnc_log;
 };
 
+_building setVariable ["FLO_BaseTriggers", _triggers];
 _triggers
