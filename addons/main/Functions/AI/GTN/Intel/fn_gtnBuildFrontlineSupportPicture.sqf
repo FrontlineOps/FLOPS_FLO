@@ -52,6 +52,7 @@ if (_rows isEqualTo []) exitWith { _picture };
     private _age = _now - _contactTime;
     if (_age < 0 || {_age > _maxAge}) then { continue };
     if ((toLower _contactType) in ["air", "helicopter", "plane"]) then { continue };
+    if (_contactType isKindOf ["Air", configFile >> "CfgVehicles"]) then { continue };
 
     private _bestObjectiveId = "";
     private _bestDistance = 1e12;

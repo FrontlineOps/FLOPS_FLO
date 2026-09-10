@@ -236,6 +236,7 @@ while {_continueAllocation && {_poolEntries isNotEqualTo []}} do {
             _assignedByObjective set [_objectiveId, _assignedHere + 1];
         } else {
             _poolEntries deleteAt _bestIndex;
+            _continueAllocation = true;
         };
     } forEach _candidateObjectives;
 

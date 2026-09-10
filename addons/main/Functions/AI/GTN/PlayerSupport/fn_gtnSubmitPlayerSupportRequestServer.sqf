@@ -62,32 +62,26 @@ if (_requesterUid == "") then {
 
 private _playerCooldowns = _cmdr get "_playerSupportPlayerCooldowns";
 private _playerCooldownKey = format ["%1:%2", _requesterUid, _type];
-if (_playerCooldownKey in _playerCooldowns) then {
+if (_playerCooldownKey in _playerCooldowns && {(_playerCooldowns get _playerCooldownKey) > diag_tickTime}) exitWith {
     private _lockedUntil = _playerCooldowns get _playerCooldownKey;
-    if (_lockedUntil > diag_tickTime) exitWith {
-        [_requestSide, "HQ", format ["Negative. %1 request cooling down for %2 seconds.", _type, ceil (_lockedUntil - diag_tickTime)]] call FLO_fnc_gtnBroadcastCommanderRadioMessage;
-        false
-    };
-
-    _playerCooldowns deleteAt _playerCooldownKey;
+    [_requestSide, "HQ", format ["Negative. %1 request cooling down for %2 seconds.", _type, ceil (_lockedUntil - diag_tickTime)]] call FLO_fnc_gtnBroadcastCommanderRadioMessage;
+    false
 };
+_playerCooldowns deleteAt _playerCooldownKey;
 
 private _objectiveLocks = _cmdr get "_playerSupportObjectiveLocks";
 private _objectiveLockKey = _validation get "cooldownKey";
-if (_objectiveLockKey in _objectiveLocks) then {
+if (_objectiveLockKey in _objectiveLocks && {(_objectiveLocks get _objectiveLockKey) > diag_tickTime}) exitWith {
     private _lockedUntil = _objectiveLocks get _objectiveLockKey;
-    if (_lockedUntil > diag_tickTime) exitWith {
-        [_requestSide, "HQ", format [
-            "Negative. %1 for %2 cooling down for %3 seconds.",
-            _type,
-            _validation get "targetLabel",
-            ceil (_lockedUntil - diag_tickTime)
-        ]] call FLO_fnc_gtnBroadcastCommanderRadioMessage;
-        false
-    };
-
-    _objectiveLocks deleteAt _objectiveLockKey;
+    [_requestSide, "HQ", format [
+        "Negative. %1 for %2 cooling down for %3 seconds.",
+        _type,
+        _validation get "targetLabel",
+        ceil (_lockedUntil - diag_tickTime)
+    ]] call FLO_fnc_gtnBroadcastCommanderRadioMessage;
+    false
 };
+_objectiveLocks deleteAt _objectiveLockKey;
 
 private _hasPendingDuplicate = false;
 {
@@ -136,7 +130,7 @@ _cmdr set ["_playerSupportRequests", _requests];
 [_requestSide, "HQ", format ["HQ copies %1 request for %2. Stand by.", _type, _validation get "targetLabel"]] call FLO_fnc_gtnBroadcastCommanderRadioMessage;
 ["GTN Player Support", 3, format [
     "%1 queued %2 request for %3",
-    name _requester,
+    _requestSide,
     _type,
     _validation get "targetLabel"
 ]] call FLO_fnc_log;

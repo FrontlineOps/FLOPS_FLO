@@ -345,6 +345,7 @@ while {_continueAllocation && {_available isNotEqualTo []}} do {
             _assignedByObjective set [_objectiveId, _assignedHere + 1];
         } else {
             _available deleteAt _bestIndex;
+            _continueAllocation = true;
         };
     } forEach _candidateObjectives;
 

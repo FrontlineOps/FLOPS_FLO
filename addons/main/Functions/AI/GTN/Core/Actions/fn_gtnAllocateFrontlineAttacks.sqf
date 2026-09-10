@@ -221,10 +221,11 @@ while {_continueAllocation && {_poolEntries isNotEqualTo []}} do {
 
         _poolEntryById deleteAt _bestGroupId;
         _poolEntries deleteAt (_poolEntries find _bestGroupId);
+        // A rejected route consumes this candidate, so try the remaining pool.
+        _continueAllocation = true;
         if (_ordered) then {
             _x set ["deficit", _deficit - 1];
             _metrics set ["assignedGroups", (_metrics get "assignedGroups") + 1];
-            _continueAllocation = true;
 
             private _assignedHere = if (_objectiveId in _assignedByObjective) then { _assignedByObjective get _objectiveId } else { 0 };
             if (_assignedHere == 0) then {
