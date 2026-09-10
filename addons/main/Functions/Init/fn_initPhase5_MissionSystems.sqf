@@ -399,6 +399,9 @@ if (FLO_IsLoadedSave) then {
         { _x params ["_hp", "_dmg"]; _veh setHitPointDamage [_hp, _dmg]; } forEach _damagedHitpoints;
         if (_attr get "engineOn") then { _veh engineOn true; };
         [_veh, _type, _attr, _trackedCrewTypes] call FLO_fnc_initRestoreTrackedCrew;
+        if (_attr get "storeVehicle") then {
+            [_veh, _type] call FLO_fnc_vehicleConfigureRequestedVehicle;
+        };
         _loadedVehicles = _loadedVehicles + 1;
     } forEach (keys _vehHash);
     ["INIT", 3, format ["Restored %1 vehicles from current save", _loadedVehicles]] call FLO_fnc_log;
@@ -410,6 +413,7 @@ if (FLO_IsLoadedSave) then {
         ["damage", 0], ["hadAICrew", true]
     ];
     private _loadedObjects = 0;
+    private _discardedWeaponHolders = 0;
     {
         private _objId = _x;
         private _attr = _objHash get _objId;
@@ -443,6 +447,16 @@ if (FLO_IsLoadedSave) then {
             throw format ["Saved object %1 has invalid spatial or class state", _objId];
         };
 
+        // Earlier version-29 saves captured dropped holders without cargo.
+        // Empty simulated holders are engine-deleted when this script yields.
+        if ([_type] call FLO_fnc_saveIsWeaponHolderClass) then {
+            if (_attr get "hadAICrew") then {
+                throw format ["Saved weapon holder %1 cannot own AI crew", _objId];
+            };
+            _discardedWeaponHolders = _discardedWeaponHolders + 1;
+            continue;
+        };
+
         private _obj = createVehicle [_type, [0,0,0], [], 0, "CAN_COLLIDE"];
         if (isNull _obj) then {
             throw format ["Failed to restore saved object %1 of type %2", _objId, _type];
@@ -455,6 +469,9 @@ if (FLO_IsLoadedSave) then {
         _loadedObjects = _loadedObjects + 1;
     } forEach (keys _objHash);
     ["INIT", 3, format ["Restored %1 objects from current save", _loadedObjects]] call FLO_fnc_log;
+    if (_discardedWeaponHolders > 0) then {
+        ["INIT", 2, format ["Discarded %1 transient weapon-holder records without saved cargo", _discardedWeaponHolders]] call FLO_fnc_log;
+    };
 
     // Restore supply crates
     private _crateHash = _savedData get "crates";

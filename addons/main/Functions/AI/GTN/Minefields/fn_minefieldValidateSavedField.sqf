@@ -228,8 +228,14 @@ private _requiredMineSpecKeys = ["type", "posASL"];
     if !(_mineType isEqualType "") then {
         throw format ["Minefield %1 mine %2 type has invalid type %3", _fieldId, _mineIndex, typeName _mineType];
     };
-    if (_mineType == "" || {!isClass (configFile >> "CfgAmmo" >> _mineType)}) then {
-        throw format ["Minefield %1 mine %2 has invalid ammo class %3", _fieldId, _mineIndex, _mineType];
+    // createMine takes a CfgVehicles class and creates its configured ammo.
+    private _mineConfig = configFile >> "CfgVehicles" >> _mineType;
+    if (_mineType == "" || {!isClass _mineConfig}) then {
+        throw format ["Minefield %1 mine %2 has invalid mine class %3", _fieldId, _mineIndex, _mineType];
+    };
+    private _mineAmmo = getText (_mineConfig >> "ammo");
+    if (_mineAmmo == "" || {!isClass (configFile >> "CfgAmmo" >> _mineAmmo)}) then {
+        throw format ["Minefield %1 mine %2 class %3 has invalid configured ammo %4", _fieldId, _mineIndex, _mineType, _mineAmmo];
     };
     if !(_minePos isEqualType []) then {
         throw format ["Minefield %1 mine %2 posASL has invalid type %3", _fieldId, _mineIndex, typeName _minePos];

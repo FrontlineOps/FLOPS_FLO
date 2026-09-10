@@ -13,8 +13,11 @@ class FLO {
         file = "\z\flo\addons\main\Functions\Save";
 
         class saveConfigureAutosave {};
+        class saveCaptureCampaignState {};
+        class saveCommitCampaignData {};
         class saveGetAllCargo {};
         class saveGetCompressedDamage {};
+        class saveIsWeaponHolderClass {};
         class saveRequest {};
     };
 

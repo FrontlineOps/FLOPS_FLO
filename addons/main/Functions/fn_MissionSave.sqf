@@ -14,12 +14,26 @@
  */
 
 if (!isServer) exitWith { false };
-if (FLO_MissionSaveInProgress) exitWith {
+if (remoteExecutedOwner > 2 && {admin remoteExecutedOwner <= 0}) exitWith {
+    ["SAVE", 2, "Rejected direct campaign save from a non-admin remote caller"] call FLO_fnc_log;
+    false
+};
+if (!FLO_MissionReady) exitWith {
+    ["SAVE", 2, "Rejected campaign save before mission readiness"] call FLO_fnc_log;
+    false
+};
+private _acquiredSave = false;
+isNil {
+    if (!FLO_MissionSaveInProgress) then {
+        FLO_MissionSaveInProgress = true;
+        _acquiredSave = true;
+    };
+};
+if (!_acquiredSave) exitWith {
     ["SAVE", 2, "Rejected concurrent mission save request"] call FLO_fnc_log;
     false
 };
 
-FLO_MissionSaveInProgress = true;
 private _saveResult = false;
 private _saveException = "";
 try {
@@ -111,36 +125,8 @@ try {
 // SAVE: VEHICLES (around installations)
 // ============================================================================
 
-try {
-    private _vehHash = createHashMap;
-    private _savedIds = createHashMap;
-    {
-        private _nearVehs = (getMarkerPos _x) nearEntities [["Air", "Ship", "LandVehicle"], _saveRadius];
-        {
-            private _veh = _x;
-            if (alive _veh && { (crew _veh select { isPlayer _x }) isEqualTo [] }) then {
-                private _existingId = _veh getVariable ["FLO_SaveID", ""];
-                if (_existingId == "" || !(_savedIds getOrDefault [_existingId, false])) then {
-                    private _id = if (_existingId != "") then { _existingId } else { [] call FLO_fnc_createUUID };
-                    _veh setVariable ["FLO_SaveID", _id, true];
-                    _savedIds set [_id, true];
-                    private _hadAICrew = ({ alive _x && {!isPlayer _x} } count (crew _veh)) > 0;
-                    _vehHash set [_id, createHashMapFromArray [
-                        ["type", typeOf _veh], ["posATL", getPosATL _veh], ["fuel", fuel _veh],
-                        ["damage", damage _veh], ["damagedHitpoints", [_veh] call FLO_fnc_saveGetCompressedDamage],
-                        ["vectorDirAndUp", [vectorDir _veh, vectorUp _veh]], ["locked", locked _veh], ["engineOn", isEngineOn _veh],
-                        ["hadAICrew", _hadAICrew],
-                        ["storeVehicle", _veh getVariable ["FLO_StoreVehicle", false]],
-                        ["mobileRespawnVehicle", _veh getVariable ["FLO_MobileRespawnVehicle", false]],
-                        ["supportVehicleRoles", _veh getVariable ["FLO_SupportVehicleRoles", []]]
-                    ]];
-                };
-            };
-        } forEach _nearVehs;
-    } forEach _installationMarkers;
-    _data set ["vehicles", _vehHash];
-    ["SAVE", 3, format ["Vehicles: %1", count _vehHash]] call FLO_fnc_log;
-} catch { ["SAVE", 1, format ["Vehicles failed: %1", _exception]] call FLO_fnc_log; };
+private _campaignState = [_installationMarkers, _saveRadius] call FLO_fnc_saveCaptureCampaignState;
+_data set ["vehicles", _campaignState get "vehicles"];
 
 // ============================================================================
 // SAVE: OBJECTS (around installations)
@@ -149,6 +135,7 @@ try {
 try {
     private _objHash = createHashMap;
     private _savedObjIds = createHashMap;
+    private _skippedWeaponHolders = 0;
 
     // Exclude crates that are handled elsewhere
     private _excludeCrates = createHashMapFromArray [
@@ -170,6 +157,12 @@ try {
         {
             private _obj = _x;
             private _objType = typeOf _obj;
+
+            // This snapshot owns structures, not temporary dropped inventory.
+            if ([_objType] call FLO_fnc_saveIsWeaponHolderClass) then {
+                _skippedWeaponHolders = _skippedWeaponHolders + 1;
+                continue;
+            };
 
             // Skip if: not alive, in exclusion lists, marked as crate, temp object, or IDS placed entity
             if (alive _obj &&
@@ -195,45 +188,14 @@ try {
         } forEach _nearObjs;
     } forEach _installationMarkers;
     _data set ["objects", _objHash];
-    ["SAVE", 3, format ["Objects: %1", count _objHash]] call FLO_fnc_log;
+    ["SAVE", 3, format ["Objects: %1; excluded weapon-holder candidates: %2", count _objHash, _skippedWeaponHolders]] call FLO_fnc_log;
 } catch { ["SAVE", 1, format ["Objects failed: %1", _exception]] call FLO_fnc_log; };
 
 // ============================================================================
 // SAVE: SUPPLY CRATES
 // ============================================================================
 
-try {
-    private _crateHash = createHashMap;
-    private _saveCrates = (entities "ReammoBox_F") select { alive _x && { _x getVariable ["FLO_save_crate", false] } };
-    {
-        private _id = [] call FLO_fnc_createUUID;
-        _x setVariable ["FLO_SaveID", _id, true];
-        private _items = [_x] call FLO_fnc_saveGetAllCargo;
-        _x setVariable ["FLO_crate_items", _items, true];
-        private _crateData = createHashMapFromArray [
-            ["type", typeOf _x], ["posASL", getPosASL _x],
-            ["vectorDirAndUp", [vectorDir _x, vectorUp _x]],
-            ["items", _items], ["damage", damage _x], ["locked", locked _x]
-        ];
-        if (_x getVariable ["FLO_LogisticsShipment", false]) then {
-            private _shipmentSide = _x getVariable ["FLO_LogisticsSide", sideUnknown];
-            if !(_shipmentSide in [west, east]) then {
-                throw format ["Logistics shipment %1 has invalid side %2", _id, _shipmentSide];
-            };
-            _crateData set ["logisticsShipment", true];
-            _crateData set ["logisticsDelivered", _x getVariable ["FLO_LogisticsDelivered", false]];
-            _crateData set ["logisticsSideKey", [_shipmentSide] call FLO_fnc_sideKey];
-            _crateData set ["logisticsOriginNodeId", _x getVariable ["FLO_LogisticsOriginNodeId", ""]];
-            _crateData set ["logisticsThroughput", _x getVariable ["FLO_LogisticsThroughput", -1]];
-            _crateData set ["logisticsContributorUID", _x getVariable ["FLO_LogisticsContributorUID", ""]];
-            _crateData set ["logisticsContributorName", _x getVariable ["FLO_LogisticsContributorName", ""]];
-            _crateData set ["developmentTargetObjectiveId", _x getVariable ["FLO_DevelopmentTargetObjectiveId", ""]];
-        };
-        _crateHash set [_id, _crateData];
-    } forEach _saveCrates;
-    _data set ["crates", _crateHash];
-    ["SAVE", 3, format ["Crates: %1", count _crateHash]] call FLO_fnc_log;
-} catch { ["SAVE", 1, format ["Crates failed: %1", _exception]] call FLO_fnc_log; };
+_data set ["crates", _campaignState get "crates"];
 
 // ============================================================================
 // SAVE: COMMANDER MINEFIELDS
@@ -246,6 +208,7 @@ try {
         {
             private _serialized = [_y] call FLO_fnc_minefieldSerializeField;
             if ((keys _serialized) isNotEqualTo []) then {
+                [_serialized, count _minefieldArray] call FLO_fnc_minefieldValidateSavedField;
                 _minefieldArray pushBack _serialized;
             };
         } forEach FLO_Minefields;
@@ -268,128 +231,15 @@ try {
 // SAVE: STRUCTURES (FOBs, OPs)
 // ============================================================================
 
-try {
-    private _fobArray = [];
-    private _opArray = [];
-    private _fobType = FLO_FactionFobType;
-    private _fobContainerType = FLO_FactionFobTerminalType;
-    private _opType = FLO_FactionCopType;
-    private _opContainerType = FLO_FactionCopTerminalType;
-    {
-        if !(_x isEqualType "" && {_x != ""} && {isClass (configFile >> "CfgVehicles" >> _x)}) then {
-            throw format ["Base structure class is invalid: %1", _x];
-        };
-    } forEach [_fobType, _fobContainerType, _opType, _opContainerType];
-
-    // Find and save FOBs with their containers
-    if (_fobType != "") then {
-        private _allFobContainers = if (_fobContainerType != "") then { allMissionObjects _fobContainerType } else { [] };
-        {
-            if (!isNull _x && alive _x && { _x getVariable ["FLO_FOB_Initialized", false] }) then {
-                private _building = _x;
-                private _marker = _building getVariable ["fobMarkerName", ""];
-                private _baseSide = _building getVariable "FLO_BaseSide";
-                private _baseSaveId = _building getVariable "FLO_BaseSaveId";
-                private _logisticsNodeId = _building getVariable "FLO_LogisticsNodeId";
-                if (
-                    !(_baseSide in [east, west])
-                    || {!(_baseSaveId isEqualType "" && {_baseSaveId != ""})}
-                    || {!(_logisticsNodeId isEqualType "" && {_logisticsNodeId != ""})}
-                ) then {
-                    throw format ["FOB at %1 has invalid save identity", getPosASL _building];
-                };
-
-                // Find the container that's near this FOB
-                private _nearContainer = objNull;
-                {
-                    if (_x distance _building < 20) exitWith { _nearContainer = _x; };
-                } forEach _allFobContainers;
-
-                // Save full FOB data
-                private _fobData = createHashMapFromArray [
-                    ["buildingType", typeOf _building],
-                    ["buildingPosASL", getPosASL _building],
-                    ["buildingDir", getDir _building],
-                    ["buildingVectorUp", vectorUp _building],
-                    ["markerName", _marker],
-                    ["baseSideKey", [_baseSide] call FLO_fnc_sideKey],
-                    ["baseSaveId", _baseSaveId],
-                    ["logisticsNodeId", _logisticsNodeId]
-                ];
-
-                // Add container data if found
-                if (!isNull _nearContainer) then {
-                    _fobData set ["containerType", typeOf _nearContainer];
-                    _fobData set ["containerPosASL", getPosASL _nearContainer];
-                    _fobData set ["containerDir", getDir _nearContainer];
-                    _fobData set ["containerVectorUp", vectorUp _nearContainer];
-                };
-
-                _fobArray pushBack _fobData;
-            };
-        } forEach (allMissionObjects _fobType);
-    };
-
-    // Find and save OPs with their containers
-    if (_opType != "") then {
-        private _allOpContainers = if (_opContainerType != "") then { allMissionObjects _opContainerType } else { [] };
-        {
-            if (!isNull _x && alive _x && { _x getVariable ["FLO_OP_Initialized", false] }) then {
-                private _building = _x;
-                private _marker = _building getVariable ["opMarkerName", ""];
-                private _baseSide = _building getVariable "FLO_BaseSide";
-                private _baseSaveId = _building getVariable "FLO_BaseSaveId";
-                private _logisticsNodeId = _building getVariable "FLO_LogisticsNodeId";
-                if (
-                    !(_baseSide in [east, west])
-                    || {!(_baseSaveId isEqualType "" && {_baseSaveId != ""})}
-                    || {!(_logisticsNodeId isEqualType "" && {_logisticsNodeId != ""})}
-                ) then {
-                    throw format ["OP at %1 has invalid save identity", getPosASL _building];
-                };
-
-                // Find the container that's near this OP
-                private _nearContainer = objNull;
-                {
-                    if (_x distance _building < 15) exitWith { _nearContainer = _x; };
-                } forEach _allOpContainers;
-
-                // Save full OP data
-                private _opData = createHashMapFromArray [
-                    ["buildingType", typeOf _building],
-                    ["buildingPosASL", getPosASL _building],
-                    ["buildingDir", getDir _building],
-                    ["buildingVectorUp", vectorUp _building],
-                    ["markerName", _marker],
-                    ["baseSideKey", [_baseSide] call FLO_fnc_sideKey],
-                    ["baseSaveId", _baseSaveId],
-                    ["logisticsNodeId", _logisticsNodeId]
-                ];
-
-                // Add container data if found
-                if (!isNull _nearContainer) then {
-                    _opData set ["containerType", typeOf _nearContainer];
-                    _opData set ["containerPosASL", getPosASL _nearContainer];
-                    _opData set ["containerDir", getDir _nearContainer];
-                    _opData set ["containerVectorUp", vectorUp _nearContainer];
-                };
-
-                _opArray pushBack _opData;
-            };
-        } forEach (allMissionObjects _opType);
-    };
-
-    _data set ["fobs", _fobArray];
-    _data set ["ops", _opArray];
-    ["SAVE", 3, format ["Structures: %1 FOBs, %2 OPs", count _fobArray, count _opArray]] call FLO_fnc_log;
-} catch { ["SAVE", 1, format ["Structures failed: %1", _exception]] call FLO_fnc_log; };
+_data set ["fobs", _campaignState get "fobs"];
+_data set ["ops", _campaignState get "ops"];
 
 // ============================================================================
 // SAVE: BASE DEPLOYMENT STATE
 // ============================================================================
 
 try {
-    _data set ["baseDeploymentState", [] call FLO_fnc_baseDeploySerializeState];
+    _data set ["baseDeploymentState", _campaignState get "baseDeploymentState"];
     ["SAVE", 3, "Base deployment state saved"] call FLO_fnc_log;
 } catch { ["SAVE", 1, format ["Base deployment state failed: %1", _exception]] call FLO_fnc_log; };
 
@@ -398,17 +248,9 @@ try {
 // ============================================================================
 
 try {
-    if (!isNil "FLO_SideResources") then {
-        private _sideResData = createHashMap;
-        {
-            private _obj = FLO_SideResources get _x;
-            if (!isNil "_obj") then {
-                _sideResData set [_x, _obj call ["serialize", []]];
-            };
-        } forEach (keys FLO_SideResources);
+    private _sideResData = _campaignState get "sideResources";
         _data set ["sideResources", _sideResData];
         ["SAVE", 3, format ["Side resources saved for %1 sides", count (keys _sideResData)]] call FLO_fnc_log;
-    };
 } catch { ["SAVE", 1, format ["Resources failed: %1", _exception]] call FLO_fnc_log; };
 
 // ============================================================================
@@ -416,17 +258,9 @@ try {
 // ============================================================================
 
 try {
-    if (!isNil "FLO_Logistics_Networks" && {FLO_Logistics_Networks isEqualType createHashMap} && {(keys FLO_Logistics_Networks) isNotEqualTo []}) then {
-        private _bySide = createHashMap;
-        {
-            private _obj = FLO_Logistics_Networks get _x;
-            if (!isNil "_obj") then {
-                _bySide set [_x, _obj call ["serialize", []]];
-            };
-        } forEach (keys FLO_Logistics_Networks);
+    private _bySide = _campaignState get "logisticsNetworkBySide";
         _data set ["logisticsNetworkBySide", _bySide];
         ["SAVE", 3, format ["Logistics: saved %1 side contexts", count (keys _bySide)]] call FLO_fnc_log;
-    };
 } catch { ["SAVE", 1, format ["Logistics failed: %1", _exception]] call FLO_fnc_log; };
 
 // ============================================================================
@@ -434,7 +268,7 @@ try {
 // ============================================================================
 
 try {
-    private _vgHash = call FLO_fnc_virtualizationSerializeRegistry;
+    private _vgHash = [_campaignState get "virtualGroups", _campaignState get "capturedAtTick"] call FLO_fnc_virtualizationSerializeRegistry;
     _data set ["virtualGroups", _vgHash];
     ["SAVE", 3, format ["Virtual Groups: %1", count _vgHash]] call FLO_fnc_log;
 } catch {
@@ -446,7 +280,7 @@ try {
 // ============================================================================
 
 try {
-    if (!isNil "FLO_Objectives") then { _data set ["objectives", FLO_Objectives]; };
+    _data set ["objectives", _campaignState get "objectives"];
     if (!isNil "FLO_GTN_ResourceManager") then {
         private _allCommanders = FLO_GTN_ResourceManager call ["_getAllCommanders", []];
         private _eastEnabled = "EAST" in _allCommanders;
@@ -531,17 +365,11 @@ private _isValid = true;
 } forEach _requiredRootTypes;
 
 if (_isValid) then {
-    try {
-        missionProfileNamespace setVariable ["FLO_MissionData", _data];
-        saveMissionProfileNamespace;
-        private _saveTime = diag_tickTime - _saveStartTime;
-        ["SAVE", 3, format ["Save complete in %1s", round (_saveTime * 100) / 100]] call FLO_fnc_log;
-        ["flo_mission_save_completed", [true, _data]] call CBA_fnc_globalEvent;
-        true
-    } catch {
-        ["SAVE", 1, format ["Write failed: %1", _exception]] call FLO_fnc_log;
-        false
-    };
+    if !([_data] call FLO_fnc_saveCommitCampaignData) exitWith { false };
+    private _saveTime = diag_tickTime - _saveStartTime;
+    ["SAVE", 3, format ["Save complete in %1s", round (_saveTime * 100) / 100]] call FLO_fnc_log;
+    ["flo_mission_save_completed", [true]] call CBA_fnc_globalEvent;
+    true
 } else {
     ["SAVE", 1, "Validation failed"] call FLO_fnc_log;
     false
@@ -554,7 +382,7 @@ if (_isValid) then {
 FLO_MissionSaveInProgress = false;
 if (_saveException != "") then {
     ["SAVE", 1, format ["Mission save aborted by exception: %1", _saveException]] call FLO_fnc_log;
-    throw _saveException;
+    _saveResult = false;
 };
 
 _saveResult

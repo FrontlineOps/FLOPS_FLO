@@ -31,4 +31,5 @@ class ObjectiveUtilities {
     class refreshRespawnMarkersByTerritory {};
     class syncObjectiveRuntimeState {};
     class updateObjectiveCaptureState {};
+    class objectiveRestoreCaptureTimers {};
 };

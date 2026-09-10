@@ -24,7 +24,7 @@ private _mineSpecs = [];
     if !(mineActive _x) then { continue };
 
     _mineSpecs pushBack (createHashMapFromArray [
-        ["type", _x getVariable ["FLO_MineType", typeOf _x]],
+        ["type", _x getVariable "FLO_MineType"],
         ["posASL", getPosASL _x]
     ]);
 } forEach (_field get "mineObjects");
