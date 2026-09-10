@@ -1312,6 +1312,10 @@
             };
 
             var packableCategories = {
+                uniforms: true,
+                vests: true,
+                headgear: true,
+                facewear: true,
                 ammo: true,
                 mines: true,
                 attachments: true,
@@ -1834,6 +1838,10 @@
             }
 
             function targetForLine(line) {
+                if (normalizeContainer(line, line.container) !== "auto") {
+                    return "";
+                }
+
                 if (line.category === "uniforms") {
                     return "uniform";
                 }
@@ -1850,7 +1858,7 @@
             }
 
             function normalizeContainer(item, container) {
-                if (!canPack(item)) {
+                if (item.entryKind !== "gear") {
                     return "auto";
                 }
 
@@ -2533,6 +2541,9 @@
                 },
                 setContainer: function (line, container) {
                     line.container = normalizeContainer(line, container);
+                    if (line.container !== "auto") {
+                        line.slot = "";
+                    }
                     renderCart(true);
                 },
                 selectTarget: function (container) {

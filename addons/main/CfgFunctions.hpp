@@ -276,6 +276,7 @@ class FLO {
         class storeAppendSupportItems {};
         class storeAppendUnitGear {};
         class storeApplyKit {};
+        class storeApplyGearItems {};
         class storeApplyWeaponLine {};
         class storeBuildCatalog {};
         class storeBuildCatalogItem {};
