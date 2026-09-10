@@ -17,6 +17,7 @@
 params ["_groupId", "_gData", "_resumeStates"];
 
 private _resumeState = _resumeStates getOrDefault [_groupId, ""];
+[_gData] call FLO_fnc_virtualizationResetMovementClock;
 [
     _groupId,
     createHashMapFromArray [["inCombat", false]]

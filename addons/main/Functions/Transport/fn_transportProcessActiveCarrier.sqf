@@ -8,7 +8,7 @@
  *
  * Arguments:
  *   0: Carrier Group ID <STRING>
- *   1: Carrier Group Data <HASHMAP>
+ *   1: Owned live Carrier Group Data <HASHMAP> - Passed by the virtualization update owner
  *   2: Real Carrier Group <GROUP>
  *
  * Return Value:
@@ -23,7 +23,6 @@ params [
 
 if (_groupId == "") exitWith { false };
 if (isNull _realGroup) exitWith { false };
-_groupData = [_groupId] call FLO_fnc_transportGetTrackedGroup;
 if !([_groupData] call FLO_fnc_virtualizationIsTransportCarrier) exitWith { false };
 
 private _attachedIds = +([_groupData] call FLO_fnc_virtualizationGetTransportPassengers);
@@ -55,7 +54,7 @@ private _liveCarrierVehicles = _carrierVehicles select { alive _x };
     [_x, _attachedData, _groupId, _carrierVehicles, _groupData] call FLO_fnc_transportSyncActivePassengerGroup;
 } forEach _attachedIds;
 
-_groupData = [_groupId] call FLO_fnc_transportGetTrackedGroup;
+// Passenger reconciliation patches the same owned registry record in place.
 if (([_groupData] call FLO_fnc_virtualizationGetTransportPassengers) isEqualTo []) exitWith {
     [_realGroup] call FLO_fnc_transportResetActiveCarrierMotion;
     if ((_groupData get "dismountAtWaypoint") >= 0 || {(_groupData get "transportInsertMode") != ""}) then {
@@ -104,7 +103,7 @@ if (_groupData get "transportUnloadCommandIssued") exitWith {
         [_groupId, _groupData, _carrierVehicles] call FLO_fnc_transportIssueActiveDismount;
 
         private _unloadIssuedAt = _groupData get "transportUnloadIssuedAt";
-        if (_unloadIssuedAt >= 0 && {(diag_tickTime - _unloadIssuedAt) >= FLO_Transport_ActiveUnloadTimeout}) then {
+        if (_unloadIssuedAt >= 0 && {(diag_tickTime - _unloadIssuedAt + (_groupData get "transportUnloadElapsedOffset")) >= FLO_Transport_ActiveUnloadTimeout}) then {
             ["TRANSPORT", 2, format [
                 "Active carrier %1 live unload stalled with %2 mounted units - forcing detach fallback",
                 _groupId,

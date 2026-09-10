@@ -15,6 +15,9 @@
  * Returns: <BOOL> - Success status
  */
 
+// PreInit also runs for menu scenes and clients where gameplay never starts.
+FLO_MissionReady = false;
+
 if (!isServer) exitWith {false};
 
 FLO_MissionSaveVersion = 29;

@@ -58,48 +58,6 @@ if ((count _spatialMeta) != (count _groups)) then {
         _realGroups set [_realGroupKey, _groupId];
     };
 
-    private _attachedTo = _groupData get "attachedTo";
-    if (_attachedTo != "") then {
-        private _carrier = _groups get _attachedTo;
-        if (isNil "_carrier") then {
-            throw format ["Virtual group %1 references missing carrier %2", _groupId, _attachedTo];
-        };
-        if ((_carrier get "side") != (_groupData get "side")) then {
-            throw format ["Virtual group %1 and carrier %2 have different sides", _groupId, _attachedTo];
-        };
-        if !(_groupId in (_carrier get "attachedGroups")) then {
-            throw format ["Carrier %1 does not reciprocate passenger %2", _attachedTo, _groupId];
-        };
-        if ([_attachedTo, _groupId] call FLO_fnc_virtualizationTransportChainContains) then {
-            throw format ["Transport relationship for %1 through %2 is cyclic", _groupId, _attachedTo];
-        };
-    };
-
-    {
-        private _passenger = _groups get _x;
-        if (isNil "_passenger") then {
-            throw format ["Carrier %1 references missing passenger %2", _groupId, _x];
-        };
-        if ((_passenger get "attachedTo") != _groupId) then {
-            throw format ["Passenger %1 does not reciprocate carrier %2", _x, _groupId];
-        };
-    } forEach (_groupData get "attachedGroups");
-
-    private _mountedIn = _groupData get "mountedIn";
-    if (_mountedIn != "" && {_mountedIn != _attachedTo}) then {
-        throw format [
-            "Virtual group %1 mountedIn=%2 differs from attachedTo=%3",
-            _groupId,
-            _mountedIn,
-            _attachedTo
-        ];
-    };
-
-    private _organicParent = _groupData get "organicPackageParentGroupId";
-    if (_organicParent != "" && {!(_organicParent in _groups)}) then {
-        throw format ["Virtual group %1 references missing organic parent %2", _groupId, _organicParent];
-    };
-
     private _meta = _spatialMeta get _groupId;
     if (isNil "_meta") then {
         throw format ["Virtual group %1 is missing spatial metadata", _groupId];
@@ -130,5 +88,7 @@ if ((count _spatialMeta) != (count _groups)) then {
         ];
     };
 } forEach _groups;
+
+[_groups] call FLO_fnc_virtualizationValidateTransportGraph;
 
 true

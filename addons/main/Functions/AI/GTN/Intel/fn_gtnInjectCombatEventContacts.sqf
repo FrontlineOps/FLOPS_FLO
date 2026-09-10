@@ -53,6 +53,10 @@ private _latestProcessedAt = _lastProcessedAt;
     if (_enemyUnits <= 0 || {_enemyGroupCount <= 0}) then { continue };
 
     private _eventPos = _x get "position";
+    private _zoneId = _x get "objectiveId";
+    private _existingIndex = _contacts findIf {
+        count _x > 7 && {(_x select 3) == "combat"} && {(_x select 7) == _zoneId}
+    };
     private _isDuplicate = false;
     {
         _x params ["_contactPos", "_contactTime"];
@@ -61,7 +65,7 @@ private _latestProcessedAt = _lastProcessedAt;
         };
     } forEach _contacts;
 
-    if (_isDuplicate) then { continue };
+    if (_isDuplicate && {_existingIndex < 0}) then { continue };
 
     private _confidence = 0.45;
     if ((_x get "winner") isEqualTo _enemySide) then {
@@ -74,8 +78,16 @@ private _latestProcessedAt = _lastProcessedAt;
         _confidence = 0.9;
     };
 
-    _contacts pushBack [_eventPos, _eventTime, _enemyUnits, "combat", _confidence];
-    _added = _added + 1;
+    private _report = [+_eventPos, _eventTime, _enemyUnits, "combat", _confidence, objNull, "", _zoneId];
+    if (_existingIndex >= 0) then {
+        // One battle's newer force report replaces its earlier estimate.
+        if (_eventTime > ((_contacts select _existingIndex) select 1)) then {
+            _contacts set [_existingIndex, _report];
+        };
+    } else {
+        _contacts pushBack _report;
+        _added = _added + 1;
+    };
 } forEach _events;
 
 _worldState set ["_combatIntelLastProcessedAt", _latestProcessedAt];

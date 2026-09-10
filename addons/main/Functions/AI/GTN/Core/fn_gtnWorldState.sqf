@@ -64,7 +64,7 @@ private _worldState = createHashMapObject [[
     // Enemy intel
     ["_enemyIntel", createHashMapFromArray [
         ["knownPositions", []],
-        ["contactReports", []],    // [Pos, Time, Strength, Type, Confidence, SourceObject?]
+        ["contactReports", []],    // [Pos, Time, Strength, Type, Confidence, SourceObject?, SourceGroupId?, CombatZoneId?]
         ["estimatedStrength", 0],
         ["lastContactTime", 0],
         ["threatLevel", 0],
@@ -182,8 +182,8 @@ private _worldState = createHashMapObject [[
                 ["radius", _data getOrDefault ["radius", 50]],
                 ["priority", _priority],
                 ["owner", _owner],
-                ["enemyCount", [_nearFriendly, _nearEnemy] select (_owner == _ownSide)],
-                ["friendlyCount", [_nearEnemy, _nearFriendly] select (_owner == _ownSide)],
+                ["enemyCount", _nearEnemy],
+                ["friendlyCount", _nearFriendly],
                 ["contested", _contested],
                 ["underAttack", _underAttack],
                 ["vulnerable", _vulnerable],
@@ -417,18 +417,21 @@ private _worldState = createHashMapObject [[
 
                     // Only report enemies for this side context.
                     if (_side == _enemySide) then {
-                        // Check if we already have a recent report for this location (within 50m, 60s)
-                        private _isNew = true;
-                        {
-                            _x params ["_cPos", "_cTime"];
-                            if (_cPos distance2D _pos < 50 && (diag_tickTime - _cTime) < 60) exitWith {
-                                _isNew = false;
-                            };
-                        } forEach _contacts;
-
-                        if (_isNew) then {
-                            // Create contact report: [Pos, Time, Strength(1), Type, Confidence, SourceObject]
-                            _contacts pushBack [_pos, diag_tickTime, 1, _type, _acc, _obj];
+                        if (isNull _obj) then { continue };
+                        // Refresh the observed entity, not every entity near its last position.
+                        private _existingIndex = _contacts findIf {
+                            _x params ["_cPos", "_cTime", "_cStrength", "_cType", "_cConfidence", ["_cObject", objNull]];
+                            _cObject isEqualTo _obj
+                        };
+                        private _sourceGroup = group (effectiveCommander _obj);
+                        private _sourceGroupId = _sourceGroup getVariable ["FLO_virtualGroupId", ""];
+                        // nearTargets accuracy is positional error; knowledge is documented 0..4.
+                        private _confidence = ((_leader knowsAbout _obj) / 4) max 0 min 1;
+                        private _report = [+_pos, diag_tickTime, 1, _type, _confidence, _obj, _sourceGroupId];
+                        if (_existingIndex >= 0) then {
+                            _contacts set [_existingIndex, _report];
+                        } else {
+                            _contacts pushBack _report;
                             _newContacts pushBack [_pos, _type];
                         };
                     };

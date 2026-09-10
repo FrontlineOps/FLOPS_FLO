@@ -8,6 +8,7 @@
  * Arguments:
  *   0: Infantry Group ID <STRING>
  *   1: Offset direction (degrees) <NUMBER> - Optional, default random
+ *   2: Release empty carrier <BOOLEAN> - False when the caller owns finalization
  *
  * Return Value:
  *   Success <BOOLEAN>
@@ -19,7 +20,8 @@
 
 params [
     ["_infantryGroupId", "", [""]],
-    ["_offsetDir", -1, [0]]
+    ["_offsetDir", -1, [0]],
+    ["_releaseCarrier", true, [true]]
 ];
 
 if (_infantryGroupId == "") exitWith { false };
@@ -67,7 +69,18 @@ if (!isNull _infRealGroup) then {
 // Offset position from transport
 if (_offsetDir < 0) then { _offsetDir = random 360; };
 private _newPos = _basePos getPos [30, _offsetDir];
+// A stacking offset must not move a passenger off a valid coastal landing.
+if (surfaceIsWater _newPos && {!surfaceIsWater _basePos}) then {
+    _newPos = +_basePos;
+};
 [_infantryGroupId, _newPos] call FLO_fnc_virtualizationUpdateGroupPosition;
+
+if (_releaseCarrier) then {
+    private _carrierData = [_transportId] call FLO_fnc_transportGetTrackedGroup;
+    if ((_carrierData get "attachedGroups") isEqualTo []) then {
+        [_transportId] call FLO_fnc_transportPoolRelease;
+    };
+};
 
 ["TRANSPORT", 3, format["Detached %1 from transport %2", _infantryGroupId, _transportId]] call FLO_fnc_log;
 

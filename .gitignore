@@ -1,9 +1,8 @@
-mission.sqm
-.vscode
 AGENTS.md
 context.md
-docs
-.tools/
+.agents-notes/
 .hemttout/
+releases/
+dist/
 .hemttprivatekey
 .biprivatekey

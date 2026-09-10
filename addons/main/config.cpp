@@ -58,6 +58,7 @@ class CfgRemoteExec {
         class FLO_fnc_civilianRequestMission { allowedTargets = 2; jip = 0; };
         class FLO_fnc_civilianMissionManager { allowedTargets = 2; jip = 0; };
         class FLO_fnc_civilianMissionResolveAction { allowedTargets = 2; jip = 0; };
+        class FLO_fnc_civilianRepairActionLocal { allowedTargets = 0; jip = 1; };
         class FLO_fnc_civilianDetaineeCommand { allowedTargets = 2; jip = 0; };
         class FLO_fnc_gtnCommanderRadioMessage { allowedTargets = 0; jip = 0; };
         class FLO_fnc_initClientFinalize { allowedTargets = 0; jip = 1; };

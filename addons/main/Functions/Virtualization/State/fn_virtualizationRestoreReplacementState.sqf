@@ -4,24 +4,15 @@
 
 params ["_groupData", "_savedData"];
 
-[_groupData] call FLO_fnc_virtualizationClearReplacementTransit;
-switch (_savedData get "replacementState") do {
-    case "REINFORCE": {
-        [
-            _groupData get "id",
-            _savedData get "reinforcementTargetPos",
-            _savedData get "reinforcementRequestedObjective",
-            _savedData get "reinforcementDeliveryObjective"
-        ] call FLO_fnc_virtualizationMarkReinforcementTransit;
-    };
-    case "AA_DEPLOY": {
-        [
-            _groupData get "id",
-            _savedData get "reinforcementTargetPos",
-            _savedData get "reinforcementRequestedObjective",
-            _savedData get "reinforcementDeliveryObjective"
-        ] call FLO_fnc_virtualizationMarkStaticAAReplacementTransit;
-    };
+private _replacementState = _savedData get "replacementState";
+if !(_replacementState in ["", "REINFORCE", "AA_DEPLOY"]) then {
+    throw format ["Saved virtual group %1 has unsupported replacement state %2", _groupData get "id", _replacementState];
 };
+
+// Hydration does not own the mission, commander, execution or AA state already
+// restored by their owners. Transit transition helpers deliberately clear it.
+{
+    _groupData set [_x, _savedData get _x];
+} forEach ["replacementState", "reinforcementTargetPos", "reinforcementRequestedObjective", "reinforcementDeliveryObjective"];
 
 true

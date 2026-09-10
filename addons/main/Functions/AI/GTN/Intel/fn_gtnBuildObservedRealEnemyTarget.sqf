@@ -31,6 +31,7 @@ private _contextObject = vehicle _observedObject;
 if (isNull _contextObject) then {
     _contextObject = _observedObject;
 };
+if (_contextObject isKindOf "Air" || {_contextObject isKindOf "Ship"}) exitWith { _target };
 
 private _localUnits = [];
 
@@ -116,7 +117,7 @@ if !(_contextObject isKindOf "Man") then {
     };
 };
 
-private _unitCount = ((count _localUnits) max (ceil _contactStrength)) max 1;
+private _unitCount = (ceil _contactStrength) max 1;
 
 createHashMapFromArray [
     ["groupId", format ["real_%1", (_groupNetId splitString ":") joinString "_"]],
@@ -126,7 +127,7 @@ createHashMapFromArray [
     ["contactCount", 0],
     ["groupType", _groupType],
     ["unitCount", _unitCount],
-    ["commanderOrder", "MOVE"],
+    ["commanderOrder", ""],
     ["objectiveIds", []],
     ["isPlayerControlled", true]
 ]

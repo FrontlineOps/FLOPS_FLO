@@ -115,6 +115,8 @@ if (!_isActive && {!_activationDeferred}) then {
             _virtStats set ["phaseMovementMsTotal", (_virtStats get "phaseMovementMsTotal") + ((diag_tickTime - _phaseStart) * 1000)];
         };
     } else {
+        // A combat movement pause must still allow the carrier to unload.
+        [_groupId, _groupData, _groupData get "position"] call FLO_fnc_transportProcessVirtualCarrier;
         if ((_groupData get "waypoints") isNotEqualTo []) then {
             _virtStats set ["movementPauseSkipsTotal", (_virtStats get "movementPauseSkipsTotal") + 1];
             _virtStats set ["movementPauseSkipsThisBatch", (_virtStats get "movementPauseSkipsThisBatch") + 1];

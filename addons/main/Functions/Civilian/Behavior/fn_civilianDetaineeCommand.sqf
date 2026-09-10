@@ -200,7 +200,7 @@ switch (toUpper _mode) do {
 
         if ((random 1) > _cooperateChance || {(keys _package) isEqualTo []}) exitWith {
             if ((_context get "disposition") in ["FRIENDLY", "NEUTRAL"]) then {
-                [_penalty, "decrease"] call FLO_fnc_adjustReputation;
+                [-_penalty, "decrease"] call FLO_fnc_adjustReputation;
             };
             ["Civilian", selectRandom [
                 "I told you nothing.",
@@ -211,7 +211,7 @@ switch (toUpper _mode) do {
         };
 
         if ((_context get "disposition") in ["FRIENDLY", "NEUTRAL"]) then {
-            [_penalty, "decrease"] call FLO_fnc_adjustReputation;
+            [-_penalty, "decrease"] call FLO_fnc_adjustReputation;
         };
 
         [_package] call FLO_fnc_gtnAlertCivilianReport;
@@ -267,6 +267,5 @@ switch (toUpper _mode) do {
         [[_unit]] call FLO_fnc_civilianActions;
         true
     };
-};
-
-false
+    default { false };
+}

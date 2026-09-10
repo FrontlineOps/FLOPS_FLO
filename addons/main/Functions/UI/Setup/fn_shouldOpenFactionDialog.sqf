@@ -15,6 +15,11 @@
  *   BOOL - True when the faction dialog may be opened
  */
 
+if (!hasInterface || {is3DEN} || {isNull findDisplay 46} || {!isNull findDisplay 0}) exitWith { false };
+// Absence of an initialization phase is not permission to start a campaign.
+if (isNil "FLO_InitPhase") exitWith { false };
+if (FLO_InitPhase != 1) exitWith { false };
+
 private _isLoadedSave = missionNamespace getVariable ["FLO_IsLoadedSave", false];
 if (_isLoadedSave) exitWith { false };
 
@@ -22,11 +27,6 @@ private _missionConfigReady = !isNil "FLO_MissionConfig"
     && {FLO_MissionConfig isEqualType createHashMap}
     && {(keys FLO_MissionConfig) isNotEqualTo []};
 if (_missionConfigReady) exitWith { false };
-
-private _initPhase = missionNamespace getVariable ["FLO_InitPhase", 0];
-if (_initPhase > 1) exitWith { false };
-
-if (!hasInterface) exitWith { false };
 
 private _canAdminServer = isServer || {
     (serverCommandAvailable "#kick") && {serverCommandAvailable "#debug"}

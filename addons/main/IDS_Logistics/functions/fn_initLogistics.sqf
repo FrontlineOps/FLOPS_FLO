@@ -20,8 +20,18 @@
  */
 
 IDS_Logistics_PlacedEntities = [];
+IDS_Logistics_ManipulatedEntities = [];
 IDS_Logistics_isHolding = false;
 IDS_Logistics_currentEntity = objNull;
+IDS_Logistics_originalNetId = "";
+IDS_Logistics_scrollHandler = -1;
+IDS_Logistics_keyDownHandler = -1;
+IDS_Logistics_keyUpHandler = -1;
+IDS_Logistics_dirUpdateEH = -1;
+IDS_Logistics_CameraSession = 0;
+IDS_Logistics_CameraActive = false;
+uiNamespace setVariable ["IDS_Logistics_PlacementDisplay", displayNull];
+uiNamespace setVariable ["IDS_Logistics_CameraDisplay", displayNull];
 
 // Initialize UI variables
 uiNamespace setVariable ["IDS_Logistics_shiftPressed", false];
@@ -55,6 +65,14 @@ if (IDS_Logistics_Entities isEqualTo []) then {
     private _message = "Addon CfgLogistics/Entities contains no buildable entities";
     ["IDS_LOGISTICS", 1, _message] call FLO_fnc_log;
     throw _message;
+};
+
+if (isServer) then {
+    IDS_Logistics_DisconnectEH = addMissionEventHandler ["HandleDisconnect", {
+        params ["_unit"];
+        [_unit] call IDS_Logistics_fnc_releasePlayerPlacements;
+        false
+    }];
 };
 
 ["IDS_LOGISTICS", 3, format [

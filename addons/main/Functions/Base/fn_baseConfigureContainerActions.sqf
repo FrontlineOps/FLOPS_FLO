@@ -14,17 +14,11 @@ params ["_building", "_config"];
 
 private _type = _config get "type";
 private _actionPrefix = _config get "actionPrefix";
-private _containerType = missionNamespace getVariable [
-    _config get "containerTypeVariable",
-    _config get "containerFallbackType"
-];
-
-private _containers = nearestObjects [_building, [_containerType], _config get "containerSearchRadius"];
-if (_containers isEqualTo []) exitWith {
+private _container = _building getVariable "FLO_BaseTerminal";
+if (isNull _container) exitWith {
     [_type, 2, _config get "containerMissingLog"] call FLO_fnc_log;
 };
 
-private _container = _containers select 0;
 private _containerActions = if (_actionPrefix isEqualTo "FOB") then {
     private _commanderCondition = "(serverCommandAvailable '#kick') && (serverCommandAvailable '#debug')";
     [

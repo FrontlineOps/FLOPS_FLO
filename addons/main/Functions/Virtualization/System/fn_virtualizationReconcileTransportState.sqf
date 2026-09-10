@@ -48,8 +48,9 @@ private _repairCount = 0;
             [_groupData] call FLO_fnc_virtualizationClearMountedIn;
             _repairCount = _repairCount + 1;
         };
-        if ((_groupData get "missionLock") == "TRANSPORT") then {
-            ["VIRTUALIZATION", 1, format [
+        // Carriers own a TRANSPORT lock without being attached passengers.
+        if ((_groupData get "missionLock") == "TRANSPORT" && {(_groupData get "attachedGroups") isEqualTo []}) then {
+            ["VIRTUALIZATION", 2, format [
                 "Clearing stale transport mission lock on unattached passenger %1",
                 _groupId
             ]] call FLO_fnc_log;

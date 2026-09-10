@@ -65,7 +65,8 @@ private _context = if (!isNil "FLO_CivilianManager") then {
 private _intelCooldown = FLO_CivilianConfig get "INTEL_COOLDOWN_SECONDS";
 private _callerOwner = owner _caller;
 
-if (_lastIntelAt >= 0 && {(diag_tickTime - _lastIntelAt) < _intelCooldown}) exitWith {
+private _elapsedOffset = if ((keys _groupData) isNotEqualTo []) then { _groupData get "civilianIntelElapsedOffset" } else { 0 };
+if (_lastIntelAt >= 0 && {(diag_tickTime - _lastIntelAt + _elapsedOffset) < _intelCooldown}) exitWith {
     ["Civilian", selectRandom [
         "I already told you what I know.",
         "That is all I have heard for now.",

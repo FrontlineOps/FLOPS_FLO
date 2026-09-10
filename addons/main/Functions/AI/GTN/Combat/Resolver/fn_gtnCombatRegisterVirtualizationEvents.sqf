@@ -18,6 +18,7 @@ _handlers set ["FLO_Virtualization_GroupAdded", ["FLO_Virtualization_GroupAdded"
 
 _handlers set ["FLO_Virtualization_GroupRemoved", ["FLO_Virtualization_GroupRemoved", {
     params ["_groupId", "_groupData"];
+    ((call FLO_fnc_gtnCombatGetState) get "attritionRemainders") deleteAt _groupId;
     if ([_groupData] call FLO_fnc_gtnCombatAffectsClassification) then {
         [true] call FLO_fnc_gtnCombatMarkClassificationDirty;
     };
@@ -65,6 +66,7 @@ _handlers set ["FLO_Virtualization_GroupPatched", ["FLO_Virtualization_GroupPatc
 
 _handlers set ["FLO_Virtualization_GroupActivated", ["FLO_Virtualization_GroupActivated", {
     params ["_groupId", "_groupData", "_realGroup"];
+    ((call FLO_fnc_gtnCombatGetState) get "attritionRemainders") deleteAt _groupId;
     if ([_groupData] call FLO_fnc_gtnCombatAffectsClassification) then {
         [true] call FLO_fnc_gtnCombatMarkClassificationDirty;
     };

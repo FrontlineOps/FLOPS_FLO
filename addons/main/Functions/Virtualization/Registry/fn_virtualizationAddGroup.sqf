@@ -20,6 +20,7 @@ if !([_pos, true, format ["virtualizationAddGroup %1", _groupId]] call FLO_fnc_v
 };
 
 _groups set [_groupId, _groupData];
+FLO_VirtUpdate set ["lastGroupCacheTime", -1e10];
 [_groupId, _pos, _groupData get "side"] call FLO_fnc_virtualizationSpatialAdd;
 call FLO_fnc_virtualizationTouchRegistry;
 

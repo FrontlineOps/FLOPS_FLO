@@ -33,6 +33,8 @@ private _entityConfig = [_className] call IDS_Logistics_fnc_getEntityConfig;
 if (_entityConfig isEqualTo []) exitWith { ["<t color='#FF4444'>ERROR</t><br/>Entity '" + _className + "' not found in configuration.", 2] call IDS_Logistics_fnc_cameraHint; };
 
 // Create the entity locally (preview only)
+uiNamespace setVariable ["IDS_Logistics_PlacementDisplay", findDisplay 46];
+IDS_Logistics_originalNetId = "";
 private _entity = createVehicleLocal [_className, [0,0,0], [], 0, "CAN_COLLIDE"];
 
 // Disable simulation and collision

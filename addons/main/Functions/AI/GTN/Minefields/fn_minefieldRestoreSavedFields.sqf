@@ -173,4 +173,5 @@ FLO_Minefields = _stagedFields;
 FLO_MinefieldObjectiveIndex = _stagedObjectiveIndex;
 FLO_MinefieldObjectiveCooldowns = _validatedCooldowns;
 
+["MINEFIELD", 3, format ["Restored minefields fields=%1 mines=%2", count _validatedFields, count _createdMines]] call FLO_fnc_log;
 count _validatedFields

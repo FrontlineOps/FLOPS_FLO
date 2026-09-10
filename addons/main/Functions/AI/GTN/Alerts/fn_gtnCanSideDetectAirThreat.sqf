@@ -29,10 +29,12 @@ private _airPos = getPosATL _aircraft;
 if ([_airPos, 3000, _detectingSide] call FLO_fnc_gtnCanSideObserveArea) exitWith { true };
 
 private _groups = call FLO_fnc_virtualizationGetGroupMap;
-private _radarGroupIds = ["queryRadius", [_airPos, 50000, _detectingSide, true]] call FLO_fnc_virtualizationSpatialIndex;
+private _airDefenseState = call FLO_fnc_gtnAirDefenseGetState;
+// Preserve the existing coverage ceiling even when configured ranges exceed it.
+private _queryRadius = ((_airDefenseState get "mobileDetectionRange") max (_airDefenseState get "staticDetectionRange")) min 50000;
+private _radarGroupIds = ["queryRadius", [_airPos, _queryRadius, _detectingSide, true]] call FLO_fnc_virtualizationSpatialIndex;
 
 private _canDetect = false;
-private _airDefenseState = call FLO_fnc_gtnAirDefenseGetState;
 {
     private _groupData = _groups get _x;
     if ((_groupData get "side") != _detectingSide) then {

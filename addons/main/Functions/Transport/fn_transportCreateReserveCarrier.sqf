@@ -60,14 +60,10 @@ switch (_reserveType) do {
 
 if (_assetPool isEqualTo []) exitWith { "" };
 
-private _groupId = [_spawnPos, _groupType, configNull, _reserveObjectiveId, 1, _side] call FLO_fnc_createVirtualGroup;
+private _composition = [selectRandom _assetPool];
+private _groupId = [_spawnPos, _groupType, configNull, _reserveObjectiveId, 1, _side, "", _composition, true] call FLO_fnc_createVirtualGroup;
 if (_groupId isEqualTo "") exitWith { "" };
 
-[_groupId, [selectRandom _assetPool]] call FLO_fnc_virtualizationSetAssetCompositionById;
-[_groupId, createHashMapFromArray [
-    ["transportRole", true],
-    ["homeObjective", _reserveObjectiveId]
-]] call FLO_fnc_virtualizationPatchGroup;
 private _groupData = [_groupId] call FLO_fnc_transportGetTrackedGroup;
 
 private _availableTransports = FLO_TransportPool get "available";

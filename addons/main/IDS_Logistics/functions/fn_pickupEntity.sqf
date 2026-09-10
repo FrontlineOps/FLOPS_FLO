@@ -34,8 +34,10 @@ private _originalPos = getPosASL _entity;
 private _originalDir = getDir _entity;
 private _originalVectorUp = vectorUp _entity;
 
-// Tell server to temporarily remove the entity from the global array
-[_netId, true] remoteExecCall ["IDS_Logistics_fnc_toggleEntityVisibility", 2];
+// The server retains registry ownership while the client manipulates a preview.
+IDS_Logistics_originalNetId = _netId;
+uiNamespace setVariable ["IDS_Logistics_PlacementDisplay", findDisplay 46];
+[_netId, true, player] remoteExecCall ["IDS_Logistics_fnc_toggleEntityVisibility", 2];
 
 // Create local preview entity for manipulation
 private _localEntity = createVehicleLocal [_className, [0,0,0], [], 0, "CAN_COLLIDE"];

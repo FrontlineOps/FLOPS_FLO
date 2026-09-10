@@ -10,6 +10,7 @@ class Objective {
     class flipObjective {};
     class seedObjectiveOwnership {};
     class monitorObjectiveDominance {};
+    class collectVirtualObjectiveCounts {};
     class startObjectiveGraph {};
     class updateObjectiveDominance {};
 };
@@ -31,4 +32,5 @@ class ObjectiveUtilities {
     class refreshRespawnMarkersByTerritory {};
     class syncObjectiveRuntimeState {};
     class updateObjectiveCaptureState {};
+    class objectiveRestoreCaptureTimers {};
 };

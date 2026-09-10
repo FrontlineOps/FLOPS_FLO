@@ -12,6 +12,8 @@
  * 4: Unit Count <NUMBER> - (Optional, default based on group type) Number of units in infantry groups
  * 5: Side <SIDE> - (Optional, default: east) Side of the group
  * 6: Spawn Class <STRING> - Optional preferred unit class for civilian activation/persistence
+ * 7: Selected Composition <ARRAY> - Optional exact unit/vehicle classes selected by the owning producer
+ * 8: Transport Role <BOOLEAN> - Optional dedicated reserve role; requires selected composition
  *
  * Return Value:
  * Group ID <STRING> - The ID of the created virtual group
@@ -27,7 +29,9 @@ params [
     ["_homeObjective", "", [""]],
     ["_unitCount", -1, [0]],
     ["_side", east, [east]],
-    ["_spawnClass", "", [""]]
+    ["_spawnClass", "", [""]],
+    ["_selectedComposition", [], [[]]],
+    ["_transportRole", false, [false]]
 ];
 
 _position = [_position] call FLO_fnc_virtualizationNormalizePosition;
@@ -55,7 +59,9 @@ private _groupData = [
     _unitCount,
     _side,
     _spawnClass,
-    _groupId
+    _groupId,
+    _selectedComposition,
+    _transportRole
 ] call FLO_fnc_virtualizationBuildGroupData;
 
 // Add group to virtualization system

@@ -18,7 +18,7 @@ params ["_groups", "_groupRefs", "_lossPct"];
 
 private _eligibleRefs = _groupRefs select {
     private _groupId = _x select 0;
-    _groupId in _groups && {((_groups get _groupId) get "unitCount") > 0}
+    _groupId in _groups && {((_groups get _groupId) get "unitCount") > 0} && {!((_groups get _groupId) get "isActive")}
 };
 if (_eligibleRefs isEqualTo [] || {_lossPct <= 0}) exitWith { 0 };
 
@@ -27,6 +27,21 @@ _sortedRefs sort true;
 private _totalUnits = 0;
 { _totalUnits = _totalUnits + (_x select 1); } forEach _sortedRefs;
 private _targetLosses = (round (_totalUnits * (_lossPct min 1))) min _totalUnits;
+private _remainders = (call FLO_fnc_gtnCombatGetState) get "attritionRemainders";
+private _fractionalRound = _targetLosses <= 0;
+private _pendingTotal = 0;
+if (_fractionalRound) then {
+    // Only zero-rounded rounds accumulate. Ordinary casualty targets and their
+    // proportional allocation remain unchanged. Credit belongs to the groups,
+    // so a new engagement-zone identity cannot restart a singleton's losses.
+    {
+        _x params ["_groupId", "_count"];
+        private _pending = (_remainders getOrDefault [_groupId, 0]) + (_count * (_lossPct min 1));
+        _remainders set [_groupId, _pending];
+        _pendingTotal = _pendingTotal + _pending;
+    } forEach _sortedRefs;
+    _targetLosses = (floor (_pendingTotal + 0.000001)) min _totalUnits;
+};
 if (_targetLosses <= 0) exitWith { 0 };
 private _remainingLosses = _targetLosses;
 private _remainingUnits = _totalUnits;
@@ -44,6 +59,18 @@ private _remainingUnits = _totalUnits;
 
     private _appliedLoss = [_groupId, _loss] call FLO_fnc_gtnCombatApplyGroupLoss;
     _remainingLosses = _remainingLosses + _loss - _appliedLoss;
+    if !(_groupId in _groups) then { _remainders deleteAt _groupId; };
 } forEach _sortedRefs;
 
-_targetLosses - _remainingLosses
+private _appliedTotal = _targetLosses - _remainingLosses;
+if (_fractionalRound) then {
+    private _survivingUnits = _totalUnits - _appliedTotal;
+    private _remainingCredit = (_pendingTotal - _appliedTotal) max 0;
+    {
+        private _groupId = _x select 0;
+        if !(_groupId in _groups) then { continue };
+        _remainders set [_groupId, _remainingCredit * (((_groups get _groupId) get "unitCount") / (_survivingUnits max 1))];
+    } forEach _sortedRefs;
+};
+
+_appliedTotal

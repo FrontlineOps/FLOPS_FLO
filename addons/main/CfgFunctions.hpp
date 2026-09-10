@@ -13,8 +13,11 @@ class FLO {
         file = "\z\flo\addons\main\Functions\Save";
 
         class saveConfigureAutosave {};
+        class saveCaptureCampaignState {};
+        class saveCommitCampaignData {};
         class saveGetAllCargo {};
         class saveGetCompressedDamage {};
+        class saveIsWeaponHolderClass {};
         class saveRequest {};
     };
 
@@ -273,6 +276,7 @@ class FLO {
         class storeAppendSupportItems {};
         class storeAppendUnitGear {};
         class storeApplyKit {};
+        class storeApplyGearItems {};
         class storeApplyWeaponLine {};
         class storeBuildCatalog {};
         class storeBuildCatalogItem {};
@@ -335,11 +339,14 @@ class FLO {
     class Base {
         file = "\z\flo\addons\main\Functions\Base";
 
+        class baseBindTerminal {};
+        class baseCleanupOwnedAssets {};
         class baseConfigureContainerActions {};
         class baseConfigureMainActions {};
         class baseCountSiegeForces {};
         class baseCreateMarker {};
         class baseCreateTriggers {};
+        class baseDiscoverTerminal {};
         class baseDeployAddWebEventHandler {};
         class baseDeployBuildSnapshot {};
         class baseDeployClaimFirstFOB {};

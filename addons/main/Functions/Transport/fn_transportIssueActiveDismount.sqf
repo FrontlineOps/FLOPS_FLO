@@ -55,7 +55,8 @@ if (_issuedCount == 0) exitWith { false };
 if (!_unloadAlreadyIssued) then {
     [_carrierGroupId, createHashMapFromArray [
         ["transportUnloadCommandIssued", true],
-        ["transportUnloadIssuedAt", diag_tickTime]
+        ["transportUnloadIssuedAt", diag_tickTime],
+        ["transportUnloadElapsedOffset", 0]
     ]] call FLO_fnc_virtualizationPatchGroup;
 
     ["TRANSPORT", 3, format [

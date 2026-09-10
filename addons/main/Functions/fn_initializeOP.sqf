@@ -4,6 +4,7 @@ params [
     ["_preserveMarker", false, [false]]
 ];
 
+if (!isServer) exitWith { false };
 if (isNull _opBuilding) exitWith {
     ["COP", 1, "Null object passed to COP initialization"] call FLO_fnc_log;
     false
@@ -31,7 +32,6 @@ private _config = createHashMapFromArray [
     ["initVariable", "FLO_OP_Initialized"],
     ["restoreVariable", "FLO_OP_MarkersRestored"],
     ["containerTypeVariable", "FLO_FactionCopTerminalType"],
-    ["containerFallbackType", "Land_TripodScreen_01_dual_v2_sand_F"],
     ["containerSearchRadius", 10],
     ["containerMissingLog", "No COP container found nearby for actions"],
     ["resourceTriggerArea", [3, 3, 0, false, 7]],
@@ -39,12 +39,11 @@ private _config = createHashMapFromArray [
     ["resourceSearchRadiusLarge", 10],
     ["holdoutTime", 600],
     ["holdoutRadius", 100],
-    ["cleanupRadius", 300],
     ["siegeLabel", "COP"],
-    ["siegeMarkerSize", [1.2, 1.2]],
-    ["cleanupObjectTypes", [FLO_FactionCopTerminalType]]
+    ["siegeMarkerSize", [1.2, 1.2]]
 ];
 
+[_opBuilding, _config] call FLO_fnc_baseDiscoverTerminal;
 [_opBuilding, _config, _preserveMarker] call FLO_fnc_baseCreateMarker;
 [] call FLO_fnc_refreshRespawnMarkersByTerritory;
 [_opBuilding, _config] call FLO_fnc_baseConfigureMainActions;
@@ -55,21 +54,7 @@ _opBuilding addEventHandler ["Killed", {
     params ["_unit"];
     [_unit getVariable "FLO_BaseSide", "HQ"] commandChat "All Forces Fall Back. We Lost the COP...";
 
-    {
-        _x params ["_types", "_radius"];
-        {
-            if (_x isKindOf "Building") then { _x setDamage 1 } else { deleteVehicle _x };
-        } forEach (nearestObjects [_unit, _types, _radius]);
-    } forEach [
-        [[FLO_FactionCopType], 1000],
-        [[FLO_FactionCopTerminalType], 1000]
-    ];
-
-    private _markerName = _unit getVariable ["opMarkerName", ""];
-    if (_markerName != "") then { deleteMarker _markerName };
-    {
-        deleteVehicle _x;
-    } forEach ((allMissionObjects "EmptyDetector") select { position _x distance _unit < 20 });
+    [_unit, "opMarkerName"] call FLO_fnc_baseCleanupOwnedAssets;
 
     ["COP", 2, format ["COP destroyed at %1", getPos _unit]] call FLO_fnc_log;
 }];

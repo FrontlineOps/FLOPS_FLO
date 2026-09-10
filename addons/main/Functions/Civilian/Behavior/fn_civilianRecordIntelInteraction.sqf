@@ -13,7 +13,7 @@ if (_groupId != "") then {
     if !(isNil "_groupData") then {
         [
             _groupId,
-            createHashMapFromArray [["civilianLastIntelAt", _at]]
+            createHashMapFromArray [["civilianLastIntelAt", _at], ["civilianIntelElapsedOffset", 0]]
         ] call FLO_fnc_virtualizationPatchGroup;
     };
 };

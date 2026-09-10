@@ -34,7 +34,10 @@
 params ["_groupId", "_groupData", "_currentIdx", "_waypoints"];
 
 // Check for transport dismount at this waypoint
-[_groupId] call FLO_fnc_transportDismount;
+private _dismounted = [_groupId] call FLO_fnc_transportDismount;
+// Dismount may publish a reserve return route. The caller's insertion route
+// no longer owns the cursor and must not be written back over that route.
+if (_dismounted && {(_groupData get "waypoints") isNotEqualTo _waypoints}) exitWith {};
 
 if (_waypoints isEqualTo [] || _currentIdx >= count _waypoints) exitWith {
     [_groupData, "idle"] call FLO_fnc_virtualizationSetRuntimeState;

@@ -28,6 +28,8 @@ if (isNil "FLO_GTN_CombatState") then {
     FLO_GTN_CombatState set ["objectiveContextCache", createHashMap];
     FLO_GTN_CombatState set ["objectiveContextCellSize", 250];
     FLO_GTN_CombatState set ["engagements", createHashMap];
+    // Runtime-only sub-unit losses survive engagement-zone changes, not saves.
+    FLO_GTN_CombatState set ["attritionRemainders", createHashMap];
     FLO_GTN_CombatState set ["engagementStateTTL", 120];
 };
 

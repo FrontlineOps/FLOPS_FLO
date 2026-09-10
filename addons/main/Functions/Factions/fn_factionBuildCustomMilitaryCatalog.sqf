@@ -78,6 +78,7 @@ private _groundArmor = [["F_Tank_List"]] call FLO_fnc_factionBuildVehiclePoolFro
 private _groundTransport = [["F_Truck_List"]] call FLO_fnc_factionBuildVehiclePoolFromVariables;
 private _airTransport = [["F_Heli_List", "F_Heli_Respawn_List"]] call FLO_fnc_factionBuildVehiclePoolFromVariables;
 private _mobileAA = (_groundMechanized + _groundArmor) arrayIntersect (_groundMechanized + _groundArmor);
+_mobileAA = _mobileAA select { "mobileAA" in ([_x] call FLO_fnc_factionClassifyVehicle) };
 
 if (isNil "FLO_FactionRadar" || {!(FLO_FactionRadar isEqualType "")}) then {
     throw "Custom BLUFOR definition requires text FLO_FactionRadar";

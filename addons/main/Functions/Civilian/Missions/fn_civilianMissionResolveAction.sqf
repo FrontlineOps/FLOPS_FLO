@@ -23,15 +23,37 @@ if (!isServer) exitWith {
     false
 };
 
-switch (toUpper _mode) do {
+private _modeKey = toUpper _mode;
+private _missionType = switch (_modeKey) do {
+    case "REPAIR_COMPLETE";
+    case "REPAIR_FAILED": { "repair_vehicle" };
+    case "DELIVERY_COMPLETE": { "deliver_supplies" };
+    case "MINEFIELD_COMPLETE": { "clear_minefield" };
+    case "CHECKPOINT_COMPLETE": { "establish_checkpoint" };
+    default { "" };
+};
+if (_missionType == "") exitWith { false };
+_args params [["_source", objNull, [objNull]]];
+if (isNull _source) exitWith { false };
+private _missionId = _source getVariable ["missionTaskId", ""];
+private _resolution = ["MISSION_COMPLETE", "MISSION_FAILED"] select (_modeKey == "REPAIR_FAILED");
+
+// Claim the active mission before side effects; duplicate and stale callbacks stop here.
+if !([_resolution, [_missionId, _missionType, _source]] call FLO_fnc_civilianMissionManager) exitWith { false };
+
+if (_missionType == "repair_vehicle") then {
+    _source setVariable ["FLO_CivilianMissionResolved", true, true];
+    _source removeEventHandler ["Killed", _source getVariable "FLO_CivilianRepairKilledEH"];
+    _source setVariable ["FLO_CivilianRepairKilledEH", -1];
+    [_source, false] remoteExecCall ["FLO_fnc_civilianRepairActionLocal", 0, _source];
+};
+
+switch (_modeKey) do {
     case "REPAIR_COMPLETE": {
-        _args params [["_vehicle", objNull, [objNull]], ["_actionId", -1, [0]]];
+        _args params [["_vehicle", objNull, [objNull]]];
         if (isNull _vehicle) exitWith { false };
 
         _vehicle setDamage 0;
-        if (_actionId >= 0) then {
-            [_vehicle, _actionId] remoteExec ["BIS_fnc_holdActionRemove", 0, _vehicle];
-        };
 
         private _taskId = _vehicle getVariable ["missionTaskId", ""];
         if (_taskId != "") then {
@@ -40,7 +62,6 @@ switch (toUpper _mode) do {
 
         [0.35, "increase"] call FLO_fnc_adjustReputation;
         ["ScoreAdded", ["Vehicle Repaired", 0]] remoteExec ["BIS_fnc_showNotification", 0];
-        ["MISSION_COMPLETE", [true, "repair_vehicle"]] call FLO_fnc_civilianMissionManager;
         true
     };
 
@@ -54,7 +75,6 @@ switch (toUpper _mode) do {
         };
 
         [-0.35, "decrease"] call FLO_fnc_adjustReputation;
-        ["MISSION_FAILED", ["repair_vehicle"]] call FLO_fnc_civilianMissionManager;
         true
     };
 
@@ -74,7 +94,6 @@ switch (toUpper _mode) do {
 
         [0.35, "increase"] call FLO_fnc_adjustReputation;
         ["ScoreAdded", ["Resources Delivered", 0]] remoteExec ["BIS_fnc_showNotification", 0];
-        ["MISSION_COMPLETE", [true, "deliver_supplies"]] call FLO_fnc_civilianMissionManager;
         true
     };
 
@@ -94,7 +113,6 @@ switch (toUpper _mode) do {
 
         [0.35, "increase"] call FLO_fnc_adjustReputation;
         ["ScoreAdded", ["Minefield Cleared", 0]] remoteExec ["BIS_fnc_showNotification", 0];
-        ["MISSION_COMPLETE", [true, "clear_minefield"]] call FLO_fnc_civilianMissionManager;
         true
     };
 
@@ -140,9 +158,7 @@ switch (toUpper _mode) do {
             };
         };
 
-        ["MISSION_COMPLETE", [true, "establish_checkpoint"]] call FLO_fnc_civilianMissionManager;
         true
     };
-};
-
-false
+    default { false };
+}

@@ -52,7 +52,7 @@ private _supplyJobs = [];
 
     private _className = _x get "className";
     private _entryKind = _x get "entryKind";
-    private _quantity = if ("quantity" in _x) then { floor (_x get "quantity") } else { 1 };
+    private _quantity = if ("quantity" in _x) then { _x get "quantity" } else { 1 };
     private _container = if ("container" in _x) then { _x get "container" } else { "auto" };
     private _slot = if ("slot" in _x) then { _x get "slot" } else { "" };
 
@@ -67,9 +67,14 @@ private _supplyJobs = [];
         _message = "Cart line has invalid item data.";
         continue;
     };
-    if (_quantity < 1 || {_quantity > 20}) then {
+    if (_quantity != floor _quantity || {_quantity < 1} || {_quantity > 20}) then {
         _valid = false;
         _message = "Cart quantity is invalid.";
+        continue;
+    };
+    if !(_container in FLO_StoreGearContainers && {_slot in ["", "primary", "handgun", "secondary", "assigned", "uniform", "vest", "backpack", "headgear", "facewear", "binocular"]}) then {
+        _valid = false;
+        _message = "Cart equipment destination is invalid.";
         continue;
     };
 

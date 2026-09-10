@@ -119,7 +119,6 @@ if (_attacker isEqualTo sideUnknown) then {
             if (
                 _previousState != "securing"
                 || {(_previousCaptureSide isNotEqualTo _attacker)}
-                || {_secureStartedAt < 0}
             ) then {
                 _secureStartedAt = _currentTime;
             };

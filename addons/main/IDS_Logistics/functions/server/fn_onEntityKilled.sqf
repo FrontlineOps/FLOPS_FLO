@@ -30,6 +30,7 @@ params [
 
 // Remove from tracking array
 IDS_Logistics_PlacedEntities = IDS_Logistics_PlacedEntities - [_unit];
+IDS_Logistics_ManipulatedEntities = IDS_Logistics_ManipulatedEntities - [_unit];
 
 // Delete entity
 deleteVehicle _unit;

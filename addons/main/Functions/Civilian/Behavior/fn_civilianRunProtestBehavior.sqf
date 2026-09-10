@@ -84,13 +84,14 @@ _unit setVariable ["FLO_isProtester", false, true];
 _unit setVariable ["FLO_ProtestTarget", objNull, false];
 _unit setVariable ["FLO_ProtestExpiresAt", -1, false];
 _unit setVariable ["FLO_ProtestLastAnimAt", -1, false];
-_unit switchMove "";
-_unit enableAI "PATH";
-_unit enableAI "MOVE";
-_unit setBehaviour "SAFE";
-_unit setSpeedMode "LIMITED";
 _unit setVariable ["FLO_ProtestWorkerRunning", false, false];
 
-if (!captive _unit) then {
+// Detention owns movement and animation once it has stopped the protest.
+if (alive _unit && {!captive _unit} && {!(_unit getVariable ["FLO_CivilianDetained", false])}) then {
+    _unit switchMove "";
+    _unit enableAI "PATH";
+    _unit enableAI "MOVE";
+    _unit setBehaviour "SAFE";
+    _unit setSpeedMode "LIMITED";
     [[_unit]] call FLO_fnc_civilianActions;
 };

@@ -13,13 +13,13 @@ private _deliveryRadius = _network get "NODE_DELIVERY_RADIUS";
         alive _x
         && {_x getVariable ["FLO_LogisticsShipment", false]}
         && {!(_x getVariable ["FLO_LogisticsDelivered", false])}
+        && {(_x getVariable ["FLO_LogisticsSide", sideUnknown]) isEqualTo _managedSide}
         && {!([_x] call FLO_fnc_objectiveDevelopmentShipmentTargetsActiveProject)}
     };
     if (_shipments isEqualTo []) then { continue };
 
-    private _shipment = _shipments select 0;
-    private _shipmentSide = _shipment getVariable ["FLO_LogisticsSide", sideUnknown];
-    if (_shipmentSide isNotEqualTo _managedSide) then { continue };
+    private _deliveryIndex = _shipments findIf { (_x getVariable ["FLO_LogisticsOriginNodeId", ""]) != _nodeId };
+    private _shipment = _shipments select (_deliveryIndex max 0);
     if ((_shipment getVariable ["FLO_LogisticsOriginNodeId", ""]) == _nodeId) then {
         if !(_shipment getVariable ["FLO_LogisticsSameNodeWarned", false]) then {
             _shipment setVariable ["FLO_LogisticsSameNodeWarned", true, true];

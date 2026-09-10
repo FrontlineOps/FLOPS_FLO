@@ -69,5 +69,6 @@ _trigger setVariable ["supplyBox", _supplyBox];
 
 createHashMapFromArray [
     ["taskId", _taskId],
+    ["source", _trigger],
     ["position", _deliveryPos]
 ]

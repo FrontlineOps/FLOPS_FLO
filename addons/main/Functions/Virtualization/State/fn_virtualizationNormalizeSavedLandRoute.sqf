@@ -4,7 +4,8 @@
  *   Rebuilds derived current-version LAND route geometry during restore when
  *   exact terrain validation rejects the saved continuation. The saved record
  *   shape must already be current and structurally valid; this only rebases
- *   canonical route waypoints from the saved authoritative group position.
+ *   canonical route waypoints from the validated movement origin. Attached
+ *   passengers retain their carrier position and defer ingress until dismount.
  *
  * Return Value:
  *   BOOL - True when route geometry was normalized and revalidated
@@ -13,12 +14,12 @@
 params [
     ["_savedData", createHashMap, [createHashMap]],
     ["_groupId", "", [""]],
-    ["_failureReason", "", [""]]
+    ["_failureReason", "", [""]],
+    "_routeStartPos"
 ];
 
 private _waypoints = _savedData get "waypoints";
 if (_waypoints isEqualTo []) exitWith { false };
-if (_failureReason == "START_IN_WATER") exitWith { false };
 
 private _currentWaypointIndex = _savedData get "currentWaypointIndex";
 private _loopRoute = (_savedData get "autoPatrol") || {(_savedData get "patrolConfig") isNotEqualTo []};
@@ -30,7 +31,7 @@ private _sourceTag = if (_pathSource == "") then {
 };
 
 private _routeResult = [
-    _savedData get "position",
+    _routeStartPos,
     _waypoints,
     _currentWaypointIndex,
     _loopRoute,
@@ -83,7 +84,7 @@ _savedData set ["currentWaypointIndex", 0];
 [_savedData, _groupId] call FLO_fnc_virtualizationValidateSavedGroup;
 private _routeValidation = [
     _groupId,
-    _savedData get "position",
+    _routeStartPos,
     _savedData get "waypoints",
     _savedData get "currentWaypointIndex",
     _savedData get "autoPatrol",

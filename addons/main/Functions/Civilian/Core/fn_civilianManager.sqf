@@ -37,6 +37,7 @@ private _civilianClass = [
         ["requestedByName", ""],
         ["startedAt", -1],
         ["taskId", ""],
+        ["source", objNull],
         ["position", []],
         ["offer", createHashMap]
     ]],

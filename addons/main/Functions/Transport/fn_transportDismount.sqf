@@ -64,7 +64,7 @@ private _detached = if (_insertMode == "AIR_DROP" && {!isNull _realGroup}) then 
 
     _dropCount
 } else {
-    [_transportGroupId] call FLO_fnc_transportDetachAll
+    [_transportGroupId, false] call FLO_fnc_transportDetachAll
 };
 
 // Clear dismount config
