@@ -44,5 +44,6 @@ _trigger setVariable ["targetPos", _pos];
 
 createHashMapFromArray [
     ["taskId", _taskId],
+    ["source", _trigger],
     ["position", _pos]
 ]

@@ -36,31 +36,14 @@ _vehicle setDir (_road getDir ((roadsConnectedTo _road) param [0, _road]));
 _vehicle setDamage 0.7;
 _vehicle setVariable ["missionTaskId", _taskId, true];
 
-_vehicle addEventHandler ["Killed", {
+private _killedEH = _vehicle addEventHandler ["Killed", {
     params ["_unit"];
     ["REPAIR_FAILED", [_unit]] call FLO_fnc_civilianMissionResolveAction;
 }];
+_vehicle setVariable ["FLO_CivilianRepairKilledEH", _killedEH];
+_vehicle setVariable ["FLO_CivilianMissionResolved", false, true];
 
-[
-    _vehicle,
-    "Repair Civilian Vehicle",
-    "\a3\ui_f\data\IGUI\Cfg\HoldActions\holdAction_connect_ca.paa",
-    "\a3\ui_f\data\IGUI\Cfg\HoldActions\holdAction_connect_ca.paa",
-    "_this distance _target < 7",
-    "_caller distance _target < 7",
-    {},
-    {},
-    {
-        params ["_target", "_caller", "_actionId"];
-        ["REPAIR_COMPLETE", [_target, _actionId]] remoteExecCall ["FLO_fnc_civilianMissionResolveAction", 2, false];
-    },
-    {},
-    [],
-    10,
-    0,
-    true,
-    false
-] remoteExec ["BIS_fnc_holdActionAdd", 0, _vehicle];
+[_vehicle, true] remoteExecCall ["FLO_fnc_civilianRepairActionLocal", 0, _vehicle];
 
 if ((FLO_ReputationHandle get "value") < 7) then {
     private _hostileForce = call FLO_fnc_civilianGetHostileForcePool;
@@ -80,5 +63,6 @@ if ((FLO_ReputationHandle get "value") < 7) then {
 
 createHashMapFromArray [
     ["taskId", _taskId],
+    ["source", _vehicle],
     ["position", _pos]
 ]

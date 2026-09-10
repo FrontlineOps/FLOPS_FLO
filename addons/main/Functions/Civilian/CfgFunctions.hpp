@@ -50,6 +50,7 @@ class CivilianMissions {
     class civilianBuildMissionOffer {};
     class civilianGetHostileForcePool {};
     class civilianMissionResolveAction {};
+    class civilianRepairActionLocal {};
     class civilianMissionManager {};
     class civilianRequestMission {};
 };

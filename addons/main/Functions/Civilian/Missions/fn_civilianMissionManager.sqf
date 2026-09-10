@@ -36,6 +36,7 @@ private _resetPairs = [
     ["requestedByName", ""],
     ["startedAt", -1],
     ["taskId", ""],
+    ["source", objNull],
     ["position", []],
     ["offer", createHashMap]
 ];
@@ -108,11 +109,12 @@ switch (_modeKey) do {
         _missionState set ["requestedByName", name _caller];
         _missionState set ["startedAt", diag_tickTime];
         _missionState set ["taskId", _result get "taskId"];
+        _missionState set ["source", _result get "source"];
         _missionState set ["position", _result get "position"];
         _missionState set ["offer", _offer];
         FLO_CivilianMission_Active = true;
 
-        ["CIV_MISSION", 2, format [
+        ["CIV_MISSION", 3, format [
             "Started civilian mission %1 for objective %2",
             _offer get "missionType",
             _offer get "targetObjectiveId"
@@ -127,18 +129,28 @@ switch (_modeKey) do {
 
     case "MISSION_COMPLETE";
     case "MISSION_FAILED": {
-        private _wasActive = _missionState get "active";
-        {
-            _missionState set [_x select 0, _x select 1];
-        } forEach _resetPairs;
-        FLO_CivilianMission_Active = false;
+        _args params [["_missionId", "", [""]], ["_missionType", "", [""]], ["_source", objNull, [objNull]]];
+        private _resolved = false;
+        isNil {
+            if (
+                _missionId == ""
+                || {isNull _source}
+                || {!(_missionState get "active")}
+                || {(_missionState get "id") != _missionId}
+                || {(_missionState get "type") != _missionType}
+                || {(_missionState get "source") isNotEqualTo _source}
+            ) exitWith {};
 
-        if (_wasActive) then {
-            ["CIV_MISSION", 2, format ["Civilian mission resolved with state %1", _modeKey]] call FLO_fnc_log;
+            {
+                _missionState set [_x select 0, _x select 1];
+            } forEach _resetPairs;
+            FLO_CivilianMission_Active = false;
+            _resolved = true;
         };
-
-        true
+        if (_resolved) then {
+            ["CIV_MISSION", 3, format ["Civilian mission %1 (%2) resolved with state %3", _missionId, _missionType, _modeKey]] call FLO_fnc_log;
+        };
+        _resolved
     };
-};
-
-createHashMap
+    default { createHashMap };
+}
