@@ -29,6 +29,8 @@ _stats set ["lastBatchEnd", _batchEnd];
 
 for "_i" from _batchStart to _batchEnd do {
     private _groupId = _groupIds select _i;
+    // Processing a carrier can remove a passenger later in this cached batch.
+    if !(_groupId in _groups) then { continue };
     private _groupData = _groups get _groupId;
     _processed = _processed + 1;
 

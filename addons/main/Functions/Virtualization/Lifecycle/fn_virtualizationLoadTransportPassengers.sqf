@@ -42,6 +42,9 @@ private _poolUnits = _pools get "units";
 
     private _infComp = _attachedData get "comp";
     private _infUnitCount = _attachedData get "unitCount";
+    if ((_attachedData get "groupType") == "infantry") then {
+        _infComp = _infComp select [0, _infUnitCount];
+    };
     if (_infUnitCount <= 0 && {_infComp isEqualTo []}) then {
         ["VIRTUALIZATION", 1, format [
             "Transport %1 encountered zero-strength attached group %2 - removing stale passenger record",

@@ -4,18 +4,9 @@
 
 params ["_groupData", "_realGroup"];
 
-private _leader = leader _realGroup;
-private _state = "idle";
-private _leaderBehavior = behaviour _leader;
-private _leaderCommand = currentCommand _leader;
-
-if (_leaderBehavior isEqualTo "COMBAT") then {
-    _state = "holding";
-} else {
-    if (_leaderCommand isEqualTo "MOVE") then {
-        _state = "moving";
-    };
-};
+// Remaining route ownership is independent of the leader's combat posture.
+// Virtual waypoint completion decides when an arrived terminal waypoint holds.
+private _state = "moving";
 if ((_groupData get "waypoints") isEqualTo []) then {
     _state = [_groupData] call FLO_fnc_virtualizationResolveRouteCompletionState;
 };

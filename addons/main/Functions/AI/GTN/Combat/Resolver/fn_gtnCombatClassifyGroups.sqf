@@ -85,10 +85,10 @@ private _cellKeyStride = (_cellKeyBase * 2) + 1;
         private _eastCellGroups = _eastGroupsByCell getOrDefault [_seedCellKey, []];
         _eastCellGroups pushBack _groupId;
         _eastGroupsByCell set [_seedCellKey, _eastCellGroups];
+        _eastSeeds pushBack _groupId;
 
         if !(_eastSeedCells getOrDefault [_seedCellKey, false]) then {
             _eastSeedCells set [_seedCellKey, true];
-            _eastSeeds pushBack _groupId;
 
             for "_xCell" from (_seedCellX - _threatCellRadius) to (_seedCellX + _threatCellRadius) do {
                 for "_yCell" from (_seedCellY - _threatCellRadius) to (_seedCellY + _threatCellRadius) do {
@@ -100,10 +100,10 @@ private _cellKeyStride = (_cellKeyBase * 2) + 1;
         private _westCellGroups = _westGroupsByCell getOrDefault [_seedCellKey, []];
         _westCellGroups pushBack _groupId;
         _westGroupsByCell set [_seedCellKey, _westCellGroups];
+        _westSeeds pushBack _groupId;
 
         if !(_westSeedCells getOrDefault [_seedCellKey, false]) then {
             _westSeedCells set [_seedCellKey, true];
-            _westSeeds pushBack _groupId;
 
             for "_xCell" from (_seedCellX - _threatCellRadius) to (_seedCellX + _threatCellRadius) do {
                 for "_yCell" from (_seedCellY - _threatCellRadius) to (_seedCellY + _threatCellRadius) do {

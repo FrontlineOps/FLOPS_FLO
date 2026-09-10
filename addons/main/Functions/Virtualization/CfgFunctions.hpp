@@ -170,6 +170,9 @@ class VirtualizationState {
     class virtualizationResolveRouteCompletionState {};
     class virtualizationValidateWaypointState {};
     class virtualizationValidateRegistry {};
+    class virtualizationValidateTransportGraph {};
+    class virtualizationNormalizeSavedTransport {};
+    class virtualizationResolveSavedLandStart {};
     class virtualizationNormalizeSavedLandRoute {};
     class virtualizationSerializeRegistry {};
     class virtualizationRestoreRegistry {};
@@ -190,6 +193,7 @@ class VirtualizationState {
     class virtualizationSetExecutionState {};
     class virtualizationClearExecutionState {};
     class virtualizationSetRuntimeState {};
+    class virtualizationResetMovementClock {};
     class virtualizationSetRealGroup {};
     class virtualizationClearRealGroup {};
     class virtualizationSetRealVehicles {};
@@ -231,6 +235,7 @@ class VirtualizationState {
     class virtualizationRestoreAAState {};
     class virtualizationRestoreTransportState {};
     class virtualizationRestoreReplacementState {};
+    class virtualizationRestoreTimerState {};
 };
 
 class VirtualizationDebug {

@@ -42,12 +42,8 @@ if ([_groupData] call FLO_fnc_virtualizationIsTransportCarrier) then {
     } forEach _passengerIds;
 };
 
-if ((_groupData get "mountedIn") != "") then {
-    [_groupData] call FLO_fnc_virtualizationClearMountedIn;
-};
-
 if ((_groupData get "attachedTo") != "") then {
-    [_groupData] call FLO_fnc_virtualizationClearTransportAttachment;
+    [_groupId] call FLO_fnc_virtualizationUnlinkTransportGroups;
 };
 
 private _survivorComp = _aliveUnits apply { typeOf _x };

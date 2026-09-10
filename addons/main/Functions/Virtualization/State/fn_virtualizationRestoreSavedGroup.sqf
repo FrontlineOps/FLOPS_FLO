@@ -66,6 +66,10 @@ _groupData set ["civilianRoutineUntil", _civilianRoutineUntil];
 [_groupData, _savedData] call FLO_fnc_virtualizationRestoreAAState;
 [_groupData, _savedData] call FLO_fnc_virtualizationRestoreTransportState;
 [_groupData, _savedData] call FLO_fnc_virtualizationRestoreReplacementState;
+[_groupData, _savedData] call FLO_fnc_virtualizationRestoreTimerState;
+if (_civilianRoutineState == "return" && {(_savedData get "civilianRoutineState") == "protest"}) then {
+    _groupData set ["civilianRoutineUntil", -1];
+};
 [_groupData, _groupId] call FLO_fnc_virtualizationValidateGroup;
 call FLO_fnc_virtualizationTouchRegistry;
 

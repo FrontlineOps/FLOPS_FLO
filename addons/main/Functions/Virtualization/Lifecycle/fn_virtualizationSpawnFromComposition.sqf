@@ -4,6 +4,12 @@
 
 params ["_groupId", "_side", "_groupType", "_position", "_comp", "_groupData"];
 
+// Older valid infantry records can retain classes for virtual casualties.
+// Personnel strength caps spawning; vehicle composition retains asset semantics.
+if (_groupType == "infantry") then {
+    _comp = _comp select [0, _groupData get "unitCount"];
+};
+
 private _spawnParkedHelicopters = _groupType == "helicopter"
     && { (_groupData get "waypoints") isEqualTo [] }
     && { (_groupData get "missionLock") == "" }

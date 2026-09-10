@@ -18,6 +18,7 @@ params ["_groupId", "_gData", "_resumeStates"];
 
 if (_gData get "inCombat") exitWith {};
 _resumeStates set [_groupId, _gData get "state"];
+[_gData] call FLO_fnc_virtualizationResetMovementClock;
 
 [
     _groupId,

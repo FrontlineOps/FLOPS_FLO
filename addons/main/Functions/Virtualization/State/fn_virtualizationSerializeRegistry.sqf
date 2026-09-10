@@ -5,11 +5,26 @@
  *   throws so the mission save transaction cannot publish partial force data.
  */
 
-call FLO_fnc_virtualizationValidateRegistry;
+params [["_snapshot", false, [false, createHashMap]], ["_capturedAtTick", diag_tickTime, [0]]];
 
+// One engine deep copy freezes nested records before scheduled serialization.
+// A detach between two live record reads must never enter the persisted graph.
+private _captureStart = diag_tickTime;
+if (_snapshot isEqualType false) then {
+    call FLO_fnc_virtualizationValidateRegistry;
+    isNil {
+        _snapshot = +(call FLO_fnc_virtualizationGetGroupMap);
+        _capturedAtTick = diag_tickTime;
+    };
+};
+private _captureMs = (diag_tickTime - _captureStart) * 1000;
+if (_captureMs > 20) then {
+    ["VIRTUALIZATION", 4, format ["[PERF] Save snapshot groups=%1 captureMs=%2", count _snapshot, _captureMs]] call FLO_fnc_log;
+};
 private _serialized = createHashMap;
 {
-    _serialized set [_x, [_y] call FLO_fnc_virtualizationSerializeGroup];
-} forEach (call FLO_fnc_virtualizationGetGroupMap);
+    _serialized set [_x, [_y, _capturedAtTick] call FLO_fnc_virtualizationSerializeGroup];
+} forEach _snapshot;
+[_serialized] call FLO_fnc_virtualizationValidateTransportGraph;
 
 _serialized

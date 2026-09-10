@@ -52,7 +52,7 @@ private _detachIndex = 0;
     if (_attachedTo == _groupId) then {
         if (_catastrophicPassengerLoss) then { continue };
         private _offsetDir = (_detachIndex * 45) mod 360;
-        if ([_otherId, _offsetDir] call FLO_fnc_transportDetach) then {
+        if ([_otherId, _offsetDir, false] call FLO_fnc_transportDetach) then {
             _detachIndex = _detachIndex + 1;
             [_otherId, "CARRIER_REMOVAL"] call FLO_fnc_transportApplyPostDismountWaypoint;
         } else {
@@ -125,6 +125,7 @@ private _removedSnapshot = [_groupId] call FLO_fnc_virtualizationSnapshotGroup;
 
 ["cleanup", _groupId] call FLO_fnc_virtualizationDebugManager;
 _groups deleteAt _groupId;
+FLO_VirtUpdate set ["lastGroupCacheTime", -1e10];
 call FLO_fnc_virtualizationTouchRegistry;
 
 if (_catastrophicPassengerLoss) then {

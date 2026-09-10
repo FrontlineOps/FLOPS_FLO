@@ -8,10 +8,6 @@ private _sideKey = _pools get "sideKey";
 private _unitPool = _pools get "units";
 [_unitPool, "units", _sideKey, _groupType] call FLO_fnc_virtualizationRequirePoolEntries;
 
-private _poolData = [_groupType, _pools] call FLO_fnc_virtualizationGetGroundCombatVehiclePool;
-_poolData params ["_vehiclePool", "_vehiclePoolName"];
-[_vehiclePool, _vehiclePoolName, _sideKey, _groupType] call FLO_fnc_virtualizationRequirePoolEntries;
-
 private _groupData = (call FLO_fnc_virtualizationGetGroupMap) get _groupId;
 private _composition = _groupData get "comp";
 if (_composition isEqualTo []) then {

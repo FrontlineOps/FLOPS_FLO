@@ -4,6 +4,13 @@
  *   Atomically creates the reciprocal passenger/carrier relationship.
  */
 
+// Two-sided ownership changes must not be suspended between record writes.
+if (canSuspend) exitWith {
+    private _result = false;
+    isNil { _result = _this call FLO_fnc_virtualizationLinkTransportGroups; };
+    _result
+};
+
 params [
     ["_passengerGroupId", "", [""]],
     ["_carrierGroupId", "", [""]],
