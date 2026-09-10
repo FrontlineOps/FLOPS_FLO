@@ -39,6 +39,7 @@ private _objectiveLastUpdateTimes = createHashMap;
 private _lastRuntimeSyncAt = diag_tickTime - _runtimeSyncInterval;
 private _dirtyRuntimeObjectiveIds = createHashMap;
 private _forceRuntimeSync = false;
+private _lastPerfLogAt = -5;
 
 // Initialize inactive update index
 private _inactiveMonitorIndex = 0;
@@ -52,13 +53,8 @@ while {true} do {
         waitUntil { !isNil "FLO_Objectives" };
         _objKeys = keys FLO_Objectives; // Refresh keys
     };
-    private _currentObjectiveCount = count (keys FLO_Objectives);
-    if ((count _objKeys) != _currentObjectiveCount) then {
-        _objKeys = keys FLO_Objectives;
-        if (_inactiveMonitorIndex >= count _objKeys) then {
-            _inactiveMonitorIndex = 0;
-        };
-    };
+    _objKeys = keys FLO_Objectives;
+    if (_inactiveMonitorIndex >= count _objKeys) then { _inactiveMonitorIndex = 0 };
 
     private _activeObjectives = [];
     private _liveObjectives = [];
@@ -107,52 +103,11 @@ while {true} do {
         _scanAttempts = _scanAttempts + 1;
     };
 
-    // Pre-compute virtual contribution only for objectives updated this tick.
-    // A virtual group contributes to the nearest objective whose area contains it.
-    private _virtualObjectiveCounts = createHashMap;
-    {
-        _virtualObjectiveCounts set [_x, [0, 0]]; // [westCount, eastCount]
-    } forEach _objectivesToUpdate;
-
-    if (_objectivesToUpdate isNotEqualTo [] && {!isNil "FLO_VirtualForceRegistry"}) then {
-        private _groups = call FLO_fnc_virtualizationGetGroupMap;
-        {
-            private _gData = _x;
-            if (_gData get "isActive") then { continue };
-            if ((_gData get "unitCount") <= 0) then { continue };
-            if (([_gData] call FLO_fnc_virtualizationGetTransportAttachment) != "") then { continue };
-            if !([_gData get "groupType"] call FLO_fnc_gtnCombatIsDirectCombatGroup) then { continue };
-
-            private _gPos = _gData get "position";
-            private _bestObjId = "";
-            private _bestDist = 1000000000;
-
-            {
-                private _oId = _x;
-                private _oData = FLO_Objectives get _oId;
-                private _dist = _gPos distance2D (_oData get "position");
-                if (_dist < (_oData get "radius") && {_dist < _bestDist}) then {
-                    _bestDist = _dist;
-                    _bestObjId = _oId;
-                };
-            } forEach _objectivesToUpdate;
-
-            if (_bestObjId == "") then { continue };
-            if (_bestObjId in _liveObjectives) then { continue };
-
-            private _entry = _virtualObjectiveCounts get _bestObjId;
-            private _vCount = _gData get "unitCount";
-            private _gSide = _gData get "side";
-
-            if (_gSide isEqualTo west) then {
-                _entry set [0, (_entry select 0) + _vCount];
-            };
-            if (_gSide isEqualTo east) then {
-                _entry set [1, (_entry select 1) + _vCount];
-            };
-            _virtualObjectiveCounts set [_bestObjId, _entry];
-        } forEach (values _groups);
-    };
+    // Pre-compute virtual contribution using all objectives for unique membership.
+    private _contributionStart = diag_tickTime;
+    private _captureWorkload = [];
+    private _virtualObjectiveCounts = [_objectivesToUpdate, _liveObjectives, _captureWorkload] call FLO_fnc_collectVirtualObjectiveCounts;
+    private _contributionMs = (diag_tickTime - _contributionStart) * 1000;
 
     // === EXECUTE UPDATES ===
     {
@@ -208,5 +163,13 @@ while {true} do {
         [_player, _match, false] call FLO_fnc_captureUIPublishPlayerState;
     } forEach _allPlayers;
 
+    private _cycleMs = (diag_tickTime - _currentTime) * 1000;
+    if (_cycleMs > 20 && {diag_tickTime - _lastPerfLogAt >= 5}) then {
+        _lastPerfLogAt = diag_tickTime;
+        ["OBJECTIVEMONITOR", 4, format [
+            "[PERF] cycle=%1ms virtualCounts=%2ms objectives=%3 updated=%4 players=%5 groups/eligible/cells/checks=%6",
+            _cycleMs, _contributionMs, count _objKeys, count _objectivesToUpdate, count _allPlayers, _captureWorkload
+        ]] call FLO_fnc_log;
+    };
     sleep _updateInterval;
 };
