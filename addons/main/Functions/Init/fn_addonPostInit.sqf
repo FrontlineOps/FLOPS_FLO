@@ -7,6 +7,23 @@
  *   shell that loads the addon.
  */
 
+// Addon postInit also runs in the world scene behind Arma's main menu. Wait
+// for the gameplay display on clients/hosts; menu scenes must never bootstrap.
+if (is3DEN) exitWith {};
+if (hasInterface && {!isNull findDisplay 0}) exitWith {};
+if (hasInterface && {isNull findDisplay 46}) exitWith {
+    [{
+        !isNull findDisplay 46 || {!isNull findDisplay 0}
+    }, {
+        if (!isNull findDisplay 0) exitWith {};
+        [] call FLO_fnc_addonPostInit;
+    }, []] call CBA_fnc_waitUntilAndExecute;
+};
+
+// Campaign persistence owns saving. Native suspend saves serialize the live
+// simulation and script graphs, which cannot safely resume FLO's bootstrap.
+enableSaving [false, false];
+
 [] call FLO_fnc_playerSideAdapterInit;
 
 if (isServer) then {
