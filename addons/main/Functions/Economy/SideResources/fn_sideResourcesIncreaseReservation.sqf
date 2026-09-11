@@ -1,3 +1,5 @@
+if (canSuspend) exitWith { [_this, FLO_fnc_sideResourcesIncreaseReservation] call FLO_fnc_economyRunAtomic };
+
 params [
     "_treasury",
     ["_reservationId", "", [""]],
@@ -6,7 +8,7 @@ params [
 ];
 
 if (_reservationId == "") then { throw "Treasury reservation ID cannot be empty"; };
-if (_amount <= 0) then { throw format ["Treasury reservation increase must be positive, got %1", _amount]; };
+if (!finite _amount || {_amount <= 0}) then { throw format ["Treasury reservation increase must be positive, got %1", _amount]; };
 
 private _reservations = _treasury get "_reservations";
 if !(_reservationId in _reservations) then {

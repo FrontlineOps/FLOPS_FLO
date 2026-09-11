@@ -1,6 +1,6 @@
 params ["_treasury", ["_amount", 0, [0]]];
 
-if (_amount < 0) then {
+if (!finite _amount || {_amount < 0}) then {
     throw format ["Affordability amount cannot be negative: %1", _amount];
 };
 

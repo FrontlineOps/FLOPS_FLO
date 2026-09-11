@@ -42,7 +42,7 @@ private _seenReservations = createHashMap;
     [_sideKey] call FLO_fnc_objectiveDevelopmentGetFundingObjectiveId;
     private _reservations = (FLO_SideResources get _sideKey) get "_reservations";
     {
-        if ((_x find "DEVELOPMENT:") != 0) then { continue };
+        if ((_y get "category") != "DEVELOPMENT" && {(_x find "DEVELOPMENT:") != 0}) then { continue };
         if !(_x in _seenReservations) then {
             throw format ["Treasury %1 contains orphaned Development reservation %2", _sideKey, _x];
         };

@@ -1,3 +1,5 @@
+if (canSuspend) exitWith { [_this, FLO_fnc_objectiveDevelopmentCompleteProject] call FLO_fnc_economyRunAtomic };
+
 params [
     ["_objectiveId", "", [""]],
     ["_objective", createHashMap, [createHashMap]]
@@ -39,5 +41,5 @@ private _effect = if (_branch == "REVENUE") then {
     _objectiveName,
     _effect
 ], "success"] call FLO_fnc_objectiveDevelopmentNotifySide;
-["ECONOMY", 2, format ["%1 completed %2 level %3", _objectiveId, _branch, _targetLevel]] call FLO_fnc_log;
+["ECONOMY", 3, format ["%1 completed %2 level %3", _objectiveId, _branch, _targetLevel]] call FLO_fnc_log;
 true

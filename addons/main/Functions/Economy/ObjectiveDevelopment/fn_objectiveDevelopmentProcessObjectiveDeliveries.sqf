@@ -1,3 +1,5 @@
+if (canSuspend) exitWith { [_this, FLO_fnc_objectiveDevelopmentProcessObjectiveDeliveries] call FLO_fnc_economyRunAtomic };
+
 params [
     ["_network", createHashMap, [createHashMap]],
     ["_objectiveId", "", [""]]
@@ -20,6 +22,11 @@ if ((_project get "sideKey") != _sideKey) then {
 };
 [_objectiveId, _objective, true] call FLO_fnc_objectiveDevelopmentValidateProject;
 if ((_project get "state") == "FUNDING") exitWith { 0 };
+private _enemyCountKey = ["opforCount", "bluforCount"] select (_side isEqualTo east);
+if ((_objective get "contested") || {_objective get "underAttack"} || {(_objective get _enemyCountKey) > 0}) exitWith {
+    _project set ["state", "PAUSED_COMBAT"];
+    0
+};
 
 private _shipments = nearestObjects [
     _objective get "position",

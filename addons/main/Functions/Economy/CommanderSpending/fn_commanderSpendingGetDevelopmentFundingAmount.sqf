@@ -3,7 +3,7 @@ params [
     ["_remainingCost", 0, [0]]
 ];
 
-if (_remainingCost <= 0) then {
+if (!finite _remainingCost || {_remainingCost <= 0}) then {
     throw format ["Development funding remaining cost must be positive, got %1", _remainingCost];
 };
 

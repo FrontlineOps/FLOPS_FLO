@@ -1,3 +1,5 @@
+if (canSuspend) exitWith { [_this, FLO_fnc_sideResourcesSpendResources] call FLO_fnc_economyRunAtomic };
+
 params [
     "_treasury",
     ["_amount", 0, [0]],
@@ -8,7 +10,7 @@ params [
     ["_publish", true, [false]]
 ];
 
-if (_amount <= 0) then {
+if (!finite _amount || {_amount <= 0}) then {
     throw format ["Treasury expenditure must be positive, got %1", _amount];
 };
 if !([_treasury, _amount] call FLO_fnc_sideResourcesCanAfford) exitWith { false };

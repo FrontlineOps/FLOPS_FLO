@@ -1,3 +1,5 @@
+if (canSuspend) exitWith { [_this, FLO_fnc_sideResourcesReleaseReservation] call FLO_fnc_economyRunAtomic };
+
 params [
     "_treasury",
     ["_reservationId", "", [""]],

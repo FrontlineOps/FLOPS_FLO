@@ -1,3 +1,5 @@
+if (canSuspend) exitWith { [_this, FLO_fnc_sideResourcesCommitReservation] call FLO_fnc_economyRunAtomic };
+
 params [
     "_treasury",
     ["_reservationId", "", [""]],
@@ -9,7 +11,7 @@ private _reservations = _treasury get "_reservations";
 if !(_reservationId in _reservations) then {
     throw format ["Unknown treasury reservation: %1", _reservationId];
 };
-if (_amount <= 0) then { throw format ["Reservation commit must be positive, got %1", _amount]; };
+if (!finite _amount || {_amount <= 0}) then { throw format ["Reservation commit must be positive, got %1", _amount]; };
 
 private _reservation = _reservations get _reservationId;
 private _remaining = _reservation get "remaining";
@@ -20,7 +22,7 @@ if (_amount > (_treasury get "_balance")) then {
 
 _treasury set ["_balance", (_treasury get "_balance") - _amount];
 private _nextRemaining = _remaining - _amount;
-if (_nextRemaining <= 0.001) then {
+if (_nextRemaining == 0) then {
     _reservations deleteAt _reservationId;
 } else {
     _reservation set ["remaining", _nextRemaining];

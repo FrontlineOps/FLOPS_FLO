@@ -46,6 +46,6 @@ if (_stateChanged) then { [] call FLO_fnc_sideResourcesPublishState; };
 
 private _elapsedMs = (diag_tickTime - _t0) * 1000;
 if (_elapsedMs > 10) then {
-    diag_log format ["[FLO][PERF] Economy income tick processed %1 objectives in %2 ms", count _objectiveIds, _elapsedMs];
+    ["ECONOMY", 4, format ["[PERF] Income tick objectives=%1 sides=%2 totalMs=%3", count _objectiveIds, count FLO_SideResources, _elapsedMs]] call FLO_fnc_log;
 };
 true

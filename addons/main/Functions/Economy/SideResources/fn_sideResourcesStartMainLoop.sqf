@@ -16,5 +16,5 @@ private _pfhId = [{
 
 FLO_SideResourceSystem set ["pfhId", _pfhId];
 FLO_SideResourceSystem set ["updateInterval", _interval];
-["ECONOMY", 2, format ["Started side income worker (%1s)", _interval]] call FLO_fnc_log;
+["ECONOMY", 3, format ["Started side income worker (%1s)", _interval]] call FLO_fnc_log;
 true

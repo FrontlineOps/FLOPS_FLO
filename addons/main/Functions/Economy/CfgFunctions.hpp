@@ -2,6 +2,7 @@ class Economy {
     file = "\z\flo\addons\main\Functions\Economy";
 
     class addMoney {};
+    class economyRunAtomic {};
     class sideResources {};
 };
 
@@ -28,6 +29,7 @@ class EconomySideResources {
     class sideResourcesSpendResources {};
     class sideResourcesStartMainLoop {};
     class sideResourcesTick {};
+    class sideResourcesValidateSavedState {};
 };
 
 class EconomyCommanderSpending {

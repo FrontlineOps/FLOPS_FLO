@@ -1,3 +1,5 @@
+if (canSuspend) exitWith { [_this, FLO_fnc_objectiveDevelopmentStartProject] call FLO_fnc_economyRunAtomic };
+
 params [
     ["_side", sideUnknown, [west]],
     ["_objectiveId", "", [""]],
@@ -82,7 +84,7 @@ private _objectiveName = [_objectiveId] call FLO_fnc_campaignObjectiveName;
     _fundingAmount,
     _cost
 ], "info"] call FLO_fnc_objectiveDevelopmentNotifySide;
-["ECONOMY", 2, format [
+["ECONOMY", 3, format [
     "%1 started funding %2 level %3 at %4 reserved=%5/%6",
     _sideKey,
     _branch,

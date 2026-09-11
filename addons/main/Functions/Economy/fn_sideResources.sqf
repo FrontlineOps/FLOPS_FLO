@@ -120,6 +120,9 @@ try {
         private _savedPayload = objNull;
         if (_restoring) then {
             _savedPayload = _savedResources get _sideKey;
+            if !(_savedPayload isEqualType createHashMap) then {
+                throw format ["ECONOMY saved %1 treasury payload must be a HashMap", _sideKey];
+            };
         };
 
         private _treasury = createHashMapObject [_treasuryClass, [_side, _savedPayload]];

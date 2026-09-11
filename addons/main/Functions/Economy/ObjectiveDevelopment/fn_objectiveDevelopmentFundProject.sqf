@@ -1,3 +1,5 @@
+if (canSuspend) exitWith { [_this, FLO_fnc_objectiveDevelopmentFundProject] call FLO_fnc_economyRunAtomic };
+
 params [
     ["_side", sideUnknown, [west]],
     ["_objectiveId", "", [""]]

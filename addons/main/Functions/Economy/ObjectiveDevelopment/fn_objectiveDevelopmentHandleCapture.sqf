@@ -1,3 +1,5 @@
+if (canSuspend) exitWith { [_this, FLO_fnc_objectiveDevelopmentHandleCapture] call FLO_fnc_economyRunAtomic };
+
 params [
     ["_objectiveId", "", [""]],
     ["_objective", createHashMap, [createHashMap]],

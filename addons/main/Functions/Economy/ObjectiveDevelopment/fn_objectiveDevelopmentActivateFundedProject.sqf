@@ -1,3 +1,5 @@
+if (canSuspend) exitWith { [_this, FLO_fnc_objectiveDevelopmentActivateFundedProject] call FLO_fnc_economyRunAtomic };
+
 params [["_objectiveId", "", [""]]];
 
 if !(_objectiveId in FLO_Objectives) then {
@@ -41,7 +43,7 @@ private _objectiveName = [_objectiveId] call FLO_fnc_campaignObjectiveName;
     _project get "targetLevel",
     _objectiveName
 ], "success"] call FLO_fnc_objectiveDevelopmentNotifySide;
-["ECONOMY", 2, format [
+["ECONOMY", 3, format [
     "%1 activated %2 level %3 at %4 for %5",
     _sideKey,
     _project get "branch",

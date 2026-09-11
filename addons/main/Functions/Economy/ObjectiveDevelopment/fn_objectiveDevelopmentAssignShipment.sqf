@@ -1,3 +1,5 @@
+if (canSuspend) exitWith { [_this, FLO_fnc_objectiveDevelopmentAssignShipment] call FLO_fnc_economyRunAtomic };
+
 params [
     ["_player", objNull, [objNull]],
     ["_objectiveId", "", [""]]
@@ -6,7 +8,7 @@ params [
 if (!isServer || {isNull _player}) exitWith { false };
 private _owner = owner _player;
 if (remoteExecutedOwner > 2 && {remoteExecutedOwner != _owner}) exitWith {
-    ["ECONOMY", 1, format ["Rejected development shipment assignment owner %1 for player owner %2", remoteExecutedOwner, _owner]] call FLO_fnc_log;
+    ["ECONOMY", 2, format ["Rejected development shipment assignment owner %1 for player owner %2", remoteExecutedOwner, _owner]] call FLO_fnc_log;
     false
 };
 if (!alive _player) exitWith {
@@ -62,6 +64,7 @@ private _assignedSupply = 0;
     if (_x isEqualTo _shipment) then { continue };
     if (!alive _x || {!(_x getVariable ["FLO_LogisticsShipment", false])} || {_x getVariable ["FLO_LogisticsDelivered", false]}) then { continue };
     if ((_x getVariable ["FLO_DevelopmentTargetObjectiveId", ""]) != _objectiveId) then { continue };
+    if ((_x getVariable ["FLO_LogisticsSide", sideUnknown]) isNotEqualTo _side) then { continue };
     private _assignedAmount = _x getVariable ["FLO_LogisticsThroughput", -1];
     if !(_assignedAmount isEqualType 0 && {_assignedAmount > 0}) then {
         throw format ["Assigned development shipment %1 has invalid amount %2", netId _x, _assignedAmount];
@@ -80,5 +83,5 @@ _shipment setVariable ["FLO_DevelopmentTargetObjectiveId", _objectiveId, true];
 _shipment setVariable ["FLO_LogisticsContributorUID", getPlayerUID _player, true];
 _shipment setVariable ["FLO_LogisticsContributorName", name _player, true];
 [format ["Shipment assigned to %1 development. Deliver it inside the objective.", [_objectiveId] call FLO_fnc_campaignObjectiveName], "success", false, _owner] call FLO_fnc_sendNotification;
-["ECONOMY", 3, format ["%1 assigned shipment %2 to development %3", name _player, netId _shipment, _objectiveId]] call FLO_fnc_log;
+["ECONOMY", 3, format ["Supply shipment assigned to Development objective %1", _objectiveId]] call FLO_fnc_log;
 true

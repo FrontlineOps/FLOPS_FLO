@@ -10,4 +10,5 @@ _snapshot = +createHashMapFromArray [
     ["lastIncome", _treasury get "_lastIncome"]
 ];
 };
+[_snapshot, _treasury get "_sideKey", _treasury get "LEDGER_LIMIT"] call FLO_fnc_sideResourcesValidateSavedState;
 _snapshot

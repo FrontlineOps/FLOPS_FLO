@@ -7,7 +7,7 @@ params [
     ["_context", createHashMap, [createHashMap]]
 ];
 
-if (_amount <= 0) then {
+if (!finite _amount || {_amount <= 0}) then {
     throw format ["Commander spending amount must be positive, got %1", _amount];
 };
 _category = toUpper _category;

@@ -1,10 +1,14 @@
 /* Builds the current side-neutral commander treasury posture from authoritative state. */
+if (canSuspend) exitWith { [_this, FLO_fnc_commanderSpendingGetState] call FLO_fnc_economyRunAtomic };
+
 params ["_treasury"];
 
 private _policy = _treasury get "COMMANDER_SPENDING_POLICY";
 private _balance = _treasury get "_balance";
 private _committed = [_treasury] call FLO_fnc_sideResourcesGetCommitted;
-private _available = [_treasury] call FLO_fnc_sideResourcesGetAvailable;
+private _available = _balance - _committed;
+if (_available < -0.001) then { throw format ["ECONOMY %1 treasury has overcommitted funds", _treasury get "_sideKey"]; };
+_available = _available max 0;
 private _incomeCycle = _treasury get "_lastIncome";
 private _incomeInterval = _treasury get "UPDATE_INTERVAL";
 if !(_incomeInterval isEqualType 0 && {_incomeInterval > 0}) then {
