@@ -13,6 +13,8 @@ class IDS_Logistics {
         class initLogistics { preInit = 1; };
         class pickupEntity {};
         class placeEntity {};
+        class installPlacementHandlers {};
+        class adjustPlacement {};
         class startPlacement {};
         class updateEntityPlacement {};
     };

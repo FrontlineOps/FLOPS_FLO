@@ -21,48 +21,12 @@ if (isNil "_saveData") exitWith {
     ["SAVE_DETECT", 3, "No saved game data found"] call FLO_fnc_log;
     [false, nil]
 };
-if !(_saveData isEqualType createHashMap) then {
-    ["SAVE_DETECT", 1, "Saved campaign payload is malformed; Continue aborted"] call FLO_fnc_log;
-    throw "Saved campaign payload must be a HashMap";
+try {
+    [_saveData] call FLO_fnc_saveValidateCampaignRoot;
+} catch {
+    ["SAVE_DETECT", 1, format ["Current campaign validation failed; Continue aborted: %1", _exception]] call FLO_fnc_log;
+    throw _exception;
 };
-
-private _requiredRootTypes = [
-    ["time", []],
-    ["markers", createHashMap],
-    ["vehicles", createHashMap],
-    ["objects", createHashMap],
-    ["crates", createHashMap],
-    ["minefields", []],
-    ["minefieldObjectiveCooldowns", createHashMap],
-    ["fobs", []],
-    ["ops", []],
-    ["config", createHashMap],
-    ["objectives", createHashMap],
-    ["virtualGroups", createHashMap],
-    ["aiCommanders", createHashMap],
-    ["sideResources", createHashMap],
-    ["logisticsNetworkBySide", createHashMap],
-    ["baseDeploymentState", createHashMap],
-    ["idsLogisticsEntities", []]
-];
-{
-    _x params ["_key", "_prototype"];
-    if !(_key in _saveData) then {
-        private _error = format ["Current mission save is missing required root field %1", _key];
-        ["SAVE_DETECT", 1, _error] call FLO_fnc_log;
-        throw _error;
-    };
-    private _value = _saveData get _key;
-    if !(_value isEqualType _prototype) then {
-        private _error = format [
-            "Current mission save root field %1 has invalid type %2",
-            _key,
-            typeName _value
-        ];
-        ["SAVE_DETECT", 1, _error] call FLO_fnc_log;
-        throw _error;
-    };
-} forEach _requiredRootTypes;
 private _configData = _saveData get "config";
 private _requiredConfigTypes = [
     ["bluforHandle", createHashMap],

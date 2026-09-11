@@ -32,7 +32,7 @@ switch (_replacementState) do {
                 case "ATTACK": { "attacking" };
                 case "DEFEND": { "defending" };
                 default {
-                    ["holding", "defending"] select (((_groupData get "groupType") == "static_aa") || {([_groupData] call FLO_fnc_virtualizationGetAADeployState) == "DEPLOYED"});
+                    ["holding", "defending"] select (((_groupData get "groupType") == "static_aa") || {((_groupData get "aaDeployState")) == "DEPLOYED"});
                 };
             };
         } else {

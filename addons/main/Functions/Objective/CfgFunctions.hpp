@@ -23,7 +23,7 @@ class ObjectiveUtilities {
     class getRandomObjectivePos {};
     class getNearestObjective {};
     class initObjectiveRuntimeStateEvents {};
-    class getObjectiveNearPlayer {};
+
     class getObjectivePosition {};
     class isPositionInObjective {};
     class objectiveOwnerAtPosition {};

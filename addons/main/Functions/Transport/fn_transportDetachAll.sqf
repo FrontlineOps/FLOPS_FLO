@@ -20,7 +20,7 @@ params [["_transportGroupId", "", [""]], ["_releaseCarrier", true, [true]]];
 
 if (_transportGroupId == "") exitWith { 0 };
 
-private _transData = [_transportGroupId] call FLO_fnc_transportGetTrackedGroup;
+private _transData = [_transportGroupId] call FLO_fnc_virtualizationGetGroup;
 
 private _attached = [_transData] call FLO_fnc_virtualizationGetTransportPassengers;
 private _count = count _attached;

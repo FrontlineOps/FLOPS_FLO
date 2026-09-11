@@ -26,12 +26,12 @@ params [
 
 if (_infantryGroupId == "") exitWith { false };
 
-private _infData = [_infantryGroupId] call FLO_fnc_transportGetTrackedGroup;
+private _infData = [_infantryGroupId] call FLO_fnc_virtualizationGetGroup;
 
 private _transportId = [_infData] call FLO_fnc_virtualizationGetTransportAttachment;
 if (_transportId == "") exitWith { false };
 
-private _transData = [_transportId] call FLO_fnc_transportGetTrackedGroup;
+private _transData = [_transportId] call FLO_fnc_virtualizationGetGroup;
 private _infRealGroup = _infData get "realGroup";
 private _transRealGroup = _transData get "realGroup";
 private _transportVehicles = if (!isNull _transRealGroup) then {
@@ -77,7 +77,7 @@ if (surfaceIsWater _newPos && {!surfaceIsWater _basePos}) then {
 [_infantryGroupId, _newPos] call FLO_fnc_virtualizationUpdateGroupPosition;
 
 if (_releaseCarrier) then {
-    private _carrierData = [_transportId] call FLO_fnc_transportGetTrackedGroup;
+    private _carrierData = [_transportId] call FLO_fnc_virtualizationGetGroup;
     if ((_carrierData get "attachedGroups") isEqualTo []) then {
         [_transportId] call FLO_fnc_transportPoolRelease;
     };

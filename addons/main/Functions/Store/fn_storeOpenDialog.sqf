@@ -31,7 +31,9 @@ if (isNull _control) exitWith {
 };
 uiNamespace setVariable ["FLO_StoreControl", _control];
 
-[_control] call FLO_fnc_storeAddWebEventHandler;
+// Arma browser control event (not yet listed in HEMTT event metadata).
+private _webDialogEvent = "JSDialog";
+_control ctrlAddEventHandler [_webDialogEvent, FLO_fnc_storeHandleUiEvent];
 [_control, ["LoadFile", "\z\flo\addons\main\UI\Store\index.html"]] call FLO_fnc_storeWebAction;
 
 true

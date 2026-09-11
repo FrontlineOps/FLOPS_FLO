@@ -109,105 +109,16 @@ try {
         };
     } forEach [_fobType, _fobContainerType, _opType, _opContainerType];
 
-    // Find and save FOBs with their containers
-    if (_fobType != "") then {
-        {
-            if (!isNull _x && alive _x && { _x getVariable ["FLO_FOB_Initialized", false] }) then {
-                private _building = _x;
-                private _marker = _building getVariable ["fobMarkerName", ""];
-                private _baseSide = _building getVariable "FLO_BaseSide";
-                private _baseSaveId = _building getVariable "FLO_BaseSaveId";
-                private _logisticsNodeId = _building getVariable "FLO_LogisticsNodeId";
-                if (
-                    !(_baseSide in [east, west])
-                    || {!(_baseSaveId isEqualType "" && {_baseSaveId != ""})}
-                    || {!(_logisticsNodeId isEqualType "" && {_logisticsNodeId != ""})}
-                ) then {
-                    throw format ["FOB at %1 has invalid save identity", getPosASL _building];
-                };
-
-                private _nearContainer = _building getVariable "FLO_BaseTerminal";
-                if (isNil "_nearContainer" || {!(_nearContainer isEqualType objNull)}) then {
-                    throw format ["Base %1 has no initialized terminal ownership", _baseSaveId];
-                };
-                if (!isNull _nearContainer && {(_nearContainer getVariable ["FLO_BaseOwner", objNull]) isNotEqualTo _building}) then {
-                    throw format ["Base %1 terminal ownership is not reciprocal", _baseSaveId];
-                };
-
-                // Save full FOB data
-                private _fobData = createHashMapFromArray [
-                    ["buildingType", typeOf _building],
-                    ["buildingPosASL", getPosASL _building],
-                    ["buildingDir", getDir _building],
-                    ["buildingVectorUp", vectorUp _building],
-                    ["markerName", _marker],
-                    ["baseSideKey", [_baseSide] call FLO_fnc_sideKey],
-                    ["baseSaveId", _baseSaveId],
-                    ["logisticsNodeId", _logisticsNodeId]
-                ];
-
-                // Add container data if found
-                if (!isNull _nearContainer) then {
-                    _fobData set ["containerType", typeOf _nearContainer];
-                    _fobData set ["containerPosASL", getPosASL _nearContainer];
-                    _fobData set ["containerDir", getDir _nearContainer];
-                    _fobData set ["containerVectorUp", vectorUp _nearContainer];
-                };
-
-                _fobArray pushBack _fobData;
-            };
-        } forEach (allMissionObjects _fobType);
-    };
-
-    // Find and save OPs with their containers
-    if (_opType != "") then {
-        {
-            if (!isNull _x && alive _x && { _x getVariable ["FLO_OP_Initialized", false] }) then {
-                private _building = _x;
-                private _marker = _building getVariable ["opMarkerName", ""];
-                private _baseSide = _building getVariable "FLO_BaseSide";
-                private _baseSaveId = _building getVariable "FLO_BaseSaveId";
-                private _logisticsNodeId = _building getVariable "FLO_LogisticsNodeId";
-                if (
-                    !(_baseSide in [east, west])
-                    || {!(_baseSaveId isEqualType "" && {_baseSaveId != ""})}
-                    || {!(_logisticsNodeId isEqualType "" && {_logisticsNodeId != ""})}
-                ) then {
-                    throw format ["OP at %1 has invalid save identity", getPosASL _building];
-                };
-
-                private _nearContainer = _building getVariable "FLO_BaseTerminal";
-                if (isNil "_nearContainer" || {!(_nearContainer isEqualType objNull)}) then {
-                    throw format ["Base %1 has no initialized terminal ownership", _baseSaveId];
-                };
-                if (!isNull _nearContainer && {(_nearContainer getVariable ["FLO_BaseOwner", objNull]) isNotEqualTo _building}) then {
-                    throw format ["Base %1 terminal ownership is not reciprocal", _baseSaveId];
-                };
-
-                // Save full OP data
-                private _opData = createHashMapFromArray [
-                    ["buildingType", typeOf _building],
-                    ["buildingPosASL", getPosASL _building],
-                    ["buildingDir", getDir _building],
-                    ["buildingVectorUp", vectorUp _building],
-                    ["markerName", _marker],
-                    ["baseSideKey", [_baseSide] call FLO_fnc_sideKey],
-                    ["baseSaveId", _baseSaveId],
-                    ["logisticsNodeId", _logisticsNodeId]
-                ];
-
-                // Add container data if found
-                if (!isNull _nearContainer) then {
-                    _opData set ["containerType", typeOf _nearContainer];
-                    _opData set ["containerPosASL", getPosASL _nearContainer];
-                    _opData set ["containerDir", getDir _nearContainer];
-                    _opData set ["containerVectorUp", vectorUp _nearContainer];
-                };
-
-                _opArray pushBack _opData;
-            };
-        } forEach (allMissionObjects _opType);
-    };
+    {
+        if (!isNull _x && alive _x && {_x getVariable ["FLO_FOB_Initialized", false]}) then {
+            _fobArray pushBack ([_x, "fobMarkerName"] call FLO_fnc_baseSerializeRecord);
+        };
+    } forEach (allMissionObjects _fobType);
+    {
+        if (!isNull _x && alive _x && {_x getVariable ["FLO_OP_Initialized", false]}) then {
+            _opArray pushBack ([_x, "opMarkerName"] call FLO_fnc_baseSerializeRecord);
+        };
+    } forEach (allMissionObjects _opType);
 
     _campaignState set ["fobs", _fobArray];
     _campaignState set ["ops", _opArray];

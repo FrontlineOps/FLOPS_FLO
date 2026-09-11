@@ -47,9 +47,9 @@ class UtilitiesGame {
     class opposingSide {};
     class getConnectedHumanPlayers {};
     class addReward {};
-    class getRandomMagazine {};
+
     class addIntelServer {};
-    class militaryIntel {};
+
     class adjustAggression {};
     class adjustReputation {};
     class configureObjectActionsLocal {};
@@ -59,7 +59,6 @@ class UtilitiesGame {
 class UtilitiesVehicle {
     file = "\z\flo\addons\main\Functions\Utilities\Vehicle";
 
-    class placeVehicleWithCrew {};
     class vehicleConfigureRequestedVehicle {};
 };
 

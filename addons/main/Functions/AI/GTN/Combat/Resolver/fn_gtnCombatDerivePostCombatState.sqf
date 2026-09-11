@@ -28,6 +28,6 @@ switch (_gData get "commanderOrder") do {
     case "DEFEND": { "holding" };
     case "MOVE": { "moving" };
     default {
-        ["idle", "holding"] select (([_gData] call FLO_fnc_virtualizationGetAADeployState) == "DEPLOYED");
+        ["idle", "holding"] select (((_gData get "aaDeployState")) == "DEPLOYED");
     };
 }

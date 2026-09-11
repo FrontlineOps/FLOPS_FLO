@@ -22,7 +22,7 @@ params [
 
 if (_transportGroupId == "") exitWith { false };
 
-private _transData = [_transportGroupId] call FLO_fnc_transportGetTrackedGroup;
+private _transData = [_transportGroupId] call FLO_fnc_virtualizationGetGroup;
 
 // Check if this is a transport
 private _isTransport = [_transData] call FLO_fnc_virtualizationIsTransportCarrier;

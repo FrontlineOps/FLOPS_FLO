@@ -62,7 +62,7 @@ if !([_carrierGroupId] call FLO_fnc_virtualizationTryActivateGroup) exitWith {
     false
 };
 
-_carrierData = [_carrierGroupId] call FLO_fnc_transportGetTrackedGroup;
+_carrierData = [_carrierGroupId] call FLO_fnc_virtualizationGetGroup;
 private _requiredSeats = _passengerData get "unitCount";
 private _passengerRealGroup = _passengerData get "realGroup";
 if (!isNull _passengerRealGroup) then {

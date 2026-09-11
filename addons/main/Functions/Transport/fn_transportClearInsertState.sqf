@@ -16,7 +16,7 @@ params [["_groupId", "", [""]]];
 
 if (_groupId == "") exitWith { false };
 
-private _groupData = [_groupId] call FLO_fnc_transportGetTrackedGroup;
+private _groupData = [_groupId] call FLO_fnc_virtualizationGetGroup;
 
 private _realGroup = _groupData get "realGroup";
 if (!isNull _realGroup) then {

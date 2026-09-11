@@ -20,7 +20,7 @@ if (_groupId in _available) then {
         _data param [4, sideUnknown]
     ]];
 } else {
-    private _groupData = [_groupId] call FLO_fnc_transportGetTrackedGroup;
+    private _groupData = [_groupId] call FLO_fnc_virtualizationGetGroup;
     private _capacity = [_groupData] call FLO_fnc_transportGetGroupCapacity;
     _active set [_groupId, [
         _capacity,

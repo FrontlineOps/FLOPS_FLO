@@ -314,54 +314,13 @@ try {
 // FINALIZATION
 // ============================================================================
 
-private _requiredRootTypes = [
-    ["time", []],
-    ["markers", createHashMap],
-    ["vehicles", createHashMap],
-    ["objects", createHashMap],
-    ["crates", createHashMap],
-    ["minefields", []],
-    ["minefieldObjectiveCooldowns", createHashMap],
-    ["fobs", []],
-    ["ops", []],
-    ["config", createHashMap],
-    ["objectives", createHashMap],
-    ["virtualGroups", createHashMap],
-    ["aiCommanders", createHashMap],
-    ["baseDeploymentState", createHashMap],
-    ["sideResources", createHashMap],
-    ["logisticsNetworkBySide", createHashMap],
-    ["idsLogisticsEntities", []]
-];
-private _isValid = true;
-{
-    _x params ["_key", "_prototype"];
-    if !(_key in _data) then {
-        _isValid = false;
-        ["SAVE", 1, format ["Missing required root field: %1", _key]] call FLO_fnc_log;
-    } else {
-        private _value = _data get _key;
-        if !(_value isEqualType _prototype) then {
-            _isValid = false;
-            ["SAVE", 1, format [
-                "Required root field %1 has invalid type %2",
-                _key,
-                typeName _value
-            ]] call FLO_fnc_log;
-        };
-    };
-} forEach _requiredRootTypes;
+[_data] call FLO_fnc_saveValidateCampaignRoot;
+if !([_data] call FLO_fnc_saveCommitCampaignData) exitWith { false };
+private _saveTime = diag_tickTime - _saveStartTime;
+["SAVE", 3, format ["Save complete in %1s", round (_saveTime * 100) / 100]] call FLO_fnc_log;
+["flo_mission_save_completed", [true]] call CBA_fnc_globalEvent;
+true
 
-if (_isValid) then {
-    if !([_data] call FLO_fnc_saveCommitCampaignData) exitWith { false };
-    private _saveTime = diag_tickTime - _saveStartTime;
-    ["SAVE", 3, format ["Save complete in %1s", round (_saveTime * 100) / 100]] call FLO_fnc_log;
-    ["flo_mission_save_completed", [true]] call CBA_fnc_globalEvent;
-    true
-} else {
-    ["SAVE", 1, "Validation failed"] call FLO_fnc_log;
-    false
-};
 };
 } catch {
     _saveException = _exception;

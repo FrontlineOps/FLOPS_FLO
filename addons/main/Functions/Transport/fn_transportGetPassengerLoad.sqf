@@ -8,7 +8,7 @@ private _attachedGroups = [_transportData] call FLO_fnc_virtualizationGetTranspo
 private _load = 0;
 
 {
-    private _passengerData = [_x] call FLO_fnc_transportGetTrackedGroup;
+    private _passengerData = [_x] call FLO_fnc_virtualizationGetGroup;
     _load = _load + (_passengerData get "unitCount");
 } forEach _attachedGroups;
 

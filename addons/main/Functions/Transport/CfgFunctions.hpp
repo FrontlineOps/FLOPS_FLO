@@ -12,7 +12,7 @@ class Transport {
     class transportGetPickupCapacity {};
     class transportGetPassengerLoad {};
     class transportCountMountedActivePassengers {};
-    class transportGetTrackedGroup {};
+
     class transportHasKnownEnemyNearby {};
     class transportBuildMissionPlan {};
     class transportCommitMissionPlan {};

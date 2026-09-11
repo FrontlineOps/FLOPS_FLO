@@ -32,7 +32,7 @@ class VirtualizationRegistry {
     class virtualizationRequireRegistry         {};
     class virtualizationGetGroupMap             {};
     class virtualizationGetConfigValue          {};
-    class virtualizationSetConfigValue          {};
+
     class virtualizationGetSpatialState         {};
     class virtualizationCreateGroupRecordDefaults {};
     class virtualizationRequireGroup            {};
@@ -46,13 +46,13 @@ class VirtualizationRegistry {
     class virtualizationGenerateGroupId   {};
     class virtualizationBuildGroupData    {};
     class virtualizationSelectInitialAssetComposition {};
-    class virtualizationGetOrganicPackageInfantryCount {};
+
     class virtualizationGetOrganicPackageInfantryCounts {};
     class virtualizationCreateOrganicPackageDismount {};
     class virtualizationRollbackOrganicPackageCreation {};
-    class virtualizationSetEnabled       {};
+
     class virtualizationGetGroup         {};
-    class virtualizationQueryGroupIds    {};
+
     class virtualizationAddGroup         {};
     class virtualizationCollectTransportManifest {};
     class virtualizationRemoveGroup      {};
@@ -180,7 +180,7 @@ class VirtualizationState {
     class virtualizationRebuildDerivedState {};
     class virtualizationGetEffectiveState {};
     class virtualizationSetAssetComposition {};
-    class virtualizationSetAssetCompositionById {};
+
     class virtualizationClearCommanderOrder {};
     class virtualizationSetCommanderOrder {};
     class virtualizationCommitCommanderOrder {};
@@ -201,14 +201,12 @@ class VirtualizationState {
     class virtualizationClearRealVehicles {};
     class virtualizationSetAADeployState {};
     class virtualizationClearAADeployState {};
-    class virtualizationGetAADeployState {};
-    class virtualizationGetAATargetPos {};
-    class virtualizationGetAATargetObjective {};
+
     class virtualizationClearPathRequest {};
     class virtualizationSetTransportAttachment {};
     class virtualizationClearTransportAttachment {};
     class virtualizationSetTransportPassengers {};
-    class virtualizationAddTransportPassenger {};
+
     class virtualizationRemoveTransportPassenger {};
     class virtualizationGetTransportAttachment {};
     class virtualizationGetTransportPassengers {};
@@ -232,7 +230,7 @@ class VirtualizationState {
     class virtualizationRestoreCommanderState {};
     class virtualizationRestoreMissionState {};
     class virtualizationRestorePathState {};
-    class virtualizationRestoreRouteState {};
+
     class virtualizationRestoreAAState {};
     class virtualizationRestoreTransportState {};
     class virtualizationRestoreReplacementState {};
@@ -254,7 +252,6 @@ class VirtualizationDebug {
 class VirtualizationUtilities {
     file = "\z\flo\addons\main\Functions\Virtualization\Utilities";
 
-    class filterNonCivGroups      {};
     class getGroupTypeCount       {};
     class getRoadParkingPos       {};
     class getSafeLandPos          {};

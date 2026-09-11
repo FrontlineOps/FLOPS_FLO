@@ -12,7 +12,7 @@ private _active = FLO_TransportPool get "active";
 if !(_groupId in _active) exitWith { false };
 
 private _data = _active get _groupId;
-private _groupData = [_groupId] call FLO_fnc_transportGetTrackedGroup;
+private _groupData = [_groupId] call FLO_fnc_virtualizationGetGroup;
 private _passengerIds = +([_groupData] call FLO_fnc_virtualizationGetTransportPassengers);
 if (_passengerIds isNotEqualTo []) then {
     private _message = format [

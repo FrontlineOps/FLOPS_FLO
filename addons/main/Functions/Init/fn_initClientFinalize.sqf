@@ -76,11 +76,6 @@ if (_baseRespawnPos isEqualTo [0,0,0]) then {
             };
         } forEach (keys FLO_Objectives);
 
-        if (_owner isEqualType "") then {
-            private _ownerKey = toUpper _owner;
-            if (_ownerKey isEqualTo "EAST") then { _owner = east; };
-            if (_ownerKey isEqualTo "WEST") then { _owner = west; };
-        };
 
         if (_owner isEqualTo _enemySide) then {
             if (_markerName in allMapMarkers) then {

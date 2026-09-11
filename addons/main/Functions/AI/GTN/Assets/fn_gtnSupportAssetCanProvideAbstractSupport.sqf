@@ -36,11 +36,6 @@ private _worldState = _commander get "_worldState";
 private _objectiveState = (_worldState call ["_getObjectives", []]) get _objectiveId;
 private _owner = _objectiveState get "owner";
 
-if (_owner isEqualType "") then {
-    private _ownerKey = toUpper _owner;
-    if (_ownerKey == "EAST") then { _owner = east; };
-    if (_ownerKey == "WEST") then { _owner = west; };
-};
 
 (_owner isEqualTo _side)
 && {!(_objectiveState get "contested")}

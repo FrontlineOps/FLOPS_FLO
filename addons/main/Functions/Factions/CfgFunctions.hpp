@@ -1,0 +1,42 @@
+class Factions {
+    file = "\z\flo\addons\main\Functions\Factions";
+
+    class factionBuildAutoSelectionCatalog {};
+    class factionBuildAutoCivilianCatalog {};
+    class factionBuildAutoIndex {};
+    class factionBuildMergedAutoCivilianCatalog {};
+    class factionBuildMergedAutoMilitaryCatalog {};
+    class factionBuildAutoMilitaryCatalog {};
+    class factionBuildObjectiveGroupFieldSpecs {};
+    class factionBuildTuningFieldSpecsFromIdcs {};
+    class factionBuildVehiclePoolFromVariables {};
+    class factionClassIsCombatInfantry {};
+    class factionClassifyVehicle {};
+    class factionCollectDirectUnitVariables {};
+    class factionCompactNumericText {};
+    class factionCompositionDefaultCaps {};
+    class factionCompositionDefaultCounts {};
+    class factionCompositionDefaultObjectiveGroups {};
+    class factionCreateCompositionDefaultHandle {};
+    class factionExtractVehicleClasses {};
+    class factionGetCustomDefinition {};
+    class factionGetGroupConfigs {};
+    class factionGetCompositionDefaults {};
+    class factionGetObjectiveGroupFieldSpecs {};
+    class factionGetTuningFieldSpecs {};
+    class factionGetVariableArray {};
+    class factionBuildCompositionDefaultsHandle {};
+    class factionBuildCustomCivilianCatalog {};
+    class factionBuildCustomMilitaryCatalog {};
+    class factionHandleSource {};
+    class factionHandleSide {};
+    class factionUnitIsOfficer {};
+    class factionValidateCatalogSide {};
+    class factionIsUnsignedInt {};
+    class factionMergePairs {};
+    class factionApplyTuningOverrides {};
+
+    class factionBuildTuningHandle {};
+    class factionPickUnitByRole {};
+    class factionSanitizeCompositionForCatalog {};
+};

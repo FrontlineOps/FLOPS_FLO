@@ -60,7 +60,7 @@ class GTNCoreLogic {
     class gtnMarkCommanderStateDirty {};
     class gtnGetCachedReserveBands {};
     class gtnGetSideCommanderHandle {};
-    class gtnGetTempoScaledAssignmentLimit {};
+
     class gtnBuildObjectiveReserveBands {};
     class gtnExecuteTrackCycle {};
     class gtnGroupIsStrategicallyAssignable {};
@@ -70,7 +70,7 @@ class GTNCoreLogic {
     class gtnResolveAttackLandAnchor {};
     class gtnAdmitGoalAgenda {};
     class gtnAnalyzeManeuverGroup {};
-    class gtnAnalyzeVirtualGroup {};
+
     class gtnBuildGoalAgenda {};
     class gtnBuildStrategicPicture {};
     class gtnExecuteIntents {};
@@ -137,7 +137,7 @@ class GTNTasks {
     class gtnPlayerTaskDescription {};
     class gtnPlayerTaskTitle {};
     class gtnPublishPlayerTask {};
-    class gtnMarkTaskFailed {};
+
     class gtnMarkTaskSucceeded {};
     class gtnTaskEnemySide {};
     class gtnTaskMissing {};
@@ -225,3 +225,41 @@ class GTNAssets {
 };
 
 #include "Minefields\CfgFunctions.hpp"
+
+class GTNOrders {
+    file = "\z\flo\addons\main\Functions\AI\GTN\Core\Orders";
+    class gtnOrderGroupMove {};
+    class gtnOrderGroupAttack {};
+    class gtnOrderGroupDefend {};
+    class gtnOrderGroupGarrison {};
+};
+
+class GTNDefense {
+    file = "\z\flo\addons\main\Functions\AI\GTN\Core\Defense";
+    class gtnGetDefenseCapForObjective {};
+    class gtnGetGarrisonCapForObjective {};
+    class gtnCountObjectiveDefenders {};
+    class gtnManageDefenseLeases {};
+    class gtnManageStaticAANetwork {};
+};
+
+class GTNSensing {
+    file = "\z\flo\addons\main\Functions\AI\GTN\Core\Sensing";
+    class gtnSenseObjectives {};
+    class gtnSenseForces {};
+    class gtnSenseSupportAssets {};
+    class gtnSenseEnemyIntel {};
+    class gtnSenseTacticalSituation {};
+    class gtnUpdateWorldState {};
+};
+
+class GTNCapabilities {
+    file = "\z\flo\addons\main\Functions\AI\GTN\Core\Capabilities";
+    class gtnAnalyzeWeaponAmmo {};
+    class gtnGetVehicleWeapons {};
+    class gtnClassifyVehicle {};
+    class gtnAnalyzeVehicle {};
+    class gtnGetArtilleryStatus {};
+    class gtnGetAirAssetStatus {};
+    class gtnRevealIntelToUnits {};
+};

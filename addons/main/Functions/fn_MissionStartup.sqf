@@ -140,11 +140,6 @@ private _opCount = 0;
                         _owner = _objData get "owner";
                     };
                 } forEach (keys FLO_Objectives);
-                if (_owner isEqualType "") then {
-                    private _ownerKey = toUpper _owner;
-                    if (_ownerKey isEqualTo "EAST") then { _owner = east; };
-                    if (_ownerKey isEqualTo "WEST") then { _owner = west; };
-                };
                 if (_owner isEqualTo _enemySide) then { continue };
 
                 private _markerName = format ["respawn_%1_%2", _respawnKey, _counter];

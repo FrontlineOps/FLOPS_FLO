@@ -25,8 +25,8 @@ params [
     ["_distance", 0, [0]]
 ];
 
-[_infantryGroupId] call FLO_fnc_transportGetTrackedGroup;
-private _transportData = [_transportId] call FLO_fnc_transportGetTrackedGroup;
+[_infantryGroupId] call FLO_fnc_virtualizationGetGroup;
+private _transportData = [_transportId] call FLO_fnc_virtualizationGetGroup;
 
 private _insertMode = _missionPlan get "mode";
 private _insertPos = _missionPlan get "insertPos";
@@ -77,7 +77,7 @@ if !([_transportId, _waypoints, true, _orderTag] call FLO_fnc_updateVirtualGroup
     throw format ["FLO_fnc_transportCommitMissionPlan: preflighted route failed for %1", _transportId];
 };
 
-private _committedTransportData = [_transportId] call FLO_fnc_transportGetTrackedGroup;
+private _committedTransportData = [_transportId] call FLO_fnc_virtualizationGetGroup;
 private _committedWaypoints = _committedTransportData get "waypoints";
 private _dismountWaypointIndex = _committedWaypoints findIf {
     ((_x select 0) distance2D _insertPos) < 1

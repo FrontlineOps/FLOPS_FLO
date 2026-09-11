@@ -26,17 +26,17 @@ if (_infantryGroupId == "" || _transportGroupId == "") exitWith {
     false 
 };
 
-private _infData = [_infantryGroupId] call FLO_fnc_transportGetTrackedGroup;
-private _transData = [_transportGroupId] call FLO_fnc_transportGetTrackedGroup;
+private _infData = [_infantryGroupId] call FLO_fnc_virtualizationGetGroup;
+private _transData = [_transportGroupId] call FLO_fnc_virtualizationGetGroup;
 
 if ((_infData get "isActive") && {isNull (_infData get "realGroup")}) then {
     [_infantryGroupId] call FLO_fnc_virtualizationRepairOrphanedActiveGroup;
-    _infData = [_infantryGroupId] call FLO_fnc_transportGetTrackedGroup;
+    _infData = [_infantryGroupId] call FLO_fnc_virtualizationGetGroup;
 };
 
 if ((_transData get "isActive") && {isNull (_transData get "realGroup")}) then {
     [_transportGroupId] call FLO_fnc_virtualizationRepairOrphanedActiveGroup;
-    _transData = [_transportGroupId] call FLO_fnc_transportGetTrackedGroup;
+    _transData = [_transportGroupId] call FLO_fnc_virtualizationGetGroup;
 };
 
 // Check if already attached
@@ -70,7 +70,7 @@ private _transIsActive = _transData get "isActive";
 
 if (_infIsActive != _transIsActive && {_transData get "transportRole"} && {_infIsActive}) then {
     if ([_transportGroupId, _transData, _infantryGroupId, _infData] call FLO_fnc_transportPrepareCarrierForPickup) then {
-        _transData = [_transportGroupId] call FLO_fnc_transportGetTrackedGroup;
+        _transData = [_transportGroupId] call FLO_fnc_virtualizationGetGroup;
         _groupType = _transData get "groupType";
         _pickupCapacity = [_transData] call FLO_fnc_transportGetPickupCapacity;
         _transIsActive = _transData get "isActive";

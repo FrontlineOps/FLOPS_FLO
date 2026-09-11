@@ -5,7 +5,7 @@
  *   Builds the concrete carrier insert plan for a transport request. Ground
  *   carriers use a standard standoff unload, while helicopters choose between
  *   landing inserts and paradrops using maintained objective ownership, fresh
- *   enemy contact intel, and AA analysis. Landing inserts are preferred unless
+ *   enemy contact intel, and reported AA coverage. Landing inserts are preferred unless
  *   multiple maintained threat signals justify a paradrop.
  *
  * Arguments:
@@ -84,27 +84,24 @@ if (_carrierType != "helicopter") then {
     private _enemyNearby = [_side, _destinationPos, FLO_Transport_ThreatDismountRadius * 2] call FLO_fnc_transportHasKnownEnemyNearby;
     private _airDropThreatSignals = 0;
     private _objectiveAnchorPos = [_destinationPos, _objectivePos] select (_nearObjective);
+    private _gtnCommander = [_side] call FLO_fnc_gtnGetCommanderBySide;
+
+    // Air-defense reports cover routes, including destinations outside objectives.
+    // A disabled commander has no maintained intelligence picture to consult.
+    if (!isNil "_gtnCommander") then {
+        private _threats = [_gtnCommander get "_worldState"] call FLO_fnc_gtnGetKnownAirDefenseThreats;
+        _hasAA = [_pickupPos, _destinationPos, _threats] call FLO_fnc_gtnAirRouteHasKnownThreat;
+    };
 
     if (_nearObjective) then {
         _objectiveOwner = _objectiveData get "owner";
-        if (_objectiveOwner isEqualType "") then {
-            private _ownerKey = toUpper _objectiveOwner;
-            if (_ownerKey == "EAST") then { _objectiveOwner = east; };
-            if (_ownerKey == "WEST") then { _objectiveOwner = west; };
-        };
         _enemyOwned = _objectiveOwner != _side;
 
-        private _gtnCommander = [_side] call FLO_fnc_gtnGetCommanderBySide;
         if (!isNil "_gtnCommander") then {
             private _worldState = _gtnCommander get "_worldState";
             private _objectiveState = (_worldState call ["_getObjectives", []]) get _objectiveId;
             if (!isNil "_objectiveState") then {
                 _underPressure = (_objectiveState get "contested") || { _objectiveState get "underAttack" };
-            };
-
-            private _objectiveAnalysis = _worldState call ["_getObjectiveAnalysis", [_objectiveId]];
-            if (!isNil "_objectiveAnalysis") then {
-                _hasAA = _objectiveAnalysis get "hasAA";
             };
         };
     };
@@ -153,6 +150,10 @@ if (_carrierType != "helicopter") then {
         };
     };
 
+    // A forced drop cannot bypass the same known-AA constraint as an automatic
+    // drop. An empty plan rejects the request before transport claims ownership.
+    if (_mode == "AIR_DROP" && {_hasAA}) exitWith { _mode = ""; };
+
     if (_mode == "AIR_LAND") then {
         if (_enemyOwned || {_underPressure} || {_enemyNearby} || {_hasAA}) then {
             private _standoff = [FLO_Transport_DismountDistance max 250, (_objectiveRadius max FLO_Transport_DismountDistance) + ([225, 350] select (_hasAA))] select (_nearObjective);
@@ -174,6 +175,8 @@ if (_carrierType != "helicopter") then {
         _completionRadius = 120;
     };
 };
+
+if (_mode == "") exitWith { createHashMap };
 
 createHashMapFromArray [
     ["mode", _mode],

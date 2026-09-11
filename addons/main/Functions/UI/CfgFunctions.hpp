@@ -3,7 +3,7 @@ class UI {
 
     class initClientUI { postInit = 1; };
     class initClientUIPreInit { preInit = 1; };
-    class safeConfirm {};
+
 };
 
 class UICapture {
@@ -47,13 +47,16 @@ class UISetup {
     class factionDialogSelectDefault {};
     class factionDialogShowCompositionTab {};
     class factionDialogStart {};
+    class factionDialogReadConfig {};
+    class factionDialogSelectStartPosition {};
+    class factionDialogWaitForMission {};
+
     class factionDialogValidateFactionSelections {};
 };
 
 class OperationsUI {
     file = "\z\flo\addons\main\Functions\UI\Operations";
 
-    class operationsAddWebEventHandler {};
     class operationsBuildMapDrawData {};
     class operationsDrawMap {};
     class operationsFocusMap {};
@@ -74,7 +77,6 @@ class OperationsUI {
 class DevelopmentUI {
     file = "\z\flo\addons\main\Functions\UI\Development";
 
-    class developmentAddWebEventHandler {};
     class developmentHandleUiEvent {};
     class developmentInitClient {};
     class developmentOpenDialog {};
@@ -88,7 +90,6 @@ class DevelopmentUI {
 class SupportUI {
     file = "\z\flo\addons\main\Functions\UI\Support";
 
-    class supportAddWebEventHandler {};
     class supportBuildSnapshot {};
     class supportDrawMap {};
     class supportFocusMap {};

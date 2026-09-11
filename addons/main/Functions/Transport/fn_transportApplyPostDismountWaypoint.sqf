@@ -20,7 +20,7 @@ params [
 
 if (_infantryGroupId == "") exitWith { false };
 
-private _infData = [_infantryGroupId] call FLO_fnc_transportGetTrackedGroup;
+private _infData = [_infantryGroupId] call FLO_fnc_virtualizationGetGroup;
 private _postWp = _infData get "postDismountWaypoint";
 if (_postWp isEqualTo []) exitWith { false };
 

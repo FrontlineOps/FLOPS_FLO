@@ -26,7 +26,7 @@ params [
 if (_infantryGroupId == "") exitWith { "" };
 if (_destinationPos isEqualTo [0,0,0]) exitWith { "" };
 
-private _infData = [_infantryGroupId] call FLO_fnc_transportGetTrackedGroup;
+private _infData = [_infantryGroupId] call FLO_fnc_virtualizationGetGroup;
 private _forceTransport = false;
 private _requestSpec = createHashMap;
 

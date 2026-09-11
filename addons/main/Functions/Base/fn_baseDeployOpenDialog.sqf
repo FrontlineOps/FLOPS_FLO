@@ -38,7 +38,9 @@ if (isNull _control) exitWith {
 };
 uiNamespace setVariable ["FLO_DeployControl", _control];
 
-[_control] call FLO_fnc_baseDeployAddWebEventHandler;
+// Arma browser control event (not yet listed in HEMTT event metadata).
+private _webDialogEvent = "JSDialog";
+_control ctrlAddEventHandler [_webDialogEvent, FLO_fnc_baseDeployHandleUiEvent];
 [_control, ["LoadFile", "\z\flo\addons\main\UI\Deploy\index.html"]] call FLO_fnc_baseDeployWebAction;
 
 true

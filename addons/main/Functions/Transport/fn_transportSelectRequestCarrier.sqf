@@ -52,7 +52,7 @@ if (_allowGroundTransport && {_transportId == ""} && {_infantryIsActive}) then {
     };
 
     if (_transportId != "") then {
-        _transportData = [_transportId] call FLO_fnc_transportGetTrackedGroup;
+        _transportData = [_transportId] call FLO_fnc_virtualizationGetGroup;
         if !([_transportId, _transportData, _infantryGroupId, _infData] call FLO_fnc_transportPrepareCarrierForPickup) then {
             _transportId = "";
             _transportData = createHashMap;
@@ -84,7 +84,7 @@ if (_allowAirTransport && {_transportId == ""} && {((_distance >= FLO_Transport_
     };
 
     if (_transportId != "") then {
-        _transportData = [_transportId] call FLO_fnc_transportGetTrackedGroup;
+        _transportData = [_transportId] call FLO_fnc_virtualizationGetGroup;
         if !([_transportId, _transportData, _infantryGroupId, _infData] call FLO_fnc_transportPrepareCarrierForPickup) then {
             _transportId = "";
             _transportData = createHashMap;
@@ -93,7 +93,7 @@ if (_allowAirTransport && {_transportId == ""} && {((_distance >= FLO_Transport_
 };
 
 if (_transportId != "" && {(keys _transportData) isEqualTo []}) then {
-    _transportData = [_transportId] call FLO_fnc_transportGetTrackedGroup;
+    _transportData = [_transportId] call FLO_fnc_virtualizationGetGroup;
 };
 
 [_transportId, _transportData]

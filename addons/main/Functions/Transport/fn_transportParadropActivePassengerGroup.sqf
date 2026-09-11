@@ -29,11 +29,11 @@ if !([_dropPos, true, format [
     false
 };
 
-private _passengerData = [_passengerGroupId] call FLO_fnc_transportGetTrackedGroup;
+private _passengerData = [_passengerGroupId] call FLO_fnc_virtualizationGetGroup;
 private _carrierGroupId = [_passengerData] call FLO_fnc_virtualizationGetTransportAttachment;
 if (_carrierGroupId == "") exitWith { false };
 
-private _carrierData = [_carrierGroupId] call FLO_fnc_transportGetTrackedGroup;
+private _carrierData = [_carrierGroupId] call FLO_fnc_virtualizationGetGroup;
 private _passengerRealGroup = _passengerData get "realGroup";
 if (isNull _passengerRealGroup) exitWith {
     ["TRANSPORT", 2, format [

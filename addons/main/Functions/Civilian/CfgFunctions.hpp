@@ -6,7 +6,7 @@ class CivilianCore {
     class civilianConfig {};
     class civilianResolveObjective {};
     class civilianBuildRoleProfile {};
-    class civilianBuildAmbientRoute {};
+
     class civilianBuildObjectivePoiCache {};
     class civilianResolveObjectiveContext {};
     class civilianRefreshObjectiveContexts {};

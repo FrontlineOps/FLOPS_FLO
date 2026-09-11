@@ -28,6 +28,8 @@ uiNamespace setVariable ["FLO_DevelopmentControl", _control];
 FLO_DevelopmentBrowserReady = false;
 FLO_DevelopmentLastSnapshot = createHashMap;
 
-[_control] call FLO_fnc_developmentAddWebEventHandler;
+// Arma browser control event (not yet listed in HEMTT event metadata).
+private _webDialogEvent = "JSDialog";
+_control ctrlAddEventHandler [_webDialogEvent, FLO_fnc_developmentHandleUiEvent];
 _control ctrlWebBrowserAction ["LoadFile", "\z\flo\addons\main\UI\Development\index.html"];
 true

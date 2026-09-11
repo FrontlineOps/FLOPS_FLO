@@ -64,7 +64,7 @@ private _composition = [selectRandom _assetPool];
 private _groupId = [_spawnPos, _groupType, configNull, _reserveObjectiveId, 1, _side, "", _composition, true] call FLO_fnc_createVirtualGroup;
 if (_groupId isEqualTo "") exitWith { "" };
 
-private _groupData = [_groupId] call FLO_fnc_transportGetTrackedGroup;
+private _groupData = [_groupId] call FLO_fnc_virtualizationGetGroup;
 
 private _availableTransports = FLO_TransportPool get "available";
 _availableTransports set [_groupId, [
