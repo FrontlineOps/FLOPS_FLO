@@ -11,7 +11,14 @@ class Factions {
     class factionBuildTuningFieldSpecsFromIdcs {};
     class factionBuildVehiclePoolFromVariables {};
     class factionClassIsCombatInfantry {};
+    class factionClassifyUnit {};
+    class factionAmmoIsAntiAir {};
     class factionClassifyVehicle {};
+    class factionGetVehicleCapabilities {};
+    class factionGetWeaponMagazines {};
+    class factionBuildRolePools {};
+    class factionBuildInfantryComposition {};
+    class factionApplyInfantryRanks {};
     class factionCollectDirectUnitVariables {};
     class factionCompactNumericText {};
     class factionCompositionDefaultCaps {};

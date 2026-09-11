@@ -79,6 +79,18 @@ private _initialAssetComposition = if (_selectedComposition isNotEqualTo []) the
 } else {
     [_groupType, _resolvedUnitCount, _side] call FLO_fnc_virtualizationSelectInitialAssetComposition
 };
+if (_groupType == "infantry" && {_initialAssetComposition isEqualTo []}) then {
+    private _catalog = FLO_FactionCatalog get ([_side] call FLO_fnc_sideKey);
+    // Auto catalogs opt into config-derived roles; custom definitions keep their
+    // authored spawning contract. An explicit caller composition always wins.
+    if ("infantryRoles" in _catalog) then {
+        if (_groupCfg isEqualType [] && {_groupCfg isNotEqualTo []}) then {
+            _groupCfg = selectRandom _groupCfg;
+            _groupData set ["groupCfg", _groupCfg];
+        };
+        _initialAssetComposition = [_catalog, _resolvedUnitCount, _groupCfg] call FLO_fnc_factionBuildInfantryComposition;
+    };
+};
 if (_initialAssetComposition isNotEqualTo []) then {
     [_groupData, _initialAssetComposition] call FLO_fnc_virtualizationSetAssetComposition;
 };

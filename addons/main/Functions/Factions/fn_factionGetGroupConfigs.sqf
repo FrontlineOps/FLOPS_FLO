@@ -17,12 +17,14 @@ private _result = createHashMapFromArray [
     ["infantryGroups", []],
     ["specOpsGroups", []],
     ["infantryUnits", []],
+    ["specOpsUnits", []],
     ["hasGroups", false]
 ];
 
 if (_factionClass == "") exitWith { _result };
 
-private _facCfg = configFile >> "CfgFactionClasses" >> _factionClass;
+private _facCfg = missionConfigFile >> "CfgFactionClasses" >> _factionClass;
+if !(isClass _facCfg) then { _facCfg = configFile >> "CfgFactionClasses" >> _factionClass; };
 if !(isClass _facCfg) exitWith { _result };
 
 private _side = getNumber (_facCfg >> "side");
@@ -35,6 +37,7 @@ if !(isClass _groupsRoot) exitWith { _result };
 private _infantryGroups = [];
 private _specOpsGroups = [];
 private _infantryUnits = [];
+private _specOpsUnits = [];
 
 for "_i" from 0 to (count _groupsRoot - 1) do {
     private _category = _groupsRoot select _i;
@@ -56,14 +59,17 @@ for "_i" from 0 to (count _groupsRoot - 1) do {
         if !(isClass _groupCfg) then { continue };
 
         private _unitClasses = [];
+        private _invalidMember = false;
         {
             private _unitClass = getText (_x >> "vehicle");
+            if (_unitClass != "" && {!isClass (configFile >> "CfgVehicles" >> _unitClass)}) then { _invalidMember = true; };
+            _unitClass = configName (configFile >> "CfgVehicles" >> _unitClass);
             if (_unitClass != "") then {
                 _unitClasses pushBackUnique _unitClass;
             };
         } forEach ("true" configClasses _groupCfg);
 
-        if (_unitClasses isEqualTo []) then { continue };
+        if (_invalidMember || {_unitClasses isEqualTo []}) then { continue };
 
         private _allCombatInfantry = true;
         {
@@ -73,8 +79,6 @@ for "_i" from 0 to (count _groupsRoot - 1) do {
         } forEach _unitClasses;
 
         if (!_allCombatInfantry) then { continue };
-
-        _infantryUnits append _unitClasses;
 
         private _grpNameLower = toLower (configName _groupCfg);
         private _grpDisplayLower = toLower (getText (_groupCfg >> "name"));
@@ -90,8 +94,10 @@ for "_i" from 0 to (count _groupsRoot - 1) do {
 
         if (_grpLooksSpecOps) then {
             _specOpsGroups pushBack _groupCfg;
+            _specOpsUnits append _unitClasses;
         } else {
             _infantryGroups pushBack _groupCfg;
+            _infantryUnits append _unitClasses;
         };
     };
 };
@@ -99,6 +105,7 @@ for "_i" from 0 to (count _groupsRoot - 1) do {
 _result set ["infantryGroups", _infantryGroups];
 _result set ["specOpsGroups", _specOpsGroups];
 _result set ["infantryUnits", _infantryUnits arrayIntersect _infantryUnits];
+_result set ["specOpsUnits", _specOpsUnits arrayIntersect _specOpsUnits];
 _result set ["hasGroups", (count _infantryGroups + count _specOpsGroups) > 0];
 
 _result

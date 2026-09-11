@@ -30,7 +30,7 @@ private _identity = toLower format [
 private _rejected = false;
 {
     if (_identity find _x >= 0) exitWith { _rejected = true; };
-} forEach ["virtual", "story", "character", "survivor", "civilian", "pilot", "crew", "unarmed"];
+} forEach ["virtual", "story", "character", "survivor", "civilian", "pilot", "crew", "driver", "unarmed"];
 if (_rejected) exitWith { false };
 
 private _weapons = [];

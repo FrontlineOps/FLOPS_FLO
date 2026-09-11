@@ -14,7 +14,10 @@
 
 params [["_factionClasses", [], [[]]]];
 
-private _classes = _factionClasses select { _x isEqualType "" && {_x != ""} };
+if ((_factionClasses findIf {!(_x isEqualType "" && {_x != ""})}) >= 0) then {
+    throw "[FACTIONS] Auto military selection requires non-empty faction classnames";
+};
+private _classes = +_factionClasses;
 _classes = _classes arrayIntersect _classes;
 
 private _empty = createHashMap;
@@ -60,8 +63,7 @@ private _catalogs = [];
 {
     private _catalog = [_x] call FLO_fnc_factionBuildAutoMilitaryCatalog;
     if ((keys _catalog) isEqualTo []) then {
-        ["FACTIONS", 2, format ["Skipping empty auto faction catalog while merging: %1", _x]] call FLO_fnc_log;
-        continue;
+        throw format ["[FACTIONS] Selected auto military faction %1 has no catalog", _x];
     };
 
     _catalogs pushBack _catalog;
@@ -79,6 +81,18 @@ private _catalogs = [];
 if (_catalogs isEqualTo []) exitWith { _empty };
 
 private _baseCatalog = _catalogs select 0;
+if ((_baseCatalog get "groundInfantryUnits") isEqualTo []) then { throw "[FACTIONS] Cannot merge a faction without infantry"; };
+private _nativeSide = getNumber (configFile >> "CfgVehicles" >> ((_baseCatalog get "groundInfantryUnits") select 0) >> "side");
+{
+    if ((_x get "groundInfantryUnits") isEqualTo []) then { throw "[FACTIONS] Cannot merge a faction without infantry"; };
+    if (getNumber (configFile >> "CfgVehicles" >> ((_x get "groundInfantryUnits") select 0) >> "side") != _nativeSide) then {
+        throw "[FACTIONS] Cannot merge military factions from different native sides";
+    };
+} forEach _catalogs;
+_merged set ["infantryRoles", [_merged get "groundInfantryUnits"] call FLO_fnc_factionBuildRolePools];
+_merged set ["infantrySources", _catalogs apply {
+    createHashMapFromArray [["source", "auto"], ["factionClass", _x get "factionClass"], ["groundInfantryUnits", _x get "groundInfantryUnits"], ["groundInfantryGroups", _x get "groundInfantryGroups"], ["infantryRoles", _x get "infantryRoles"]]
+}];
 {
     _merged set [_x, _baseCatalog get _x];
 } forEach [
@@ -88,13 +102,6 @@ private _baseCatalog = _catalogs select 0;
     "objectiveGroupTypeCaps",
     "groupCounts"
 ];
-
-if ((_merged get "officers") isEqualTo [] && {(_merged get "groundInfantryUnits") isNotEqualTo []}) then {
-    private _officer = [_merged get "groundInfantryUnits", "officer"] call FLO_fnc_factionPickUnitByRole;
-    if (_officer != "") then {
-        _merged set ["officers", [_officer]];
-    };
-};
 
 ["FACTIONS", 3, format [
     "Merged auto military factions %1: units=%2 groups=%3 motorized=%4 mechanized=%5 armor=%6 mobileAA=%7 staticAA=%8 air=%9",

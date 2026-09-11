@@ -22,14 +22,18 @@ if !(isClass _factionCfg) then {
 };
 if !(isClass _factionCfg) exitWith { _empty };
 private _expectedSide = getNumber (_factionCfg >> "side");
+if !(_expectedSide in [0, 1]) then {
+    throw format ["[FACTIONS] Auto military faction %1 has unsupported native side %2", _factionClass, _expectedSide];
+};
+private _started = diag_tickTime;
 
 private _groups = [_factionClass] call FLO_fnc_factionGetGroupConfigs;
 private _infantryGroups = _groups get "infantryGroups";
 private _specOpsGroups = _groups get "specOpsGroups";
 private _groupUnits = _groups get "infantryUnits";
 
-private _units = +_groupUnits;
-private _usesUnitFallback = _groupUnits isEqualTo [];
+private _units = [];
+private _specOpsUnits = +(_groups get "specOpsUnits");
 private _rejectedInfantry = [];
 private _vehiclePools = createHashMapFromArray [
     ["groundMotorized", []],
@@ -49,7 +53,6 @@ private _vehiclePools = createHashMapFromArray [
 ];
 
 private _factionLower = toLower _factionClass;
-private _rejectedRadarAssets = [];
 
 {
     private _vehCfg = _x;
@@ -60,12 +63,15 @@ private _rejectedRadarAssets = [];
     private _className = configName _vehCfg;
 
     if (_className isKindOf "CAManBase") then {
-        if (_usesUnitFallback) then {
-            if ([_className, _factionClass, _expectedSide] call FLO_fnc_factionClassIsCombatInfantry) then {
-                _units pushBackUnique _className;
+        if ([_className, _factionClass, _expectedSide] call FLO_fnc_factionClassIsCombatInfantry) then {
+            private _roles = [_className] call FLO_fnc_factionClassifyUnit;
+            if ("recon" in _roles || {"sniper" in _roles} || {"diver" in _roles} || {_className in _specOpsUnits && {!(_className in _groupUnits)}}) then {
+                _specOpsUnits pushBackUnique _className;
             } else {
-                _rejectedInfantry pushBackUnique _className;
+                _units pushBackUnique _className;
             };
+        } else {
+            _rejectedInfantry pushBackUnique _className;
         };
         continue;
     };
@@ -76,57 +82,50 @@ private _rejectedRadarAssets = [];
         _vehiclePools set [_x, _pool];
     } forEach ([_className] call FLO_fnc_factionClassifyVehicle);
 
-    private _hasRadarConfig = getNumber (_vehCfg >> "radarType") > 0 || {getNumber (_vehCfg >> "reportRemoteTargets") > 0};
-    private _isDedicatedRadarAsset = (
-        (_className isKindOf "LandVehicle") ||
-        {_className isKindOf "StaticWeapon"}
-    ) && {
-        ((toLower _className) find "radar") >= 0 ||
-        {((toLower (getText (_vehCfg >> "displayName"))) find "radar") >= 0}
-    };
-
-    if (_isDedicatedRadarAsset && {_hasRadarConfig}) then {
-        private _radarPool = _vehiclePools get "radar";
-        _radarPool pushBackUnique _className;
-        _vehiclePools set ["radar", _radarPool];
-    } else {
-        if (_hasRadarConfig) then {
-            _rejectedRadarAssets pushBackUnique _className;
-        };
-    };
 } forEach ("true" configClasses (configFile >> "CfgVehicles"));
 
 _units = _units arrayIntersect _units;
+// Category names are hints. A conventional category containing recon/divers
+// must not leave a template that violates the conventional unit pool.
+_infantryGroups = _infantryGroups select {
+    private _group = _x;
+    private _members = ("true" configClasses _group) apply {configName (configFile >> "CfgVehicles" >> getText (_x >> "vehicle"))};
+    private _conventional = (_members findIf {!(_x in _units)}) < 0;
+    if (!_conventional) then {
+        _specOpsGroups pushBackUnique _group;
+        { _specOpsUnits pushBackUnique _x; } forEach _members;
+    };
+    _conventional
+};
 
-["FACTIONS", 4, format [
-    "DETAIL catalog=%1 units=%2 infantryGroups=%3 specOpsGroups=%4 unitFallback=%5 rejectedInfantry=%6 motorized=%7 mechanized=%8 armor=%9 mobileAA=%10 staticAA=%11 radar=%12 airJet=%13 rejectedRadar=%14",
+// A faction consisting only of reconnaissance troops still has eligible ground
+// infantry. Divers alone do not establish a conventional land-force pool.
+if (_units isEqualTo []) then {
+    _units = _specOpsUnits select { !("diver" in ([_x] call FLO_fnc_factionClassifyUnit)) };
+};
+private _rolePools = [_units] call FLO_fnc_factionBuildRolePools;
+private _officers = +(_rolePools get "officer");
+if (_officers isEqualTo []) then { _officers = +(_rolePools get "leader"); };
+private _availableRoles = [];
+{ if (_y isNotEqualTo []) then { _availableRoles pushBack [_x, count _y]; }; } forEach _rolePools;
+
+["FACTIONS", 3, format [
+    "Auto military catalog faction=%1 infantry=%2 groups=%3 specOps=%4 roles=%5 rejectedInfantry=%6 motorized=%7 mechanized=%8 armor=%9 mobileAA=%10 staticAA=%11 radar=%12 airJet=%13 timeMs=%14",
     _factionClass,
     count _units,
     count _infantryGroups,
     count _specOpsGroups,
-    _usesUnitFallback,
+    _availableRoles,
     count _rejectedInfantry,
-    _vehiclePools get "groundMotorized",
-    _vehiclePools get "groundMechanized",
-    _vehiclePools get "groundArmor",
-    _vehiclePools get "mobileAA",
-    _vehiclePools get "staticAA",
-    _vehiclePools get "radar",
-    _vehiclePools get "airJet",
-    _rejectedRadarAssets
+    count (_vehiclePools get "groundMotorized"),
+    count (_vehiclePools get "groundMechanized"),
+    count (_vehiclePools get "groundArmor"),
+    count (_vehiclePools get "mobileAA"),
+    count (_vehiclePools get "staticAA"),
+    count (_vehiclePools get "radar"),
+    count (_vehiclePools get "airJet"),
+    (diag_tickTime - _started) * 1000
 ]] call FLO_fnc_log;
-
-private _specOpsUnits = [];
-if (_specOpsGroups isNotEqualTo []) then {
-    private _specPools = [_specOpsGroups] call FLO_fnc_initFactionSplitMixedInfantryPool;
-    _specOpsUnits = _specPools select 1;
-};
-
-private _officers = [];
-private _officer = [_units, "officer"] call FLO_fnc_factionPickUnitByRole;
-if (_officer != "") then {
-    _officers pushBack _officer;
-};
 
 private _compositionSide = ["OPFOR", "BLUFOR"] select (_expectedSide == 1);
 private _compositionDefaults = [_compositionSide, "AUTO_STANDARD"] call FLO_fnc_factionGetCompositionDefaults;
@@ -139,6 +138,7 @@ createHashMapFromArray [
     ["officers", _officers],
     ["groundInfantryGroups", _infantryGroups],
     ["groundInfantryUnits", _units],
+    ["infantryRoles", _rolePools],
     ["groundSpecOpsGroups", _specOpsGroups],
     ["groundSpecOpsUnits", _specOpsUnits],
     ["groundMotorized", _vehiclePools get "groundMotorized"],

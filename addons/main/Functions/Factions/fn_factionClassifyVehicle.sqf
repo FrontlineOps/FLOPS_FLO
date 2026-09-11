@@ -1,158 +1,62 @@
-/*
- * Function: FLO_fnc_factionClassifyVehicle
- * Author: Frontline Operations Development Group
- * Description:
- *   Classifies a CfgVehicles class into FLO faction catalog vehicle pools.
- *
- * Arguments:
- *   0: Vehicle classname <STRING>
- *
- * Return Value:
- *   ARRAY of catalog pool keys
+/* Maps public vehicle classes to usable faction roles. Dedicated AA, artillery,
+ * drones and support assets cannot leak into ordinary maneuver/CAS pools.
  */
-
 params [["_className", "", [""]]];
-
-if (_className == "") exitWith { [] };
-
 private _cfg = configFile >> "CfgVehicles" >> _className;
-if !(isClass _cfg) exitWith { [] };
-if (getNumber (_cfg >> "scope") < 2) exitWith { [] };
+if !(isClass _cfg && {getNumber (_cfg >> "scope") == 2}) exitWith { [] };
 if (_className isKindOf "Man") exitWith { [] };
+if !(_className isKindOf "AllVehicles") exitWith { [] };
 
-private _cnLower = toLower _className;
-private _dnLower = toLower (getText (_cfg >> "displayName"));
-private _vcLower = toLower (getText (_cfg >> "vehicleClass"));
-private _ecLower = toLower (getText (_cfg >> "editorCategory"));
-private _esLower = toLower (getText (_cfg >> "editorSubcategory"));
-private _textLower = [_cnLower, _dnLower, _vcLower, _ecLower, _esLower] joinString " ";
-private _tokenText = " " + ((_textLower splitString " _-/().,[]") joinString " ") + " ";
-private _cats = [];
-
-private _hasText = {
-    params ["_needle"];
-    (_textLower find _needle) >= 0
-};
-
-private _hasToken = {
-    params ["_needle"];
-    (_tokenText find (" " + _needle + " ")) >= 0
-};
-
-private _isAA = {
-    (["aa"] call _hasToken) ||
-    {["sam"] call _hasText} ||
-    {["anti_air"] call _hasText} ||
-    {["antiair"] call _hasText} ||
-    {["zu23"] call _hasText} ||
-    {["zu 23"] call _hasText} ||
-    {["zsu"] call _hasText} ||
-    {["2s6"] call _hasText} ||
-    {["tunguska"] call _hasText} ||
-    {["shilka"] call _hasText} ||
-    {["igla"] call _hasText} ||
-    {["stinger"] call _hasText} ||
-    {["tor"] call _hasToken}
-};
-
-private _isArtillery = {
-    (getNumber (_cfg >> "artilleryScanner") > 0) ||
-    {["arty"] call _hasText} ||
-    {["artillery"] call _hasText} ||
-    {["mortar"] call _hasText} ||
-    {["mlrs"] call _hasText} ||
-    {["howitzer"] call _hasText}
-};
-
-private _isDrone = (getNumber (_cfg >> "isUav") > 0) ||
-    {["uav"] call _hasText} ||
-    {["ugv"] call _hasText} ||
-    {["drone"] call _hasText};
-
-if (_isDrone) then {
-    if (_className isKindOf "Air") then {
-        _cats pushBack "airDrone";
-    } else {
-        _cats pushBack "groundDrone";
-    };
-};
+private _tokens = (toLower format ["%1 %2 %3 %4", _className, getText (_cfg >> "displayName"), getText (_cfg >> "vehicleClass"), getText (_cfg >> "editorSubcategory")]) splitString " _-/().,[]";
+private _capabilities = [_className] call FLO_fnc_factionGetVehicleCapabilities;
+private _armed = _capabilities get "armed";
+private _threat = getArray (_cfg >> "threat");
+private _airThreat = count _threat >= 3 && {(_threat select 2) > 0.5} && {(_threat select 2) > (_threat select 1)};
+private _aaHint = (_tokens arrayIntersect ["aa", "sam", "antiair", "zu23", "zsu", "2s6", "tunguska", "shilka", "igla", "stinger", "tor"]) isNotEqualTo [] || {"zu" in _tokens && {"23" in _tokens}};
+private _isAA = _armed && {(_capabilities get "antiAir") || {_airThreat && {_aaHint || {_className isKindOf "Tank"}}} || {_aaHint}};
+private _isArtillery = getNumber (_cfg >> "artilleryScanner") > 0;
+private _isDrone = getNumber (_cfg >> "isUav") > 0;
+private _transport = getNumber (_cfg >> "transportSoldier");
+private _isRadar = !_armed && {getNumber (_cfg >> "radarType") > 0 || {getNumber (_cfg >> "reportRemoteTargets") > 0}} && {"radar" in _tokens};
 
 if (_className isKindOf "StaticWeapon") exitWith {
-    if (call _isAA) then {
-        _cats pushBack "staticAA";
-    };
-    if (call _isArtillery) then {
-        _cats pushBack "groundArtillery";
-    };
-    _cats arrayIntersect _cats
+    private _roles = [];
+    if (_isAA) then { _roles pushBack "staticAA"; };
+    if (_isArtillery) then { _roles pushBack "groundArtillery"; };
+    if (_isRadar) then { _roles pushBack "radar"; };
+    _roles
 };
-
+if (_isRadar && {_className isKindOf "LandVehicle"}) exitWith { ["radar"] };
+if (_isDrone) exitWith {
+    if (_className isKindOf "Air") exitWith { ["airDrone"] };
+    if (_className isKindOf "LandVehicle") exitWith { ["groundDrone"] };
+    []
+};
 if (_className isKindOf "Helicopter") exitWith {
-    private _transport = getNumber (_cfg >> "transportSoldier");
-    if (_transport >= 4) then {
-        _cats pushBack "airTransport";
-    };
-    if (_transport <= 6 || {["attack"] call _hasText} || {["gunship"] call _hasText}) then {
-        _cats pushBack "airHeli";
-    };
-    _cats arrayIntersect _cats
+    private _roles = [];
+    if (_transport >= 4) then { _roles pushBack "airTransport"; };
+    if (_armed) then { _roles pushBack "airHeli"; };
+    _roles
 };
-
 if (_className isKindOf "Plane") exitWith {
-    if (_isDrone) then { _cats } else { ["airJet"] }
+    if (_armed) then { ["airJet"] } else { [] }
 };
+if (_className isKindOf "Ship") exitWith { ["boat"] };
+if !(_className isKindOf "LandVehicle") exitWith { [] };
+if (_isArtillery) exitWith { ["groundArtillery"] };
+if (_isAA) exitWith { ["mobileAA"] };
 
-if (_className isKindOf "Ship") exitWith {
-    ["boat"]
+private _isAPC = _className isKindOf "Wheeled_APC_F" ||
+    {(_tokens arrayIntersect ["apc", "ifv", "aav", "bmd", "bmp", "btr", "lav", "lav25", "stryker", "m113", "mtlb"]) isNotEqualTo []};
+if (_className isKindOf "Tank") exitWith {
+    if (_isAPC || {_transport > 0 && {!("mbt" in _tokens)} && {!(_capabilities get "tankCannon")}}) then { ["groundMechanized"] } else { ["groundArmor"] }
 };
-
-if (_className isKindOf "LandVehicle") then {
-    private _transport = getNumber (_cfg >> "transportSoldier");
-    private _landIsAA = call _isAA;
-    private _landIsArtillery = call _isArtillery;
-
-    if (_landIsArtillery) then {
-        _cats pushBack "groundArtillery";
-    };
-
-    if (_landIsAA) then {
-        _cats pushBack "mobileAA";
-    };
-
-    if (_landIsAA || {_landIsArtillery}) exitWith {
-        _cats arrayIntersect _cats
-    };
-
-    if (_className isKindOf "Tank") then {
-        private _isTroopCarrier = _transport > 0 ||
-            {["apc"] call _hasText} ||
-            {["ifv"] call _hasText} ||
-            {["aav"] call _hasText} ||
-            {["bmd"] call _hasText} ||
-            {["bmp"] call _hasText} ||
-            {["btr"] call _hasText} ||
-            {["m113"] call _hasText} ||
-            {["mtlb"] call _hasText};
-
-        if (_isTroopCarrier) then {
-            _cats pushBack "groundMechanized";
-        } else {
-            _cats pushBack "groundArmor";
-        };
-    } else {
-        if (_className isKindOf "Truck") then {
-            if (_transport > 0) then {
-                _cats pushBack "groundTransport";
-            };
-        };
-
-        if (_className isKindOf "Car") then {
-            _cats pushBack "groundMotorized";
-            if (_transport >= 4) then {
-                _cats pushBack "groundTransport";
-            };
-        };
-    };
+if (_isAPC && {_className isKindOf "Car"}) exitWith { ["groundMechanized"] };
+if ((_capabilities get "tankCannon") && {getNumber (_cfg >> "armor") >= 100}) exitWith { ["groundArmor"] };
+private _isSupport = getNumber (_cfg >> "transportAmmo") > 0 || {getNumber (_cfg >> "transportRepair") > 0} || {getNumber (_cfg >> "transportFuel") > 0};
+private _roles = [];
+if (_className isKindOf "Car") then {
+    if (_transport >= 4) then { _roles pushBack "groundTransport"; };
+    if (_armed && {!_isSupport}) then { _roles pushBack "groundMotorized"; };
 };
-
-_cats arrayIntersect _cats
+_roles
