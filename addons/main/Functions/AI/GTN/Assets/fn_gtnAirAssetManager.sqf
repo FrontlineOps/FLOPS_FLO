@@ -215,27 +215,26 @@ if (isNil "FLO_GTNAirAssetManager") then {
 
         ["_scheduleVirtualMissionRelease", {
             params ["_gid", "_duration"];
-
-            [_gid, _duration] spawn {
-                params ["_gid", "_duration"];
-                sleep _duration;
-
-                if (!isNil "FLO_VirtualForceRegistry") then {
-                    private _groups = call FLO_fnc_virtualizationGetGroupMap;
-                    if (_gid in _groups) then {
-                        private _gData = _groups get _gid;
-                        [_gData] call FLO_fnc_virtualizationClearMissionLock;
-                        [_gData] call FLO_fnc_virtualizationClearExecutionState;
-                        [_gid] call FLO_fnc_gtnAirParkCombatGroupOffMap;
-                    };
+            private _missions = _self get "missions";
+            // Destroyed aircraft have already relinquished mission ownership.
+            if !(_gid in _missions) exitWith {};
+            private _missionId = (_missions get _gid) get "missionId";
+            [{
+                params ["_manager", "_gid", "_missionId"];
+                private _missions = _manager get "missions";
+                if !(_gid in _missions) exitWith {};
+                private _record = _missions get _gid;
+                if ((_record get "missionId") != _missionId || {(_record get "mode") != "VIRTUAL"}) exitWith {};
+                private _groups = call FLO_fnc_virtualizationGetGroupMap;
+                if (_gid in _groups) then {
+                    private _gData = _groups get _gid;
+                    [_gData] call FLO_fnc_virtualizationClearMissionLock;
+                    [_gData] call FLO_fnc_virtualizationClearExecutionState;
+                    [_gid] call FLO_fnc_gtnAirParkCombatGroupOffMap;
                 };
-
-                if (!isNil "FLO_GTNAirAssetManager") then {
-                    (FLO_GTNAirAssetManager get "missions") deleteAt _gid;
-                };
-
+                _missions deleteAt _gid;
                 ["GTN Air Asset Manager", 3, format["Virtual air mission complete for %1", _gid]] call FLO_fnc_log;
-            };
+            }, [_self, _gid, _missionId], _duration] call CBA_fnc_waitAndExecute;
         }],
 
         ["_scheduleRTBCompletion", {
@@ -290,6 +289,8 @@ if (isNil "FLO_GTNAirAssetManager") then {
             // Optional output preserves the existing asset-array return contract.
             params ["_targetPos", ["_missionType", "CAS"], ["_requestSide", sideUnknown], ["_meta", createHashMap], ["_requestResult", createHashMap]];
             _requestResult set ["reason", ""];
+            _requestResult set ["outcome", ""];
+            _requestResult set ["losses", 0];
 
             private _tRequest = diag_tickTime;
             private _candidateCount = 0;
@@ -350,8 +351,18 @@ if (isNil "FLO_GTNAirAssetManager") then {
 
             private _sel = [];
             private _bestDist = 1e12;
+            private _playerRequested = ("playerSupport" in _meta) && {_meta get "playerSupport"};
+            private _commander = [_requestSide] call FLO_fnc_gtnGetCommanderBySide;
+            private _worldState = _commander get "_worldState";
+            private _knownAirDefense = if (_missionType == "CAS" && {!_playerRequested}) then {
+                _worldState call ["_getKnownAirDefenseThreats", []]
+            } else { [] };
             {
                 _x params ["_gid", "_gData"];
+                if (_knownAirDefense isNotEqualTo []) then {
+                    private _route = [_gData] call FLO_fnc_gtnAirResolveReserveRoutePositions;
+                    if ([_route select 1, _targetPos, _knownAirDefense] call FLO_fnc_gtnAirRouteHasKnownThreat) then { continue };
+                };
                 private _dist = (_gData get "position") distance2D _targetPos;
                 if (_dist < _bestDist) then {
                     _bestDist = _dist;
@@ -359,7 +370,7 @@ if (isNil "FLO_GTNAirAssetManager") then {
                 };
             } forEach _airGroups;
             if (_sel isEqualTo []) exitWith {
-                _requestResult set ["reason", "NO_ELIGIBLE_AIRCRAFT"];
+                _requestResult set ["reason", "KNOWN_AIR_DEFENSE"];
                 []
             };
 
@@ -367,7 +378,6 @@ if (isNil "FLO_GTNAirAssetManager") then {
             private _gdata = _sel select 1;
             _selectedId = _gid;
             private _forceLive = ("forceLive" in _meta) && {_meta get "forceLive"};
-            private _playerRequested = ("playerSupport" in _meta) && {_meta get "playerSupport"};
             private _targetGroupIds = if ("targetGroupIds" in _meta) then { +(_meta get "targetGroupIds") } else { [] };
             private _areaContact = ("areaContact" in _meta) && {_meta get "areaContact"};
             if (_missionType == "CAS" && {!_forceLive} && {_targetGroupIds isEqualTo []} && {!_areaContact}) exitWith {
@@ -444,6 +454,11 @@ if (isNil "FLO_GTNAirAssetManager") then {
                     _airDefenseContactIndex
                 ] call FLO_fnc_gtnAirDefenseResolveVirtualEngagement;
                 private _interceptStatus = _intercept get "status";
+                if ("contactPosition" in _intercept) then {
+                    _worldState call ["_reportAirDefenseContact", [
+                        _intercept get "aaGroupId", _intercept get "contactPosition", _intercept get "contactType"
+                    ]];
+                };
 
                 if (_interceptStatus == "PHYSICAL") exitWith {
                     private _realGroup = _gdata get "realGroup";
@@ -460,6 +475,14 @@ if (isNil "FLO_GTNAirAssetManager") then {
                 if (_interceptStatus == "CLEAR" && {_missionType == "CAS"}) then {
                     _effect = [_missionRecord] call FLO_fnc_gtnAirApplyVirtualCASEffect;
                 };
+                private _outcome = if (_interceptStatus != "CLEAR") then { _interceptStatus } else {
+                    if (_missionType == "CAS") then {
+                        ["NO_TARGET_EFFECT", "EFFECT_APPLIED"] select ((_effect get "totalLosses") > 0)
+                    } else { "COMPLETED" }
+                };
+                _missionRecord set ["outcome", _outcome];
+                _requestResult set ["outcome", _outcome];
+                _requestResult set ["losses", _effect get "totalLosses"];
                 _phaseVirtualMs = (diag_tickTime - _tVirtual) * 1000;
                 if (_gid in (call FLO_fnc_virtualizationGetGroupMap)) then {
                     [_gid, false] call FLO_fnc_gtnAirParkCombatGroupOffMap;
@@ -469,13 +492,15 @@ if (isNil "FLO_GTNAirAssetManager") then {
                 _self call ["_scheduleVirtualMissionRelease", [_gid, _duration]];
 
                 ["GTN Air Asset Manager", 3, format[
-                    "Virtual %1 mission by %2 at %3 (intercept=%4 losses=%5 duration=%6s)",
+                    "Virtual %1 mission by %2 at %3 (intercept=%4 losses=%5 duration=%6s outcome=%7 groupsHit=%8)",
                     _missionType,
                     _gid,
                     _targetPos,
                     _interceptStatus,
                     _effect get "totalLosses",
-                    round _duration
+                    round _duration,
+                    _outcome,
+                    _effect get "groupsHit"
                 ]] call FLO_fnc_log;
 
                 _self call ["_recordRequestPerf", [

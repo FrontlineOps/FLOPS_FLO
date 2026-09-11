@@ -91,9 +91,17 @@ if (isNil "FLO_GTNAirTaskOrder") then {
                             ["GTN ATO", 3, format["Revealed %1 targets to CAS aircraft crew", _revealed]] call FLO_fnc_log;
                         };
                     } else {
-                        ["GTN ATO", 3, format["Virtual-only %1 mission assigned to %2 at %3 (no unvirtualize)", _mission, _gid, _pos]] call FLO_fnc_log;
+                        private _outcome = _requestResult get "outcome";
+                        ["GTN ATO", 3, format["Virtual %1 attempt by %2 at %3 resolved: %4", _mission, _gid, _pos, _outcome]] call FLO_fnc_log;
                         if (_hasPlayerSupportMeta) then {
-                            [_requestSide, "HQ", format ["%1 active over %2.", toUpper _mission, _targetLabel]] call FLO_fnc_gtnBroadcastCommanderRadioMessage;
+                            private _report = switch (_outcome) do {
+                                case "ABORTED": { "aborted under air-defense fire" };
+                                case "DESTROYED": { "aircraft lost to air defenses" };
+                                case "NO_TARGET_EFFECT": { "no confirmed target damage" };
+                                case "EFFECT_APPLIED": { "strike completed with confirmed target losses" };
+                                default { "mission completed" };
+                            };
+                            [_requestSide, "HQ", format ["%1 over %2: %3.", toUpper _mission, _targetLabel, _report]] call FLO_fnc_gtnBroadcastCommanderRadioMessage;
                         };
                     };
                 } else {

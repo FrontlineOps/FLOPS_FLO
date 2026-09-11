@@ -101,6 +101,8 @@ class FLO {
 
     class GTNIntel {
         file = "\z\flo\addons\main\Functions\AI\GTN\Intel";
+        class gtnRecordAirDefenseContact {};
+        class gtnGetKnownAirDefenseThreats {};
 
         class gtnApproximateCommanderMarkerPosition {};
         class gtnBuildFrontlineSupportPicture {};
@@ -214,6 +216,7 @@ class FLO {
         class gtnAirInitializeOffMapReserves {};
         class gtnAirParkCombatGroupOffMap {};
         class gtnAirResolveReserveRoutePositions {};
+        class gtnAirRouteHasKnownThreat {};
         class gtnAirTryRevirtualizeLiveMission {};
         class gtnBroadcastCommanderRadioMessage {};
         class gtnBroadcastArtilleryRadio {};

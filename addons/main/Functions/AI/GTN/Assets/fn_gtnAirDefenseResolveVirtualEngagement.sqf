@@ -43,6 +43,8 @@ private _candidates = [];
 if (_candidates isEqualTo []) exitWith { createHashMapFromArray [["status", "CLEAR"], ["aaGroupId", ""], ["losses", 0]] };
 _candidates sort true;
 (_candidates select 0) params ["_priority", "_distance", "_aaId", "_aaData", "_pairKey"];
+private _contactPosition = +(_aaData get "position");
+private _contactType = _aaData get "groupType";
 
 private _engagementObserved = [
     [_routeStart, _routeEnd],
@@ -156,4 +158,7 @@ if !(_airGroupId in _groups) then { _status = "DESTROYED"; };
 ]] call FLO_fnc_log;
 ["FLO_GTN_VirtualAirDefenseEngagement", [_aaId, _airGroupId, _status, _appliedLoss]] call CBA_fnc_localEvent;
 
-createHashMapFromArray [["status", _status], ["aaGroupId", _aaId], ["losses", _appliedLoss]]
+createHashMapFromArray [
+    ["status", _status], ["aaGroupId", _aaId], ["losses", _appliedLoss],
+    ["contactPosition", _contactPosition], ["contactType", _contactType]
+]

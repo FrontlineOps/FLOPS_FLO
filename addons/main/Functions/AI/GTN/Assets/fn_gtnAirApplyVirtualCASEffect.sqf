@@ -15,14 +15,15 @@ private _contactConfidence = _missionRecord get "contactConfidence";
 private _contactAge = _missionRecord get "contactAgeSeconds";
 private _groups = call FLO_fnc_virtualizationGetGroupMap;
 private _candidates = [];
+private _searchRadius = (_uncertaintyRadius max 120) min 900;
 
 if (_targetIds isEqualTo []) then {
     if (!_areaContact) then {
         throw format ["Virtual CAS mission %1 has no exact or area contact", _missionRecord get "missionId"];
     };
-    private _searchRadius = (_uncertaintyRadius max 120) min 900;
     _targetIds = ["queryRadius", [_targetPos, _searchRadius, _enemySide, true]] call FLO_fnc_virtualizationSpatialIndex;
 };
+_targetIds = _targetIds arrayIntersect _targetIds;
 
 {
     private _groupId = _x;
@@ -31,7 +32,8 @@ if (_targetIds isEqualTo []) then {
     if ((_groupData get "side") isNotEqualTo _enemySide) then { continue };
     if (_groupData get "isActive") then { continue };
     if ((_groupData get "unitCount") <= 0) then { continue };
-    if (_areaContact && {((_groupData get "position") distance2D _targetPos) > ((_uncertaintyRadius max 120) min 900)}) then { continue };
+    // Exact identity does not authorize following an unobserved target elsewhere.
+    if (((_groupData get "position") distance2D _targetPos) > _searchRadius) then { continue };
 
     private _groupType = _groupData get "groupType";
     if !(_groupType in ["infantry", "motorized", "mechanized", "armor", "mobile_aa", "artillery", "static_aa"]) then { continue };
@@ -77,6 +79,7 @@ for "_index" from 0 to (_targetCount - 1) do {
     (_candidates select _index) params ["_priority", "_groupId", "_exposure"];
     if !(_groupId in _groups) then { continue };
     private _groupData = _groups get _groupId;
+    if (((_groupData get "position") distance2D _targetPos) > _searchRadius) then { continue };
     private _currentCount = _groupData get "unitCount";
     private _requestedLoss = ((round (_baseLoss * _exposure * _contactFactor / (1 + (_index * 0.35)))) max 1) min _currentCount;
     private _appliedLoss = [_groupId, _requestedLoss] call FLO_fnc_gtnCombatApplyGroupLoss;

@@ -683,7 +683,7 @@ private _gtnCommander = createHashMapObject [[
             ];
 
             diag_log format [
-                "[FLO][PERF] GTN commander %1 frontlineCAS | asset=%2 candidates=%3 eligible=%4 locked=%5 requested=%6 objective=%7 score=%8",
+                "[FLO][PERF] GTN commander %1 frontlineCAS | asset=%2 candidates=%3 eligible=%4 locked=%5 requested=%6 objective=%7 score=%8 knownAARejected=%9",
                 _self get "_sideKey",
                 _frontlineCASMetrics get "assetAvailable",
                 _frontlineCASMetrics get "candidateCount",
@@ -691,7 +691,8 @@ private _gtnCommander = createHashMapObject [[
                 _frontlineCASMetrics get "lockedCount",
                 _frontlineCASMetrics get "requestedCount",
                 _frontlineCASMetrics get "selectedObjective",
-                _frontlineCASMetrics get "selectedScore"
+                _frontlineCASMetrics get "selectedScore",
+                _frontlineCASMetrics get "airDefenseRejectedCount"
             ];
 
             diag_log format [

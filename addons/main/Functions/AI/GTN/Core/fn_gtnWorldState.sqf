@@ -98,6 +98,8 @@ private _worldState = createHashMapObject [[
     ["_enemyIntelScanCursor", 0],
     ["_enemyIntelScanBudget", 24], // Max leaders to scan per intel pass
     ["_knownEnemyGroupFreshSeconds", 180],
+    ["_airDefenseContacts", createHashMap], // Runtime reports; positions do not follow hidden AA movement.
+    ["_airDefenseContactMaxAgeSeconds", 900],
     ["_combatIntelFreshSeconds", 240],
     ["_combatIntelLastProcessedAt", -1],
     ["_lastCombatIntelAdded", 0],
@@ -769,6 +771,15 @@ private _worldState = createHashMapObject [[
 
     ["_getKnownEnemyGroupPicture", {
         (_self get "_enemyIntel") get "knownGroupPicture"
+    }],
+
+    ["_reportAirDefenseContact", {
+        params ["_contactId", "_position", "_groupType"];
+        [_self, _contactId, _position, _groupType] call FLO_fnc_gtnRecordAirDefenseContact
+    }],
+
+    ["_getKnownAirDefenseThreats", {
+        [_self] call FLO_fnc_gtnGetKnownAirDefenseThreats
     }],
 
     ["_getSupportAssets", {
