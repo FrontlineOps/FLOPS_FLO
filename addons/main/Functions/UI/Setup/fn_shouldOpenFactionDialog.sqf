@@ -15,7 +15,8 @@
  *   BOOL - True when the faction dialog may be opened
  */
 
-if (!hasInterface || {is3DEN} || {isNull findDisplay 46} || {!isNull findDisplay 0}) exitWith { false };
+// Display 0 remains open behind Eden previews, including hosted multiplayer.
+if (!hasInterface || {is3DEN} || {isNull findDisplay 46} || {!is3DENPreview && {!isNull findDisplay 0}}) exitWith { false };
 // Absence of an initialization phase is not permission to start a campaign.
 if (isNil "FLO_InitPhase") exitWith { false };
 if (FLO_InitPhase != 1) exitWith { false };

@@ -8,14 +8,13 @@
  */
 
 // Addon postInit also runs in the world scene behind Arma's main menu. Wait
-// for the gameplay display on clients/hosts; menu scenes must never bootstrap.
+// for the gameplay display on clients/hosts; Eden previews also retain display 0.
 if (is3DEN) exitWith {};
-if (hasInterface && {!isNull findDisplay 0}) exitWith {};
+if (hasInterface && {!is3DENPreview} && {!isNull findDisplay 0}) exitWith {};
 if (hasInterface && {isNull findDisplay 46}) exitWith {
     [{
-        !isNull findDisplay 46 || {!isNull findDisplay 0}
+        !isNull findDisplay 46 || {!is3DENPreview && {!isNull findDisplay 0}}
     }, {
-        if (!isNull findDisplay 0) exitWith {};
         [] call FLO_fnc_addonPostInit;
     }, []] call CBA_fnc_waitUntilAndExecute;
 };
