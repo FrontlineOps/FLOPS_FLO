@@ -6,4 +6,5 @@ class ForceGeneration {
     class initializeTransportReserveGroups {};
     class backfillObjectiveTemplateGroups {};
     class distributeVirtualGroups {};
+    class resolveObjectiveLandPlacement {};
 };

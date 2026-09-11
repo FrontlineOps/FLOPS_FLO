@@ -137,6 +137,9 @@ for "_i" from 1 to _remainingGroups do {
             };
         };
 
+        if (count _safePos >= 2 && {!surfaceIsWater _safePos}) then {
+            _safePos = [_safePos, _position, _distributionRadius max 100] call FLO_fnc_resolveObjectiveLandPlacement;
+        };
         if (count _safePos < 2 || {surfaceIsWater _safePos}) then {
             _rejectedLandPlacements = _rejectedLandPlacements + 1;
             continue;
