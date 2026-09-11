@@ -1,139 +1,148 @@
-/*
- * Function: FLO_fnc_gtnGoalLibrary
- * Author: Frontline Operations Development Group
- *
- * Description:
- * Goal Task Network goal library for the current frontline allocation model.
- * The live GTN path only uses:
- * - protect_critical_assets -> prim_allocate_frontline_defense
- *
- * Arguments:
- * None
- *
- * Return Value:
- * Goal Library HashMap Object <HASHMAP>
- *
- * Example:
- * private _goalLib = call FLO_fnc_gtnGoalLibrary;
- * private _goal = _goalLib call ["_getGoal", ["protect_critical_assets"]];
- */
-
-["GTN", 3, "Initializing GTN Goal Library"] call FLO_fnc_log;
-
-#define GOAL_STRATEGIC "STRATEGIC"
-
-private _goalLibrary = createHashMapObject [[
-    ["_goals", createHashMap],
-    ["_primitives", createHashMap],
-
+/* Goal definitions separate projected effects from verified runtime outcomes. */
+private _library = createHashMapObject [[
+    ["_goals", createHashMap], ["_primitives", createHashMap],
     ["_registerGoal", {
-        params ["_goalDef"];
-        private _id = _goalDef get "id";
-        private _goals = _self get "_goals";
-        _goals set [_id, _goalDef];
-        _self set ["_goals", _goals];
-        ["GTN", 4, format ["Registered goal: %1", _id]] call FLO_fnc_log;
+        params ["_definition"];
+        [_definition, false] call FLO_fnc_gtnValidatePlanDefinition;
+        (_self get "_goals") set [_definition get "id", _definition];
     }],
-
     ["_registerPrimitive", {
-        params ["_primDef"];
-        private _id = _primDef get "id";
-        private _prims = _self get "_primitives";
-        _prims set [_id, _primDef];
-        _self set ["_primitives", _prims];
-        ["GTN", 4, format ["Registered primitive: %1", _id]] call FLO_fnc_log;
+        params ["_definition"];
+        [_definition, true] call FLO_fnc_gtnValidatePlanDefinition;
+        (_self get "_primitives") set [_definition get "id", _definition];
     }],
-
-    ["_getGoal", {
-        params ["_goalId"];
-        (_self get "_goals") getOrDefault [_goalId, nil]
-    }],
-
-    ["_getPrimitive", {
-        params ["_primitiveId"];
-        (_self get "_primitives") getOrDefault [_primitiveId, nil]
-    }],
-
-    ["_isPrimitive", {
-        params ["_taskId"];
-        !isNil { (_self get "_primitives") get _taskId }
-    }],
-
-    ["_isGoal", {
-        params ["_taskId"];
-        !isNil { (_self get "_goals") get _taskId }
-    }],
-
+    ["_getGoal", { params ["_id"]; (_self get "_goals") get _id }],
+    ["_getPrimitive", { params ["_id"]; (_self get "_primitives") get _id }],
+    ["_isPrimitive", { params ["_id"]; _id in (_self get "_primitives") }],
+    ["_isGoal", { params ["_id"]; _id in (_self get "_goals") }],
     ["_getGoalsByType", {
         params ["_type"];
-        private _result = [];
         private _goals = _self get "_goals";
-
-        {
-            private _goal = _goals get _x;
-            if ((_goal get "type") == _type) then {
-                _result pushBack _goal;
-            };
-        } forEach (keys _goals);
-
-        _result
-    }],
-
-    ["_initialize", {
-        _self call ["_registerGoals", []];
-        _self call ["_registerPrimitives", []];
-
-        ["GTN", 3, format [
-            "Goal Library initialized with %1 goals and %2 primitives",
-            count (keys (_self get "_goals")),
-            count (keys (_self get "_primitives"))
-        ]] call FLO_fnc_log;
-    }],
-
-    ["_registerGoals", {
-        _self call ["_registerGoal", [createHashMapFromArray [
-            ["id", "protect_critical_assets"],
-            ["type", GOAL_STRATEGIC],
-            ["description", "Protect threatened friendly objectives with shared frontline defense allocation"],
-            ["preconditions", { true }],
-            ["methods", [
-                createHashMapFromArray [
-                    ["id", "active_defense"],
-                    ["score", {
-                        params ["_ws", "_params", "_planner"];
-                        private _underAttack = _ws call ["_getObjectivesUnderAttack", []];
-                        if ((keys _underAttack) isEqualTo []) exitWith { -1 };
-                        60
-                    }],
-                    ["subtasks", [
-                        ["prim_allocate_frontline_defense", []]
-                    ]]
-                ],
-                createHashMapFromArray [
-                    ["id", "holding_defense"],
-                    ["score", { 25 }],
-                    ["subtasks", [
-                        ["prim_allocate_frontline_defense", []]
-                    ]]
-                ]
-            ]]
-        ]]];
-
-    }],
-
-    ["_registerPrimitives", {
-        _self call ["_registerPrimitive", [createHashMapFromArray [
-            ["id", "prim_allocate_frontline_defense"],
-            ["description", "Allocate defense groups across threatened objectives"],
-            ["handler", "GTN_allocateFrontlineDefense"],
-            ["timeout", 30],
-            ["completionCheck", { true }]
-        ]]];
+        (keys _goals select { ((_goals get _x) get "type") == _type }) apply { _goals get _x }
     }]
 ]];
-
-_goalLibrary call ["_initialize", []];
-
-["GTN", 3, "GTN Goal Library created"] call FLO_fnc_log;
-
-_goalLibrary
+_library call ["_registerGoal", [createHashMapFromArray [
+    ["id", "capture_objective"], ["type", "STRATEGIC"], ["repeat", false],
+    ["description", "capture objective"],
+    ["preconditions", { _this call FLO_fnc_gtnIntentGoalValid }],
+    ["satisfied", { _this call FLO_fnc_gtnIntentGoalSatisfied }],
+    ["methods", [
+        createHashMapFromArray [
+            ["id", "exploit_verified_opening"], ["score", {120}],
+            ["conditions", {_this call FLO_fnc_gtnCanExploitOpening}],
+            ["subtasks", [["prim_intent_confirm", ["_PARAM_0"]], ["prim_intent_assault", ["_PARAM_0"]], ["prim_intent_secure", ["_PARAM_0"]]]]
+        ],
+        createHashMapFromArray [
+            ["id", "resume_muster"], ["score", {100}],
+            ["conditions", {params ["_state"]; ((_state get "intent") get "phase") == "MUSTER"}],
+            ["subtasks", [["prim_intent_muster", ["_PARAM_0"]], ["prim_intent_assemble", ["_PARAM_0"]], ["prim_intent_scout", ["_PARAM_0"]], ["prim_intent_assault", ["_PARAM_0"]], ["prim_intent_secure", ["_PARAM_0"]]]]
+        ],
+        createHashMapFromArray [
+            ["id", "resume_assemble"], ["score", {100}],
+            ["conditions", {params ["_state"]; ((_state get "intent") get "phase") == "ASSEMBLE"}],
+            ["subtasks", [["prim_intent_assemble", ["_PARAM_0"]], ["prim_intent_scout", ["_PARAM_0"]], ["prim_intent_assault", ["_PARAM_0"]], ["prim_intent_secure", ["_PARAM_0"]]]]
+        ],
+        createHashMapFromArray [
+            ["id", "resume_scout"], ["score", {100}],
+            ["conditions", {params ["_state"]; ((_state get "intent") get "phase") == "SCOUT"}],
+            ["subtasks", [["prim_intent_scout", ["_PARAM_0"]], ["prim_intent_assault", ["_PARAM_0"]], ["prim_intent_secure", ["_PARAM_0"]]]]
+        ],
+        createHashMapFromArray [
+            ["id", "resume_assault"], ["score", {100}],
+            ["conditions", {params ["_state"]; ((_state get "intent") get "phase") == "ASSAULT"}],
+            ["subtasks", [["prim_intent_assault", ["_PARAM_0"]], ["prim_intent_secure", ["_PARAM_0"]]]]
+        ],
+        createHashMapFromArray [
+            ["id", "resume_secure"], ["score", {100}],
+            ["conditions", {params ["_state"]; ((_state get "intent") get "phase") == "SECURE"}],
+            ["subtasks", [["prim_intent_secure", ["_PARAM_0"]]]]
+        ]
+    ]]
+]]];
+_library call ["_registerPrimitive", [createHashMapFromArray [
+    ["id", "prim_intent_confirm"], ["timeout", 1800],
+    ["preconditions", { _this call FLO_fnc_gtnIntentGoalValid && {_this call FLO_fnc_gtnCanExploitOpening} }],
+    ["effects", {params ["_state"]; [_state, "ASSAULT"] call FLO_fnc_gtnProjectIntentPhase}],
+    ["completionCheck", {params ["_ctx"]; (_ctx get "data") get "phaseCompleted"}]
+]]];
+_library call ["_registerPrimitive", [createHashMapFromArray [
+    ["id", "prim_intent_scout"], ["timeout", 1800],
+    ["preconditions", { params ["_state", "_args"]; [_state, _args] call FLO_fnc_gtnIntentGoalValid && {((_state get "intent") get "phase") == "SCOUT"} }],
+    ["effects", { params ["_state"]; [_state, "ASSAULT"] call FLO_fnc_gtnProjectIntentPhase }],
+    ["completionCheck", { params ["_ctx"]; (_ctx get "data") get "phaseCompleted" }]
+]]];
+_library call ["_registerPrimitive", [createHashMapFromArray [
+    ["id", "prim_intent_muster"], ["timeout", 1800],
+    ["preconditions", { params ["_state", "_args"]; [_state, _args] call FLO_fnc_gtnIntentGoalValid && {((_state get "intent") get "phase") == "MUSTER"} }],
+    ["effects", { params ["_state"]; [_state, "ASSEMBLE"] call FLO_fnc_gtnProjectIntentPhase }],
+    ["completionCheck", { params ["_ctx"]; (_ctx get "data") get "phaseCompleted" }]
+]]];
+_library call ["_registerPrimitive", [createHashMapFromArray [
+    ["id", "prim_intent_assemble"], ["timeout", 1800],
+    ["preconditions", { params ["_state", "_args"]; [_state, _args] call FLO_fnc_gtnIntentGoalValid && {((_state get "intent") get "phase") == "ASSEMBLE"} }],
+    ["effects", { params ["_state"]; [_state, "SCOUT"] call FLO_fnc_gtnProjectIntentPhase }],
+    ["completionCheck", { params ["_ctx"]; (_ctx get "data") get "phaseCompleted" }]
+]]];
+_library call ["_registerPrimitive", [createHashMapFromArray [
+    ["id", "prim_intent_assault"], ["timeout", 1800],
+    ["preconditions", { params ["_state", "_args"]; [_state, _args] call FLO_fnc_gtnIntentGoalValid && {((_state get "intent") get "phase") == "ASSAULT"} }],
+    ["effects", { params ["_state"]; [_state, "SECURE"] call FLO_fnc_gtnProjectIntentPhase }],
+    ["completionCheck", { params ["_ctx"]; (_ctx get "data") get "phaseCompleted" }]
+]]];
+_library call ["_registerPrimitive", [createHashMapFromArray [
+    ["id", "prim_intent_secure"], ["timeout", 3600],
+    ["preconditions", { params ["_state", "_args"]; [_state, _args] call FLO_fnc_gtnIntentGoalValid && {((_state get "intent") get "phase") == "SECURE"} }],
+    ["effects", { params ["_state"]; [_state, "COMPLETE"] call FLO_fnc_gtnProjectIntentPhase }],
+    ["completionCheck", { params ["_ctx"]; (_ctx get "data") get "phaseCompleted" }]
+]]];
+_library call ["_registerGoal", [createHashMapFromArray [
+    ["id", "secure_friendly_objective"], ["type", "STRATEGIC"], ["repeat", false],
+    ["description", "secure friendly objective"],
+    ["preconditions", { _this call FLO_fnc_gtnIntentGoalValid }],
+    ["satisfied", { _this call FLO_fnc_gtnIntentGoalSatisfied }],
+    ["methods", [
+        createHashMapFromArray [
+            ["id", "resume_dispatch"], ["score", {100}],
+            ["conditions", {params ["_state"]; ((_state get "intent") get "phase") == "DISPATCH"}],
+            ["subtasks", [["prim_intent_dispatch", ["_PARAM_0"]], ["prim_intent_arrive", ["_PARAM_0"]]]]
+        ],
+        createHashMapFromArray [
+            ["id", "resume_arrive"], ["score", {100}],
+            ["conditions", {params ["_state"]; ((_state get "intent") get "phase") == "ARRIVE"}],
+            ["subtasks", [["prim_intent_arrive", ["_PARAM_0"]]]]
+        ]
+    ]]
+]]];
+_library call ["_registerPrimitive", [createHashMapFromArray [
+    ["id", "prim_intent_dispatch"], ["timeout", 1800],
+    ["preconditions", { params ["_state", "_args"]; [_state, _args] call FLO_fnc_gtnIntentGoalValid && {((_state get "intent") get "phase") == "DISPATCH"} }],
+    ["effects", { params ["_state"]; [_state, "ARRIVE"] call FLO_fnc_gtnProjectIntentPhase }],
+    ["completionCheck", { params ["_ctx"]; (_ctx get "data") get "phaseCompleted" }]
+]]];
+_library call ["_registerPrimitive", [createHashMapFromArray [
+    ["id", "prim_intent_arrive"], ["timeout", 1800],
+    ["preconditions", { params ["_state", "_args"]; [_state, _args] call FLO_fnc_gtnIntentGoalValid && {((_state get "intent") get "phase") == "ARRIVE"} }],
+    ["effects", { params ["_state"]; [_state, "COMPLETE"] call FLO_fnc_gtnProjectIntentPhase }],
+    ["completionCheck", { params ["_ctx"]; (_ctx get "data") get "phaseCompleted" }]
+]]];
+_library call ["_registerGoal", [createHashMapFromArray [
+    ["id", "support_objective"], ["type", "STRATEGIC"], ["repeat", false],
+    ["description", "support objective"],
+    ["preconditions", { _this call FLO_fnc_gtnIntentGoalValid }],
+    ["satisfied", { _this call FLO_fnc_gtnIntentGoalSatisfied }],
+    ["methods", [
+        createHashMapFromArray [
+            ["id", "resume_request"], ["score", {100}],
+            ["conditions", {params ["_state"]; ((_state get "intent") get "phase") == "REQUEST"}],
+            ["subtasks", [["prim_intent_request", ["_PARAM_0"]]]]
+        ]
+    ]]
+]]];
+_library call ["_registerPrimitive", [createHashMapFromArray [
+    ["id", "prim_intent_request"], ["timeout", 1800],
+    ["preconditions", { params ["_state", "_args"]; [_state, _args] call FLO_fnc_gtnIntentGoalValid && {((_state get "intent") get "phase") == "REQUEST"} }],
+    ["effects", { params ["_state"]; [_state, "COMPLETE"] call FLO_fnc_gtnProjectIntentPhase }],
+    ["completionCheck", { params ["_ctx"]; (_ctx get "data") get "phaseCompleted" }]
+]]];
+["GTN", 3, format ["Goal library ready: goals=%1 primitives=%2", count (_library get "_goals"), count (_library get "_primitives")]] call FLO_fnc_log;
+_library

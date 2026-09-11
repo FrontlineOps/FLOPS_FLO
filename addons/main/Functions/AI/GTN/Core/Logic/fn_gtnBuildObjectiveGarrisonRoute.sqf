@@ -33,7 +33,7 @@ if (_buildingSlot) exitWith {
         {
             private _position = _x;
             if (_position isEqualTo [0, 0, 0]) then { continue };
-            if (surfaceIsWater _position) then { continue };
+            if (surfaceIsWater _position || {getTerrainHeightASL _position < 1}) then { continue };
             if !([_position, _objective] call FLO_fnc_isPositionInObjective) then { continue };
 
             private _nearestClaim = _radius;

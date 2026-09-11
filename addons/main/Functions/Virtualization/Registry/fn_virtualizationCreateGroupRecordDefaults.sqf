@@ -57,6 +57,7 @@ createHashMapFromArray [
     ["reinforcementDeliveryObjective", ""],
     ["forceVirtual", false],
     ["commanderOrder", ""],
+    ["commanderIntent", ""],
     ["executionState", ""],
     ["orderTargetPos", []],
     ["orderMode", ""],

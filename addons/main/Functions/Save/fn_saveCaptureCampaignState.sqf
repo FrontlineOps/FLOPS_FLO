@@ -21,8 +21,19 @@ try {
         ["baseDeploymentState", call FLO_fnc_baseDeploySerializeState],
         ["capturedAtTick", diag_tickTime]
     ];
+    private _commanders = FLO_GTN_ResourceManager call ["_getAllCommanders", []];
+    private _savedCommanders = createHashMap;
     {
-        _y set ["captureTimerVersion", 1];
+        private _state = if (_x in _commanders) then {
+            [_commanders get _x, _campaignState get "virtualGroups", _campaignState get "objectives", _campaignState get "capturedAtTick"] call FLO_fnc_gtnSerializeCommanderIntents
+        } else {
+            createHashMapFromArray [["gtnEnabled", false], ["nextIntentId", 0], ["intents", createHashMap]]
+        };
+        [_state, _x, _campaignState get "virtualGroups", _campaignState get "objectives"] call FLO_fnc_gtnValidateSavedIntents;
+        _savedCommanders set [_x, _state];
+    } forEach ["EAST", "WEST"];
+    _campaignState set ["aiCommanders", _savedCommanders];
+    {
         _y set ["captureTimerSampleTick", _campaignState get "capturedAtTick"];
     } forEach (_campaignState get "objectives");
     private _virtualVehicles = [];

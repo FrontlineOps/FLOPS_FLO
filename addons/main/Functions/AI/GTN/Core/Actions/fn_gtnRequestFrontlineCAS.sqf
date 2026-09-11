@@ -1,5 +1,5 @@
 /* Requests one paid CAS mission from maintained frontline contact intelligence. */
-params [["_cmdr", nil]];
+params ["_cmdr", "_requestedObjective"];
 
 private _metrics = createHashMapFromArray [
     ["assetAvailable", false],
@@ -41,6 +41,7 @@ private _bestObjectiveId = "";
 private _bestScore = -1e12;
 {
     private _objectiveId = _x;
+    if (_objectiveId != _requestedObjective) then { continue };
     private _contact = _y;
     if !(_objectiveId in _frontline) then { continue };
     if !(_objectiveId in _objectives) then {

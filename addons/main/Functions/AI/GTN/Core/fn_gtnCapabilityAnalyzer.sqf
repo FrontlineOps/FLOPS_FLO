@@ -28,7 +28,7 @@
 
 if (!isNil "FLO_GTN_CapabilityAnalyzer") exitWith { FLO_GTN_CapabilityAnalyzer };
 
-["GTN Capability Analyzer", 2, "Initializing Config-Based Capability Analyzer"] call FLO_fnc_log;
+["GTN Capability Analyzer", 3, "Initializing Config-Based Capability Analyzer"] call FLO_fnc_log;
 
 // ============================================================================
 // CREATE ANALYZER OBJECT
@@ -778,6 +778,12 @@ FLO_GTN_CapabilityAnalyzer = createHashMapObject [[
     // Analyze a group's combined capabilities (works with real groups or virtual group IDs)
     ["_analyzeGroup", {
         params ["_groupOrId"];
+        private _virtual = if (_groupOrId isEqualType "") then { (call FLO_fnc_virtualizationGetGroupMap) get _groupOrId } else { nil };
+        if (_groupOrId isEqualType "" && {isNil "_virtual"}) exitWith { nil };
+        if (!isNil "_virtual" && {!(_virtual get "isActive")}) exitWith {
+            [_self, _virtual] call FLO_fnc_gtnAnalyzeVirtualGroup
+        };
+
 
         // Check cache first
         private _cacheKey = format["group_%1", _groupOrId];
@@ -825,63 +831,6 @@ FLO_GTN_CapabilityAnalyzer = createHashMapObject [[
                         if (!isNull _realGroup) then {
                             _units = units _realGroup;
                         };
-                    } else {
-                        // Virtual group - calculate power from template using config
-                        private _template = _gData getOrDefault ["template", []];
-                        private _strength = _gData getOrDefault ["strength", 1];
-                        private _groupType = _gData get "groupType";
-
-                        // Calculate power from template unit classes using config
-                        private _estPower = 0;
-                        private _maxPenetration = 0;
-                        private _maxThreatAir = 0;
-                        private _canEngageArmor = false;
-                        private _canEngageAir = false;
-                        private _hasTransport = false;
-
-                        {
-                            private _typeClass = _x;
-                            if (_typeClass isKindOf "CAManBase") then {
-                                // Infantry - get cost from config
-                                private _cost = _self call ["_getConfigCost", [_typeClass]];
-                                private _threat = _self call ["_getConfigThreat", [_typeClass]];
-                                _estPower = _estPower + _cost;
-
-                                // Check if AT/AA capable from threat profile
-                                if ((_threat select 1) > 0.3) then { _canEngageArmor = true };
-                                if ((_threat select 2) > 0.3) then { _canEngageAir = true };
-                            } else {
-                                // Vehicle - get cost and analyze
-                                private _cost = _self call ["_getConfigCost", [_typeClass]];
-                                private _threat = _self call ["_getConfigThreat", [_typeClass]];
-                                private _transport = _self call ["_getConfigTransport", [_typeClass]];
-                                _estPower = _estPower + _cost;
-
-                                if ((_threat select 1) > 0.3) then { _canEngageArmor = true };
-                                if ((_threat select 2) > 0.3) then { _canEngageAir = true };
-                                if (_transport > 4) then { _hasTransport = true };
-                            };
-                        } forEach _template;
-
-                        _analysis set ["totalCombatPower", _estPower * _strength];
-                        _analysis set ["unitCount", count _template];
-                        _analysis set ["canEngageArmor", _canEngageArmor];
-                        _analysis set ["canEngageAir", _canEngageAir];
-                        _analysis set ["hasTransport", _hasTransport];
-
-                        // Set capabilities from analysis
-                        if (_canEngageArmor) then {
-                            (_analysis get "capabilities") set ["AT", 1];
-                        };
-                        if (_canEngageAir) then {
-                            (_analysis get "capabilities") set ["AA", 1];
-                        };
-                        if (_groupType in ["helicopter", "jet"]) then {
-                            (_analysis get "capabilities") set ["AIR_POWER", 1];
-                        };
-
-                        _self call ["_setCache", [_cacheKey, _analysis]];
-                        _analysis  // Return early for virtual groups
                     };
                 };
             };
@@ -1655,8 +1604,8 @@ FLO_GTN_CapabilityAnalyzer = createHashMapObject [[
         if (!isNil "_worldState") then {
             private _intel = _worldState call ["_getObjectiveIntel", [_objectiveId]];
             if (!isNil "_intel") then {
-                private _quality = _intel getOrDefault ["intelQuality", 0];
-                if (_quality > 0.5) then {
+                private _quality = _intel get "intelQuality";
+                if (_quality > 0.5 && {_worldState call ["_isIntelFresh", [_objectiveId, 240]]}) then {
                     // Good intel - use it
                     _hasReconIntel = true;
                     _analysis set ["totalDefensePower", _intel getOrDefault ["totalCombatPower", 0]];
@@ -2316,6 +2265,6 @@ FLO_GTN_CapabilityAnalyzer = createHashMapObject [[
     }]
 ]];
 
-["GTN Capability Analyzer", 2, "Heavyweight Capability Analyzer initialized"] call FLO_fnc_log;
+["GTN Capability Analyzer", 3, "Heavyweight Capability Analyzer initialized"] call FLO_fnc_log;
 
 FLO_GTN_CapabilityAnalyzer

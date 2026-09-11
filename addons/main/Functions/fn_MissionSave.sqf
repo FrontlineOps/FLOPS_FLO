@@ -40,13 +40,11 @@ try {
 _saveResult = call {
 
 private _saveStartTime = diag_tickTime;
-private _saveVersion = FLO_MissionSaveVersion;
 
 ["SAVE", 3, "Starting mission save..."] call FLO_fnc_log;
 
 // Create fresh save data
 private _data = createHashMap;
-_data set ["saveVersion", _saveVersion];
 _data set ["time", call FLO_fnc_operationalDate];
 
 // ============================================================================
@@ -281,16 +279,7 @@ try {
 
 try {
     _data set ["objectives", _campaignState get "objectives"];
-    if (!isNil "FLO_GTN_ResourceManager") then {
-        private _allCommanders = FLO_GTN_ResourceManager call ["_getAllCommanders", []];
-        private _eastEnabled = "EAST" in _allCommanders;
-        private _westEnabled = "WEST" in _allCommanders;
-        private _aiCommanders = createHashMapFromArray [
-            ["EAST", createHashMapFromArray [["gtnEnabled", _eastEnabled]]],
-            ["WEST", createHashMapFromArray [["gtnEnabled", _westEnabled]]]
-        ];
-        _data set ["aiCommanders", _aiCommanders];
-    };
+    _data set ["aiCommanders", _campaignState get "aiCommanders"];
     ["SAVE", 3, "Objectives and dual GTN state saved"] call FLO_fnc_log;
 } catch { ["SAVE", 1, format ["Objectives/GTN failed: %1", _exception]] call FLO_fnc_log; };
 
@@ -326,7 +315,6 @@ try {
 // ============================================================================
 
 private _requiredRootTypes = [
-    ["saveVersion", 0],
     ["time", []],
     ["markers", createHashMap],
     ["vehicles", createHashMap],

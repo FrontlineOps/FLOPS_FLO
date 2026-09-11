@@ -1,289 +1,121 @@
-/*
- * Function: FLO_fnc_gtnExecutor
- * Author: Frontline Operations Development Group
- *
- * Description:
- * Goal Task Network plan executor for the current frontline allocation model.
- * The live executor bridges the mobile-defense primitive:
- * - prim_allocate_frontline_defense
- *
- * Arguments:
- * 0: Commander Host <HASHMAP> - Commander host object
- * 1: Side Context <HASHMAP> - Normalized own/enemy side context
- *
- * Return Value:
- * Executor HashMap Object <HASHMAP>
- *
- * Example:
- * private _executor = [_commander, [east] call FLO_fnc_gtnSideContext] call FLO_fnc_gtnExecutor;
- * _executor call ["_executePrimitive", [_taskNode]];
- */
-
-params [
-    ["_commander", nil],
-    ["_sideContext", createHashMap]
-];
-
-if (isNil "_commander") exitWith {
-    ["GTN", 1, "Executor requires commander reference"] call FLO_fnc_log;
-    nil
-};
-
-if (isNil "_sideContext" || {(!(_sideContext isEqualType createHashMap))} || {_sideContext isEqualTo []}) then {
-    _sideContext = [east] call FLO_fnc_gtnSideContext;
-};
-
-private _ownSide = _sideContext get "ownSide";
-private _enemySide = _sideContext get "enemySide";
-private _sideKey = _sideContext get "sideKey";
-
-["GTN", 3, format ["Initializing GTN Executor (%1)", _sideKey]] call FLO_fnc_log;
-
+/* Execution contexts remain owned by unique task nodes until their plan retires. */
+params ["_commander", "_sideContext"];
 private _executor = createHashMapObject [[
-    ["_aiCommander", _commander],
-    ["_sideContext", _sideContext],
-    ["_ownSide", _ownSide],
-    ["_enemySide", _enemySide],
-    ["_sideKey", _sideKey],
-    ["_gtnCommander", nil],
-    ["_activeExecutions", createHashMap],
-    ["_handlers", createHashMap],
-    ["_activeTrackId", "GLOBAL"],
-    ["_perf", createHashMapFromArray [
-        ["primitiveLogThresholdMs", 10],
-        ["checkLogThresholdMs", 10],
-        ["lastPrimitiveMs", createHashMap],
-        ["peakPrimitiveMs", createHashMap],
-        ["slowPrimitiveCount", createHashMap],
-        ["lastCheckMs", createHashMap],
-        ["peakCheckMs", createHashMap],
-        ["slowCheckCount", createHashMap]
-    ]],
-
-    ["_setGTNCommander", {
-        params ["_gtnCmdr"];
-        _self set ["_gtnCommander", _gtnCmdr];
-    }],
-
+    ["_aiCommander", _commander], ["_gtnCommander", nil], ["_sideContext", _sideContext],
+    ["_sideKey", _sideContext get "sideKey"], ["_handlers", createHashMap],
+    ["_activeExecutions", createHashMap], ["_nextExecutionId", 0],
+    ["_perf", createHashMapFromArray [["lastPrimitiveMs", createHashMap], ["peakPrimitiveMs", createHashMap], ["lastCheckMs", createHashMap]]],
+    ["_setGTNCommander", { params ["_cmdr"]; _self set ["_gtnCommander", _cmdr] }],
     ["_registerHandler", {
-        params ["_primitiveId", "_handlerFn"];
-        private _handlers = _self get "_handlers";
-        _handlers set [_primitiveId, _handlerFn];
-        _self set ["_handlers", _handlers];
+        params ["_id", "_handler"];
+        {
+            if !(_x in _handler && {(_handler get _x) isEqualType {}}) then { throw format ["GTN handler %1 requires %2 code", _id, _x] };
+        } forEach ["start", "poll", "cancel", "finish"];
+        (_self get "_handlers") set [_id, _handler];
     }],
-
-    ["_getPerf", {
-        _self get "_perf"
+    ["_getExecutionKey", { params ["_node"]; _node get "executionKey" }],
+    ["_getContext", {
+        params ["_node"];
+        private _key = _node get "executionKey";
+        private _active = _self get "_activeExecutions";
+        if (_key == "" || {!(_key in _active)}) exitWith { nil };
+        private _context = _active get _key;
+        // A context from a different executor generation cannot match by key alone.
+        if !((_context get "taskNode") isEqualRef _node) exitWith { nil };
+        _context
     }],
-
-    ["_resolveTrackId", {
-        params [["_taskNode", nil]];
-
-        if (isNil "_taskNode") exitWith { _self get "_activeTrackId" };
-        if (!(_taskNode isEqualType createHashMap)) exitWith { _self get "_activeTrackId" };
-
-        private _track = _taskNode getOrDefault ["_trackRef", nil];
-        if (isNil "_track") exitWith { _self get "_activeTrackId" };
-        if (!(_track isEqualType createHashMap)) exitWith { _self get "_activeTrackId" };
-
-        _track getOrDefault ["id", _self get "_activeTrackId"]
-    }],
-
-    ["_setActiveTrack", {
-        params [["_taskNode", nil]];
-        private _trackId = _self call ["_resolveTrackId", [_taskNode]];
-        _self set ["_activeTrackId", _trackId];
-        _trackId
-    }],
-
-    ["_getExecutionKey", {
-        params ["_taskRef"];
-
-        private _taskNode = if (_taskRef isEqualType createHashMap) then { _taskRef } else { nil };
-        private _taskId = if (!isNil "_taskNode") then { _taskNode get "taskId" } else { _taskRef };
-        private _trackId = if (!isNil "_taskNode") then {
-            _self call ["_resolveTrackId", [_taskNode]]
-        } else {
-            _self get "_activeTrackId"
-        };
-
-        format ["%1::%2", _trackId, _taskId]
-    }],
-
     ["_executePrimitive", {
-        params ["_taskNode"];
-
-        private _trackId = _self call ["_setActiveTrack", [_taskNode]];
-        private _taskId = _taskNode get "taskId";
-        private _params = _taskNode get "params";
-        private _executionKey = format ["%1::%2", _trackId, _taskId];
-
+        params ["_node", "_arguments", "_bindings", "_worldState"];
+        if ((_node get "executionKey") != "") then { throw "GTN task cannot be started twice" };
+        private _id = _node get "taskId";
         private _handlers = _self get "_handlers";
-        private _handler = _handlers getOrDefault [_taskId, nil];
-        if (isNil "_handler") exitWith {
-            ["GTN", 2, format ["No handler registered for primitive: %1", _taskId]] call FLO_fnc_log;
-            false
-        };
-
-        ["GTN", 5, format [">>> EXECUTING PRIMITIVE: %1 with params: %2", _taskId, _params]] call FLO_fnc_log;
-
+        if !(_id in _handlers) then { throw format ["GTN missing execution handler for %1", _id] };
+        private _serial = (_self get "_nextExecutionId") + 1;
+        _self set ["_nextExecutionId", _serial];
+        private _key = format ["%1:%2", _self get "_sideKey", _serial];
+        _node set ["executionKey", _key];
         private _context = createHashMapFromArray [
-            ["commander", _self get "_gtnCommander"],
-            ["aiCommander", _self get "_aiCommander"],
-            ["executor", _self],
-            ["taskNode", _taskNode],
-            ["trackId", _trackId],
-            ["executionKey", _executionKey],
-            ["params", _params],
-            ["startTime", diag_tickTime],
-            ["status", "RUNNING"]
+            ["commander", _self get "_gtnCommander"], ["executor", _self], ["worldState", _worldState],
+            ["taskNode", _node], ["executionKey", _key], ["params", _arguments],
+            ["bindings", _bindings], ["outputs", createHashMap], ["data", createHashMapFromArray [["completionReported", false]]],
+            ["completionValidated", false],
+            ["handler", _handlers get _id], ["status", "RUNNING"], ["startTime", diag_tickTime]
         ];
-
-        private _tExec = diag_tickTime;
-        private _result = [_context] call _handler;
-        private _execMs = (diag_tickTime - _tExec) * 1000;
-
+        (_self get "_activeExecutions") set [_key, _context];
+        private _start = diag_tickTime;
+        private _accepted = false;
+        try { _accepted = [_context] call ((_context get "handler") get "start") } catch {
+            _context set ["status", "FAILED"];
+            _self call ["_retireExecution", [_node, false, "START_EXCEPTION"]];
+            ["GTN", 1, format ["Primitive %1 start failed: %2", _id, _exception]] call FLO_fnc_log;
+            throw _exception;
+        };
+        if !(_accepted isEqualType true) then { throw format ["GTN primitive %1 start must return BOOL", _id] };
+        if (!_accepted) then { _context set ["status", "FAILED"] };
+        private _ms = (diag_tickTime - _start) * 1000;
         private _perf = _self get "_perf";
-        private _lastPrimitiveMs = _perf get "lastPrimitiveMs";
-        private _peakPrimitiveMs = _perf get "peakPrimitiveMs";
-        private _slowPrimitiveCount = _perf get "slowPrimitiveCount";
-        _lastPrimitiveMs set [_taskId, _execMs];
-        private _peakPrimitive = _peakPrimitiveMs get _taskId;
-        if (isNil "_peakPrimitive" || {_execMs > _peakPrimitive}) then {
-            _peakPrimitiveMs set [_taskId, _execMs];
-        };
-        if (_execMs >= (_perf get "primitiveLogThresholdMs")) then {
-            _slowPrimitiveCount set [_taskId, (_slowPrimitiveCount getOrDefault [_taskId, 0]) + 1];
-            diag_log format [
-                "[FLO][PERF] GTN executor %1 primitive %2 track=%3 execute took %4 ms",
-                _self get "_sideKey",
-                _taskId,
-                _trackId,
-                _execMs
-            ];
-
-            private _primData = _taskNode getOrDefault ["primitiveData", createHashMap];
-            private _primMetrics = _primData getOrDefault ["metrics", createHashMap];
-            if ((keys _primMetrics) isNotEqualTo []) then {
-                diag_log format [
-                    "[FLO][PERF] GTN executor %1 primitive %2 track=%3 metrics=%4",
-                    _self get "_sideKey",
-                    _taskId,
-                    _trackId,
-                    _primMetrics
-                ];
-            };
-        };
-
-        private _active = _self get "_activeExecutions";
-        _active set [_executionKey, _context];
-
-        _result
+        (_perf get "lastPrimitiveMs") set [_id, _ms];
+        private _peaks = _perf get "peakPrimitiveMs";
+        _peaks set [_id, _ms max (_peaks getOrDefault [_id, 0])];
+        if (_ms >= 10) then { ["GTN", 4, format ["Primitive %1 start=%2ms execution=%3", _id, _ms, _key]] call FLO_fnc_log };
+        _accepted
     }],
-
     ["_checkExecution", {
-        params ["_taskRef"];
-
-        private _taskNode = if (_taskRef isEqualType createHashMap) then { _taskRef } else { nil };
-        private _taskId = if (!isNil "_taskNode") then { _taskNode get "taskId" } else { _taskRef };
-
-        if (!isNil "_taskNode") then {
-            _self call ["_setActiveTrack", [_taskNode]];
+        params ["_node"];
+        private _context = _self call ["_getContext", [_node]];
+        if (isNil "_context") then { throw "GTN running task lost its execution context" };
+        if ((_context get "status") == "FAILED" || {_context get "completionValidated"}) exitWith { _context get "status" };
+        private _start = diag_tickTime;
+        [_context] call ((_context get "handler") get "poll");
+        if ((_context get "status") != "FAILED") then {
+            private _complete = [_context] call ((_node get "definition") get "completionCheck");
+            if !(_complete isEqualType true) then { throw "GTN completion predicate must return BOOL" };
+            _context set ["status", ["RUNNING", "SUCCESS"] select _complete];
+            _context set ["completionValidated", _complete];
         };
-
-        private _executionKey = _self call ["_getExecutionKey", [_taskRef]];
-        private _active = _self get "_activeExecutions";
-        private _context = _active getOrDefault [_executionKey, nil];
-        if (isNil "_context") exitWith { "UNKNOWN" };
-
-        private _status = _context get "status";
-        if (_status == "RUNNING") then {
-            private _handlers = _self get "_handlers";
-            private _handler = _handlers getOrDefault [_taskId, nil];
-
-            if (!isNil "_handler") then {
-                private _tCheck = diag_tickTime;
-                [_context] call _handler;
-                private _checkMs = (diag_tickTime - _tCheck) * 1000;
-
-                private _perf = _self get "_perf";
-                private _lastCheckMs = _perf get "lastCheckMs";
-                private _peakCheckMs = _perf get "peakCheckMs";
-                private _slowCheckCount = _perf get "slowCheckCount";
-                _lastCheckMs set [_taskId, _checkMs];
-                private _peakCheck = _peakCheckMs get _taskId;
-                if (isNil "_peakCheck" || {_checkMs > _peakCheck}) then {
-                    _peakCheckMs set [_taskId, _checkMs];
-                };
-                if (_checkMs >= (_perf get "checkLogThresholdMs")) then {
-                    _slowCheckCount set [_taskId, (_slowCheckCount getOrDefault [_taskId, 0]) + 1];
-                    diag_log format [
-                        "[FLO][PERF] GTN executor %1 primitive %2 check took %3 ms",
-                        _self get "_sideKey",
-                        _taskId,
-                        _checkMs
-                    ];
-                };
-
-                _status = _context get "status";
-            };
-        };
-
-        _status
+        private _ms = (diag_tickTime - _start) * 1000;
+        ((_self get "_perf") get "lastCheckMs") set [_node get "taskId", _ms];
+        if (_ms >= 10) then { ["GTN", 4, format ["Primitive %1 poll=%2ms", _node get "taskId", _ms]] call FLO_fnc_log };
+        _context get "status"
     }],
-
-    ["_updateExecution", {
-        params ["_taskRef", "_key", "_value"];
-        private _executionKey = _self call ["_getExecutionKey", [_taskRef]];
-        private _active = _self get "_activeExecutions";
-        private _context = _active getOrDefault [_executionKey, nil];
-
-        if (!isNil "_context") then {
-            _context set [_key, _value];
-        };
+    ["_getOutputs", {
+        params ["_node"];
+        private _context = _self call ["_getContext", [_node]];
+        if (isNil "_context" || {(_context get "status") != "SUCCESS"}) then { throw "GTN outputs requested before successful completion" };
+        +(_context get "outputs")
     }],
-
     ["_completeExecution", {
-        params ["_taskRef", ["_success", true]];
-        private _executionKey = _self call ["_getExecutionKey", [_taskRef]];
-        private _active = _self get "_activeExecutions";
-        private _context = _active getOrDefault [_executionKey, nil];
-
-        if (!isNil "_context") then {
-            _context set ["status", ["FAILED", "SUCCESS"] select (_success)];
-            _context set ["endTime", diag_tickTime];
-        };
+        params ["_node", ["_success", true], ["_outputs", createHashMap]];
+        private _context = _self call ["_getContext", [_node]];
+        if (isNil "_context" || {(_context get "status") != "RUNNING"} || {(_context get "data") get "completionReported"}) exitWith { false };
+        if !(_outputs isEqualType createHashMap) then { throw "GTN execution outputs must be a HashMap" };
+        if (_success) then {
+            _context set ["outputs", +_outputs];
+            (_context get "data") set ["completionReported", true];
+            // The completion predicate remains authoritative on the next poll.
+        } else { _context set ["status", "FAILED"] };
+        true
     }],
-
-    ["_initialize", {
-        _self call ["_registerHandlers", []];
-        ["GTN", 3, "Executor handlers registered"] call FLO_fnc_log;
+    ["_updateExecution", {
+        params ["_node", "_key", "_value"];
+        private _context = _self call ["_getContext", [_node]];
+        if (isNil "_context" || {(_context get "status") != "RUNNING"}) exitWith { false };
+        (_context get "data") set [_key, _value];
+        true
     }],
-
-    ["_registerHandlers", {
-        _self call ["_registerHandler", ["prim_allocate_frontline_defense", {
-            params ["_ctx"];
-            private _cmdr = _ctx get "commander";
-            private _taskNode = _ctx get "taskNode";
-            private _track = _taskNode get "_trackRef";
-            if (isNil "_track") exitWith {
-                _ctx set ["status", "FAILED"];
-                false
-            };
-
-            private _metrics = _cmdr call ["_allocateFrontlineDefense", [_track]];
-            private _primData = _taskNode getOrDefault ["primitiveData", createHashMap];
-            _primData set ["metrics", _metrics];
-            _taskNode set ["primitiveData", _primData];
-
-            _ctx set ["status", "SUCCESS"];
-            true
-        }]];
-    }]
+    ["_retireExecution", {
+        params ["_node", "_success", "_reason"];
+        if ((_node get "kind") != "TASK") exitWith { false };
+        private _context = _self call ["_getContext", [_node]];
+        if (isNil "_context") exitWith { false };
+        // Remove ownership before cleanup, so callbacks cannot resurrect this work.
+        (_self get "_activeExecutions") deleteAt (_node get "executionKey");
+        _context set ["status", ["CANCELLED", "SUCCESS"] select _success];
+        private _callback = (_context get "handler") get (["cancel", "finish"] select _success);
+        [_context, _reason] call _callback;
+        true
+    }],
+    ["_getPerf", { _self get "_perf" }]
 ]];
-
-_executor call ["_initialize", []];
-
-["GTN", 3, "GTN Executor initialized"] call FLO_fnc_log;
-
+[_executor] call FLO_fnc_gtnRegisterPlanHandlers;
 _executor

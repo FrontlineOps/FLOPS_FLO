@@ -50,7 +50,9 @@ for "_i" from 0 to (_wpCount - 1) do {
     private _angle = _baseAngle + (random 60 - 30);
     private _dist = _minDist + random (_maxDist - _minDist);
     private _wpPos = _offsetCenter getPos [_dist, _angle];
-    if !(surfaceIsWater _wpPos) then {
+    // A dry waterline point can flood as sea conditions change or after restart.
+    // Patrol destinations need standing ground above that boundary.
+    if (!(surfaceIsWater _wpPos) && {getTerrainHeightASL _wpPos >= 1}) then {
         _patrolWaypoints pushBack [_wpPos, "MOVE", "AWARE", "LIMITED", "STAG COLUMN", "YELLOW", 15];
     };
 };

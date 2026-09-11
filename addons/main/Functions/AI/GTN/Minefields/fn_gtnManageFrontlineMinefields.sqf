@@ -13,7 +13,7 @@
  * HASHMAP - Cycle metrics
  */
 
-params [["_cmdr", nil]];
+params ["_cmdr"];
 
 private _metrics = createHashMapFromArray [
     ["run", false],
@@ -54,10 +54,7 @@ private _metrics = createHashMapFromArray [
     ["rejectedSpacing", 0]
 ];
 
-if (isNil "_cmdr") exitWith { _metrics };
 if (!isServer) exitWith { _metrics };
-if (isNil "FLO_Objectives") exitWith { _metrics };
-if (isNil "FLO_Minefields") exitWith { _metrics };
 
 private _config = _cmdr get "_config";
 private _now = diag_tickTime;
@@ -68,6 +65,7 @@ private _runDue = (_cmdr get "_minefieldDirty")
 
 if (!_runDue) exitWith { _metrics };
 
+_cmdr set ["_minefieldCandidates", createHashMap];
 _metrics set ["run", true];
 _cmdr set ["_minefieldDirty", false];
 _cmdr set ["_lastMinefieldRunAt", _now];
@@ -183,43 +181,10 @@ if (_candidates isEqualTo []) exitWith {
     _metrics
 };
 
-_tPhase = diag_tickTime;
-private _ranked = [_candidates, [], { _x get "score" }, "DESCEND"] call BIS_fnc_sortBy;
-_metrics set ["sortMs", (diag_tickTime - _tPhase) * 1000];
-private _placementsRemaining = _placementsPerCycle min _remainingCapacity;
-
-_tPhase = diag_tickTime;
-{
-    if (_placementsRemaining <= 0) exitWith {};
-
-    private _queueResult = [_x] call FLO_fnc_minefieldQueueObjectiveBuild;
-    if !(_queueResult get "queued") then { continue };
-
-    _placementsRemaining = _placementsRemaining - 1;
-    _metrics set ["enqueuedFields", (_metrics get "enqueuedFields") + 1];
-    _metrics set ["queuedBuilds", (_metrics get "queuedBuilds") + 1];
-} forEach _ranked;
-_metrics set ["queueMs", (diag_tickTime - _tPhase) * 1000];
+private _eligible = _cmdr get "_minefieldCandidates";
+{ _eligible set [_x get "objectiveId", _x] } forEach _candidates;
 _metrics set ["totalMs", (diag_tickTime - _tCycle) * 1000];
-
-if ((_metrics get "removedFields") > 0 || {(_metrics get "enqueuedFields") > 0} || {(_metrics get "resourceSkips") > 0} || {(_metrics get "totalMs") > 25}) then {
-    diag_log format [
-        "[FLO][PERF] GTN minefield queue %1 active=%2 queued=%3 frontlineEnemy=%4 candidateObjectives=%5 removed=%6 enqueued=%7 resourceSkips=%8 | cleanup=%9 stale=%10 build=%11 sort=%12 queue=%13 total=%14",
-        _sideKey,
-        _metrics get "activeFields",
-        _metrics get "queuedBuilds",
-        count _frontlineEnemyObjectives,
-        _metrics get "candidateObjectives",
-        _metrics get "removedFields",
-        _metrics get "enqueuedFields",
-        _metrics get "resourceSkips",
-        _metrics get "cleanupMs",
-        _metrics get "staleMs",
-        _metrics get "candidateBuildMs",
-        _metrics get "sortMs",
-        _metrics get "queueMs",
-        _metrics get "totalMs"
-    ];
+if ((_metrics get "totalMs") > 25) then {
+    ["GTN", 4, format ["[PERF] Minefield maintenance %1 metrics=%2", _sideKey, _metrics]] call FLO_fnc_log;
 };
-
 _metrics

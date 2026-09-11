@@ -3,7 +3,6 @@
  */
 
 params ["_groupData", "_savedData"];
-[_savedData] call FLO_fnc_virtualizationValidateSavedCommanderVersion;
 
 [_groupData] call FLO_fnc_virtualizationClearCommanderOrder;
 private _commanderOrder = _savedData get "commanderOrder";

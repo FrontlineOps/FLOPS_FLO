@@ -37,7 +37,7 @@ private _radius = ((_objective get "radius") max 35);
 private _linkedObjectives = _objective get "linkedObjectives";
 private _subtype = _objective get "subtype";
 private _priority = _objective get "priority";
-private _enemyCount = _objective get "enemyCount";
+private _enemyCount = (_objective get "enemyCount") max 0;
 private _underAttack = _objective get "underAttack";
 private _contested = _objective get "contested";
 

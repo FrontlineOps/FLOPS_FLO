@@ -35,6 +35,7 @@
     "comp",
     "alwaysActive",
     "commanderOrder",
+    "commanderIntent",
     "executionState",
     "orderTargetPos",
     "orderMode",

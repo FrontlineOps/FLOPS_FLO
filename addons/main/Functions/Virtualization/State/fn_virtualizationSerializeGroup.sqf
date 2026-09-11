@@ -2,7 +2,7 @@
  * Function: FLO_fnc_virtualizationSerializeGroup
  * Author: Frontline Operations Development Group
  * Description:
- *   Serializes the canonical virtual-group schema for persistence.
+ *   Serializes the canonical virtual-group state for persistence.
  *
  * Arguments:
  * 0: Group data <HASHMAP>
@@ -17,7 +17,6 @@ private _groupId = _groupData get "id";
 [_groupData, _groupId] call FLO_fnc_virtualizationValidateGroup;
 
 private _savedData = createHashMap;
-_savedData set ["commanderOrderVersion", 1];
 {
     _savedData set [
         _x,
@@ -25,9 +24,7 @@ _savedData set ["commanderOrderVersion", 1];
     ];
 } forEach (call FLO_fnc_virtualizationGetPersistentFields);
 
-// Timer format 0 is the existing unanchored version-29 record. Format 1
-// retains the sampling epoch and elapsed portions preceding this process.
-_savedData set ["timerFormatVersion", 1];
+// Anchor process-relative deadlines and elapsed ages to this coherent capture.
 _savedData set ["timerSampleTick", _capturedAtTick];
 _savedData set ["timerElapsedOffsets", createHashMapFromArray [
     ["civilianLastIntelAt", _groupData get "civilianIntelElapsedOffset"],

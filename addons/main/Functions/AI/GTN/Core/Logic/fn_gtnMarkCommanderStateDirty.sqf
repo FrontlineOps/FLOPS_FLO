@@ -31,30 +31,21 @@ _commander set ["_lastIntelDirtyReason", _dirtyReason];
 
 switch (_dirtyReason) do {
     case "OBJECTIVE_FLIPPED": {
-        _commander set ["_availabilityCacheDirty", true];
         _commander set ["_reserveBandsCache", createHashMap];
         _commander set ["_attackSourceObjectivesCache", createHashMap];
         _commander set ["_attackFrontlineDirty", true];
-        _commander set ["_attackPressureProfiles", createHashMap];
         _commander set ["_minefieldDirty", true];
-        _commander set ["_lastGarrisonSignature", ""];
         _commander set ["_lastFriendlyObjectiveOwnershipSignature", ""];
-        _commander set ["_lastGarrisonRunAt", -1];
     };
 
     case "OBJECTIVE_INTEGRATED": {
-        _commander set ["_availabilityCacheDirty", true];
         _commander set ["_reserveBandsCache", createHashMap];
         _commander set ["_attackSourceObjectivesCache", createHashMap];
         _commander set ["_attackFrontlineDirty", true];
-        _commander set ["_attackPressureProfiles", createHashMap];
         _commander set ["_minefieldDirty", true];
-        _commander set ["_lastGarrisonSignature", ""];
-        _commander set ["_lastGarrisonRunAt", -1];
     };
 
     case "SUPPLY_CHAIN_CHANGED": {
-        _commander set ["_attackPressureProfiles", createHashMap];
     };
 
     case "ARTILLERY_STATE_CHANGED": {

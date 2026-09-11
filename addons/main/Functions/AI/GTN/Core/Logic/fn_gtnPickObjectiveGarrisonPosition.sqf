@@ -21,7 +21,6 @@ params [
     ["_claimedPositions", [], [[]]]
 ];
 
-private _ws = _cmdr get "_worldState";
 private _objective = FLO_Objectives get _objectiveId;
 private _center = _objective get "position";
 private _radius = _objective get "radius";
@@ -41,7 +40,7 @@ for "_i" from 1 to _sampleCount do {
     _candidatePos set [2, 0];
 
     if !([_candidatePos, _objective] call FLO_fnc_isPositionInObjective) then { continue };
-    if (surfaceIsWater _candidatePos) then { continue };
+    if (surfaceIsWater _candidatePos || {getTerrainHeightASL _candidatePos < 1}) then { continue };
 
     private _nearestClaim = _radius;
     {
@@ -65,10 +64,10 @@ for "_i" from 1 to _sampleCount do {
 if ((count _bestPos) >= 2) exitWith { _bestPos };
 
 private _fallback = [_objectiveId] call FLO_fnc_getRandomObjectivePos;
-if (surfaceIsWater _fallback) then {
-    _fallback = [_center, _radius] call FLO_fnc_getSafeLandPos;
+if (surfaceIsWater _fallback || {getTerrainHeightASL _fallback < 1}) then {
+    _fallback = [_center, _radius, 1] call FLO_fnc_getSafeLandPos;
 };
-if (count _fallback < 2 || {surfaceIsWater _fallback} || {!([_fallback, _objective] call FLO_fnc_isPositionInObjective)}) then {
+if (count _fallback < 2 || {surfaceIsWater _fallback} || {getTerrainHeightASL _fallback < 1} || {!([_fallback, _objective] call FLO_fnc_isPositionInObjective)}) then {
     throw format ["Objective %1 has no valid land garrison position", _objectiveId];
 };
 _fallback

@@ -1,7 +1,7 @@
 /*
  * Function: FLO_fnc_virtualizationQueryGroupIds
  * Description:
- *   Returns IDs for records matching every supplied schema field. Registry
+ *   Returns IDs for records matching every supplied record field. Registry
  *   records remain private to virtualization.
  */
 

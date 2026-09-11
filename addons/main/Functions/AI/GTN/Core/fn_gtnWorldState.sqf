@@ -36,6 +36,13 @@ private _worldState = createHashMapObject [[
     
     // Objective state - keyed by objective ID
     ["_objectives", createHashMap],
+    ["_objectiveIntel", createHashMap],
+    ["_objectiveIntelMaxAge", 240],
+    ["_objectiveObservationMetrics", createHashMap],
+    ["_ownGroupFacts", createHashMap],
+    ["_airThreatPicture", createHashMap],
+    ["_scoutCursor", 0],
+    ["_strategicPicture", createHashMap],
     
     // Force disposition
     ["_ownForces", createHashMapFromArray [
@@ -139,6 +146,7 @@ private _worldState = createHashMapObject [[
     
     // Update objective states from FLO_Objectives
     ["_senseObjectives", {
+        params [["_deferObservations", false]];
         private _objectives = createHashMap;
 
         if (isNil "FLO_Objectives") exitWith { _objectives };
@@ -146,8 +154,7 @@ private _worldState = createHashMapObject [[
         private _ownSide = _self get "_ownSide";
         private _enemySide = _self get "_enemySide";
         private _friendlyCountKey = ["bluforCount", "opforCount"] select (_ownSide isEqualTo east);
-        private _enemyCountKey = ["bluforCount", "opforCount"] select (_enemySide isEqualTo east);
-        private _intelCache = _self getOrDefault ["_objectiveIntel", createHashMap];
+        private _intelCache = _self get "_objectiveIntel";
 
         {
             private _id = _x;
@@ -155,20 +162,11 @@ private _worldState = createHashMapObject [[
             if (isNil "_data") then { continue };
 
             private _pos = _data get "position";
-            private _priority = _data getOrDefault ["priority", 50];
-            private _owner = _data getOrDefault ["owner", _enemySide];
-            if (_owner isEqualType "") then {
-                private _ownerKey = toUpper _owner;
-                if (_ownerKey isEqualTo "EAST") then { _owner = east; };
-                if (_ownerKey isEqualTo "WEST") then { _owner = west; };
-            };
+            private _priority = _data get "priority";
+            private _owner = _data get "owner";
 
             private _nearFriendly = _data get _friendlyCountKey;
-            private _nearEnemy = _data get _enemyCountKey;
-
-            private _contested = (_nearEnemy > 0) && (_nearFriendly > 0);
-            private _underAttack = (_owner == _ownSide) && (_nearEnemy > 0);
-            private _vulnerable = (_owner == _enemySide) && (_nearEnemy == 0) && (_nearFriendly < 3);
+            // Enemy presence belongs to the observed picture, not capture truth.
 
             private _cachedIntel = _intelCache getOrDefault [_id, createHashMapFromArray [
                 ["lastReconTime", 0],
@@ -181,16 +179,17 @@ private _worldState = createHashMapObject [[
 
             private _objState = createHashMapFromArray [
                 ["position", _pos],
-                ["radius", _data getOrDefault ["radius", 50]],
+                ["radius", _data get "radius"],
+                ["integrated", (_data get "campaignIntegrationState") == "INTEGRATED"],
                 ["priority", _priority],
-                ["owner", _owner],
-                ["enemyCount", _nearEnemy],
+                ["owner", _owner], ["supplied", false],
+                ["enemyCount", -1], ["enemyStrengthKnown", false], ["enemyIntelTime", -1], ["enemyIntelConfidence", 0],
                 ["friendlyCount", _nearFriendly],
-                ["contested", _contested],
-                ["underAttack", _underAttack],
-                ["vulnerable", _vulnerable],
-                ["forceRatio", if (_nearEnemy > 0) then {_nearFriendly / _nearEnemy} else {999}],
-                ["linkedObjectives", _data getOrDefault ["linkedObjectives", []]],
+                ["contested", false],
+                ["underAttack", false],
+                ["vulnerable", false],
+                ["forceRatio", -1],
+                ["linkedObjectives", _data get "linkedObjectives"],
                 ["intel", _cachedIntel]
             ];
 
@@ -198,6 +197,7 @@ private _worldState = createHashMapObject [[
         } forEach (keys FLO_Objectives);
 
         _self set ["_objectives", _objectives];
+        if (!_deferObservations) then { [_self] call FLO_fnc_gtnApplyObjectiveObservations };
         _objectives
     }],
     
@@ -209,6 +209,7 @@ private _worldState = createHashMapObject [[
         
         private _groups = call FLO_fnc_virtualizationGetGroupMap;
         private _allGroupIds = keys _groups;
+        _self set ["_ownGroupFacts", createHashMap];
 
         // Count by type and status
         private _counts = createHashMapFromArray [
@@ -222,6 +223,7 @@ private _worldState = createHashMapObject [[
             private _gData = _groups get _x;
             if (isNil "_gData") then { continue };
             if ((_gData get "side") != _ownSide) then { continue };
+            [_self, _x, _gData] call FLO_fnc_gtnObserveOwnGroup;
 
             private _groupType = _gData get "groupType";
 
@@ -801,12 +803,9 @@ private _worldState = createHashMapObject [[
 
     ["_getForceRatioAtObjective", {
         params ["_objId"];
-        private _objs = _self get "_objectives";
-        private _obj = _objs get _objId;
-        if (isNil "_obj") exitWith { 1 };
-        private _friendly = _obj getOrDefault ["friendlyCount", 0];
-        private _enemy = (_obj getOrDefault ["enemyCount", 1]) max 1;
-        _friendly / _enemy
+        private _objectives = _self get "_objectives";
+        if !(_objId in _objectives) exitWith { -1 };
+        (_objectives get _objId) get "forceRatio"
     }],
 
     ["_getAvailableCombatPower", {
@@ -825,7 +824,7 @@ private _worldState = createHashMapObject [[
 
     ["_getObjectiveIntel", {
         params ["_objId"];
-        private _intelCache = _self getOrDefault ["_objectiveIntel", createHashMap];
+        private _intelCache = _self get "_objectiveIntel";
         _intelCache getOrDefault [_objId, createHashMapFromArray [
             ["lastReconTime", 0],
             ["intelQuality", 0],
@@ -844,17 +843,28 @@ private _worldState = createHashMapObject [[
         params ["_objId", ["_maxAge", 300]];
         private _intel = _self call ["_getObjectiveIntel", [_objId]];
         private _lastRecon = _intel get "lastReconTime";
-        (diag_tickTime - _lastRecon) < _maxAge
+        (_intel get "intelQuality") > 0 && {_lastRecon >= 0} && {diag_tickTime >= _lastRecon} && {(diag_tickTime - _lastRecon) < _maxAge}
     }],
 
     ["_updateObjectiveIntel", {
-        params ["_objId", "_intelData"];
-        private _intelCache = _self getOrDefault ["_objectiveIntel", createHashMap];
-        private _existing = _intelCache getOrDefault [_objId, createHashMap];
-        { _existing set [_x, _intelData get _x]; } forEach (keys _intelData);
+        params ["_objId", "_intelData", ["_deferObservations", false]];
+        if !(_objId in (_self get "_objectives")) then { throw format ["GTN intel references unknown objective %1", _objId] };
+        if !(_intelData isEqualType createHashMap) then { throw "GTN objective intel must be a HashMap" };
+        private _existing = +(_self call ["_getObjectiveIntel", [_objId]]);
+        { _existing set [_x, _y] } forEach _intelData;
+        private _quality = _existing get "intelQuality";
+        if !(_quality isEqualType 0 && {_quality >= 0} && {_quality <= 1}) then { throw "GTN intel quality must be in [0,1]" };
+        if ("observedUnits" in _intelData || {"areaObserved" in _intelData}) then {
+            if !("observedUnits" in _intelData && {"areaObserved" in _intelData}) then { throw "GTN area observation requires units and coverage" };
+            private _units = _existing get "observedUnits";
+            if !(_units isEqualType 0 && {_units >= 0} && {(_existing get "areaObserved") isEqualType true}) then { throw "GTN invalid area observation" };
+            _existing set ["areaObservationTime", diag_tickTime];
+            _existing set ["areaObservationConfidence", _quality];
+        };
         _existing set ["lastReconTime", diag_tickTime];
-        _intelCache set [_objId, _existing];
-        _self set ["_objectiveIntel", _intelCache];
+        (_self get "_objectiveIntel") set [_objId, _existing];
+        if (!_deferObservations) then { [_self] call FLO_fnc_gtnApplyObjectiveObservations };
+        true
     }],
 
     ["_getObjectivesNeedingRecon", {
@@ -919,7 +929,7 @@ private _worldState = createHashMapObject [[
         private _tPhase = diag_tickTime;
 
         // Run all sensors
-        _self call ["_senseObjectives", []];
+        _self call ["_senseObjectives", [true]];
         _phaseMs set ["objectives", (diag_tickTime - _tPhase) * 1000];
 
         _tPhase = diag_tickTime;
@@ -939,6 +949,12 @@ private _worldState = createHashMapObject [[
             _meta set ["enemyIntelSenseRan", true];
             _self set ["_lastEnemyIntelSense", _now];
         };
+        _tPhase = diag_tickTime;
+        [_self] call FLO_fnc_gtnSenseVirtualScouts;
+        _phaseMs set ["scouts", (diag_tickTime - _tPhase) * 1000];
+        _tPhase = diag_tickTime;
+        [_self] call FLO_fnc_gtnApplyObjectiveObservations;
+        _phaseMs set ["objectiveIntel", (diag_tickTime - _tPhase) * 1000];
         _tPhase = diag_tickTime;
         _self call ["_senseTacticalSituation", []];
         _phaseMs set ["tacticalSituation", (diag_tickTime - _tPhase) * 1000];
@@ -980,6 +996,8 @@ private _worldState = createHashMapObject [[
     ["_getSnapshot", {
         createHashMapFromArray [
             ["objectives", +(_self get "_objectives")],
+            ["groups", +(_self get "_ownGroupFacts")],
+            ["ownSide", _self get "_ownSide"],
             ["forces", +(_self get "_ownForces")],
             ["assets", +(_self get "_supportAssets")],
             ["intel", +(_self get "_enemyIntel")],
@@ -991,40 +1009,7 @@ private _worldState = createHashMapObject [[
     // Compare two snapshots for significant changes
     ["_hasSignificantChange", {
         params ["_oldSnapshot"];
-
-        if (isNil "_oldSnapshot") exitWith { true };
-
-        private _oldForces = _oldSnapshot get "forces";
-        private _newForces = _self get "_ownForces";
-
-        // Check for significant force changes (>20% loss)
-        private _oldTotal = _oldForces get "totalGroups";
-        private _newTotal = _newForces get "totalGroups";
-        if (_oldTotal > 0 && {((_oldTotal - _newTotal) / _oldTotal) > 0.2}) exitWith { true };
-
-        // Check for objective status changes
-        private _oldObjs = _oldSnapshot get "objectives";
-        private _newObjs = _self get "_objectives";
-        {
-            private _oldObj = _oldObjs getOrDefault [_x, nil];
-            private _newObj = _newObjs getOrDefault [_x, nil];
-
-            if (isNil "_oldObj" || isNil "_newObj") then { continue };
-
-            // Owner changed
-            if ((_oldObj get "owner") != (_newObj get "owner")) exitWith { true };
-
-            // Contestation changed
-            if ((_oldObj get "contested") != (_newObj get "contested")) exitWith { true };
-        } forEach (keys _newObjs);
-
-        // Check for asset availability changes
-        private _oldAssets = _oldSnapshot get "assets";
-        private _newAssets = _self get "_supportAssets";
-        if ((_oldAssets get "artilleryAvailable") != (_newAssets get "artilleryAvailable")) exitWith { true };
-        if ((_oldAssets get "casAvailable") != (_newAssets get "casAvailable")) exitWith { true };
-
-        false
+        ([_oldSnapshot, _self call ["_getSnapshot", []]] call FLO_fnc_gtnWorldStateChanges) isNotEqualTo []
     }],
 
     // Debug output

@@ -4,7 +4,7 @@
  *   Applies a current WEST faction catalog to the documented friendly F_*
  *   mission variables used by thin mission shells and custom BLUFOR fallback
  *   paths. This is a current catalog bridge; it does not create save-format
- *   compatibility or legacy schema migration.
+ *   retaining obsolete campaign formats.
  */
 
 params [["_catalog", createHashMap, [createHashMap]]];

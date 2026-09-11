@@ -20,6 +20,7 @@ private _withdrawalAttempts = 0;
 {
     private _groupData = _groups get _x;
     if (isNil "_groupData") then { continue };
+    if ((_groupData get "commanderIntent") != "") then { continue };
     if ((_groupData get "commanderOrder") != "ATTACK") then { continue };
 
     private _objectiveId = _groupData get "attackObjective";

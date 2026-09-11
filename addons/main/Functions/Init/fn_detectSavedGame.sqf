@@ -1,4 +1,4 @@
-/* Validates an explicitly requested save against the exact current universe version and shape. */
+/* Validates an explicitly requested save before publishing current campaign state. */
 if (!isServer) exitWith { [false, nil] };
 
 ["SAVE_DETECT", 3, "Checking for saved game data"] call FLO_fnc_log;
@@ -21,31 +21,9 @@ if (isNil "_saveData") exitWith {
     ["SAVE_DETECT", 3, "No saved game data found"] call FLO_fnc_log;
     [false, nil]
 };
-if !(_saveData isEqualType createHashMap) exitWith {
-    ["SAVE_DETECT", 2, "Saved campaign has an invalid payload type and was not loaded"] call FLO_fnc_log;
-    [false, nil]
-};
-
-if !("saveVersion" in _saveData) exitWith {
-    ["SAVE_DETECT", 2, "Saved campaign has no universal save version and was not loaded"] call FLO_fnc_log;
-    [false, nil]
-};
-private _saveVersion = _saveData get "saveVersion";
-if !(_saveVersion isEqualType 0) exitWith {
-    ["SAVE_DETECT", 2, format [
-        "Saved campaign version has invalid type %1 and was not loaded",
-        typeName _saveVersion
-    ]] call FLO_fnc_log;
-    [false, nil]
-};
-private _currentSaveVersion = FLO_MissionSaveVersion;
-if (_saveVersion != _currentSaveVersion) exitWith {
-    ["SAVE_DETECT", 2, format [
-        "Saved campaign version %1 is incompatible with current version %2 and was not loaded",
-        _saveVersion,
-        _currentSaveVersion
-    ]] call FLO_fnc_log;
-    [false, nil]
+if !(_saveData isEqualType createHashMap) then {
+    ["SAVE_DETECT", 1, "Saved campaign payload is malformed; Continue aborted"] call FLO_fnc_log;
+    throw "Saved campaign payload must be a HashMap";
 };
 
 private _requiredRootTypes = [
@@ -160,6 +138,17 @@ if (_configError != "") then {
     throw _error;
 };
 
+private _savedCommanders = _saveData get "aiCommanders";
+{
+    if !(_x in _savedCommanders) then { throw format ["Saved campaign is missing GTN side %1", _x] };
+    try {
+        [_savedCommanders get _x, _x, _saveData get "virtualGroups", _saveData get "objectives"] call FLO_fnc_gtnValidateSavedIntents;
+    } catch {
+        ["SAVE_DETECT", 1, format ["Current GTN campaign required; Continue aborted: %1", _exception]] call FLO_fnc_log;
+        throw _exception;
+    };
+} forEach ["EAST", "WEST"];
+
 FLO_SavedGameData = _saveData;
 publicVariable "FLO_SavedGameData";
 private _missionConfig = createHashMap;
@@ -168,8 +157,7 @@ private _missionConfig = createHashMap;
 } forEach (keys _configData);
 
 ["SAVE_DETECT", 3, format [
-    "Validated current mission save version %1 for player side %2",
-    _saveVersion,
+    "Validated current mission save for player side %1",
     _configData get "playerSideKey"
 ]] call FLO_fnc_log;
 [true, _missionConfig]

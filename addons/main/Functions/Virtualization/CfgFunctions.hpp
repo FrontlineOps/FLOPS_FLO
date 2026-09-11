@@ -167,7 +167,6 @@ class VirtualizationState {
     class virtualizationGetRouteOwnedFields {};
     class virtualizationValidateGroup {};
     class virtualizationValidateSavedGroup {};
-    class virtualizationValidateSavedCommanderVersion {};
     class virtualizationValidateCommanderOrderState {};
     class virtualizationResolveRouteCompletionState {};
     class virtualizationValidateWaypointState {};

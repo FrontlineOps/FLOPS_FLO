@@ -8,6 +8,7 @@
  * Arguments:
  * 0: Position <ARRAY> - The desired position [x,y,z]
  * 1: Max Search Radius <NUMBER> - Maximum distance to search for land (default: 500)
+ * 2: Minimum terrain elevation ASL <NUMBER> - Optional shoreline clearance
  *
  * Return Value:
  * Safe position on land <ARRAY> - Returns original position if on land, or nearest land position
@@ -18,11 +19,12 @@
 
 params [
     ["_position", [0,0,0], [[]]],
-    ["_maxRadius", 500, [0]]
+    ["_maxRadius", 500, [0]],
+    ["_minimumHeight", -1e10, [0]]
 ];
 
 // Check if position is already on land
-if (!surfaceIsWater _position) exitWith { _position };
+if (!surfaceIsWater _position && {_minimumHeight <= -1e10 || {getTerrainHeightASL _position >= _minimumHeight}}) exitWith { _position };
 
 // Position is on water - search for land
 private _safePos = _position;
@@ -36,7 +38,7 @@ for "_radius" from 50 to _maxRadius step 50 do {
     for "_dir" from 0 to 315 step 45 do {
         private _testPos = _position getPos [_radius, _dir];
         
-        if (!surfaceIsWater _testPos) exitWith {
+        if (!surfaceIsWater _testPos && {_minimumHeight <= -1e10 || {getTerrainHeightASL _testPos >= _minimumHeight}}) exitWith {
             _safePos = _testPos;
             _found = true;
         };
@@ -46,7 +48,7 @@ for "_radius" from 50 to _maxRadius step 50 do {
 // If still not found, try to find any land position using findEmptyPosition
 if (!_found) then {
     private _emptyPos = _position findEmptyPosition [0, _maxRadius, "Land_VASICore_F"];
-    if (_emptyPos isNotEqualTo [] && {!surfaceIsWater _emptyPos}) then {
+    if (_emptyPos isNotEqualTo [] && {!surfaceIsWater _emptyPos} && {_minimumHeight <= -1e10 || {getTerrainHeightASL _emptyPos >= _minimumHeight}}) then {
         _safePos = _emptyPos;
     };
 };

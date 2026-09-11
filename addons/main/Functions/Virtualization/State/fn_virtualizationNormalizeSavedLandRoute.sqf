@@ -1,7 +1,7 @@
 /*
  * Function: FLO_fnc_virtualizationNormalizeSavedLandRoute
  * Description:
- *   Rebuilds derived current-version LAND route geometry during restore when
+ *   Rebuilds derived current LAND route geometry during restore when
  *   exact terrain validation rejects the saved continuation. The saved record
  *   shape must already be current and structurally valid; this only rebases
  *   canonical route waypoints from the validated movement origin. Attached

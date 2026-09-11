@@ -159,7 +159,9 @@ if (isNil "FLO_GTN_CommanderDebugMarkers") then { FLO_GTN_CommanderDebugMarkers 
                 _activeIds pushBack _objMarkerId;
 
                 private _ratio = _obj get "forceRatio";
-                private _ratioRounded = round (_ratio * 10) / 10;
+                private _ratioRounded = if (_ratio < 0) then { "?" } else { str (round (_ratio * 10) / 10) };
+                private _enemyCount = _obj get "enemyCount";
+                private _enemyLabelCount = if (_enemyCount < 0) then { "?" } else { str _enemyCount };
                 private _globalObj = FLO_Objectives get _objId;
                 private _owner = _globalObj get "owner";
                 if (_owner isEqualType "") then {
@@ -177,7 +179,7 @@ if (isNil "FLO_GTN_CommanderDebugMarkers") then { FLO_GTN_CommanderDebugMarkers 
                     _objId,
                     _priority,
                     _obj get "friendlyCount",
-                    _obj get "enemyCount",
+                    _enemyLabelCount,
                     _ratioRounded,
                     _ownerLabel,
                     if (_wrongOwner) then { format [" ! expected %1", _enemyLabel] } else { "" }

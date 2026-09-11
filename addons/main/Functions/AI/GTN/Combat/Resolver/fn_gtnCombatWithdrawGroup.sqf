@@ -8,6 +8,7 @@ if ((_groupData get "commanderOrder") == "GARRISON" || {_groupData get "transpor
 if ((_groupData get "orderMode") == "WITHDRAW") exitWith { false };
 if ((_groupData get "attachedGroups") isNotEqualTo [] || {(_groupData get "attachedTo") != ""}) exitWith { false };
 private _world = _commander get "_worldState";
+private _previousIntent = _groupData get "commanderIntent";
 private _objectives = _world call ["_getObjectives", []];
 private _side = _commander get "_ownSide";
 private _position = _groupData get "position";
@@ -15,6 +16,7 @@ private _candidates = [];
 {
     private _objective = _y;
     if ((_objective get "owner") != _side || {(_objective get "enemyCount") > 0}) then { continue };
+    if ((_objective get "enemyCount") < 0 && {(_objective get "friendlyCount") <= 0}) then { continue };
     if (_objective get "contested" || {_objective get "underAttack"}) then { continue };
     if !([_x] call FLO_fnc_campaignIsObjectiveIntegrated) then { continue };
     private _target = _objective get "position";
@@ -39,4 +41,9 @@ private _ordered = false;
         _ordered = true;
     };
 } forEach _candidates;
+if (_ordered && {_previousIntent != ""}) then {
+    // Tactical withdrawal supersedes the operation at the same ownership boundary.
+    // Retiring compensation clears ownership before requesting other withdrawals.
+    [_commander, (_commander get "_intents") get _previousIntent, false, "TACTICAL_WITHDRAWAL"] call FLO_fnc_gtnRetireIntent;
+};
 _ordered

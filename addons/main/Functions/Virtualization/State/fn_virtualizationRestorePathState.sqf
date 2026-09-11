@@ -1,7 +1,7 @@
 /*
  * Function: FLO_fnc_virtualizationRestorePathState
  * Description:
- *   Restores route provenance after current-version save validation.
+ *   Restores route provenance after current save validation.
  */
 
 params ["_groupData", "_savedData"];

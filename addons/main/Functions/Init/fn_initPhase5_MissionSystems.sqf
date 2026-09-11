@@ -413,7 +413,6 @@ if (FLO_IsLoadedSave) then {
         ["damage", 0], ["hadAICrew", true]
     ];
     private _loadedObjects = 0;
-    private _discardedWeaponHolders = 0;
     {
         private _objId = _x;
         private _attr = _objHash get _objId;
@@ -447,14 +446,8 @@ if (FLO_IsLoadedSave) then {
             throw format ["Saved object %1 has invalid spatial or class state", _objId];
         };
 
-        // Earlier version-29 saves captured dropped holders without cargo.
-        // Empty simulated holders are engine-deleted when this script yields.
         if ([_type] call FLO_fnc_saveIsWeaponHolderClass) then {
-            if (_attr get "hadAICrew") then {
-                throw format ["Saved weapon holder %1 cannot own AI crew", _objId];
-            };
-            _discardedWeaponHolders = _discardedWeaponHolders + 1;
-            continue;
+            throw format ["Current save cannot contain transient weapon holder %1", _objId];
         };
 
         private _obj = createVehicle [_type, [0,0,0], [], 0, "CAN_COLLIDE"];
@@ -469,9 +462,7 @@ if (FLO_IsLoadedSave) then {
         _loadedObjects = _loadedObjects + 1;
     } forEach (keys _objHash);
     ["INIT", 3, format ["Restored %1 objects from current save", _loadedObjects]] call FLO_fnc_log;
-    if (_discardedWeaponHolders > 0) then {
-        ["INIT", 2, format ["Discarded %1 transient weapon-holder records without saved cargo", _discardedWeaponHolders]] call FLO_fnc_log;
-    };
+
 
     // Restore supply crates
     private _crateHash = _savedData get "crates";
@@ -622,6 +613,15 @@ if (FLO_IsLoadedSave) then {
     if (_gtnWasEnabled) then {
         FLO_GTN_ResourceManager call ["_initializeGTN", []];
     };
+    private _commanders = FLO_GTN_ResourceManager call ["_getAllCommanders", []];
+    {
+        private _state = _cmd get _x;
+        if (_state get "gtnEnabled") then {
+            if !(_x in _commanders) then { throw format ["GTN saved side %1 was not initialized", _x] };
+            [_commanders get _x, _state, call FLO_fnc_virtualizationGetGroupMap, FLO_Objectives] call FLO_fnc_gtnRestoreCommanderIntents;
+        };
+    } forEach ["EAST", "WEST"];
+
 
     ["INIT", 3, "Dual GTN state restored"] call FLO_fnc_log;
 
@@ -671,7 +671,7 @@ if (FLO_IsLoadedSave) then {
     // Trigger load completion event
     ["flo_mission_load_completed", [true, _savedData]] call CBA_fnc_globalEvent;
 
-    ["INIT", 3, "Current-version entity restoration complete"] call FLO_fnc_log;
+    ["INIT", 3, "Current entity restoration complete"] call FLO_fnc_log;
 };
 
 // ============================================

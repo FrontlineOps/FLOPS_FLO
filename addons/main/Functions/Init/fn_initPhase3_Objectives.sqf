@@ -19,7 +19,6 @@ private _phaseT0 = diag_tickTime;
 if (FLO_IsLoadedSave) then {
     private _savedData = FLO_SavedGameData;
     private _restoreT0 = diag_tickTime;
-    private _legacyCaptureTimers = 0;
     private _savedObjectives = _savedData get "objectives";
     if ((keys _savedObjectives) isEqualTo []) then {
         private _error = "Current mission save contains no objectives";
@@ -98,9 +97,6 @@ if (FLO_IsLoadedSave) then {
         if !((_objData get "campaignCapturedBySideKey") in ["", "EAST", "WEST"]) then {
             throw format ["Saved objective %1 has invalid captured-by side key", _objId];
         };
-        if (!("captureTimerVersion" in _objData) || {(_objData get "captureTimerVersion") == 0}) then {
-            _legacyCaptureTimers = _legacyCaptureTimers + 1;
-        };
         [_objId, _objData] call FLO_fnc_objectiveRestoreCaptureTimers;
         _savedObjectives set [
             _objId,
@@ -116,7 +112,7 @@ if (FLO_IsLoadedSave) then {
     private _runtimeMs = (diag_tickTime - _runtimeT0) * 1000;
     private _restoreMs = (_runtimeT0 - _restoreT0) * 1000;
 
-    ["INIT", 3, format ["Restored %1 current-version objectives; migrated %2 legacy capture timers", count FLO_Objectives, _legacyCaptureTimers]] call FLO_fnc_log;
+    ["INIT", 3, format ["Restored %1 objectives with anchored capture clocks", count FLO_Objectives]] call FLO_fnc_log;
     diag_log format [
         "[FLO][PERF] Phase3 save restore objectives=%1 restore=%2 ms runtime=%3 ms",
         count FLO_Objectives,

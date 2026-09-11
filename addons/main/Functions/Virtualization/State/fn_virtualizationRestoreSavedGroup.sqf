@@ -2,7 +2,7 @@
  * Function: FLO_fnc_virtualizationRestoreSavedGroup
  * Author: Frontline Operations Development Group
  * Description:
- *   Restores the canonical saved virtualization schema onto a newly created
+ *   Restores the canonical saved virtualization state onto a newly created
  *   virtual-group record.
  *
  * Arguments:
@@ -62,6 +62,7 @@ _groupData set ["civilianRoutineUntil", _civilianRoutineUntil];
 
 [_groupData, _savedData] call FLO_fnc_virtualizationRestoreMissionState;
 [_groupData, _savedData] call FLO_fnc_virtualizationRestoreCommanderState;
+_groupData set ["commanderIntent", _savedData get "commanderIntent"];
 [_groupData, _savedData] call FLO_fnc_virtualizationRestorePathState;
 [_groupData, _savedData] call FLO_fnc_virtualizationRestoreAAState;
 [_groupData, _savedData] call FLO_fnc_virtualizationRestoreTransportState;
