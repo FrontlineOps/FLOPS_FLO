@@ -31,18 +31,20 @@ if !([_spawnPos] call FLO_fnc_validateGroupPosition) exitWith {
 };
 
 private _targetPos = _spawnPos;
-if (_deliveryObjectiveId != "") then {
+private _deliveryValid = if (_deliveryObjectiveId == "") then { true } else {
     private _objData = FLO_Objectives get _deliveryObjectiveId;
     if ((_objData get "owner") isNotEqualTo _managedSide) exitWith {
         ["LOGISTICS", 2, format ["Delivery objective %1 no longer owned by managed side", _deliveryObjectiveId]] call FLO_fnc_log;
-        ""
+        false
     };
     if !([_deliveryObjectiveId] call FLO_fnc_campaignIsObjectiveIntegrated) exitWith {
         ["LOGISTICS", 2, format ["Delivery objective %1 is not integrated territory", _deliveryObjectiveId]] call FLO_fnc_log;
-        ""
+        false
     };
     _targetPos = _objData get "position";
+    true
 };
+if (!_deliveryValid) exitWith { "" };
 
 if !([_targetPos] call FLO_fnc_validateGroupPosition) exitWith {
     ["LOGISTICS", 1, format ["Invalid target position %1 for %2 reinforcement to %3", _targetPos, _groupType, _deliveryObjectiveId]] call FLO_fnc_log;

@@ -33,13 +33,11 @@ private _batchCount = if (_objectiveId in _batchDispatchCounts) then { _batchDis
 
 if (_enemyCount <= 0) exitWith { "" };
 
-if ((_objective get "contested")) then {
-    private _forceRatio = _friendlyCount / _enemyCount;
-    if (
-        _forceRatio < (_net get "REINFORCEMENT_OBJECTIVE_CONTESTED_COLLAPSE_FORCE_RATIO")
-        && {_inboundCount >= (_net get "REINFORCEMENT_OBJECTIVE_CONTESTED_COLLAPSE_INBOUND_CAP")}
-    ) exitWith { "COLLAPSE_INBOUND_CAP" };
-};
+if (
+    (_objective get "contested")
+    && {(_friendlyCount / _enemyCount) < (_net get "REINFORCEMENT_OBJECTIVE_CONTESTED_COLLAPSE_FORCE_RATIO")}
+    && {_inboundCount >= (_net get "REINFORCEMENT_OBJECTIVE_CONTESTED_COLLAPSE_INBOUND_CAP")}
+) exitWith { "COLLAPSE_INBOUND_CAP" };
 
 private _secureRatio = _net get "REINFORCEMENT_OBJECTIVE_SECURE_RATIO";
 if (_friendlyCount >= ceil (_enemyCount * _secureRatio)) exitWith { "SECURE_RATIO" };
