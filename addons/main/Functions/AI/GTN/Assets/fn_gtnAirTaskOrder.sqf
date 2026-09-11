@@ -59,7 +59,8 @@ if (isNil "FLO_GTNAirTaskOrder") then {
                 private _hasPlayerSupportMeta = ("playerSupport" in _meta) && {_meta get "playerSupport"};
                 private _targetLabel = if ("targetLabel" in _meta) then { _meta get "targetLabel" } else { mapGridPosition _pos };
 
-                private _asset = _mgr call ["_requestAirAsset", [_pos, _mission, _requestSide, _meta]];
+                private _requestResult = createHashMap;
+                private _asset = _mgr call ["_requestAirAsset", [_pos, _mission, _requestSide, _meta, _requestResult]];
                 private _air = objNull;
                 private _gid = "";
                 private _mode = "";
@@ -96,7 +97,7 @@ if (isNil "FLO_GTNAirTaskOrder") then {
                         };
                     };
                 } else {
-                    ["GTN ATO", 2, "No available virtual air asset for task - skipping"] call FLO_fnc_log;
+                    ["GTN ATO", 2, format ["%1 %2 task rejected at %3: %4", _requestSide, _mission, _pos, _requestResult get "reason"]] call FLO_fnc_log;
                 };
 
                 if (_mode isEqualTo "VIRTUAL") then { continue };

@@ -38,7 +38,10 @@ if (_mapSize <= 1000) then {
         _liveContacts = _liveContacts + 1;
     } else {
         private _position = _airData get "position";
-        if ((_position select 0) < 0 || {(_position select 0) > _mapSize}) then { continue };
+        if (
+            (_position select 0) < 0 || {(_position select 0) > _mapSize}
+            || {(_position select 1) < 0} || {(_position select 1) > _mapSize}
+        ) then { continue };
         if ((_airData get "waypoints") isEqualTo [] && {(_airData get "missionLock") == ""}) then { continue };
         [
             _airId,

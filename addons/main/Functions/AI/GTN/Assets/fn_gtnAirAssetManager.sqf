@@ -287,7 +287,9 @@ if (isNil "FLO_GTNAirAssetManager") then {
         }],
 
         ["_requestAirAsset", {
-            params ["_targetPos", ["_missionType", "CAS"], ["_requestSide", sideUnknown], ["_meta", createHashMap]];
+            // Optional output preserves the existing asset-array return contract.
+            params ["_targetPos", ["_missionType", "CAS"], ["_requestSide", sideUnknown], ["_meta", createHashMap], ["_requestResult", createHashMap]];
+            _requestResult set ["reason", ""];
 
             private _tRequest = diag_tickTime;
             private _candidateCount = 0;
@@ -298,8 +300,14 @@ if (isNil "FLO_GTNAirAssetManager") then {
             private _phaseActivateMs = 0;
             private _phaseVirtualMs = 0;
 
-            if (isNil "FLO_VirtualForceRegistry") exitWith { [] };
-            if !(_requestSide in [east, west]) exitWith { [] };
+            if (isNil "FLO_VirtualForceRegistry") exitWith {
+                _requestResult set ["reason", "REGISTRY_UNAVAILABLE"];
+                []
+            };
+            if !(_requestSide in [east, west]) exitWith {
+                _requestResult set ["reason", "INVALID_SIDE"];
+                []
+            };
             _missionType = toUpper _missionType;
 
             private _groups = call FLO_fnc_virtualizationGetGroupMap;
@@ -320,7 +328,10 @@ if (isNil "FLO_GTNAirAssetManager") then {
             } forEach _groups;
 
             _candidateCount = count _airGroups;
-            if (_candidateCount == 0) exitWith { [] };
+            if (_candidateCount == 0) exitWith {
+                _requestResult set ["reason", "NO_ELIGIBLE_AIRCRAFT"];
+                []
+            };
 
             private _missions = _self get "missions";
             _airGroups = _airGroups select {
@@ -332,7 +343,10 @@ if (isNil "FLO_GTNAirAssetManager") then {
                 if (_fighters isNotEqualTo []) then { _airGroups = _fighters; };
             };
             _availableCount = count _airGroups;
-            if (_availableCount == 0) exitWith { [] };
+            if (_availableCount == 0) exitWith {
+                _requestResult set ["reason", "AIRCRAFT_BUSY"];
+                []
+            };
 
             private _sel = [];
             private _bestDist = 1e12;
@@ -344,7 +358,10 @@ if (isNil "FLO_GTNAirAssetManager") then {
                     _sel = [_gid, _gData];
                 };
             } forEach _airGroups;
-            if (_sel isEqualTo []) exitWith { [] };
+            if (_sel isEqualTo []) exitWith {
+                _requestResult set ["reason", "NO_ELIGIBLE_AIRCRAFT"];
+                []
+            };
 
             private _gid = _sel select 0;
             private _gdata = _sel select 1;
@@ -354,7 +371,7 @@ if (isNil "FLO_GTNAirAssetManager") then {
             private _targetGroupIds = if ("targetGroupIds" in _meta) then { +(_meta get "targetGroupIds") } else { [] };
             private _areaContact = ("areaContact" in _meta) && {_meta get "areaContact"};
             if (_missionType == "CAS" && {!_forceLive} && {_targetGroupIds isEqualTo []} && {!_areaContact}) exitWith {
-                ["GTN Air Asset Manager", 2, format ["Rejected virtual CAS by %1 without reported target intelligence", _gid]] call FLO_fnc_log;
+                _requestResult set ["reason", "NO_REPORTED_TARGET_INTELLIGENCE"];
                 []
             };
 
@@ -407,16 +424,12 @@ if (isNil "FLO_GTNAirAssetManager") then {
             };
 
             if (_isLiveArea && {!_activated}) exitWith {
-                ["GTN Air Asset Manager", 2, format [
-                    "Live %1 request failed - unable to activate air group %2",
-                    _missionType,
-                    _selectedId
-                ]] call FLO_fnc_log;
+                _requestResult set ["reason", "ACTIVATION_FAILED"];
                 []
             };
 
             if (!_isLiveArea) exitWith {
-                if !([_gid, _gdata, _missionRecord, _playerRequested] call FLO_fnc_gtnAirAuthorizeSortie) exitWith { [] };
+                if !([_gid, _gdata, _missionRecord, _playerRequested, _requestResult] call FLO_fnc_gtnAirAuthorizeSortie) exitWith { [] };
                 [_gdata, "AIR", _missionType] call FLO_fnc_virtualizationSetMissionLock;
                 _missionRecord set ["mode", "VIRTUAL"];
                 _missions set [_gid, _missionRecord];
@@ -486,16 +499,18 @@ if (isNil "FLO_GTNAirAssetManager") then {
             private _realGroup = _gdata get "realGroup";
             if (isNull _realGroup) exitWith {
                 [_gid] call FLO_fnc_gtnAirParkCombatGroupOffMap;
+                _requestResult set ["reason", "ACTIVATED_GROUP_MISSING"];
                 []
             };
             private _vehicles = [_realGroup] call FLO_fnc_virtualizationCollectRealGroupVehicles;
             if (_vehicles isEqualTo []) exitWith {
                 [_gid] call FLO_fnc_gtnAirParkCombatGroupOffMap;
+                _requestResult set ["reason", "ACTIVATED_AIRCRAFT_MISSING"];
                 []
             };
             private _veh = _vehicles select 0;
 
-            if !([_gid, _gdata, _missionRecord, _playerRequested] call FLO_fnc_gtnAirAuthorizeSortie) exitWith {
+            if !([_gid, _gdata, _missionRecord, _playerRequested, _requestResult] call FLO_fnc_gtnAirAuthorizeSortie) exitWith {
                 [_gid] call FLO_fnc_gtnAirParkCombatGroupOffMap;
                 []
             };

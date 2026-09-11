@@ -3,11 +3,13 @@ params [
     ["_groupId", "", [""]],
     ["_groupData", nil],
     ["_missionRecord", nil],
-    ["_playerRequested", false, [true]]
+    ["_playerRequested", false, [true]],
+    ["_requestResult", createHashMap, [createHashMap]]
 ];
 
 if (!isServer) then { throw "Air sortie authorization is server-owned"; };
 if (isNil "_groupData" || {isNil "_missionRecord"}) then { throw "Air sortie authorization requires group and mission state"; };
+_requestResult set ["reason", ""];
 
 private _side = _groupData get "side";
 private _sideKey = [_side] call FLO_fnc_sideKey;
@@ -26,7 +28,7 @@ private _network = FLO_Logistics_Networks get _sideKey;
 private _treasury = FLO_SideResources get _sideKey;
 private _sourceObjective = [_network, _homeObjective, [], _localSupplyCost] call FLO_fnc_logisticsNetworkFindSupplySourceObjective;
 if (_sourceObjective == "") exitWith {
-    ["GTN Air", 3, format ["%1 sortie denied - no connected source can sustain aircraft %2", _sideKey, _groupId]] call FLO_fnc_log;
+    _requestResult set ["reason", "NO_CONNECTED_SUPPLIES"];
     false
 };
 
@@ -47,12 +49,19 @@ if (!_playerRequested) then {
         createHashMapFromArray [["strategic", true], ["commitment", false], ["reserved", false], ["referenceId", _missionId]]
     ] call FLO_fnc_commanderSpendingEvaluate;
     _spendingAllowed = _spendingDecision get "allowed";
+    if (!_spendingAllowed) then {
+        _requestResult set ["reason", _spendingDecision get "reason"];
+    };
 };
 if (!_spendingAllowed) exitWith { false };
 
-if !(_treasury call ["reserve", [_reservationId, _treasuryCost, "AIR_SUPPORT", _reason, _actor, _missionId]]) exitWith { false };
+if !(_treasury call ["reserve", [_reservationId, _treasuryCost, "AIR_SUPPORT", _reason, _actor, _missionId]]) exitWith {
+    _requestResult set ["reason", "TREASURY_RESERVATION_DENIED"];
+    false
+};
 if !([_network, _sourceNodeId, _localSupplyCost, _reason] call FLO_fnc_logisticsNetworkConsumeThroughput) exitWith {
     _treasury call ["releaseReservation", [_reservationId, "Air sortie source Local Supplies changed"]];
+    _requestResult set ["reason", "LOCAL_SUPPLIES_CHANGED"];
     false
 };
 if !(_treasury call ["commitReservation", [_reservationId, _treasuryCost, _reason]]) then {
