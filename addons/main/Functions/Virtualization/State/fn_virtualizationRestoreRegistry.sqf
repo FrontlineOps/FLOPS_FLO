@@ -90,16 +90,15 @@ private _builtGroups = createHashMap;
         _savedData get "transportRole"
     ] call FLO_fnc_virtualizationBuildGroupData;
 
+    // Hydrate and validate privately; rejection must not publish a partial army.
+    [_groupData, _savedData] call FLO_fnc_virtualizationRestoreSavedGroup;
     _builtGroups set [_groupId, _groupData];
 } forEach _validatedGroups;
 
+[_builtGroups] call FLO_fnc_virtualizationValidateTransportGraph;
 {
     [_x, _y, false] call FLO_fnc_virtualizationAddGroup;
 } forEach _builtGroups;
-
-{
-    [_x, _y] call FLO_fnc_virtualizationRestoreSavedGroup;
-} forEach _validatedGroups;
 
 // Reject malformed cross-record state before derived-state reconciliation.
 call FLO_fnc_virtualizationValidateRegistry;

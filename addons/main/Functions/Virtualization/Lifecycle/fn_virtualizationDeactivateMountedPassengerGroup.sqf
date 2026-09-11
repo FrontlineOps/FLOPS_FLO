@@ -19,6 +19,16 @@ params [
     ["_carrierGroupId", "", [""]]
 ];
 
+if (canSuspend) exitWith {
+    private _result = false;
+    private _failure = [];
+    isNil {
+        try { _result = _this call FLO_fnc_virtualizationDeactivateMountedPassengerGroup; } catch { _failure = [_exception]; };
+    };
+    if (_failure isNotEqualTo []) then { throw (_failure select 0) };
+    _result
+};
+
 if (_groupId == "") exitWith { false };
 
 private _groupData = [_groupId] call FLO_fnc_virtualizationRequireGroup;
@@ -28,6 +38,8 @@ private _realGroup = _groupData get "realGroup";
 if (isNull _realGroup) exitWith {
     [_groupId] call FLO_fnc_virtualizationRepairOrphanedActiveGroup
 };
+
+if ((units _realGroup) findIf { isPlayer _x } >= 0) exitWith { false };
 
 [_groupId, _groupData, _realGroup] call FLO_fnc_virtualizationCaptureRealGroupPosition;
 private _canonicalWaypointCount = count (_groupData get "waypoints");

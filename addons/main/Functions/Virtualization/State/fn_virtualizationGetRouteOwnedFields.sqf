@@ -8,11 +8,5 @@
     "virtualSpeed",
     "lastMoveTime",
     "virtualMoveCarryMeters",
-    "loiterStartTime",
-    "pathToken",
-    "pathTargetPos",
-    "pathAllowTrails",
-    "pathStartedAt",
-    "pathSource",
-    "pathWaypointSettings"
+    "pathSource"
 ]

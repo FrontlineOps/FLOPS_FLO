@@ -34,7 +34,7 @@ if !([_gData, _ownSide, ["infantry", "motorized", "mechanized", "armor"], []] ca
 private _alreadyAssigned = false;
 private _saturated = false;
 if (_objectiveId != "") then {
-    private _hasRouteContext = ((_gData get "waypoints") isNotEqualTo []) || {(_gData get "pathToken") >= 0};
+    private _hasRouteContext = ((_gData get "waypoints") isNotEqualTo []);
     private _sameObjectiveAssigned = ((_gData get "commanderOrder") == "DEFEND") && {(_gData get "defendObjective") == _objectiveId} && {_hasRouteContext};
     private _currentDefendPos = _gData get "orderTargetPos";
     private _sameHoldPos = _currentDefendPos isEqualType [] && {count _currentDefendPos >= 2} && {(_currentDefendPos distance2D _pos) < 20};

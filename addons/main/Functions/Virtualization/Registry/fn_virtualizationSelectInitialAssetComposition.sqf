@@ -9,6 +9,7 @@ params [
 ];
 
 if !(([_groupType] call FLO_fnc_virtualizationGetArchetype) get "initialGroundComposition") exitWith { [] };
+if (_unitCount == 0) exitWith { [] };
 
 private _pools = [_side] call FLO_fnc_virtualizationGetSpawnPools;
 private _sideKey = _pools get "sideKey";
@@ -32,7 +33,7 @@ if (_groupType in ["motorized", "mechanized"]) then {
     };
 };
 
-private _assetCount = _unitCount max 1;
+private _assetCount = _unitCount;
 private _composition = [];
 
 for "_i" from 1 to _assetCount do {

@@ -27,8 +27,7 @@ private _savedData = createHashMap;
 // Anchor process-relative deadlines and elapsed ages to this coherent capture.
 _savedData set ["timerSampleTick", _capturedAtTick];
 _savedData set ["timerElapsedOffsets", createHashMapFromArray [
-    ["civilianLastIntelAt", _groupData get "civilianIntelElapsedOffset"],
-    ["transportUnloadIssuedAt", _groupData get "transportUnloadElapsedOffset"]
+    ["civilianLastIntelAt", _groupData get "civilianIntelElapsedOffset"]
 ]];
 
 [_savedData, _groupId] call FLO_fnc_virtualizationValidateSavedGroup;

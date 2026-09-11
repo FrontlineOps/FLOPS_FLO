@@ -19,4 +19,4 @@ if (_objectiveId == "") exitWith { false };
 if !([_position, _objectiveId] call FLO_fnc_isPositionInObjective) exitWith { false };
 
 private _objective = FLO_Objectives get _objectiveId;
-(_objective get "contested") || { _objective get "underAttack" } || { (_objective get "enemyCount") > 0 }
+(_objective get "contested") || { _objective get "underAttack" }

@@ -22,9 +22,7 @@ if ((_carrierData get "attachedGroups") isNotEqualTo []) then {
 _carrierData set ["dismountAtWaypoint", -1];
 _carrierData set ["transportInsertMode", ""];
 _carrierData set ["transportInsertPos", []];
-_carrierData set ["transportLandCommandIssued", false];
-_carrierData set ["transportUnloadCommandIssued", false];
-_carrierData set ["transportUnloadIssuedAt", -1];
+[_carrierData] call FLO_fnc_virtualizationResetTransportCommands;
 
 if ((_carrierData get "executionState") == "TRANSPORT") then {
     _carrierData set ["executionState", ""];

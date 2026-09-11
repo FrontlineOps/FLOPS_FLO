@@ -21,6 +21,14 @@ private _syncedComp = if (_tracksAssets) then {
     _aliveUnits apply { typeOf _x }
 };
 
+private _supportComp = [];
+if (_groupType == "static_aa") then {
+    private _vehicles = +(_groupData get "realVehicles");
+    _vehicles append ([_realGroup] call FLO_fnc_virtualizationCollectRealGroupVehicles);
+    _vehicles = _vehicles arrayIntersect _vehicles;
+    _supportComp = (_vehicles select { alive _x && {!(_x in _assetVehicles)} }) apply { typeOf _x };
+};
+_groupData set ["supportComp", _supportComp];
 _groupData set ["unitCount", _syncedCount];
 [_groupData, _syncedComp] call FLO_fnc_virtualizationSetAssetComposition;
 

@@ -12,10 +12,14 @@ params [["_snapshot", false, [false, createHashMap]], ["_capturedAtTick", diag_t
 private _captureStart = diag_tickTime;
 if (_snapshot isEqualType false) then {
     call FLO_fnc_virtualizationValidateRegistry;
+    private _captureFailure = [];
     isNil {
-        _snapshot = +(call FLO_fnc_virtualizationGetGroupMap);
-        _capturedAtTick = diag_tickTime;
+        try {
+            _snapshot = call FLO_fnc_virtualizationCapturePersistentRegistry;
+            _capturedAtTick = diag_tickTime;
+        } catch { _captureFailure = [_exception] };
     };
+    if (_captureFailure isNotEqualTo []) then { throw (_captureFailure select 0) };
 };
 private _captureMs = (diag_tickTime - _captureStart) * 1000;
 if (_captureMs > 20) then {

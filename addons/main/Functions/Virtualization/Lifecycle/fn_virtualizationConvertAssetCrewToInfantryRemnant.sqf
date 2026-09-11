@@ -49,6 +49,7 @@ if ((_groupData get "attachedTo") != "") then {
 private _survivorComp = _aliveUnits apply { typeOf _x };
 
 _groupData set ["groupType", "infantry"];
+_groupData set ["supportComp", []];
 _groupData set ["groupCfg", []];
 _groupData set ["spawnClass", ""];
 _groupData set ["transportRole", false];

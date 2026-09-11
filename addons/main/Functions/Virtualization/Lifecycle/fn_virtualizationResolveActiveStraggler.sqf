@@ -57,12 +57,19 @@ if (_objectiveId == "") then {
     _objectiveId = _groupData get "homeObjective";
 };
 
+private _objectiveHot = false;
 if (_objectiveId != "") then {
     private _objectiveData = FLO_Objectives get _objectiveId;
-    if ((_objectiveData get "contested") || {_objectiveData get "underAttack"} || {(_objectiveData get "enemyCount") > 0}) exitWith {
-        false
+    // Objective records hold absolute side counts; enemyCount belongs to GTN intel.
+    private _side = _groupData get "side";
+    private _hostileCount = switch (_side) do {
+        case west: { _objectiveData get "opforCount" };
+        case east: { _objectiveData get "bluforCount" };
+        default { (_objectiveData get "bluforCount") + (_objectiveData get "opforCount") };
     };
+    _objectiveHot = (_objectiveData get "contested") || {_objectiveData get "underAttack"} || {_hostileCount > 0};
 };
+if (_objectiveHot) exitWith { false };
 
 ["VIRTUALIZATION", 4, format [
     "Resolving remote straggler group %1 (%2) with %3 survivors at %4m",

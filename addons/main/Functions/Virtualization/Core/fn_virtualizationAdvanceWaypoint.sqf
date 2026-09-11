@@ -11,7 +11,7 @@
  *   - GUARD, HOLD: Advances through waypoints; enters "holding" runtime state on FINAL waypoint
  *   - CYCLE: Loops back to first waypoint
  *   - SENTRY: Holds position in holding state
- *   - LOITER: Stays at position for timeout duration
+ *   - LOITER: Final aircraft orbit holds; ground or non-final waypoints advance
  *
  *   NOTE: Virtual groups advance through ALL waypoints to reach their destination.
  *   Only the FINAL SAD/DESTROY/GUARD/HOLD waypoint triggers persistent holding.
@@ -90,9 +90,14 @@ switch (_wpType) do {
         [_groupId, _groupData, _currentIdx, _waypoints, _wpType] call FLO_fnc_virtualizationAdvanceTerminalWaypoint;
     };
 
-    // LOITER - stay in area for timeout duration
+    // Completion radius is a distance, not a timer. Aircraft retain a final orbit.
     case "LOITER": {
-        [_groupData, _currentIdx, _waypoints, _isPatrol, _currentWp] call FLO_fnc_virtualizationAdvanceLoiterWaypoint;
+        private _airborne = (([_groupData get "groupType"] call FLO_fnc_virtualizationGetArchetype) get "movementDomain") == "AIR";
+        if (_airborne && {_currentIdx == count _waypoints - 1}) then {
+            [_groupData, "holding"] call FLO_fnc_virtualizationSetRuntimeState;
+        } else {
+            [_groupId, _groupData, _currentIdx, _waypoints, _isPatrol] call FLO_fnc_virtualizationAdvanceDefaultWaypoint;
+        };
     };
 
     // Default movement waypoints (MOVE, etc.)
@@ -102,5 +107,6 @@ switch (_wpType) do {
 };
 
 _groupData set ["virtualMoveCarryMeters", 0];
+_groupData set ["lastMoveTime", diag_tickTime];
 [_groupData] call FLO_fnc_virtualizationRefreshCurrentWaypointSpeed;
 

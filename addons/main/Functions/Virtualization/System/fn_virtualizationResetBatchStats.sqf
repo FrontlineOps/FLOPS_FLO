@@ -19,6 +19,7 @@ _stats set ["movementPauseSkipsThisBatch", 0];
 _stats set ["movementDeadbandSkipsThisBatch", 0];
 _stats set ["missionHoldSkipsThisBatch", 0];
 _stats set ["eliminatedGroupsThisBatch", 0];
+_stats set ["stragglerResolvesThisBatch", 0];
 _stats set ["lastPlayerCacheMs", 0];
 _stats set ["lastGroupCacheMs", 0];
 

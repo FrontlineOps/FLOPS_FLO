@@ -36,6 +36,6 @@ private _sanitizedWaypoints = [];
     ];
 } forEach _waypoints;
 
-["ROUTE_REQUEST", _sanitizedWaypoints, 0, -1, -1, [], []] call FLO_fnc_virtualizationValidateWaypointState;
+["ROUTE_REQUEST", _sanitizedWaypoints, 0, -1] call FLO_fnc_virtualizationValidateWaypointState;
 
 _sanitizedWaypoints

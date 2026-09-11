@@ -13,14 +13,15 @@ if (_spawnClass != "" && {isClass (configFile >> "CfgVehicles" >> _spawnClass)})
 };
 
 private _groupCfg = _groupData get "groupCfg";
+private _platformClass = "";
 if (_groupCfg isEqualType configNull && {!isNull _groupCfg}) then {
     private _units = configProperties [_groupCfg, "isClass _x", false];
     if (_units isNotEqualTo []) then {
         private _unitClass = getText ((_units select 0) >> "vehicle");
-        if (_unitClass != "" && {isClass (configFile >> "CfgVehicles" >> _unitClass)}) exitWith {
-            _unitClass
+        if (_unitClass != "" && {isClass (configFile >> "CfgVehicles" >> _unitClass)}) then {
+            _platformClass = _unitClass;
         };
     };
 };
 
-""
+_platformClass

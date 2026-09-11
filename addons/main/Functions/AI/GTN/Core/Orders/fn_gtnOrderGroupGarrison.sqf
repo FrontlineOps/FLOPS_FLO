@@ -40,7 +40,7 @@ if !([_gData, _ownSide, ["infantry", "motorized", "mechanized", "armor"], []] ca
     false
 };
 
-private _hasRouteContext = ((_gData get "waypoints") isNotEqualTo []) || {(_gData get "pathToken") >= 0};
+private _hasRouteContext = ((_gData get "waypoints") isNotEqualTo []);
 private _currentGarrisonPos = _gData get "garrisonPosition";
 private _sameHoldPos = _currentGarrisonPos isEqualType [] && {count _currentGarrisonPos >= 2} && {(_currentGarrisonPos distance2D _pos) < 20};
 if (

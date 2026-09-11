@@ -22,7 +22,7 @@
  */
 
 params [
-    ["_position", nil, [[]]],
+    ["_position", nil],
     ["_logErrors", false, [true]],
     ["_context", "", [""]]
 ];
@@ -44,9 +44,9 @@ if (!(_position isEqualType [])) exitWith {
 };
 
 // Check array length
-if (count _position < 2) exitWith {
+if (!(count _position in [2, 3]) || {_position findIf { !(_x isEqualType 0) || {!finite _x} } >= 0}) exitWith {
     if (_logErrors) then {
-        ["VIRTUALIZATION", 1, format["Invalid position (too short) - %1: %2", _context, _position]] call FLO_fnc_log;
+        ["VIRTUALIZATION", 1, format["Invalid position (expected two or three finite coordinates) - %1", _context]] call FLO_fnc_log;
     };
     false
 };

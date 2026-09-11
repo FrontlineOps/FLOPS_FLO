@@ -34,7 +34,9 @@ private _spawnParkedHelicopters = _groupType == "helicopter"
     && { ([_groupData] call FLO_fnc_virtualizationGetTransportPassengers) isEqualTo [] }
     && { (_groupData get "state") == "idle" || { _groupData get "transportRole" } };
 
+private _spawnFailed = false;
 for "_i" from 1 to _unitCount do {
+    if (_spawnFailed) then { continue };
     private _aircraftType = selectRandom _airPool;
     private _spawnParked = _spawnParkedHelicopters && { _aircraftType isKindOf "Helicopter" };
     private _spawnPos = if (_spawnParked) then {
@@ -44,7 +46,13 @@ for "_i" from 1 to _unitCount do {
         [(_position select 0) + (50 * _i), (_position select 1), _spawnHeight]
     };
     private _crewType = [_aircraftType, _unitPool, _sideKey, _groupType] call FLO_fnc_virtualizationResolveCrewType;
-    [_realGroup, _aircraftType, _spawnPos, _crewType, !_spawnParked] call FLO_fnc_virtualizationCreateCrewedVehicle;
+    private _aircraft = [_realGroup, _aircraftType, _spawnPos, _crewType, !_spawnParked] call FLO_fnc_virtualizationCreateCrewedVehicle;
+    _spawnFailed = isNull _aircraft;
+};
+
+if (_spawnFailed) exitWith {
+    [_groupData, _realGroup, false] call FLO_fnc_virtualizationDeleteRealGroupAssets;
+    grpNull
 };
 
 if ((units _realGroup) isEqualTo []) exitWith {

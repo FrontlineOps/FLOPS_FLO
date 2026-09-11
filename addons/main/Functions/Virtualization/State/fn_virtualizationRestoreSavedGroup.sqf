@@ -6,17 +6,17 @@
  *   virtual-group record.
  *
  * Arguments:
- * 0: Group ID <STRING>
+ * 0: Unpublished group record <HASHMAP>
  * 1: Saved group data <HASHMAP>
  *
  * Return Value:
  * BOOL - True when restore completed
  */
 
-params ["_groupId", "_savedData"];
+params ["_groupData", "_savedData"];
 
+private _groupId = _groupData get "id";
 [_savedData, _groupId] call FLO_fnc_virtualizationValidateSavedGroup;
-private _groupData = [_groupId] call FLO_fnc_virtualizationRequireGroup;
 
 private _alwaysActive = _savedData get "alwaysActive";
 private _civilianRoutineState = _savedData get "civilianRoutineState";
@@ -34,6 +34,7 @@ _groupData set ["direction", _savedData get "direction"];
 _groupData set ["spawnClass", _savedData get "spawnClass"];
 _groupData set ["combatExperience", _savedData get "combatExperience"];
 [_groupData, _savedData get "comp"] call FLO_fnc_virtualizationSetAssetComposition;
+_groupData set ["supportComp", +(_savedData get "supportComp")];
 _groupData set ["waypoints", _savedData get "waypoints"];
 _groupData set ["currentWaypointIndex", _savedData get "currentWaypointIndex"];
 _groupData set ["lastMoveTime", diag_tickTime];
@@ -63,7 +64,7 @@ _groupData set ["civilianRoutineUntil", _civilianRoutineUntil];
 [_groupData, _savedData] call FLO_fnc_virtualizationRestoreMissionState;
 [_groupData, _savedData] call FLO_fnc_virtualizationRestoreCommanderState;
 _groupData set ["commanderIntent", _savedData get "commanderIntent"];
-[_groupData, _savedData] call FLO_fnc_virtualizationRestorePathState;
+_groupData set ["pathSource", _savedData get "pathSource"];
 [_groupData, _savedData] call FLO_fnc_virtualizationRestoreAAState;
 [_groupData, _savedData] call FLO_fnc_virtualizationRestoreTransportState;
 [_groupData, _savedData] call FLO_fnc_virtualizationRestoreReplacementState;
@@ -72,7 +73,6 @@ if (_civilianRoutineState == "return" && {(_savedData get "civilianRoutineState"
     _groupData set ["civilianRoutineUntil", -1];
 };
 [_groupData, _groupId] call FLO_fnc_virtualizationValidateGroup;
-call FLO_fnc_virtualizationTouchRegistry;
 
 true
 

@@ -154,6 +154,8 @@ if (_newDismountIndex >= 0) then {
     _groupData set ["dismountAtWaypoint", _newDismountIndex];
 };
 
+[_groupData] call FLO_fnc_virtualizationResetTransportCommands;
+
 // Set the real group in the group data
 [_groupData, _realGroup] call FLO_fnc_virtualizationSetRealGroup;
 [ _groupData, [_realGroup] call FLO_fnc_virtualizationCollectRealGroupVehicles ] call FLO_fnc_virtualizationSetRealVehicles;

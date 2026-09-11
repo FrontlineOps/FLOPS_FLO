@@ -18,7 +18,6 @@ if (_eligiblePlayers isEqualTo []) exitWith { false };
 private _requestedNearestDist = 1e10;
 private _anchorNearestDist = 1e10;
 private _spawnNearestDist = 1e10;
-private _nearestPlayer = objNull;
 private _closestSpawnVehicle = objNull;
 
 {
@@ -26,7 +25,6 @@ private _closestSpawnVehicle = objNull;
     private _requestedDist = _requestedPos distance2D _player;
     if (_requestedDist < _requestedNearestDist) then {
         _requestedNearestDist = _requestedDist;
-        _nearestPlayer = _player;
     };
 
     private _anchorDist = _spawnAnchorPos distance2D _player;
@@ -54,7 +52,7 @@ private _anchorNearestRounded = (round (_anchorNearestDist * 10)) / 10;
 private _spawnNearestRounded = (round (_spawnNearestDist * 10)) / 10;
 private _collapseRounded = (round (_distanceCollapse * 10)) / 10;
 ["VIRTUALIZATION", 2, format [
-    "Suspicious activation %1 type=%2 requestedPos=%3 requestedNearest=%4m anchorPos=%5 anchorNearest=%6m closestSpawnPos=%7 closestSpawnNearest=%8m collapse=%9m activationDeferred=%10 missionLock=%11 activeUnits=%12/%13 nearestPlayer=%14 clearance=%15m",
+    "Suspicious activation %1 type=%2 requestedPos=%3 requestedNearest=%4m anchorPos=%5 anchorNearest=%6m closestSpawnPos=%7 closestSpawnNearest=%8m collapse=%9m activationDeferred=%10 missionLock=%11 activeUnits=%12/%13 clearance=%14m",
     _groupId,
     _groupData get "groupType",
     _requestedPos,
@@ -68,7 +66,6 @@ private _collapseRounded = (round (_distanceCollapse * 10)) / 10;
     _groupData get "missionLock",
     FLO_VirtUpdate get "activeUnitCount",
     ["activationUnitCap"] call FLO_fnc_virtualizationGetConfigValue,
-    if (isNull _nearestPlayer) then { "<none>" } else { name _nearestPlayer },
     _clearanceMeters
 ] ] call FLO_fnc_log;
 

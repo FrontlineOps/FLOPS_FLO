@@ -15,7 +15,7 @@ if !(_sample isEqualType 0 && {finite _sample} && {_sample >= 0} && {_offsets is
     if !(_offset isEqualType 0 && {finite _offset} && {_offset >= 0}) then {
         throw format ["Saved group has invalid timer offset %1", _x];
     };
-} forEach ["civilianLastIntelAt", "transportUnloadIssuedAt"];
+} forEach ["civilianLastIntelAt"];
 
 {
     private _value = _savedData get _x;
@@ -49,8 +49,7 @@ if !(_sample isEqualType 0 && {finite _sample} && {_sample >= 0} && {_offsets is
 } forEach [
     ["defendLeaseIssuedAt", ""],
     ["civilianLastRoutineAt", ""],
-    ["civilianLastIntelAt", "civilianIntelElapsedOffset"],
-    ["transportUnloadIssuedAt", "transportUnloadElapsedOffset"]
+    ["civilianLastIntelAt", "civilianIntelElapsedOffset"]
 ];
 
 true

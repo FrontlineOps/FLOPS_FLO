@@ -2,7 +2,7 @@
  * Function: FLO_fnc_virtualizationSpawnArtilleryGroup
  */
 
-params ["_groupId", "_position", "_side", "_unitCount", "_pools"];
+params ["_groupId", "_position", "_side", "_unitCount", "_pools", "_groupData"];
 
 private _sideKey = _pools get "sideKey";
 private _unitPool = _pools get "units";
@@ -14,7 +14,6 @@ private _artilleryPool = _pools get "groundArtillery";
 private _realGroup = [_side, _groupId, "artillery"] call FLO_fnc_virtualizationCreateRealGroup;
 if (isNull _realGroup) exitWith { grpNull };
 
-private _groupData = (call FLO_fnc_virtualizationGetGroupMap) get _groupId;
 private _spawnFailed = false;
 for "_i" from 1 to _unitCount do {
     if (_spawnFailed) then { continue };

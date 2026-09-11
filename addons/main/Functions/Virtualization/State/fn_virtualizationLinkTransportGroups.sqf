@@ -7,7 +7,11 @@
 // Two-sided ownership changes must not be suspended between record writes.
 if (canSuspend) exitWith {
     private _result = false;
-    isNil { _result = _this call FLO_fnc_virtualizationLinkTransportGroups; };
+    private _failure = [];
+    isNil {
+        try { _result = _this call FLO_fnc_virtualizationLinkTransportGroups; } catch { _failure = [_exception]; };
+    };
+    if (_failure isNotEqualTo []) then { throw (_failure select 0) };
     _result
 };
 

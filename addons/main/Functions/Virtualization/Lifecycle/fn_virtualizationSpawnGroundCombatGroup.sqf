@@ -2,13 +2,12 @@
  * Function: FLO_fnc_virtualizationSpawnGroundCombatGroup
  */
 
-params ["_groupId", "_position", "_side", "_unitCount", "_groupType", "_pools"];
+params ["_groupId", "_position", "_side", "_unitCount", "_groupType", "_pools", "_groupData"];
 
 private _sideKey = _pools get "sideKey";
 private _unitPool = _pools get "units";
 [_unitPool, "units", _sideKey, _groupType] call FLO_fnc_virtualizationRequirePoolEntries;
 
-private _groupData = (call FLO_fnc_virtualizationGetGroupMap) get _groupId;
 private _composition = _groupData get "comp";
 if (_composition isEqualTo []) then {
     _composition = [_groupType, _unitCount, _side] call FLO_fnc_virtualizationSelectInitialAssetComposition;

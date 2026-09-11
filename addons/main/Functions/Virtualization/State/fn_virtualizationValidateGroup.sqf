@@ -53,11 +53,37 @@ if !((_groupData get "side") in [east, west, independent, civilian]) then {
 if ((_groupData get "groupType") == "") then {
     throw format ["Virtual group %1 has an empty group type", _groupId];
 };
-if ((_groupData get "unitCount") < 0) then {
-    throw format ["Virtual group %1 has negative unit count %2", _groupId, _groupData get "unitCount"];
+private _unitCount = _groupData get "unitCount";
+if (!finite _unitCount || {_unitCount < 0} || {_unitCount != floor _unitCount}) then {
+    throw format ["Virtual group %1 has invalid unit count %2", _groupId, _unitCount];
+};
+private _archetype = [_groupData get "groupType"] call FLO_fnc_virtualizationGetArchetype;
+private _composition = _groupData get "comp";
+if (_composition isNotEqualTo [] && {count _composition != _unitCount}) then {
+    throw format ["Virtual group %1 composition/count mismatch", _groupId];
+};
+{
+    if !(_x isEqualType "" && {isClass (configFile >> "CfgVehicles" >> _x)}) then {
+        throw format ["Virtual group %1 contains an invalid composition class", _groupId];
+    };
+    if ((_archetype get "assetStrength") == (_x isKindOf "Man")) then {
+        throw format ["Virtual group %1 composition does not match its strength domain", _groupId];
+    };
+} forEach _composition;
+private _supportComp = _groupData get "supportComp";
+if (_supportComp isNotEqualTo [] && {(_groupData get "groupType") != "static_aa"}) then {
+    throw format ["Virtual group %1 has support assets outside a static AA battery", _groupId];
+};
+{
+    if !(_x isEqualType "" && {isClass (configFile >> "CfgVehicles" >> _x)} && {!(_x isKindOf "Man")} && {!(_x isKindOf "Air")} && {!(_x isKindOf "Ship")}) then {
+        throw format ["Virtual group %1 contains an invalid support asset class", _groupId];
+    };
+} forEach _supportComp;
+if !((_groupData get "replacementState") in ["", "REINFORCE", "AA_DEPLOY"]) then {
+    throw format ["Virtual group %1 has unsupported replacement state", _groupId];
 };
 private _combatExperience = _groupData get "combatExperience";
-if (_combatExperience < 0 || {_combatExperience > 100}) then {
+if (!finite _combatExperience || {_combatExperience < 0} || {_combatExperience > 100}) then {
     throw format ["Virtual group %1 has invalid combat experience %2", _groupId, _combatExperience];
 };
 
@@ -89,10 +115,7 @@ if (!_isActive && {(_groupData get "realVehicles") isNotEqualTo []}) then {
     _groupId,
     _groupData get "waypoints",
     _groupData get "currentWaypointIndex",
-    _groupData get "dismountAtWaypoint",
-    _groupData get "pathToken",
-    _groupData get "pathTargetPos",
-    _groupData get "pathWaypointSettings"
+    _groupData get "dismountAtWaypoint"
 ] call FLO_fnc_virtualizationValidateWaypointState;
 [_groupData, _groupId] call FLO_fnc_virtualizationValidateCommanderOrderState;
 private _attachedTo = _groupData get "attachedTo";

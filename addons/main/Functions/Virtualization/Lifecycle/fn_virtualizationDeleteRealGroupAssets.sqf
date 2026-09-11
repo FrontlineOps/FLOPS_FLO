@@ -8,6 +8,11 @@ params [
     ["_retainDeadEntities", false, [false]]
 ];
 
+if !([_groupData, _realGroup, false] call FLO_fnc_virtualizationCanDeactivateGroup) then {
+    ["VIRTUALIZATION", 1, format ["Refusing entity deletion for %1: player or foreign occupant", _groupData get "id"]] call FLO_fnc_log;
+    throw "Virtualization entity deletion crossed group ownership";
+};
+
 private _vehiclesToDelete = +(_groupData get "realVehicles");
 if (!isNull _realGroup) then {
     _vehiclesToDelete append (assignedVehicles _realGroup);

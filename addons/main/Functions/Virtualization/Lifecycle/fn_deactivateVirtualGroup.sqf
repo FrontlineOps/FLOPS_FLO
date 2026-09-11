@@ -17,6 +17,17 @@
 
 params ["_groupId", "_groupData"];
 
+if (!isServer) exitWith { false };
+if (canSuspend) exitWith {
+    private _result = false;
+    private _failure = [];
+    isNil {
+        try { _result = _this call FLO_fnc_deactivateVirtualGroup; } catch { _failure = [_exception]; };
+    };
+    if (_failure isNotEqualTo []) then { throw (_failure select 0) };
+    _result
+};
+
 if (!(_groupData isEqualType createHashMap)) exitWith {
     ["VIRTUALIZATION", 1, format [
         "Invalid deactivateVirtualGroup call for %1 - missing group data",
@@ -25,12 +36,17 @@ if (!(_groupData isEqualType createHashMap)) exitWith {
     false
 };
 
-["VIRTUALIZATION", 3, format["Deactivating virtual group %1", _groupId]] call FLO_fnc_log;
+if !(_groupData get "isActive") exitWith { false };
 
 private _realGroup = _groupData get "realGroup";
 if (isNull _realGroup) exitWith {
     [_groupId] call FLO_fnc_virtualizationRepairOrphanedActiveGroup
 };
+
+// Keep occupied vehicles physical, including all mounted FLO passenger groups.
+if !([_groupData, _realGroup] call FLO_fnc_virtualizationCanDeactivateGroup) exitWith { false };
+
+[_groupId, _groupData, _realGroup] call FLO_fnc_virtualizationConvertAssetCrewToInfantryRemnant;
 
 private _realUnitCount = count units _realGroup;
 if (_realUnitCount <= 0) then {
@@ -66,6 +82,8 @@ if (_syncedCount <= 0) exitWith {
     [_groupId] call FLO_fnc_virtualizationRemoveGroup;
     true
 };
+
+[_groupData] call FLO_fnc_virtualizationResetTransportCommands;
 
 // Update virtualization state
 [_groupData] call FLO_fnc_virtualizationClearRealGroup;

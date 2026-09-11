@@ -17,7 +17,7 @@ try {
         ["sideResources", _sideResources],
         ["logisticsNetworkBySide", _logistics],
         ["objectives", FLO_Objectives],
-        ["virtualGroups", call FLO_fnc_virtualizationGetGroupMap],
+        ["virtualGroups", call FLO_fnc_virtualizationCapturePersistentRegistry],
         ["baseDeploymentState", call FLO_fnc_baseDeploySerializeState],
         ["capturedAtTick", diag_tickTime]
     ];

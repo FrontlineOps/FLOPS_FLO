@@ -68,14 +68,14 @@ for "_i" from _batchStart to _batchEnd do {
         _stats set ["lastSlowGroupType", _groupData get "groupType"];
         _stats set ["lastSlowGroupMs", _groupMs];
         _perf set ["nextSlowGroupLogAt", _now + (_perf get "logCooldownSec")];
-        diag_log format [
-            "[FLO][PERF] Virtualization group %1 type=%2 active=%3 missionLock=%4 in %5 ms",
+        ["VIRTUALIZATION", 4, format [
+            "Group %1 type=%2 active=%3 missionLock=%4 in %5 ms",
             _groupId,
             _groupData get "groupType",
             _groupData get "isActive",
             _groupData get "missionLock",
             _groupMs
-        ];
+        ]] call FLO_fnc_log;
     };
 
 };

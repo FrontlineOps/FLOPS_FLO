@@ -84,6 +84,7 @@ class VirtualizationLifecycle {
     class activateVirtualGroup             {};
     class virtualizationTryActivateGroup   {};
     class deactivateVirtualGroup           {};
+    class virtualizationCanDeactivateGroup {};
     class activateSavedVirtualGroup        {};
     class virtualizationCollectRealGroupVehicles {};
     class virtualizationConvertAssetCrewToInfantryRemnant {};
@@ -124,6 +125,8 @@ class VirtualizationRouting {
     file = "\z\flo\addons\main\Functions\Virtualization\Routing";
 
     class updateVirtualGroupWaypoints      {};
+    class virtualizationBuildRouteCandidate {};
+    class virtualizationPublishRoute {};
     class virtualizationApplyRealRoute     {};
     class virtualizationRefreshCurrentWaypointSpeed {};
     class virtualizationResolveMovePlatformClass {};
@@ -141,7 +144,6 @@ class VirtualizationCore {
     class virtualizationCanMoveInCombat {};
     class virtualizationScheduleNextProcess {};
     class virtualizationAdvanceDefaultWaypoint {};
-    class virtualizationAdvanceLoiterWaypoint {};
     class virtualizationAdvanceTerminalWaypoint {};
     class virtualizationRepairOrphanedActiveGroup {};
     class virtualizationProcessAttachedGroup {};
@@ -176,6 +178,7 @@ class VirtualizationState {
     class virtualizationResolveSavedLandStart {};
     class virtualizationNormalizeSavedLandRoute {};
     class virtualizationSerializeRegistry {};
+    class virtualizationCapturePersistentRegistry {};
     class virtualizationRestoreRegistry {};
     class virtualizationRebuildDerivedState {};
     class virtualizationGetEffectiveState {};
@@ -202,7 +205,6 @@ class VirtualizationState {
     class virtualizationSetAADeployState {};
     class virtualizationClearAADeployState {};
 
-    class virtualizationClearPathRequest {};
     class virtualizationSetTransportAttachment {};
     class virtualizationClearTransportAttachment {};
     class virtualizationSetTransportPassengers {};
@@ -215,6 +217,7 @@ class VirtualizationState {
     class virtualizationClearMountedIn {};
     class virtualizationGetMountedTransport {};
     class virtualizationTransportChainContains {};
+    class virtualizationResetTransportCommands {};
     class virtualizationResetCarrierInsertState {};
     class virtualizationLinkTransportGroups {};
     class virtualizationUnlinkTransportGroups {};
@@ -229,7 +232,6 @@ class VirtualizationState {
     class virtualizationRestoreSavedGroup {};
     class virtualizationRestoreCommanderState {};
     class virtualizationRestoreMissionState {};
-    class virtualizationRestorePathState {};
 
     class virtualizationRestoreAAState {};
     class virtualizationRestoreTransportState {};

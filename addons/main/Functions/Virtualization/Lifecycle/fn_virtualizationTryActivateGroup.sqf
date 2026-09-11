@@ -2,6 +2,16 @@
  * Function: FLO_fnc_virtualizationTryActivateGroup
  */
 
+if (canSuspend) exitWith {
+    private _result = false;
+    private _failure = [];
+    isNil {
+        try { _result = _this call FLO_fnc_virtualizationTryActivateGroup; } catch { _failure = [_exception] };
+    };
+    if (_failure isNotEqualTo []) then { throw (_failure select 0) };
+    _result
+};
+
 params [
     "_groupId",
     ["_bypassUnitCap", false, [true]]

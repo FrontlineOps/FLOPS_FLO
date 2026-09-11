@@ -6,6 +6,8 @@
 
 params ["_groupData", "_savedData"];
 
+[_groupData] call FLO_fnc_virtualizationResetTransportCommands;
+
 _groupData set ["transportRole", _savedData get "transportRole"];
 _groupData set ["isTransport", _savedData get "isTransport"];
 
@@ -27,9 +29,6 @@ if (_attachedTo != "") then {
 _groupData set ["dismountAtWaypoint", _savedData get "dismountAtWaypoint"];
 _groupData set ["transportInsertMode", toUpper (_savedData get "transportInsertMode")];
 _groupData set ["transportInsertPos", +(_savedData get "transportInsertPos")];
-_groupData set ["transportLandCommandIssued", _savedData get "transportLandCommandIssued"];
-_groupData set ["transportUnloadCommandIssued", _savedData get "transportUnloadCommandIssued"];
-_groupData set ["transportUnloadIssuedAt", _savedData get "transportUnloadIssuedAt"];
 _groupData set ["postDismountWaypoint", +(_savedData get "postDismountWaypoint")];
 
 [_groupData] call FLO_fnc_virtualizationClearMountedIn;

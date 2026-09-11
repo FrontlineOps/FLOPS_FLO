@@ -30,6 +30,7 @@ private _entry = _groupCounts select { _x select 0 isEqualTo _groupType };
 if (_entry isNotEqualTo []) then {
     (_entry select 0) select 1
 } else {
-    diag_log format ["[VIRTUALIZATION] ERROR: No unit count defined for group type %1 (%2), using default 1", _groupType, _sideKey];
-    1
+    private _error = format ["No unit count defined for group type %1 (%2)", _groupType, _sideKey];
+    ["VIRTUALIZATION", 1, _error] call FLO_fnc_log;
+    throw _error
 }; 

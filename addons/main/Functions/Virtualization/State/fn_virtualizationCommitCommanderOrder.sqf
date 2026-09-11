@@ -36,11 +36,21 @@ params [
     ["_leaseUntil", -1, [0]]
 ];
 
+if (canSuspend) exitWith {
+    private _result = [];
+    private _failure = [];
+    isNil {
+        try { _result = _this call FLO_fnc_virtualizationCommitCommanderOrder; } catch { _failure = [_exception]; };
+    };
+    if (_failure isNotEqualTo []) then { throw (_failure select 0) };
+    _result
+};
+
 if (_groupId == "") then {
     throw "FLO_fnc_virtualizationCommitCommanderOrder: empty group id";
 };
 
-if (!(_targetPos isEqualType []) || {count _targetPos < 2}) then {
+if !([_targetPos] call FLO_fnc_validateGroupPosition) then {
     throw format [
         "FLO_fnc_virtualizationCommitCommanderOrder: invalid target position for %1: %2",
         _groupId,
@@ -54,27 +64,20 @@ if (_order == "ATTACK" && {_objectiveId == ""}) then {
 };
 private _orderStart = diag_tickTime;
 
-private _tRoute = diag_tickTime;
-private _routeCommitted = [_groupId, _waypoints, true, _routeSource] call FLO_fnc_updateVirtualGroupWaypoints;
-private _routeMs = (diag_tickTime - _tRoute) * 1000;
-
-if (!_routeCommitted) exitWith {
-    [false, _routeMs, 0, 0, (diag_tickTime - _orderStart) * 1000]
-};
-
+private _candidate = [_groupData] call FLO_fnc_virtualizationCloneValue;
 private _tAssign = diag_tickTime;
 switch (_order) do {
     case "MOVE": {
-        [_groupData, _targetPos, _orderMode] call FLO_fnc_virtualizationAssignMoveOrder;
+        [_candidate, _targetPos, _orderMode] call FLO_fnc_virtualizationAssignMoveOrder;
     };
     case "ATTACK": {
-        [_groupData, _targetPos, _objectiveId] call FLO_fnc_virtualizationAssignAttackOrder;
+        [_candidate, _targetPos, _objectiveId] call FLO_fnc_virtualizationAssignAttackOrder;
     };
     case "DEFEND": {
-        [_groupData, _targetPos, _objectiveId, _leaseIssuedAt, _leaseUntil] call FLO_fnc_virtualizationAssignDefendOrder;
+        [_candidate, _targetPos, _objectiveId, _leaseIssuedAt, _leaseUntil] call FLO_fnc_virtualizationAssignDefendOrder;
     };
     case "GARRISON": {
-        [_groupData, _targetPos, _objectiveId, _orderMode] call FLO_fnc_virtualizationAssignGarrisonOrder;
+        [_candidate, _targetPos, _objectiveId, _orderMode] call FLO_fnc_virtualizationAssignGarrisonOrder;
     };
     default {
         throw format [
@@ -85,6 +88,19 @@ switch (_order) do {
     };
 };
 private _assignMs = (diag_tickTime - _tAssign) * 1000;
+
+private _orderFields = (keys _candidate) select { (_candidate get _x) isNotEqualTo (_groupData get _x) };
+private _tRoute = diag_tickTime;
+private _routeAllowed = [_groupId, _candidate, _waypoints, true, _routeSource, false, []] call FLO_fnc_virtualizationBuildRouteCandidate;
+if (!_routeAllowed) exitWith {
+    { _groupData set [_x, _candidate get _x] } forEach ["landRouteStartBlocked", "landRouteRetryAt"];
+    [false, (diag_tickTime - _tRoute) * 1000, _assignMs, 0, (diag_tickTime - _orderStart) * 1000]
+};
+private _routeCommitted = [_groupId, _groupData, _candidate, _orderFields] call FLO_fnc_virtualizationPublishRoute;
+private _routeMs = (diag_tickTime - _tRoute) * 1000;
+if (!_routeCommitted) exitWith {
+    [false, _routeMs, _assignMs, 0, (diag_tickTime - _orderStart) * 1000]
+};
 
 private _tTransport = diag_tickTime;
 if (_orderMode != "WITHDRAW") then {

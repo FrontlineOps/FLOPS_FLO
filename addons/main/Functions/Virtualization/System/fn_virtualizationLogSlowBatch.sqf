@@ -18,8 +18,8 @@ if (_batchMs < (_perf get "slowBatchThresholdMs") || {_now < (_perf get "nextSlo
 _stats set ["slowBatchCount", (_stats get "slowBatchCount") + 1];
 _perf set ["nextSlowBatchLogAt", _now + (_perf get "logCooldownSec")];
 
-diag_log format [
-    "[FLO][PERF] Virtualization PFH processed %1 groups (batch %2-%3 of %4) in %5 ms | due=%6 scheduledSkips=%7 playerCache=%8 groupCache=%9 activations=%10 blocked=%11 deactivations=%12 activeUnits=%13/%14 deferred=%15 virtualMoves=%16 activeSyncs=%17 waypointAdv=%18 patrols=%19 attached=%20 movePaused=%21 deadband=%22 missionSkips=%23 eliminated=%24",
+["VIRTUALIZATION", 4, format [
+    "PFH processed %1 groups (batch %2-%3 of %4) in %5 ms | due=%6 scheduledSkips=%7 playerCache=%8 groupCache=%9 activations=%10 blocked=%11 deactivations=%12 activeUnits=%13/%14 deferred=%15 virtualMoves=%16 activeSyncs=%17 waypointAdv=%18 patrols=%19 attached=%20 movePaused=%21 deadband=%22 missionSkips=%23 eliminated=%24",
     _processed,
     _batchStart,
     _batchEnd,
@@ -44,6 +44,6 @@ diag_log format [
     _stats get "movementDeadbandSkipsThisBatch",
     _stats get "missionHoldSkipsThisBatch",
     _stats get "eliminatedGroupsThisBatch"
-];
+]] call FLO_fnc_log;
 
 true

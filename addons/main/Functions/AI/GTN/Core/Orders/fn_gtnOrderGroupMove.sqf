@@ -18,7 +18,7 @@ if (!(_pos isEqualType []) || {count _pos < 2}) exitWith {
 
 private _existingTarget = _gData get "orderTargetPos";
 private _existingMode = _gData get "orderMode";
-private _hasRouteContext = ((_gData get "waypoints") isNotEqualTo []) || {(_gData get "pathToken") >= 0};
+private _hasRouteContext = ((_gData get "waypoints") isNotEqualTo []);
 if ((_gData get "commanderOrder") == "MOVE" && {_existingMode == _mode} && {_hasRouteContext} && {count _existingTarget >= 2} && {_existingTarget distance2D _pos < 35}) exitWith {
     if (isNil "FLO_GTN_OrderNoOps") then { FLO_GTN_OrderNoOps = createHashMap; };
     FLO_GTN_OrderNoOps set ["MOVE", (FLO_GTN_OrderNoOps getOrDefault ["MOVE", 0]) + 1];

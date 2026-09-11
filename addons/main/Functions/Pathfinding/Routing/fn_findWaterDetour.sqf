@@ -56,7 +56,19 @@ private _offsetStep = FLO_PF_WaterDetourStep;
 private _offsetMax = FLO_PF_WaterDetourMax;
 private _offsetStart = ((_waterSpan * 0.8) max FLO_PF_WaterDetourBaseOffset) min _offsetMax;
 
+private _offsets = [];
 for "_offset" from _offsetStart to _offsetMax step _offsetStep do {
+    _offsets pushBack _offset;
+};
+// Preserve established routes, then try the narrow shoreline band skipped by
+// the coarse search. Large pivots can all miss a small headland's land corridor.
+private _nearStep = _sampleStep max 10;
+for "_offset" from ((_waterSpan * 0.8) max _nearStep) to (_offsetStart - 1) step _nearStep do {
+    _offsets pushBack _offset;
+};
+
+{
+    private _offset = _x;
     {
         private _sideDir = _segmentDir + _x;
         private _candidate = _spanMid getPos [_offset, _sideDir];
@@ -96,6 +108,6 @@ for "_offset" from _offsetStart to _offsetMax step _offsetStep do {
     } forEach [90, -90];
 
     if (_detour isNotEqualTo []) exitWith {};
-};
+} forEach _offsets;
 
 [_detour, _sampleCount]

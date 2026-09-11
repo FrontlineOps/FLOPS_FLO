@@ -17,6 +17,9 @@ private _advanced = 0;
             if ([_commander, _id, _data, _contactPos] call FLO_fnc_gtnCombatWithdrawGroup) then { _withdrawn = _withdrawn + 1; };
         } else {
             if ((_outcome get "decisive") && {(_data get "commanderOrder") == "ATTACK"}) then {
+                if ((_data get "combatAdvanceUntil") <= diag_tickTime) then {
+                    [_data] call FLO_fnc_virtualizationResetMovementClock;
+                };
                 _data set ["combatAdvanceUntil", diag_tickTime + 60];
                 _advanced = _advanced + 1;
             };

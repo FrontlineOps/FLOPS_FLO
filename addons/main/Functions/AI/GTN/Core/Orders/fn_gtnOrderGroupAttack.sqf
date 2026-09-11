@@ -40,7 +40,7 @@ if !([_gData, _ownSide, ["infantry", "motorized", "mechanized", "armor"]] call F
 };
 
 private _existingAttackObjective = _gData get "attackObjective";
-private _hasRouteContext = ((_gData get "waypoints") isNotEqualTo []) || {(_gData get "pathToken") >= 0};
+private _hasRouteContext = ((_gData get "waypoints") isNotEqualTo []);
 if (
     (_gData get "commanderOrder") == "ATTACK"
     && {_hasRouteContext}

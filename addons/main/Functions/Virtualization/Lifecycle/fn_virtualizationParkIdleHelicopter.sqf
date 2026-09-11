@@ -86,7 +86,7 @@ if (!_canPark) exitWith { false };
 if (_alreadyParked && {!_clearRoute}) exitWith { true };
 
 if (_clearRoute) then {
-    [_groupData] call FLO_fnc_virtualizationClearPathRequest;
+    _groupData set ["pathSource", ""];
     [_groupData] call FLO_fnc_virtualizationClearExecutionState;
     _groupData set ["waypoints", []];
     _groupData set ["currentWaypointIndex", 0];

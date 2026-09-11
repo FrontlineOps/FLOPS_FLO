@@ -30,7 +30,7 @@ private _isActive = _groupData get "isActive";
 private _missionLock = _groupData get "missionLock";
 
 // Skip invalid positions
-if ((_position select 0) < 100 && (_position select 1) < 100) exitWith {};
+if !([_position] call FLO_fnc_validateGroupPosition) exitWith {};
 
 // Marker name
 private _markerName = format["vdbg_%1", _groupId];
