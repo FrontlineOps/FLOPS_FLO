@@ -17,7 +17,6 @@ class VirtualizationSystem {
     class virtualizationResetBatchStats {};
     class virtualizationResetUpdateStats {};
     class virtualizationProcessGroupBatch {};
-    class virtualizationCanMoveInCombat {};
     class virtualizationLogSlowBatch {};
     class virtualizationRunUpdateCycle {};
     class virtualizationValidateUpdateState {};
@@ -139,6 +138,7 @@ class VirtualizationRouting {
 class VirtualizationCore {
     file = "\z\flo\addons\main\Functions\Virtualization\Core";
 
+    class virtualizationCanMoveInCombat {};
     class virtualizationScheduleNextProcess {};
     class virtualizationAdvanceDefaultWaypoint {};
     class virtualizationAdvanceLoiterWaypoint {};
