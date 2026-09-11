@@ -7,13 +7,13 @@
  *   shell that loads the addon.
  */
 
-// Addon postInit also runs in the world scene behind Arma's main menu. Wait
-// for the gameplay display on clients/hosts; Eden previews also retain display 0.
+// Display 0 persists beneath gameplay too. Clients/hosts must wait for the
+// gameplay display; menu scenes never create it. CBA clears pending waits at
+// each mission preInit, so a menu-scene wait cannot bootstrap a later mission.
 if (is3DEN) exitWith {};
-if (hasInterface && {!is3DENPreview} && {!isNull findDisplay 0}) exitWith {};
 if (hasInterface && {isNull findDisplay 46}) exitWith {
     [{
-        !isNull findDisplay 46 || {!is3DENPreview && {!isNull findDisplay 0}}
+        !isNull findDisplay 46
     }, {
         [] call FLO_fnc_addonPostInit;
     }, []] call CBA_fnc_waitUntilAndExecute;
