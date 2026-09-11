@@ -138,6 +138,8 @@ private _gtnCommander = createHashMapObject [[
     ["_lastCommanderIntelOwnerSignature", ""],
     ["_lastCommanderIntelPublishedAt", -1],
     ["_lastGarrisonRunAt", -1],
+    ["_garrisonRouteSearches", createHashMap],
+    ["_garrisonRouteResumeObjective", ""],
     ["_lastGarrisonSignature", ""],
     ["_minefieldDirty", true],
     ["_lastMinefieldRunAt", -1],
@@ -211,6 +213,7 @@ private _gtnCommander = createHashMapObject [[
         ["attackAssignmentsPerCycle", 12], // May open several six-group objective attacks in one cycle
         ["defenseAssignmentsPerCycle", 3], // 10-second baseline defense assignment cap for one commander slice
         ["garrisonAssignmentsPerCycle", 16], // Baseline defense may consume the full slice so attacks cannot strip still-ungarrisoned objectives
+        ["garrisonFailedRoutesPerCycle", 8], // Failed searches must not consume an unbounded commander slice
         ["maxTrackTasksPerCycle", 2] // Primitive burst cap per track per commander update
     ]],
     
@@ -1946,7 +1949,7 @@ private _gtnCommander = createHashMapObject [[
         if (_success) then {
             ["GTN", 3, format["Air mission queued: %1 at %2", _missionType, _pos]] call FLO_fnc_log;
         } else {
-            ["GTN", 2, format["Air mission request failed - no available air assets for %1 at %2", _missionType, _pos]] call FLO_fnc_log;
+            ["GTN", 4, format["Air mission request rejected for %1 at %2; reason recorded by ATO", _missionType, _pos]] call FLO_fnc_log;
         };
 
         _success

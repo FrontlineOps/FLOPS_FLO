@@ -86,7 +86,8 @@ if (!_routeAllowed) exitWith {
             ]] call FLO_fnc_log;
         };
     } else {
-        ["VIRTUALIZATION", 2, format [
+        private _level = [2, 5] select (_sourceTag in ["AUTO_PATROL", "GARRISON_PATROL", "GARRISON_BUILDING"]);
+        ["VIRTUALIZATION", _level, format [
             "Rejected LAND route group=%1 source=%2 reason=%3 semanticWaypoints=%4",
             _groupId,
             _sourceTag,
@@ -98,6 +99,7 @@ if (!_routeAllowed) exitWith {
 };
 
 private _candidate = [_groupData] call FLO_fnc_virtualizationCloneValue;
+_candidate set ["autoPatrolRetry", []];
 if (_movementDomain == "LAND" && {_routeWaypoints isNotEqualTo []}) then {
     _candidate set ["landRouteStartBlocked", false];
     _candidate set ["landRouteRetryAt", -1];

@@ -27,6 +27,7 @@ createHashMapFromArray [
     ["waypoints", []],
     ["currentWaypointIndex", 0],
     ["autoPatrol", false],
+    ["autoPatrolRetry", []],
     ["patrolConfig", []],
     ["noWaypoints", false],
     ["idleHelicopterParked", false],

@@ -28,6 +28,9 @@ private _metrics = createHashMapFromArray [
     ["patrolOrders", 0],
     ["reserveBandBuilds", 0],
     ["assignmentPasses", 0],
+    ["routeRejected", 0],
+    ["routeDeferred", false],
+    ["routeSearchesBlocked", 0],
     ["releaseMs", 0],
     ["candidateBuildMs", 0],
     ["reserveBandMs", 0],
@@ -49,6 +52,8 @@ private _enemySide = _cmdr get "_enemySide";
 private _reserveGraphDepth = ((_cmdr get "_config") get "defenseReserveGraphDepth");
 private _fallbackBand = _reserveGraphDepth + 1;
 private _assignmentLimit = [_cmdr, "garrisonAssignmentsPerCycle"] call FLO_fnc_gtnGetTempoScaledAssignmentLimit;
+private _failureLimit = (_cmdr get "_config") get "garrisonFailedRoutesPerCycle";
+private _routeSearches = _cmdr get "_garrisonRouteSearches";
 private _assignableGroupTypes = ["infantry", "motorized", "mechanized", "armor"];
 private _assignmentCache = _cmdr get "_objectiveAssignmentCache";
 
@@ -216,6 +221,15 @@ private _rankedCandidates = [];
 } forEach _candidateObjectives;
 _rankedCandidates sort true;
 _candidateObjectives = _rankedCandidates apply { _x select 3 };
+private _candidateIds = _candidateObjectives apply { _x get "objectiveId" };
+{
+    if !(_x in _candidateIds) then { _routeSearches deleteAt _x; };
+} forEach (keys _routeSearches);
+private _resumeIndex = _candidateIds find (_cmdr get "_garrisonRouteResumeObjective");
+if (_resumeIndex > 0) then {
+    _candidateObjectives = (_candidateObjectives select [_resumeIndex]) + (_candidateObjectives select [0, _resumeIndex]);
+};
+_cmdr set ["_garrisonRouteResumeObjective", ""];
 
 private _assignedByObjective = createHashMap;
 private _continueAllocation = true;
@@ -238,6 +252,13 @@ while {_continueAllocation && {_available isNotEqualTo []}} do {
 
         private _deficit = _x get "deficit";
         if (_deficit <= 0) then { continue };
+        if ("searchExhausted" in _x) then { continue };
+        if ((_metrics get "routeRejected") >= _failureLimit) then {
+            _metrics set ["routeDeferred", true];
+            _cmdr set ["_garrisonRouteResumeObjective", _x get "objectiveId"];
+            _stopAllocation = true;
+            continue;
+        };
 
         private _objectiveId = _x get "objectiveId";
         private _objectivePos = _x get "objectivePos";
@@ -248,6 +269,25 @@ while {_continueAllocation && {_available isNotEqualTo []}} do {
         };
         private _slotIndex = (_x get "activeGarrisons") + _assignedHereBefore;
         private _buildingSlot = (_slotIndex mod 2) == 0;
+        private _claimedPositions = if (_objectiveId in _garrisonPositionsByObjective) then {
+            _garrisonPositionsByObjective get _objectiveId
+        } else {
+            []
+        };
+        private _domainObjective = FLO_Objectives get _objectiveId;
+        private _searchInputs = [_slotIndex, _claimedPositions, _domainObjective get "position", _domainObjective get "radius"];
+        if (!(_objectiveId in _routeSearches) || {
+            ((_routeSearches get _objectiveId) get "inputs") isNotEqualTo _searchInputs
+        }) then {
+            _routeSearches set [_objectiveId, createHashMapFromArray [
+                ["inputs", [_searchInputs] call FLO_fnc_virtualizationCloneValue],
+                ["plans", createHashMap],
+                ["failedPositions", createHashMap],
+                ["warned", false]
+            ]];
+        };
+        private _search = _routeSearches get _objectiveId;
+        private _failedPositions = _search get "failedPositions";
         private _reserveBands = if ("reserveBands" in _x) then {
             _x get "reserveBands"
         } else {
@@ -268,6 +308,9 @@ while {_continueAllocation && {_available isNotEqualTo []}} do {
 
         for "_i" from 0 to ((count _available) - 1) do {
             (_available select _i) params ["_groupId", "_gData", "_homeObjective", "_groupPos"];
+            if (_groupId in _failedPositions && {
+                (_failedPositions get _groupId) isEqualTo [_groupPos, _gData get "groupType"]
+            }) then { continue };
             private _band = _fallbackBand;
             if (_homeObjective in _reserveBands) then {
                 _band = _reserveBands get _homeObjective;
@@ -294,21 +337,21 @@ while {_continueAllocation && {_available isNotEqualTo []}} do {
         };
         _metrics set ["selectionMs", (_metrics get "selectionMs") + ((diag_tickTime - _tSelection) * 1000)];
 
-        if (_bestGroupId == "") then { continue };
-
-        private _claimedPositions = if (_objectiveId in _garrisonPositionsByObjective) then {
-            _garrisonPositionsByObjective get _objectiveId
-        } else {
-            []
+        if (_bestGroupId == "") then {
+            // Exhaustion ends this search round; a later update may draw a new patrol.
+            _routeSearches deleteAt _objectiveId;
+            _x set ["searchExhausted", true];
+            continue;
         };
         private _selectedGroupData = (_available select _bestIndex) select 1;
-        private _routePlan = [
-            _cmdr,
-            _objectiveId,
-            _claimedPositions,
-            _slotIndex,
-            _selectedGroupData get "groupType"
-        ] call FLO_fnc_gtnBuildObjectiveGarrisonRoute;
+        private _groupType = _selectedGroupData get "groupType";
+        private _plans = _search get "plans";
+        if !(_groupType in _plans) then {
+            _plans set [_groupType, [
+                _cmdr, _objectiveId, _claimedPositions, _slotIndex, _groupType
+            ] call FLO_fnc_gtnBuildObjectiveGarrisonRoute];
+        };
+        private _routePlan = _plans get _groupType;
         private _garrisonPos = _routePlan get "targetPos";
 
         private _tOrder = diag_tickTime;
@@ -316,6 +359,7 @@ while {_continueAllocation && {_available isNotEqualTo []}} do {
         _metrics set ["orderMs", (_metrics get "orderMs") + ((diag_tickTime - _tOrder) * 1000)];
 
         if (_ordered) then {
+            _routeSearches deleteAt _objectiveId;
             _available deleteAt _bestIndex;
             _x set ["deficit", _deficit - 1];
             _metrics set ["assignedGroups", (_metrics get "assignedGroups") + 1];
@@ -344,6 +388,12 @@ while {_continueAllocation && {_available isNotEqualTo []}} do {
 
             _assignedByObjective set [_objectiveId, _assignedHere + 1];
         } else {
+            _failedPositions set [_bestGroupId, [+(_selectedGroupData get "position"), _groupType]];
+            _metrics set ["routeRejected", (_metrics get "routeRejected") + 1];
+            if !(_search get "warned") then {
+                _search set ["warned", true];
+                _metrics set ["routeSearchesBlocked", (_metrics get "routeSearchesBlocked") + 1];
+            };
             _available deleteAt _bestIndex;
             _continueAllocation = true;
         };
@@ -355,8 +405,10 @@ while {_continueAllocation && {_available isNotEqualTo []}} do {
 };
 _metrics set ["totalMs", (diag_tickTime - _tTotal) * 1000];
 
-["GTN", 3, format [
-    "Baseline garrison allocation: released=%1 assigned=%2 building=%3 patrol=%4 buildingFallback=%5 opened=%6 reinforced=%7 candidates=%8 eligible=%9 reserveBands=%10 passes=%11",
+private _level = [4, 3] select ((_metrics get "assignedGroups") > 0 || {(_metrics get "releasedGroups") > 0});
+if ((_metrics get "routeSearchesBlocked") > 0) then { _level = 2; };
+["GTN", _level, format [
+    "Baseline garrison allocation: released=%1 assigned=%2 building=%3 patrol=%4 buildingFallback=%5 opened=%6 reinforced=%7 candidates=%8 eligible=%9 reserveBands=%10 passes=%11 rejected=%12 deferred=%13 blockedObjectives=%14",
     _metrics get "releasedGroups",
     _metrics get "assignedGroups",
     _metrics get "buildingOrders",
@@ -367,7 +419,10 @@ _metrics set ["totalMs", (diag_tickTime - _tTotal) * 1000];
     _metrics get "candidateObjectives",
     _metrics get "eligibleGroups",
     _metrics get "reserveBandBuilds",
-    _metrics get "assignmentPasses"
+    _metrics get "assignmentPasses",
+    _metrics get "routeRejected",
+    _metrics get "routeDeferred",
+    _metrics get "routeSearchesBlocked"
 ]] call FLO_fnc_log;
 
 if ((_metrics get "totalMs") >= 20) then {

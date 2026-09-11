@@ -3,6 +3,7 @@
     "waypoints",
     "currentWaypointIndex",
     "autoPatrol",
+    "autoPatrolRetry",
     "patrolConfig",
     "virtualSpeed",
     "lastMoveTime",
