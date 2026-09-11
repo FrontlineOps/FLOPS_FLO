@@ -78,7 +78,8 @@ private _requestCandidates = [
     _currentPos,
     _side,
     _groundCarrierTypes,
-    _airCarrierTypes
+    _airCarrierTypes,
+    _requestSpec getOrDefault ["dedicatedOnly", false]
 ] call FLO_fnc_transportFindRequestCandidates;
 
 private _carrierSelection = [
@@ -98,7 +99,7 @@ _transportData = _selectedTransportData;
 
 // No transport available
 if (_transportId == "") exitWith {
-    ["TRANSPORT", 3, format["Request: No transport available for %1 - infantry will walk", _infantryGroupId]] call FLO_fnc_log;
+    ["TRANSPORT", 4, format["Request: No transport available for %1 - infantry will walk", _infantryGroupId]] call FLO_fnc_log;
     ""
 };
 

@@ -42,9 +42,10 @@ private _transportVehicles = if (!isNull _transRealGroup) then {
 [_infantryGroupId] call FLO_fnc_virtualizationUnlinkTransportGroups;
 
 if ((_infData get "missionLock") in ["ORGANIC_PACKAGE", "TRANSPORT"]) then {
+    private _reinforcing = (_infData get "replacementState") == "REINFORCE";
     [_infantryGroupId, createHashMapFromArray [
-        ["missionLock", ""],
-        ["missionType", ""]
+        ["missionLock", ["", "LOGISTICS"] select _reinforcing],
+        ["missionType", ["", "REINFORCE"] select _reinforcing]
     ]] call FLO_fnc_virtualizationPatchGroup;
 };
 

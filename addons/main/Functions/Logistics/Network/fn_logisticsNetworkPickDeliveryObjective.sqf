@@ -20,7 +20,8 @@ params [
     "_net",
     "_requestedObjectiveId",
     ["_requiredThroughput", 0, [0]],
-    ["_blockedObjectives", [], [[]]]
+    ["_blockedObjectives", [], [[]]],
+    ["_deliveryInbound", createHashMap, [createHashMap]]
 ];
 
 if (_requestedObjectiveId == "") exitWith { "" };
@@ -28,7 +29,9 @@ if (_requestedObjectiveId == "") exitWith { "" };
 private _deliveryCache = _net get "_dispatchDeliveryObjectiveCache";
 private _sortedBlocked = +_blockedObjectives;
 _sortedBlocked sort true;
-private _cacheKey = format ["%1:%2:%3", _requestedObjectiveId, _requiredThroughput, _sortedBlocked joinString ","];
+private _saturated = (keys _deliveryInbound) select {(_deliveryInbound get _x) >= (_net get "REINFORCEMENT_DELIVERY_INBOUND_CAP")};
+_saturated sort true;
+private _cacheKey = format ["%1:%2:%3:%4", _requestedObjectiveId, _requiredThroughput, _sortedBlocked joinString ",", _saturated joinString ","];
 if (_cacheKey in _deliveryCache) exitWith { _deliveryCache get _cacheKey };
 
 private _objectives = FLO_Objectives;
@@ -39,18 +42,6 @@ private _enemySide = _net get "_enemySide";
 private _friendlyCountKey = ["bluforCount", "opforCount"] select (_managedSide isEqualTo east);
 private _enemyCountKey = ["opforCount", "bluforCount"] select (_managedSide isEqualTo east);
 private _sourceableCache = _net get "_dispatchSourceableCache";
-private _requestedSourceKey = format ["%1:%2:%3", _requestedObjectiveId, _requiredThroughput, _sortedBlocked joinString ","];
-private _requestedCanSource = if (_requestedSourceKey in _sourceableCache) then {
-    _sourceableCache get _requestedSourceKey
-} else {
-    private _canSource = (
-        [_net, _requestedObjectiveId, _blockedObjectives, _requiredThroughput]
-        call FLO_fnc_logisticsNetworkFindSupplySourceObjective
-    ) != "";
-    _sourceableCache set [_requestedSourceKey, _canSource];
-    _canSource
-};
-
 private _candidateIds = [];
 {
     private _linkedId = _x;
@@ -73,42 +64,12 @@ private _candidateIds = [];
     } forEach (_linkedObjective get "linkedObjectives");
 } forEach (_requestedObjective get "linkedObjectives");
 
-_candidateIds = _candidateIds - [_requestedObjectiveId];
-_candidateIds = _candidateIds select {
-    private _sourceKey = format ["%1:%2:%3", _x, _requiredThroughput, _sortedBlocked joinString ","];
-    if (_sourceKey in _sourceableCache) then {
-        _sourceableCache get _sourceKey
-    } else {
-        private _canSource = (
-            [_net, _x, _blockedObjectives, _requiredThroughput]
-            call FLO_fnc_logisticsNetworkFindSupplySourceObjective
-        ) != "";
-        _sourceableCache set [_sourceKey, _canSource];
-        _canSource
-    }
-};
-if (_candidateIds isEqualTo []) exitWith {
-    private _fallbackObjectiveId = ["", _requestedObjectiveId] select (_requestedCanSource);
-    _deliveryCache set [_cacheKey, _fallbackObjectiveId];
-    _fallbackObjectiveId
-};
-
+_candidateIds = _candidateIds - ([_requestedObjectiveId] + _saturated);
 private _enemyObjectiveIds = (keys _objectives) select {
     ((_objectives get _x) get "owner") isEqualTo _enemySide
 };
-if (_enemyObjectiveIds isEqualTo []) exitWith {
-    private _fallbackObjectiveId = if (_requestedCanSource) then {
-        _requestedObjectiveId
-    } else {
-        _candidateIds select 0
-    };
-    _deliveryCache set [_cacheKey, _fallbackObjectiveId];
-    _fallbackObjectiveId
-};
-
 private _minEnemyDistance = _net get "REINFORCEMENT_DELIVERY_MIN_ENEMY_DISTANCE";
-private _quietCandidates = [];
-private _fallbackCandidates = [];
+private _ranked = [];
 private _enemyDistanceCache = _net get "_dispatchEnemyDistanceCache";
 
 {
@@ -134,43 +95,31 @@ private _enemyDistanceCache = _net get "_dispatchEnemyDistanceCache";
         _resolvedDist
     };
 
-    private _row = [_candidateId, _distToRequested, _nearestEnemyDist, _friendlyCount, _enemyCount, _priority];
-    if (_enemyCount == 0 && {_nearestEnemyDist >= _minEnemyDistance}) then {
-        _quietCandidates pushBack _row;
-    } else {
-        _fallbackCandidates pushBack _row;
-    };
-} forEach _candidateIds;
-
-private _candidateRows = [_fallbackCandidates, _quietCandidates] select (_quietCandidates isNotEqualTo []);
-if (_candidateRows isEqualTo []) exitWith {
-    private _fallbackObjectiveId = if (_requestedCanSource) then {
-        _requestedObjectiveId
-    } else {
-        _candidateIds select 0
-    };
-    _deliveryCache set [_cacheKey, _fallbackObjectiveId];
-    _fallbackObjectiveId
-};
-
-private _bestObjectiveId = if (_requestedCanSource) then { _requestedObjectiveId } else { _candidateIds select 0 };
-private _bestScore = -1e12;
-
-{
-    _x params ["_candidateId", "_distToRequested", "_nearestEnemyDist", "_friendlyCount", "_enemyCount", "_priority"];
-
+    private _quiet = _enemyCount == 0 && {_nearestEnemyDist >= _minEnemyDistance};
     private _score = (5000 - (_distToRequested min 5000))
         + ((_nearestEnemyDist min 3500) * 0.25)
-        - (_friendlyCount * 35)
-        - (_enemyCount * 450)
-        + (_priority * 15);
+        - (_friendlyCount * 35) - (_enemyCount * 450) + (_priority * 15);
+    // Preserve the original first-candidate tie break and quiet-first policy.
+    _ranked pushBack [[1, 0] select _quiet, -_score, _forEachIndex, _candidateId];
+} forEach _candidateIds;
 
-    if (_score > _bestScore) then {
-        _bestScore = _score;
-        _bestObjectiveId = _candidateId;
+_ranked sort true;
+private _ordered = _ranked apply { _x select 3 };
+if (_enemyObjectiveIds isEqualTo []) then {
+    _ordered = [_requestedObjectiveId] + _candidateIds;
+} else {
+    _ordered pushBack _requestedObjectiveId;
+};
+private _selected = "";
+{
+    if (_x in _saturated) then { continue };
+    private _sourceKey = format ["%1:%2:%3", _x, _requiredThroughput, _sortedBlocked joinString ","];
+    private _canSource = if (_sourceKey in _sourceableCache) then { _sourceableCache get _sourceKey } else {
+        private _result = ([_net, _x, _blockedObjectives, _requiredThroughput] call FLO_fnc_logisticsNetworkFindSupplySourceObjective) != "";
+        _sourceableCache set [_sourceKey, _result];
+        _result
     };
-} forEach _candidateRows;
-
-_deliveryCache set [_cacheKey, _bestObjectiveId];
-
-_bestObjectiveId
+    if (_canSource) exitWith { _selected = _x; };
+} forEach _ordered;
+_deliveryCache set [_cacheKey, _selected];
+_selected

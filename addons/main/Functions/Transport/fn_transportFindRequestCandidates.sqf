@@ -23,7 +23,8 @@ params [
     ["_nearPos", [0, 0, 0], [[]]],
     ["_side", sideUnknown, [east]],
     ["_groundCarrierTypes", [], [[]]],
-    ["_airCarrierTypes", [], [[]]]
+    ["_airCarrierTypes", [], [[]]],
+    ["_dedicatedOnly", false, [true]]
 ];
 
 private _groups = call FLO_fnc_virtualizationGetGroupMap;
@@ -65,6 +66,7 @@ private _updateCandidate = {
 
     private _groupType = _groupData get "groupType";
     private _transportRole = _groupData get "transportRole";
+    if (_dedicatedOnly && {!_transportRole}) then { continue };
     private _isGroundCarrier = _groupType in _groundCarrierTypes;
     private _isAirCarrier = _groupType in _airCarrierTypes;
     if !(_isGroundCarrier || _isAirCarrier) then { continue };
@@ -108,6 +110,7 @@ private _updateCandidate = {
 
     private _groupType = _groupData get "groupType";
     private _transportRole = _groupData get "transportRole";
+    if (_dedicatedOnly && {!_transportRole}) then { continue };
     private _isGroundCarrier = _groupType in _groundCarrierTypes;
     private _isAirCarrier = _groupType in _airCarrierTypes;
     if !(_isGroundCarrier || _isAirCarrier) then { continue };

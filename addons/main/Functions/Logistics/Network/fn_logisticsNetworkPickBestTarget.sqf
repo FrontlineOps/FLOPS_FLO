@@ -140,4 +140,4 @@ if (_pressureCandidates isNotEqualTo []) exitWith {
     [_net, _pressureCandidates, _inboundCounts, _recentDispatchCounts, _batchDispatchCounts, _branchInboundCounts, _branchRecentCounts, _branchBatchCounts] call FLO_fnc_logisticsNetworkPickPressureTarget
 };
 
-[_net, _rearCandidates] call FLO_fnc_logisticsNetworkPickRearTarget
+[_net, _rearCandidates, _inboundCounts, _recentDispatchCounts, _branchInboundCounts] call FLO_fnc_logisticsNetworkPickRearTarget

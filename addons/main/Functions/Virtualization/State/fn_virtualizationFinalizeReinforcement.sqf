@@ -16,6 +16,7 @@ params [["_groupId", "", [""]]];
 private _groupData = [_groupId] call FLO_fnc_virtualizationRequireGroup;
 
 if ((_groupData get "replacementState") != "REINFORCE") exitWith { false };
+if ((_groupData get "attachedTo") != "" || {(_groupData get "mountedIn") != ""}) exitWith { false };
 
 private _deliveryObjectiveId = _groupData get "reinforcementDeliveryObjective";
 if (

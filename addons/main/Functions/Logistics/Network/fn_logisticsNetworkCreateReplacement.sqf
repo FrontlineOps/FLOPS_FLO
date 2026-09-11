@@ -131,4 +131,13 @@ if (_organicGroupIds isNotEqualTo []) then {
     ]] call FLO_fnc_virtualizationPatchGroup;
 };
 
+if (_groupType == "infantry" && {_spawnPos distance2D _targetPos >= FLO_Transport_MinDistance}) then {
+    (_net get "_reinforcementPickupRetryAt") set [_newGroupId, diag_tickTime + 60];
+    [_newGroupId, _targetPos, createHashMapFromArray [
+        ["forceMode", "GROUND"],
+        ["dedicatedOnly", true],
+        ["orderTag", "LOGI_REINF"]
+    ]] call FLO_fnc_transportRequest;
+};
+
 _newGroupId

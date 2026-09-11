@@ -17,6 +17,8 @@ class LogisticsNetwork {
     class logisticsNetworkBuildRecentDispatchCounts {};
     class logisticsNetworkCanDispatchToObjective {};
     class logisticsNetworkCheckAndReplace {};
+    class logisticsNetworkReconcileReplacementQueue {};
+    class logisticsNetworkTransportReinforcements {};
     class logisticsNetworkDescribeObjectiveSupplyRole {};
     class logisticsNetworkEnsureSupplyChainFresh {};
     class logisticsNetworkGetCachedSpawnPosition {};
@@ -43,6 +45,7 @@ class LogisticsNetwork {
     class logisticsNetworkPickBestTarget {};
     class logisticsNetworkPickHQObjective {};
     class logisticsNetworkPickDeliveryObjective {};
+    class logisticsNetworkPickDispatchDestination {};
     class logisticsNetworkPickPressureTarget {};
     class logisticsNetworkPickRearTarget {};
     class logisticsNetworkPickSpawnSourceObjective {};

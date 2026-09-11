@@ -31,7 +31,11 @@ private _enemyCount = _objective get _enemyCountKey;
 private _inboundCount = if (_objectiveId in _inboundCounts) then { _inboundCounts get _objectiveId } else { 0 };
 private _batchCount = if (_objectiveId in _batchDispatchCounts) then { _batchDispatchCounts get _objectiveId } else { 0 };
 
-if (_enemyCount <= 0) exitWith { "" };
+if (_enemyCount <= 0) exitWith {
+    if (_inboundCount >= (_net get "REINFORCEMENT_OBJECTIVE_INBOUND_CAP_MAX")) exitWith { "INBOUND_CAP" };
+    if (_batchCount >= (_net get "REINFORCEMENT_OBJECTIVE_BATCH_CAP_MAX")) exitWith { "BATCH_CAP" };
+    ""
+};
 
 if (
     (_objective get "contested")

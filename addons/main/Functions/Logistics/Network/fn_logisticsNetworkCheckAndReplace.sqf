@@ -48,6 +48,7 @@ private _perf = createHashMapFromArray [
     ["captureGrowthApplied", 0],
     ["compositionMs", 0],
     ["reserveMs", 0],
+    ["pickupMs", 0],
     ["reserveGroundMissing", 0],
     ["reserveAirMissing", 0],
     ["reserveGroundCreated", 0],
@@ -109,6 +110,13 @@ _perf set ["reserveAirMissing", _reserveStats get "airMissing"];
 _perf set ["reserveGroundCreated", _reserveStats get "groundCreated"];
 _perf set ["reserveAirCreated", _reserveStats get "airCreated"];
 
+private _pendingReinforcements = [];
+private _deliveryInboundCounts = createHashMap;
+private _inboundCounts = [_net, _pendingReinforcements, _deliveryInboundCounts] call FLO_fnc_logisticsNetworkBuildInboundObjectiveCounts;
+private _pickupStarted = diag_tickTime;
+[_net, _pendingReinforcements] call FLO_fnc_logisticsNetworkTransportReinforcements;
+_perf set ["pickupMs", (diag_tickTime - _pickupStarted) * 1000];
+
 if (_neededTotal == 0) exitWith {
     _perf set ["status", "AT_TARGET"];
     _net set ["_lastPerf", _perf];
@@ -119,31 +127,7 @@ private _queue = _net get "_reinforcementQueue";
 _perf set ["queueBefore", count _queue];
 
 _phaseT0 = diag_tickTime;
-private _rebuiltQueue = [];
-{
-    private _remain = _neededCounts getOrDefault [_x, 0];
-    if (_remain > 0) then {
-        _rebuiltQueue pushBack _x;
-        _neededCounts set [_x, _remain - 1];
-    };
-} forEach _queue;
-
-{
-    private _type = _x;
-    private _missingCount = _neededCounts get _type;
-    for "_i" from 1 to _missingCount do {
-        _rebuiltQueue pushBack _type;
-    };
-} forEach (keys _neededCounts);
-
-_queue = _rebuiltQueue;
-private _replacementPriorityOrder = _net get "REPLACEMENT_PRIORITY_ORDER";
-{
-    if !(_x in _replacementPriorityOrder) then {
-        throw format ["Replacement queue contains unprioritized group type %1", _x];
-    };
-} forEach _queue;
-_queue = [_queue, [], { _replacementPriorityOrder find _x }, "ASCEND"] call BIS_fnc_sortBy;
+_queue = [_queue, _neededCounts, _net get "REPLACEMENT_PRIORITY_ORDER"] call FLO_fnc_logisticsNetworkReconcileReplacementQueue;
 _net set ["_reinforcementQueue", _queue];
 _perf set ["reconcileMs", (diag_tickTime - _phaseT0) * 1000];
 _perf set ["queueAfter", count _queue];
@@ -218,7 +202,6 @@ _perf set ["batchSize", _batchSize];
 
 private _replaced = 0;
 private _attempted = 0;
-private _inboundCounts = [_net] call FLO_fnc_logisticsNetworkBuildInboundObjectiveCounts;
 private _recentDispatchCounts = [_net] call FLO_fnc_logisticsNetworkBuildRecentDispatchCounts;
 private _batchDispatchCounts = createHashMap;
 private _targetRejectionCounts = createHashMapFromArray [
@@ -246,7 +229,7 @@ for "_i" from 1 to _batchSize do {
     private _targetPool = if (_groupType isEqualTo "static_aa") then {
         [_net] call FLO_fnc_logisticsNetworkGetRearAATargets
     } else {
-        _maneuverTargets
+        (_maneuverTargets + _rearTargets) arrayIntersect (_maneuverTargets + _rearTargets)
     };
 
     if (_targetPool isEqualTo []) then {
@@ -255,10 +238,6 @@ for "_i" from 1 to _batchSize do {
         };
     };
 
-    private _collapseCandidates = _targetPool arrayIntersect _sourceBlockedObjectives;
-    if (_groupType isNotEqualTo "static_aa" && {_collapseCandidates isNotEqualTo []}) then {
-        _targetPool = _collapseCandidates;
-    };
     if (_targetPool isEqualTo [] && {_groupType isNotEqualTo "static_aa"} && {_rearTargets isNotEqualTo []}) then {
         _targetPool = _rearTargets;
     };
@@ -269,69 +248,14 @@ for "_i" from 1 to _batchSize do {
         continue;
     };
 
-    private _deliveryPickT0 = diag_tickTime;
-    private _sourceableTargetPool = [];
-    private _deliveryByTarget = createHashMap;
-    {
-        private _deliveryObjectiveId = _x;
-        if (_groupType isNotEqualTo "static_aa") then {
-            _deliveryObjectiveId = [
-                _net,
-                _x,
-                _throughputCost,
-                _sourceBlockedObjectives
-            ] call FLO_fnc_logisticsNetworkPickDeliveryObjective;
-        } else {
-            if (([
-                _net,
-                _x,
-                _sourceBlockedObjectives,
-                _throughputCost
-            ] call FLO_fnc_logisticsNetworkFindSupplySourceObjective) == "") then {
-                _deliveryObjectiveId = "";
-            };
-        };
-        if (_deliveryObjectiveId == "") then { continue };
-        _sourceableTargetPool pushBack _x;
-        _deliveryByTarget set [_x, _deliveryObjectiveId];
-    } forEach _targetPool;
-    _perf set ["dispatchDeliveryPickMs", (_perf get "dispatchDeliveryPickMs") + ((diag_tickTime - _deliveryPickT0) * 1000)];
-    if (_sourceableTargetPool isEqualTo []) then {
-        _perf set ["failNoSupplySource", (_perf get "failNoSupplySource") + 1];
-        _queue pushBack _groupType;
-        _supplyBlocked = true;
-        continue;
-    };
-    _targetPool = _sourceableTargetPool;
-
-    private _pickTargetT0 = diag_tickTime;
-    private _requestedObjectiveId = [
-        _net,
-        _targetPool,
-        _groupType,
-        _inboundCounts,
-        _recentDispatchCounts,
-        _batchDispatchCounts,
-        _targetRejectionCounts
-    ] call FLO_fnc_logisticsNetworkPickBestTarget;
-    _perf set ["dispatchTargetPickMs", (_perf get "dispatchTargetPickMs") + ((diag_tickTime - _pickTargetT0) * 1000)];
+    private _destination = [_net, _targetPool, _groupType, _throughputCost, _sourceBlockedObjectives, _inboundCounts, _deliveryInboundCounts, _recentDispatchCounts, _batchDispatchCounts, _targetRejectionCounts, _perf] call FLO_fnc_logisticsNetworkPickDispatchDestination;
+    _destination params ["_requestedObjectiveId", "_deliveryObjectiveId"];
     if (_requestedObjectiveId == "") then {
-        if (_groupType isEqualTo "static_aa") then {
-            _perf set ["failNoTargetObj", (_perf get "failNoTargetObj") + 1];
-        } else {
-            _perf set ["failSaturatedTarget", (_perf get "failSaturatedTarget") + 1];
-        };
+        _perf set ["failSaturatedTarget", (_perf get "failSaturatedTarget") + 1];
         _queue pushBack _groupType;
         continue;
     };
-
     private _urgency = [_net, _requestedObjectiveId] call FLO_fnc_logisticsNetworkGetReplacementUrgency;
-    private _deliveryObjectiveId = _deliveryByTarget get _requestedObjectiveId;
-    if (_deliveryObjectiveId == "") then {
-        _perf set ["failNoDeliveryObjective", (_perf get "failNoDeliveryObjective") + 1];
-        _queue pushBack _groupType;
-        continue;
-    };
 
     private _spawnFindT0 = diag_tickTime;
     private _spawnData = [
@@ -409,6 +333,7 @@ for "_i" from 1 to _batchSize do {
             [_net, _requestedObjectiveId] call FLO_fnc_logisticsNetworkRecordTargetDispatch;
             _replaced = _replaced + 1;
             _inboundCounts set [_requestedObjectiveId, (_inboundCounts getOrDefault [_requestedObjectiveId, 0]) + 1];
+            _deliveryInboundCounts set [_deliveryObjectiveId, (_deliveryInboundCounts getOrDefault [_deliveryObjectiveId, 0]) + 1];
             _recentDispatchCounts set [_requestedObjectiveId, (_recentDispatchCounts getOrDefault [_requestedObjectiveId, 0]) + 1];
             _batchDispatchCounts set [_requestedObjectiveId, (_batchDispatchCounts getOrDefault [_requestedObjectiveId, 0]) + 1];
             _perf set ["dispatchBookkeepingMs", (_perf get "dispatchBookkeepingMs") + ((diag_tickTime - _bookkeepingT0) * 1000)];
