@@ -5,6 +5,8 @@ private _dateNumber = dateToNumber _missionDate;
 
 FLO_OperationalClock set ["year", _year];
 FLO_OperationalClock set ["dateNumber", _dateNumber];
+FLO_OperationalClock set ["roundingRemainderSeconds", 0];
+FLO_OperationalClock set ["wallSinceMissionChange", 0];
 FLO_OperationalClock set ["lastMissionYear", _year];
 FLO_OperationalClock set ["lastMissionDateNumber", _dateNumber];
 FLO_OperationalClock set ["lastTick", diag_tickTime];
