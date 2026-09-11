@@ -1,9 +1,11 @@
 /* Releases direct ATTACK groups whose objective is missing or no longer enemy-held. */
 params ["_cmdr"];
+[_cmdr] call FLO_fnc_gtnCombatFinishWithdrawals;
 
 private _metrics = createHashMapFromArray [
     ["taskedCount", 0],
-    ["releasedCount", 0]
+    ["releasedCount", 0],
+    ["withdrawnCount", 0]
 ];
 
 private _attackGroupIds = +((_cmdr get "_objectiveAssignmentCache") get "attackGroupIds");
@@ -14,6 +16,7 @@ private _groups = call FLO_fnc_virtualizationGetGroupMap;
 private _objectives = (_cmdr get "_worldState") call ["_getObjectives", []];
 private _enemySide = _cmdr get "_enemySide";
 private _releaseIds = [];
+private _withdrawalAttempts = 0;
 {
     private _groupData = _groups get _x;
     if (isNil "_groupData") then { continue };
@@ -33,6 +36,13 @@ private _releaseIds = [];
     private _objective = _objectives get _objectiveId;
     if ((_objective get "owner") != _enemySide) then {
         _releaseIds pushBack _x;
+    } else {
+        if ((_groupData get "groupType") == "infantry" && {(_groupData get "unitCount") < 3} && {!(_groupData get "inCombat")} && {_withdrawalAttempts < 4}) then {
+            _withdrawalAttempts = _withdrawalAttempts + 1;
+            if ([_cmdr, _x, _groupData, _objective get "position"] call FLO_fnc_gtnCombatWithdrawGroup) then {
+                _metrics set ["withdrawnCount", (_metrics get "withdrawnCount") + 1];
+            };
+        };
     };
 } forEach _attackGroupIds;
 
@@ -51,4 +61,7 @@ if (_releaseIds isNotEqualTo []) then {
     ["GTN", 3, format ["%1 released %2 completed direct attack assignments", _cmdr get "_sideKey", count _releaseIds]] call FLO_fnc_log;
 };
 
+if ((_metrics get "withdrawnCount") > 0) then {
+    ["GTN", 3, format ["%1 withdrew %2 depleted attack groups to friendly cover", _cmdr get "_sideKey", _metrics get "withdrawnCount"]] call FLO_fnc_log;
+};
 _metrics

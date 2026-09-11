@@ -5,6 +5,9 @@ params [
 ];
 
 private _order = _groupData get "commanderOrder";
+if ((_groupData get "orderMode") == "WITHDRAW" && {_order != "MOVE"}) then {
+    throw format ["Virtual group %1 WITHDRAW requires a MOVE order", _groupId];
+};
 if !(_order in ["", "MOVE", "ATTACK", "DEFEND", "GARRISON"]) then {
     throw format ["Virtual group %1 has unsupported commander order %2", _groupId, _order];
 };

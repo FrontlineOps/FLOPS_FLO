@@ -15,6 +15,9 @@
 params ["_gData", "_resumeState"];
 
 if ((_gData get "groupType") == "static_aa") exitWith { "holding" };
+// A withdrawal can replace a hold order while the combat overlay is active.
+// Do not restore the old hold state over the newly committed escape route.
+if ((_gData get "orderMode") == "WITHDRAW" && {(_gData get "waypoints") isNotEqualTo []}) exitWith { "moving" };
 if (_resumeState != "" && {_resumeState != "inCombat"}) exitWith { _resumeState };
 if ((_gData get "pathToken") >= 0) exitWith { "planning" };
 if ((_gData get "waypoints") isNotEqualTo []) exitWith { "moving" };

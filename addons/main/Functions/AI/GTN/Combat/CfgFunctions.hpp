@@ -8,6 +8,10 @@ class GTNCombatResolver {
     file = "\z\flo\addons\main\Functions\AI\GTN\Combat\Resolver";
 
     class gtnCombatApplyAttrition {};
+    class gtnCombatAssignZoneIds {};
+    class gtnCombatApplyManeuver {};
+    class gtnCombatWithdrawGroup {};
+    class gtnCombatFinishWithdrawals {};
     class gtnCombatApplyGroupLoss {};
     class gtnCombatAveragePosition {};
     class gtnCombatAffectsClassification {};

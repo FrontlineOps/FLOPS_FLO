@@ -87,7 +87,9 @@ switch (_order) do {
 private _assignMs = (diag_tickTime - _tAssign) * 1000;
 
 private _tTransport = diag_tickTime;
-[_groupId, _groupData, _targetPos, _order] call FLO_fnc_transportMaybeRequestReassignmentPickup;
+if (_orderMode != "WITHDRAW") then {
+    [_groupId, _groupData, _targetPos, _order] call FLO_fnc_transportMaybeRequestReassignmentPickup;
+};
 private _transportMs = (diag_tickTime - _tTransport) * 1000;
 
 private _orderMs = (diag_tickTime - _orderStart) * 1000;

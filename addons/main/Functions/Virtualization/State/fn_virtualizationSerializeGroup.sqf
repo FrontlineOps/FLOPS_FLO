@@ -17,6 +17,7 @@ private _groupId = _groupData get "id";
 [_groupData, _groupId] call FLO_fnc_virtualizationValidateGroup;
 
 private _savedData = createHashMap;
+_savedData set ["commanderOrderVersion", 1];
 {
     _savedData set [
         _x,

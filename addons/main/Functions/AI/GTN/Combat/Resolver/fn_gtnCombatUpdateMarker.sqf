@@ -24,7 +24,7 @@ if !(FLO_ActivePlayerSide in [east, west]) then {
     throw "FLO_fnc_gtnCombatUpdateMarker requires a valid active player side";
 };
 
-private _zoneId = _event get "objectiveId";
+private _zoneId = _event get "engagementId";
 private _pos = _event get "position";
 private _id = [_zoneId] call FLO_fnc_gtnCombatMarkerId;
 

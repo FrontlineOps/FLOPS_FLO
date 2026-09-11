@@ -24,6 +24,7 @@ createHashMapFromArray [
     ["state", "idle"],
     ["lastStateChangeTime", diag_tickTime],
     ["inCombat", false],
+    ["combatAdvanceUntil", 0],
     ["waypoints", []],
     ["currentWaypointIndex", 0],
     ["autoPatrol", false],

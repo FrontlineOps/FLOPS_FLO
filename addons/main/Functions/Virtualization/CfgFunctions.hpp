@@ -17,6 +17,7 @@ class VirtualizationSystem {
     class virtualizationResetBatchStats {};
     class virtualizationResetUpdateStats {};
     class virtualizationProcessGroupBatch {};
+    class virtualizationCanMoveInCombat {};
     class virtualizationLogSlowBatch {};
     class virtualizationRunUpdateCycle {};
     class virtualizationValidateUpdateState {};
@@ -166,6 +167,7 @@ class VirtualizationState {
     class virtualizationGetRouteOwnedFields {};
     class virtualizationValidateGroup {};
     class virtualizationValidateSavedGroup {};
+    class virtualizationValidateSavedCommanderVersion {};
     class virtualizationValidateCommanderOrderState {};
     class virtualizationResolveRouteCompletionState {};
     class virtualizationValidateWaypointState {};

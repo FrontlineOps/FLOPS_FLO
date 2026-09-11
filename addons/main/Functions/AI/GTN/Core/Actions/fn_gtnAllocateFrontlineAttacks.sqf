@@ -111,6 +111,7 @@ private _fallbackPoolIds = [];
     private _groupData = _groups get _groupId;
     if (isNil "_groupData") then { continue };
     if !([_groupData, _ownSide, ["infantry", "motorized", "mechanized", "armor"], _idleStrategicOrders] call FLO_fnc_gtnGroupIsStrategicallyAssignable) then { continue };
+    if ((_groupData get "groupType") == "infantry" && {(_groupData get "unitCount") < 3}) then { continue };
 
     private _homeObjective = _groupData get "homeObjective";
     _poolEntries pushBack _groupId;

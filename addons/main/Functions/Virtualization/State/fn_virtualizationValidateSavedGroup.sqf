@@ -55,6 +55,7 @@ if (_combatExperience < 0 || {_combatExperience > 100}) then {
     _savedData get "pathWaypointSettings"
 ] call FLO_fnc_virtualizationValidateWaypointState;
 [_savedData, _groupId] call FLO_fnc_virtualizationValidateCommanderOrderState;
+[_savedData] call FLO_fnc_virtualizationValidateSavedCommanderVersion;
 [createHashMap, _savedData, 0, false] call FLO_fnc_virtualizationRestoreTimerState;
 
 true

@@ -89,7 +89,10 @@ if (_decisive) then {
 
 private _eastLosses = [_groups, _eastRefs, _eastLossPct] call FLO_fnc_gtnCombatApplyAttrition;
 private _westLosses = [_groups, _westRefs, _westLossPct] call FLO_fnc_gtnCombatApplyAttrition;
-if (_decisive) then { _engagements deleteAt _zoneId; };
+if (_decisive) then {
+    _engagement set ["roundCount", 0];
+    _engagement set ["momentum", 0];
+};
 
 createHashMapFromArray [
     ["winner", _winner],

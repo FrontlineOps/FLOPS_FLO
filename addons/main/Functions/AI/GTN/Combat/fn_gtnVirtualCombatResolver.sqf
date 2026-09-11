@@ -74,6 +74,7 @@ private _pfhId = [{
     private _supportAvailability = _classification get "supportAvailability";
     _phaseStartedAt = diag_tickTime;
     private _zones = [_classification] call FLO_fnc_gtnCombatGetZones;
+    private _zoneIds = [_zones] call FLO_fnc_gtnCombatAssignZoneIds;
     private _zoneBuildMs = (diag_tickTime - _phaseStartedAt) * 1000;
     private _engagedNow = createHashMap;
     private _activeZoneIds = [];
@@ -113,7 +114,7 @@ private _pfhId = [{
                     [_gData] call FLO_fnc_gtnCombatPrepareRealGroupForCombat;
                 } forEach (_eastRefs + _westRefs);
 
-                ["GTN_COMBAT", 3, format [
+                ["GTN_COMBAT", 4, format [
                     "Live combat handoff near %1m for %2 EAST groups vs %3 WEST groups",
                     round _contactDist,
                     count _eastRefs,
@@ -126,7 +127,7 @@ private _pfhId = [{
                 [_x select 1] call FLO_fnc_gtnCombatPrepareRealGroupForCombat;
             } forEach _activeRefs;
 
-            ["GTN_COMBAT", 3, format [
+            ["GTN_COMBAT", 4, format [
                 "Live combat near %1m could not fully hand off: demand=%2 activeUnits=%3 cap=%4 activeGroups=%5 - skipping virtual resolution",
                 round _contactDist,
                 _activationDemand,
@@ -138,7 +139,8 @@ private _pfhId = [{
         };
 
         private _descriptor = [_zonePos, _eastRefs, _westRefs] call FLO_fnc_gtnCombatResolveZoneDescriptor;
-        _descriptor params ["_zoneId", "_zoneName"];
+        _descriptor params ["_objectiveContextId", "_zoneName"];
+        private _zoneId = _zoneIds select _forEachIndex;
         _activeZoneIds pushBackUnique _zoneId;
         private _outcome = [
             _groups,
@@ -156,6 +158,7 @@ private _pfhId = [{
             _outcome
         ] call FLO_fnc_gtnCombatRequestStalemateArtillery;
         _outcome set ["artilleryRequestedBy", _artillerySide];
+        [_groups, _eastRefs, _westRefs, _outcome, _zonePos] call FLO_fnc_gtnCombatApplyManeuver;
 
         private _event = [
             _zoneId,
@@ -163,7 +166,8 @@ private _pfhId = [{
             _zonePos,
             _outcome,
             count _eastRefs,
-            count _westRefs
+            count _westRefs,
+            _objectiveContextId
         ] call FLO_fnc_gtnCombatRecordEvent;
         [
             _outcome,
@@ -173,7 +177,7 @@ private _pfhId = [{
 
         [_event, _combatMarkerTTL] call FLO_fnc_gtnCombatUpdateMarker;
 
-        ["GTN_COMBAT", 3, format [
+        ["GTN_COMBAT", 4, format [
             "%1 round %2 at %3m: E power=%4 W power=%5 momentum=%6 winner=%7 decisive=%8 decisiveLossPct=%9 E %10->%11 W %12->%13 artillery=%14",
             _zoneId,
             _outcome get "roundCount",
@@ -203,7 +207,7 @@ private _pfhId = [{
         if (_engagedNow getOrDefault [_groupId, false]) then { continue };
 
         [_groupId, _gData, _resumeStates] call FLO_fnc_gtnCombatExitState;
-        ["GTN_COMBAT", 3, format ["Group %1 disengaged and resumed %2", _groupId, [_gData] call FLO_fnc_virtualizationGetEffectiveState]] call FLO_fnc_log;
+        ["GTN_COMBAT", 5, format ["Group %1 disengaged and resumed %2", _groupId, [_gData] call FLO_fnc_virtualizationGetEffectiveState]] call FLO_fnc_log;
     } forEach (keys _resumeStates);
     private _disengagementMs = (diag_tickTime - _phaseStartedAt) * 1000;
 
@@ -213,8 +217,8 @@ private _pfhId = [{
 
     private _dt = diag_tickTime - _cycleStart;
     if (_dt > _perfLogThreshold) then {
-        diag_log format [
-            "[FLO][PERF] GTN virtual combat zones=%1 combatGroups=%2 totalGroups=%3 total=%4ms | resume=%5 classify=%6 rebuilt=%7 zones=%8 resolve=%9 disengage=%10 markers=%11",
+        ["PERF", 4, format [
+            "GTN virtual combat zones=%1 combatGroups=%2 totalGroups=%3 total=%4ms | resume=%5 classify=%6 rebuilt=%7 zones=%8 resolve=%9 disengage=%10 markers=%11",
             count _zones,
             _combatGroupCount,
             _groupCount,
@@ -226,12 +230,12 @@ private _pfhId = [{
             _resolutionMs,
             _disengagementMs,
             _markerCleanupMs
-        ];
+        ]] call FLO_fnc_log;
     };
 }, _interval, [_combatMarkerTTL, _engagementMaxDist, _perfLogThreshold]] call CBA_fnc_addPerFrameHandler;
 
 FLO_GTN_VirtualCombatPFH = _pfhId;
 
-["GTN_COMBAT", 2, format ["Virtual combat resolver started (%1s interval, PFH)", _interval]] call FLO_fnc_log;
+["GTN_COMBAT", 3, format ["Virtual combat resolver started (%1s interval, PFH)", _interval]] call FLO_fnc_log;
 
 true

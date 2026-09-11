@@ -2,8 +2,8 @@
  * Function: FLO_fnc_gtnCombatResolveZoneDescriptor
  * Author: Frontline Operations Development Group
  * Description:
- *   Resolves a combat zone identifier and display name using nearby objective
- *   context when available.
+ *   Resolves objective/display context only. Combat history uses the independent
+ *   participant identity assigned by gtnCombatAssignZoneIds.
  *
  * Arguments:
  *   0: Zone position <ARRAY>

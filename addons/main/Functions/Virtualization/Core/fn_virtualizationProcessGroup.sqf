@@ -105,7 +105,7 @@ if (_isActive && {isNull _realGroup}) exitWith {
 };
 
 if (!_isActive && {!_activationDeferred}) then {
-    if (!_inCombat) then {
+    if (!_inCombat || {[_groupData] call FLO_fnc_virtualizationCanMoveInCombat}) then {
         if (_profilePhases) then {
             _phaseStart = diag_tickTime;
             _virtStats set ["phaseMovementCallsTotal", (_virtStats get "phaseMovementCallsTotal") + 1];

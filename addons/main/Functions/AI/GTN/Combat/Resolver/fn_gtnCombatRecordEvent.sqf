@@ -23,12 +23,15 @@ params [
     "_zonePos",
     "_outcome",
     "_eastGroupCount",
-    "_westGroupCount"
+    "_westGroupCount",
+    ["_objectiveContextId", "", [""]]
 ];
+if (_objectiveContextId == "") then { _objectiveContextId = _zoneId; };
 
 private _event = createHashMapFromArray [
     ["time", diag_tickTime],
-    ["objectiveId", _zoneId],
+    ["objectiveId", _objectiveContextId],
+    ["engagementId", _zoneId],
     ["objectiveName", _zoneName],
     ["position", _zonePos],
     ["winner", _outcome get "winner"],
@@ -58,5 +61,5 @@ if ((count FLO_GTN_CombatEvents) > 60) then {
     FLO_GTN_CombatEvents deleteAt 0;
 };
 
-FLO_GTN_CombatLastByObjective set [_zoneId, _event];
+FLO_GTN_CombatLastByObjective set [_objectiveContextId, _event];
 _event
