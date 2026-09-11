@@ -86,7 +86,7 @@ if (_failedReason != "") exitWith {
 
 if (_closeLoop
     && {!_hasCycle}
-    && {count _waypoints > 1}
+    && {count _resolvedWaypoints > 1}
     && {_cursor distance2D ((_resolvedWaypoints select 0) select 0) > 1}) then {
     private _loopAnchorPos = +((_resolvedWaypoints select 0) select 0);
     private _closure = [_cursor, _loopAnchorPos, _allowTrails, _sourceTag] call FLO_fnc_findRoadPath;
