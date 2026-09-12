@@ -203,6 +203,7 @@ private _gtnCommander = createHashMapObject [[
         ["lastCycleMs", 0],
         ["peakCycleMs", 0],
         ["slowCycles", 0],
+        ["snapshotTotals", [0, 0, 0, 0, 0, 0, 0]],
         ["lastPhaseMs", createHashMapFromArray [
             ["normalizeTasked", 0],
             ["worldState", 0],

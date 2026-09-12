@@ -2,6 +2,7 @@
 params ["_commander"];
 private _groups = call FLO_fnc_virtualizationGetGroupMap;
 private _intents = _commander get "_intents";
+private _world = _commander get "_worldState";
 private _ids = keys _intents;
 _ids sort true;
 private _processed = 0;
@@ -28,7 +29,10 @@ for "_offset" from 0 to (_count - 1) do {
     _intent set ["groupIds", _remaining];
     _intent set ["issued", (_intent get "issued") arrayIntersect _remaining];
     if ((_intent get "initialUnits") > 0 && {_units < ((_intent get "initialUnits") * (1 - ((_commander get "_config") get "intentWithdrawalLossFraction")))}) then { _reason = "FORCE_LOSSES" };
-    private _state = [_commander get "_worldState", _id] call FLO_fnc_gtnIntentSnapshot;
+    // This read-only ownership check needs no detached prediction or force-readiness scan.
+    private _state = createHashMapFromArray [
+        ["intent", _intent], ["objectives", _world get "_objectives"], ["ownSide", _world get "_ownSide"]
+    ];
     if !([_state, [_id]] call FLO_fnc_gtnIntentGoalValid) then { _reason = "OBJECTIVE_OR_SUPPLY_LOST" };
     private _phaseLimit = [1800, 3600] select ((_intent get "phase") == "SECURE");
     if (diag_tickTime - (_intent get "phaseStartedAt") > _phaseLimit) then { _reason = "PHASE_TIMEOUT" };
@@ -39,7 +43,7 @@ for "_offset" from 0 to (_count - 1) do {
     };
     private _tracks = _commander get "_tracks";
     private _track = _tracks select (_tracks findIf { (_x get "id") == _id });
-    private _objective = ((_commander get "_worldState") get "_objectives") get (_intent get "objectiveId");
+    private _objective = (_world get "_objectives") get (_intent get "objectiveId");
     if ((_intent get "kind") == "CAPTURE" && {(_objective get "owner") == (_commander get "_ownSide")}
         && {!((_intent get "phase") in ["SECURE", "COMPLETE"])}) then {
         (_track get "planner") call ["_cancel", [_commander get "_executor", "OBJECTIVE_CAPTURED"]];

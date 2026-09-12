@@ -7,6 +7,22 @@ private _enemySide = _commander get "_enemySide";
 private _picture = createHashMap;
 private _network = FLO_Logistics_Networks get (_commander get "_sideKey");
 private _routes = _network get "_supplyRouteInfo";
+// A friendly neighbor's enemy links are reused by every objective beside it.
+// Rebuild from this cycle's sensed ownership; retain multiplicity and exclude
+// the scored objective exactly as the original two-hop traversal did.
+private _enemyAdjacency = createHashMap;
+{
+    if ((_y get "owner") != _ownSide) then { continue };
+    private _enemyLinks = createHashMap;
+    private _total = 0;
+    {
+        if (((_objectives get _x) get "owner") == _enemySide) then {
+            _enemyLinks set [_x, (_enemyLinks getOrDefault [_x, 0]) + 1];
+            _total = _total + 1;
+        };
+    } forEach (_y get "linkedObjectives");
+    _enemyAdjacency set [_x, [_total, _enemyLinks]];
+} forEach _objectives;
 {
     private _id = _x;
     private _objective = _y;
@@ -19,9 +35,9 @@ private _routes = _network get "_supplyRouteInfo";
         if ((_neighbor get "owner") == _ownSide) then {
             _friendlyLinks = _friendlyLinks + 1;
             if (_neighbor get "integrated" && {_x in _routes}) then { _sources pushBack _x };
-            {
-                if (((_objectives get _x) get "owner") == _enemySide) then { _exposedFlanks = _exposedFlanks + 1 };
-            } forEach ((_neighbor get "linkedObjectives") - [_id]);
+            private _adjacency = _enemyAdjacency get _x;
+            _exposedFlanks = _exposedFlanks + (_adjacency select 0)
+                - ((_adjacency select 1) getOrDefault [_id, 0]);
         } else { _hostileLinks = _hostileLinks + 1 };
     } forEach (_objective get "linkedObjectives");
     private _enemy = _objective get "enemyCount";
