@@ -20,5 +20,5 @@ if (([_aaPosition] call FLO_fnc_virtualizationGetNearestCachedPlayerDistance) <=
 
 private _airRadius = _groundRadius * FLO_AirActivationDistanceMultiplier;
 (_airPositions findIf {
-    ([_x] call FLO_fnc_virtualizationGetNearestCachedPlayerDistance) <= _airRadius
+    ([_x, true] call FLO_fnc_virtualizationGetNearestCachedPlayerDistance) <= _airRadius
 }) >= 0

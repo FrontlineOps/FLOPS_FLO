@@ -13,10 +13,8 @@ if (isNil "FLO_GTN_AirDefenseState") then {
         ["mobileLossExposureThreshold", 4],
         ["jetExposureThresholdBonus", 2],
         ["liveContactGraceSeconds", 90],
-        ["staticDetectionRange", 12000],
-        ["staticEngagementRange", 8000],
-        ["mobileDetectionRange", 8000],
-        ["mobileEngagementRange", 5000]
+        ["unidentifiedStaticThreatRange", 8000],
+        ["unidentifiedMobileThreatRange", 5000]
     ];
 };
 

@@ -84,10 +84,7 @@ private _targetPos = if (count _contactPos >= 2) then {
 
 private _groupType = "infantry";
 if !(_contextObject isKindOf "Man") then {
-    private _weaponNames = (weapons _contextObject) apply { toUpper _x };
-    private _hasAAWeapon = (_weaponNames findIf {
-        (_x find "AA" >= 0) || {(_x find "SAM" >= 0)}
-    }) isNotEqualTo -1;
+    private _hasAAWeapon = ((call FLO_fnc_gtnCapabilityAnalyzer) call ["_getAirDefenseRange", [typeOf _contextObject]]) > 0;
 
     if ((getArtilleryAmmo [_contextObject]) isNotEqualTo []) then {
         _groupType = "artillery";
@@ -126,6 +123,7 @@ createHashMapFromArray [
     ["confidence", _contactConfidence],
     ["contactCount", 0],
     ["groupType", _groupType],
+    ["observedClasses", [typeOf _contextObject]],
     ["unitCount", _unitCount],
     ["commanderOrder", ""],
     ["objectiveIds", []],

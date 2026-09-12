@@ -1,59 +1,13 @@
-/*
- * Function: FLO_fnc_gtnCanSideDetectAirThreat
- * Author: Frontline Operations Development Group
- * Description:
- *   Returns whether the provided side has a plausible detection path on an
- *   inbound aircraft. Detection can come from local visual observers near the
- *   aircraft or from active radar/air-defense coverage.
- *
- * Arguments:
- *   0: Aircraft object <OBJECT>
- *   1: Target position <ARRAY>
- *   2: Detecting side <SIDE>
- *
- * Return Value:
- *   BOOL
- */
-
-params [
-    ["_aircraft", objNull, [objNull]],
-    ["_targetPos", [0, 0, 0], [[]], [3]],
-    ["_detectingSide", sideUnknown]
-];
-
-if (isNull _aircraft) exitWith { false };
-if !(_detectingSide in [east, west]) exitWith { false };
-
-private _airPos = getPosATL _aircraft;
-
-if ([_airPos, 3000, _detectingSide] call FLO_fnc_gtnCanSideObserveArea) exitWith { true };
-
-private _groups = call FLO_fnc_virtualizationGetGroupMap;
-private _airDefenseState = call FLO_fnc_gtnAirDefenseGetState;
-// Preserve the existing coverage ceiling even when configured ranges exceed it.
-private _queryRadius = ((_airDefenseState get "mobileDetectionRange") max (_airDefenseState get "staticDetectionRange")) min 50000;
-private _radarGroupIds = ["queryRadius", [_airPos, _queryRadius, _detectingSide, true]] call FLO_fnc_virtualizationSpatialIndex;
-
-private _canDetect = false;
+/* Incoming-aircraft alerts require knowledge held by a friendly observer. */
+params [["_aircraft", objNull, [objNull]], ["_targetPos", [0, 0, 0], [[]], [3]], ["_detectingSide", sideUnknown]];
+if (isNull _aircraft || {!alive _aircraft} || {!(_detectingSide in [east, west])}) exitWith { false };
+private _detected = false;
 {
-    private _groupData = _groups get _x;
-    if ((_groupData get "side") != _detectingSide) then {
-        continue;
-    };
-
-    private _groupType = _groupData get "groupType";
-    if !(_groupType in ["static_aa", "radar", "mobile_aa"]) then {
-        continue;
-    };
-
-    if ((_groupData get "unitCount") <= 0) then { continue };
-    private _detectionRange = [
-        _airDefenseState get "mobileDetectionRange",
-        _airDefenseState get "staticDetectionRange"
-    ] select (_groupType == "static_aa");
-    if (((_groupData get "position") distance2D _airPos) <= _detectionRange) exitWith {
-        _canDetect = true;
-    };
-} forEach _radarGroupIds;
-
-_canDetect
+    if ((_y get "side") != _detectingSide || {!(_y get "isActive")}) then {continue};
+    private _leader = leader (_y get "realGroup");
+    if (!isNull _leader && {alive _leader} && {_leader knowsAbout _aircraft > 0}) exitWith {_detected = true};
+} forEach (call FLO_fnc_virtualizationGetGroupMap);
+if (_detected) exitWith {true};
+([] call FLO_fnc_getConnectedHumanPlayers) findIf {
+    alive _x && {side group _x == _detectingSide} && {(leader group _x) knowsAbout _aircraft > 0}
+} >= 0

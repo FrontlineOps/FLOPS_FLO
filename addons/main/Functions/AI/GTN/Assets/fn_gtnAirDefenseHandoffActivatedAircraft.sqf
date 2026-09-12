@@ -18,15 +18,11 @@ if (isNull _realGroup) then {
 };
 
 private _vehicles = [_realGroup] call FLO_fnc_virtualizationCollectRealGroupVehicles;
-if (_vehicles isNotEqualTo []) then {
-    [
-        _vehicles select 0,
-        _airData get "side",
-        _groups,
-        _contactIndex,
-        false
-    ] call FLO_fnc_gtnAirDefenseActivateAgainstLiveAircraft;
-};
+{
+    if (_x isKindOf "Air" && {alive _x}) then {
+        [_x, _airData get "side", _groups, _contactIndex] call FLO_fnc_gtnAirDefenseActivateAgainstLiveAircraft;
+    };
+} forEach _vehicles;
 
 private _state = call FLO_fnc_gtnAirDefenseGetState;
 (_state get "virtualExposureByAircraft") deleteAt _airGroupId;

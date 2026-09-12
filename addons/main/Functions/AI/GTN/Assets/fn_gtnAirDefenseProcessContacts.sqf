@@ -27,13 +27,11 @@ if (_mapSize <= 1000) then {
         if (isNull _realGroup) then { continue };
         private _vehicles = [_realGroup] call FLO_fnc_virtualizationCollectRealGroupVehicles;
         if (_vehicles isEqualTo []) then { continue };
-        [
-            _vehicles select 0,
-            _airData get "side",
-            _groups,
-            _contactIndex,
-            false
-        ] call FLO_fnc_gtnAirDefenseActivateAgainstLiveAircraft;
+        {
+            if (_x isKindOf "Air" && {alive _x}) then {
+                [_x, _airData get "side", _groups, _contactIndex] call FLO_fnc_gtnAirDefenseActivateAgainstLiveAircraft;
+            };
+        } forEach _vehicles;
         _processed = _processed + 1;
         _liveContacts = _liveContacts + 1;
     } else {
@@ -93,8 +91,8 @@ private _graceRows = count (keys _lastContacts);
 
 private _totalMs = (diag_tickTime - _updateStartedAt) * 1000;
 if (_totalMs >= 5) then {
-    diag_log format [
-        "[FLO][PERF] Air-defense contacts total=%1ms registry=%2 air=%3 aa=%4 live=%5 virtual=%6 players=%7 grace=%8 processed=%9",
+    ["PERF", 4, format [
+        "Air-defense contacts total=%1ms registry=%2 air=%3 aa=%4 live=%5 virtual=%6 players=%7 grace=%8 processed=%9",
         _totalMs,
         count _groups,
         _airCandidates,
@@ -104,7 +102,7 @@ if (_totalMs >= 5) then {
         _playerContactCount,
         _graceRows,
         _processed
-    ];
+    ]] call FLO_fnc_log;
 };
 
 _processed

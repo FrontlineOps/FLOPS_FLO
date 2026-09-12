@@ -67,6 +67,7 @@ private _freshContactCount = 0;
                 ["confidence", _contactConfidence],
                 ["contactCount", 0],
                 ["groupType", _groupType],
+                ["observedClasses", []],
                 ["unitCount", 0],
                 ["commanderOrder", ""],
                 ["objectiveIds", []],
@@ -75,6 +76,9 @@ private _freshContactCount = 0;
         };
 
         _entry set ["groupType", _groupType];
+        if (isClass (configFile >> "CfgVehicles" >> _contactType)) then {
+            (_entry get "observedClasses") pushBackUnique _contactType;
+        };
         // Strength is the sum of distinct observed entities, not live hidden state.
         _entry set ["unitCount", (_entry get "unitCount") + (_contactStrength max 0)];
         _entry set ["isPlayerControlled", false];
@@ -105,6 +109,7 @@ private _freshContactCount = 0;
     };
 
     _realEntry set ["groupType", _realTarget get "groupType"];
+    {(_realEntry get "observedClasses") pushBackUnique _x} forEach (_realTarget get "observedClasses");
     _realEntry set ["unitCount", _realTarget get "unitCount"];
     _realEntry set ["commanderOrder", _realTarget get "commanderOrder"];
     _realEntry set ["isPlayerControlled", true];
