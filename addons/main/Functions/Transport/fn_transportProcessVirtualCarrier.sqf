@@ -38,6 +38,10 @@ if (_attachedIds isEqualTo []) exitWith {
 
 if ((_groupData get "dismountAtWaypoint") < 0) exitWith { false };
 
+// Air passengers need a completed landing or drop, even under threat. The
+// ground-contact unload path cannot put them down at an airborne position.
+if ((([_groupData get "groupType"] call FLO_fnc_virtualizationGetArchetype) get "movementDomain") == "AIR") exitWith { false };
+
 if !([_groupData, _carrierPos] call FLO_fnc_transportShouldThreatDismount) exitWith { false };
 
 ["TRANSPORT", 3, format [

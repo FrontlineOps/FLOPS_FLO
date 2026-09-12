@@ -34,6 +34,14 @@ if (_transportId == "") exitWith { false };
 private _transData = [_transportId] call FLO_fnc_virtualizationGetGroup;
 private _infRealGroup = _infData get "realGroup";
 private _transRealGroup = _transData get "realGroup";
+// A passenger's last update can lag its carrier. The carrier owns the current
+// virtual position until detachment commits.
+private _basePos = if (_infData get "isActive") then {
+    _infData get "position"
+} else {
+    _transData get "position"
+};
+if (!(_infData get "isActive") && {surfaceIsWater _basePos}) exitWith { false };
 private _transportVehicles = if (!isNull _transRealGroup) then {
     [_transRealGroup] call FLO_fnc_virtualizationCollectRealGroupVehicles
 } else {
@@ -49,7 +57,6 @@ if ((_infData get "missionLock") in ["ORGANIC_PACKAGE", "TRANSPORT"]) then {
     ]] call FLO_fnc_virtualizationPatchGroup;
 };
 
-private _basePos = _infData get "position";
 if (!isNull _infRealGroup) then {
     {
         private _veh = vehicle _x;
@@ -74,6 +81,7 @@ private _newPos = _basePos getPos [30, _offsetDir];
 if (surfaceIsWater _newPos && {!surfaceIsWater _basePos}) then {
     _newPos = +_basePos;
 };
+if !(_infData get "isActive") then { _newPos set [2, 0]; };
 [_infantryGroupId, _newPos] call FLO_fnc_virtualizationUpdateGroupPosition;
 
 if (_releaseCarrier) then {
