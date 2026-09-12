@@ -173,8 +173,8 @@ if (isNil "FLO_GTNAirAssetManager") then {
                 call FLO_fnc_virtualizationCachePlayers;
             };
 
-            private _nearestPlayerDist = [_targetPos] call FLO_fnc_virtualizationGetNearestCachedPlayerDistance;
-            private _result = [_targetPos, _radius] call FLO_fnc_virtualizationIsPositionWithinActivationRange;
+            private _nearestPlayerDist = [_targetPos, true] call FLO_fnc_virtualizationGetNearestCachedPlayerDistance;
+            private _result = _nearestPlayerDist <= _radius;
 
             private _dtMs = (diag_tickTime - _t0) * 1000;
             private _perf = _self get "_perf";

@@ -21,6 +21,7 @@ createHashMapFromArray [
     ["groups", createHashMap],
     ["config", createHashMapFromArray [
         ["activationDistance", _activationDistance],
+        ["deactivationDistanceMultiplier", 1.1],
         ["activationUnitCap", _activationUnitCap],
         ["activationResumeCap", ((_activationUnitCap - 20) max 0)],
         ["activationRetryCooldown", 10],

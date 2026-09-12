@@ -25,7 +25,9 @@ if (!_forceVirtual && {_nearestDist <= _activationDist} && {!_isActive}) exitWit
         true
     };
 
-    private _bypassBudget = _inCombat || {_missionLock != ""} || {_replacementState != ""};
+    // The combat overlay cannot bypass a live handoff rejected by the cap.
+    // Explicit strategic missions retain their existing activation exception.
+    private _bypassBudget = _missionLock != "" || {_replacementState != ""};
     private _activationLoad = [_groupData, true] call FLO_fnc_virtualizationGetGroupUnitLoad;
     private _projectedUnitCount = _activeUnitCount + _activationLoad;
     private _blockActivation = false;
@@ -69,14 +71,23 @@ if (!_forceVirtual && {_nearestDist <= _activationDist} && {!_isActive}) exitWit
     true
 };
 
-if (_nearestDist > _activationDist && {_isActive}) then {
+// Separate boundaries prevent repeated spawn/delete as a player moves along the edge.
+if (_nearestDist > (_activationDist * (["deactivationDistanceMultiplier"] call FLO_fnc_virtualizationGetConfigValue)) && {_isActive}) then {
     private _alwaysActive = _groupData get "alwaysActive";
+    private _physicalContact = false;
+    if (_inCombat) then {
+        private _leader = leader (_groupData get "realGroup");
+        if (!isNull _leader && {alive _leader}) then {
+            private _enemy = _leader findNearestEnemy _leader;
+            _physicalContact = !isNull _enemy && {alive _enemy} && {_leader distance2D _enemy <= _activationDist};
+        };
+    };
     private _missionHoldActive = _missionLock != "" && {_replacementState == ""};
     if (_missionHoldActive && {_missionLock == "TRANSPORT"} && {[_groupData] call FLO_fnc_virtualizationIsTransportCarrier}) then {
         _missionHoldActive = [_groupData] call FLO_fnc_transportCarrierBlocksDeactivation;
     };
 
-    if (_missionHoldActive || {_alwaysActive}) then {
+    if (_missionHoldActive || {_alwaysActive} || {_physicalContact}) then {
         _virtStats set ["missionHoldSkipsTotal", (_virtStats get "missionHoldSkipsTotal") + 1];
         _virtStats set ["missionHoldSkipsThisBatch", (_virtStats get "missionHoldSkipsThisBatch") + 1];
     } else {
