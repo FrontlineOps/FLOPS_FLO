@@ -167,7 +167,7 @@ while {true} do {
     if (_cycleMs > 20 && {diag_tickTime - _lastPerfLogAt >= 5}) then {
         _lastPerfLogAt = diag_tickTime;
         ["OBJECTIVEMONITOR", 4, format [
-            "[PERF] cycle=%1ms virtualCounts=%2ms objectives=%3 updated=%4 players=%5 groups/eligible/cells/checks=%6",
+            "[PERF] cycle=%1ms virtualCounts=%2ms objectives=%3 updated=%4 players=%5 groups/eligible/cells/checks/geometryMs/scanMs/frames/queries/candidates/queryMs=%6",
             _cycleMs, _contributionMs, count _objKeys, count _objectivesToUpdate, count _allPlayers, _captureWorkload
         ]] call FLO_fnc_log;
     };

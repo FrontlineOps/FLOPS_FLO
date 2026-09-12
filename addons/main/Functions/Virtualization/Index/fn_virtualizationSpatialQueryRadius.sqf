@@ -5,7 +5,9 @@
 params ["_position", "_radius", ["_filterSide", nil], ["_exact", false]];
 
 private _cells = [_position, _radius] call FLO_fnc_virtualizationSpatialGetCellsInRadius;
-private _sideKey = [_filterSide] call FLO_fnc_virtualizationSpatialGetSideKey;
+private _sideKey = if (isNil "_filterSide") then { "" } else {
+    [_filterSide] call FLO_fnc_virtualizationSpatialGetSideKey
+};
 private _spatial = call FLO_fnc_virtualizationGetSpatialState;
 private _grid = if (_sideKey == "") then {
     _spatial get "grid"

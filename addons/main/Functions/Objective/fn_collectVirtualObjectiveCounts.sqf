@@ -9,6 +9,26 @@ private _counts = createHashMap;
 if (_objectiveIds isEqualTo [] || {isNil "FLO_VirtualForceRegistry"}) exitWith { _counts };
 
 private _cellSize = 1000;
+private _started = diag_tickTime;
+private _startFrame = diag_frameNo;
+// Only groups inside a requested, non-live area can contribute to this slice.
+// The registry owner keeps this index current on creation, movement and removal.
+private _candidates = createHashMap;
+private _queries = 0;
+{
+    if (_x in _liveObjectives) then { continue };
+    private _objective = FLO_Objectives get _x;
+    _queries = _queries + 1;
+    {
+        _candidates set [_x, true];
+    } forEach ([_objective get "position", _objective get "radius", nil, true] call FLO_fnc_virtualizationSpatialQueryRadius);
+} forEach _objectiveIds;
+private _queryMs = (diag_tickTime - _started) * 1000;
+if (count _candidates == 0) exitWith {
+    _workload append [count (call FLO_fnc_virtualizationGetGroupMap), 0, 0, 0, 0, 0, diag_frameNo - _startFrame, _queries, 0, _queryMs];
+    _counts
+};
+private _geometryStarted = diag_tickTime;
 private _cells = createHashMap;
 {
     private _id = _x;
@@ -28,12 +48,16 @@ private _cells = createHashMap;
         };
     };
 } forEach FLO_Objectives;
+private _geometryMs = (diag_tickTime - _geometryStarted) * 1000;
+private _scanStarted = diag_tickTime;
 
 private _groups = call FLO_fnc_virtualizationGetGroupMap;
 private _eligible = 0;
 private _checks = 0;
 {
-    private _group = _y;
+    private _group = _groups get _x;
+    // A scheduled pass can resume after a discovered group was removed.
+    if (isNil "_group") then { continue };
     if (_group get "isActive") then { continue };
     if ((_group get "unitCount") <= 0) then { continue };
     if (([_group] call FLO_fnc_virtualizationGetTransportAttachment) != "") then { continue };
@@ -61,7 +85,7 @@ private _checks = 0;
     private _sideIndex = parseNumber (_side isEqualTo east);
     private _entry = _counts get _nearestId;
     _entry set [_sideIndex, (_entry select _sideIndex) + (_group get "unitCount")];
-} forEach _groups;
+} forEach _candidates;
 
-_workload append [count _groups, _eligible, count _cells, _checks];
+_workload append [count _groups, _eligible, count _cells, _checks, _geometryMs, (diag_tickTime - _scanStarted) * 1000, diag_frameNo - _startFrame, _queries, count _candidates, _queryMs];
 _counts
