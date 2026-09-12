@@ -1,21 +1,11 @@
 /*
  * Function: FLO_fnc_virtualizationCloneValue
  * Description:
- *   Recursively clones arrays and HashMaps used in registry snapshots.
+ *   Deep-copies registry values with the engine's recursive container copy.
  */
 
 params ["_value"];
 
-if (_value isEqualType []) exitWith {
-    _value apply { [_x] call FLO_fnc_virtualizationCloneValue }
-};
-
-if (_value isEqualType createHashMap) exitWith {
-    private _copy = createHashMap;
-    {
-        _copy set [_x, [_y] call FLO_fnc_virtualizationCloneValue];
-    } forEach _value;
-    _copy
-};
+if (_value isEqualType [] || {_value isEqualType createHashMap}) exitWith { +_value };
 
 _value
