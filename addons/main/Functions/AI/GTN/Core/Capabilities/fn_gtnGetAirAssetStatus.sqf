@@ -64,8 +64,8 @@ private _groups = call FLO_fnc_virtualizationGetGroupMap;
             private _groupAmmo = 0;
             private _vehCount = 0;
             {
-                private _veh = vehicle _x;
-                if (_veh != _x && alive _veh) then {
+                private _veh = _x;
+                if (alive _veh) then {
                     _vehCount = _vehCount + 1;
                     private _analysis = _self call ["_analyzeVehicle", [_veh]];
                     if (!isNil "_analysis") then {
@@ -80,7 +80,7 @@ private _groups = call FLO_fnc_virtualizationGetGroupMap;
                         };
                     };
                 };
-            } forEach (units _realGroup);
+            } forEach ([_realGroup] call FLO_fnc_virtualizationCollectRealGroupVehicles);
 
             if (_vehCount > 0) then {
                 _assetInfo set ["ammoStatus", _groupAmmo / _vehCount];
