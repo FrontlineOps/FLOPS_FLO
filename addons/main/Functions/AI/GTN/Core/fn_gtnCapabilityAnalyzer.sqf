@@ -202,23 +202,8 @@ FLO_GTN_CapabilityAnalyzer = createHashMapObject [[
 
     // Get air asset status across all air groups
     // Returns HashMap with CAS/helo availability and ordnance status
-    ["_getAirAssetStatus", FLO_fnc_gtnGetAirAssetStatus],
+    ["_getAirAssetStatus", FLO_fnc_gtnGetAirAssetStatus]
 
-    // ========================================================================
-    // INTEL-BASED REVEAL UTILITY
-    // ========================================================================
-    // Reveal enemies at a position to units (for CAS/attack/recon missions)
-    // This ensures AI units can engage targets they have intel about
-    // Reports target awareness to the receiving units.
-    //
-    // Parameters:
-    // 0: Position <ARRAY> - Location to scan for enemies
-    // 1: Radius <NUMBER> - Search radius (default 1500m)
-    // 2: Units/Group <ARRAY or GROUP> - Units to reveal enemies to
-    // 3: Enemy Side <SIDE> - Side of enemies to reveal (default: west for OPFOR commander)
-    //
-    // Returns: Number of enemies revealed
-    ["_revealIntelToUnits", FLO_fnc_gtnRevealIntelToUnits]
 
 ]];
 

@@ -1,57 +1,22 @@
-#pragma hemtt ignore_variables ["_self"]
-/* _revealIntelToUnits implementation, bound directly to its GTN owner.
- * Native HashMapObject method dispatch supplies _self and the original arguments.
- */
-params [
-    "_position",
-    ["_radius", 1500],
-    "_unitsOrGroup",
-    ["_enemySide", west]
-];
-
-if (isNil "_position" || _position isEqualTo [0,0,0]) exitWith {
-    ["GTN", 2, "RevealIntel: Invalid position"] call FLO_fnc_log;
-    0
+/* Share fresh, identified World State reports with an assigned aircraft crew. */
+params ["_position", "_radius", "_unitsOrGroup", "_worldState"];
+private _receivers = if (_unitsOrGroup isEqualType grpNull) then {units _unitsOrGroup} else {
+    if (_unitsOrGroup isEqualType objNull) then {[_unitsOrGroup]} else {_unitsOrGroup}
 };
-
-// Get units to reveal to
-private _revealTo = [];
-if (_unitsOrGroup isEqualType grpNull) then {
-    _revealTo = units _unitsOrGroup;
-} else {
-    if (_unitsOrGroup isEqualType objNull) then {
-        _revealTo = [_unitsOrGroup];
-    } else {
-        _revealTo = _unitsOrGroup;
-    };
-};
-
-if (_revealTo isEqualTo []) exitWith {
-    ["GTN", 2, "RevealIntel: No units to reveal to"] call FLO_fnc_log;
-    0
-};
-
-// Find enemies at position
-private _nearEntities = _position nearEntities [["Man", "AllVehicles"], _radius];
-private _enemies = _nearEntities select {
-    alive _x &&
-    (side _x == _enemySide || side group _x == _enemySide)
-};
-
-if (_enemies isEqualTo []) exitWith {
-    ["GTN", 4, format["RevealIntel: No enemies found at position within %1m", _radius]] call FLO_fnc_log;
-    0
-};
-
-// Reveal each enemy to all receiving units
+private _targets = createHashMap;
+private _now = diag_tickTime;
 {
-    private _enemy = _x;
-    {
-        _x reveal [_enemy, 1];
-    } forEach _revealTo;
-} forEach _enemies;
-
-["GTN", 3, format["RevealIntel: Revealed %1 enemies to %2 units at %3",
-    count _enemies, count _revealTo, _position]] call FLO_fnc_log;
-
-count _enemies
+    _x params ["_reportedPos", "_seenAt", "_strength", "_class", "_confidence", ["_source", objNull]];
+    if (isNull _source || {!alive _source} || {_confidence <= 0}) then {continue};
+    private _age = _now - _seenAt;
+    if (_age < 0 || {_age > (_worldState get "_knownEnemyGroupFreshSeconds")}) then {continue};
+    if ((_reportedPos distance2D _position) > _radius) then {continue};
+    private _key = netId _source;
+    private _previous = _targets getOrDefault [_key, [_source, 0]];
+    _targets set [_key, [_source, ((_confidence * 4) min 1) max (_previous select 1)]];
+} forEach ((_worldState get "_enemyIntel") get "contactReports");
+{
+    _y params ["_target", "_knowledge"];
+    {if (alive _x) then {_x reveal [_target, _knowledge]}} forEach _receivers;
+} forEach _targets;
+count _targets
