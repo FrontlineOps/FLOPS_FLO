@@ -14,10 +14,14 @@
 params ["_gData"];
 
 if !(_gData get "isActive") exitWith {};
-if ((_gData get "groupType") == "static_aa") exitWith {};
+if ((_gData get "groupType") in ["static_aa", "air", "helicopter", "jet"]) exitWith {};
 
 private _realGroup = _gData get "realGroup";
 if (isNull _realGroup) exitWith {};
+
+if (isNil {_realGroup getVariable "FLO_combatPosture"}) then {
+    _realGroup setVariable ["FLO_combatPosture", [behaviour leader _realGroup, combatMode _realGroup, speedMode _realGroup]];
+};
 
 _realGroup setBehaviour "COMBAT";
 _realGroup setCombatMode "RED";

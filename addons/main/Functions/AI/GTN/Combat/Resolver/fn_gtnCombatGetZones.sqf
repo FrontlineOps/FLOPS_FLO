@@ -37,11 +37,7 @@ if (
     } else {
         _classification get "eastGroupsByCell"
     };
-    private _opponentThreatCells = if (_seedSide isEqualTo east) then {
-        _classification get "westThreatCells"
-    } else {
-        _classification get "eastThreatCells"
-    };
+    private _opponentThreatCells = _classification get "opponentThreatCells";
 
     _zones = [
         _classification get "combatGroups",

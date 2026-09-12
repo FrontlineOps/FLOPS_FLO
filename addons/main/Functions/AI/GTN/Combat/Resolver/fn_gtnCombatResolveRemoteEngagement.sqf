@@ -1,6 +1,12 @@
 /* Resolves one deterministic-trend remote combat round with bounded friction. */
 params ["_groups", "_eastRefs", "_westRefs", "_supportAvailability", ["_zoneId", "", [""]]];
 
+if (((_eastRefs + _westRefs) findIf {(_x select 1) get "isActive"}) >= 0) then {
+    private _message = format ["Remote engagement %1 contains physical participants; live handoff is required", _zoneId];
+    ["GTN_COMBAT", 1, _message] call FLO_fnc_log;
+    throw _message;
+};
+
 private _eastStats = [_eastRefs] call FLO_fnc_gtnCombatSidePower;
 private _westStats = [_westRefs] call FLO_fnc_gtnCombatSidePower;
 private _eastBefore = _eastStats get "units";

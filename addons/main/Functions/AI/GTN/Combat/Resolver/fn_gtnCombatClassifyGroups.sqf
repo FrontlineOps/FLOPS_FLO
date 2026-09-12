@@ -20,12 +20,8 @@ params ["_groups", ["_seedCellSize", 150, [0]], ["_engagementDist", 300, [0]]];
 private _combatGroups = createHashMap;
 private _eastSeeds = [];
 private _westSeeds = [];
-private _eastSeedCells = createHashMap;
-private _westSeedCells = createHashMap;
 private _eastGroupsByCell = createHashMap;
 private _westGroupsByCell = createHashMap;
-private _eastThreatCells = createHashMap;
-private _westThreatCells = createHashMap;
 private _directCombatTypes = [
     "infantry",
     "motorized",
@@ -69,7 +65,9 @@ private _cellKeyStride = (_cellKeyBase * 2) + 1;
             continue;
         };
 
-        _isCombatParticipant = true;
+        // Busy aircraft remain owned by air/transport simulation. Only ground
+        // support assets can become direct participants when unavailable.
+        _isCombatParticipant = _groupType == "artillery";
     };
 
     if !(_isCombatParticipant) then { continue };
@@ -86,31 +84,11 @@ private _cellKeyStride = (_cellKeyBase * 2) + 1;
         _eastCellGroups pushBack _groupId;
         _eastGroupsByCell set [_seedCellKey, _eastCellGroups];
         _eastSeeds pushBack _groupId;
-
-        if !(_eastSeedCells getOrDefault [_seedCellKey, false]) then {
-            _eastSeedCells set [_seedCellKey, true];
-
-            for "_xCell" from (_seedCellX - _threatCellRadius) to (_seedCellX + _threatCellRadius) do {
-                for "_yCell" from (_seedCellY - _threatCellRadius) to (_seedCellY + _threatCellRadius) do {
-                    _eastThreatCells set [((_xCell + _cellKeyBase) * _cellKeyStride) + (_yCell + _cellKeyBase), true];
-                };
-            };
-        };
     } else {
         private _westCellGroups = _westGroupsByCell getOrDefault [_seedCellKey, []];
         _westCellGroups pushBack _groupId;
         _westGroupsByCell set [_seedCellKey, _westCellGroups];
         _westSeeds pushBack _groupId;
-
-        if !(_westSeedCells getOrDefault [_seedCellKey, false]) then {
-            _westSeedCells set [_seedCellKey, true];
-
-            for "_xCell" from (_seedCellX - _threatCellRadius) to (_seedCellX + _threatCellRadius) do {
-                for "_yCell" from (_seedCellY - _threatCellRadius) to (_seedCellY + _threatCellRadius) do {
-                    _westThreatCells set [((_xCell + _cellKeyBase) * _cellKeyStride) + (_yCell + _cellKeyBase), true];
-                };
-            };
-        };
     };
 } forEach _groups;
 
@@ -123,6 +101,20 @@ if ((count _westSeeds) < (count _eastSeeds)) then {
     _seedIds = _westSeeds;
 };
 
+// Zone construction only tests the selected opponent's neighborhood.
+private _opponentCells = [_eastGroupsByCell, _westGroupsByCell] select (_seedSide isEqualTo east);
+private _threatOffsets = [];
+for "_dx" from -_threatCellRadius to _threatCellRadius do {
+    for "_dy" from -_threatCellRadius to _threatCellRadius do {
+        _threatOffsets pushBack (_dx * _cellKeyStride + _dy);
+    };
+};
+private _opponentThreatCells = createHashMap;
+{
+    private _cell = _x;
+    { _opponentThreatCells set [_cell + _x, true] } forEach _threatOffsets;
+} forEach _opponentCells;
+
 createHashMapFromArray [
     ["combatGroups", _combatGroups],
     ["seedIds", _seedIds],
@@ -134,8 +126,7 @@ createHashMapFromArray [
     ["cellKeyStride", _cellKeyStride],
     ["eastGroupsByCell", _eastGroupsByCell],
     ["westGroupsByCell", _westGroupsByCell],
-    ["eastThreatCells", _eastThreatCells],
-    ["westThreatCells", _westThreatCells],
+    ["opponentThreatCells", _opponentThreatCells],
     ["threatCellRadius", _threatCellRadius],
     ["eastSeedCount", count _eastSeeds],
     ["westSeedCount", count _westSeeds],

@@ -90,7 +90,12 @@ private _pfhId = [{
             [_groupId, _gData, _resumeStates] call FLO_fnc_gtnCombatEnterState;
         } forEach (_eastRefs + _westRefs);
 
-        private _liveArea = [_zonePos, _liveAreaRadius] call FLO_fnc_gtnCombatIsLiveArea;
+        // A zone centroid can lie outside the bubble while one participant is
+        // visible. Any physical participant also makes this an engine battle.
+        private _liveArea = ((_eastRefs + _westRefs) findIf {
+            private _data = _x select 1;
+            (_data get "isActive") || {[_data get "position", _liveAreaRadius] call FLO_fnc_gtnCombatIsLiveArea}
+        }) >= 0;
         if (_liveArea) then {
             private _activationDemand = 0;
             private _activeRefs = [];
