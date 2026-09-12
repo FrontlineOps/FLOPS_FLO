@@ -10,10 +10,10 @@ if !(_className isKindOf "AllVehicles") exitWith { [] };
 private _tokens = (toLower format ["%1 %2 %3 %4", _className, getText (_cfg >> "displayName"), getText (_cfg >> "vehicleClass"), getText (_cfg >> "editorSubcategory")]) splitString " _-/().,[]";
 private _capabilities = [_className] call FLO_fnc_factionGetVehicleCapabilities;
 private _armed = _capabilities get "armed";
-private _threat = getArray (_cfg >> "threat");
-private _airThreat = count _threat >= 3 && {(_threat select 2) > 0.5} && {(_threat select 2) > (_threat select 1)};
-private _aaHint = (_tokens arrayIntersect ["aa", "sam", "antiair", "zu23", "zsu", "2s6", "tunguska", "shilka", "igla", "stinger", "tor"]) isNotEqualTo [] || {"zu" in _tokens && {"23" in _tokens}};
-private _isAA = _armed && {(_capabilities get "antiAir") || {_airThreat && {_aaHint || {_className isKindOf "Tank"}}} || {_aaHint}};
+// Tracked APCs also inherit Tank and may have high air threat values for their
+// machine guns. Dedicated payload or role metadata must establish an AA role.
+private _aaHint = (_tokens arrayIntersect ["aa", "aas", "sam", "antiair", "zu23", "zsu", "2s6", "tunguska", "shilka", "igla", "stinger", "tor"]) isNotEqualTo [] || {"zu" in _tokens && {"23" in _tokens}};
+private _isAA = _armed && {(_capabilities get "antiAir") || {_aaHint}};
 private _isArtillery = getNumber (_cfg >> "artilleryScanner") > 0;
 private _isDrone = getNumber (_cfg >> "isUav") > 0;
 private _transport = getNumber (_cfg >> "transportSoldier");
