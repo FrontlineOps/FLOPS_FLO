@@ -31,7 +31,10 @@ if (!_hasRealGroup && {_unitLoad <= 0}) then {
         };
 
         case "STATIC_AA": {
-            _unitLoad = ((_groupData get "unitCount") max 1) + 1;
+            [_groupData] call FLO_fnc_virtualizationResolveStaticAAComposition;
+            {
+                _unitLoad = _unitLoad + ([_x] call FLO_fnc_virtualizationEstimateVehicleCrewCount);
+            } forEach ((_groupData get "comp") + (_groupData get "supportComp"));
         };
 
         case "ASSET": {

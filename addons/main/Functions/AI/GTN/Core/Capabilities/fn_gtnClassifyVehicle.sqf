@@ -6,6 +6,9 @@ params ["_vehicle"];
 if (isNull _vehicle) exitWith { "UNKNOWN" };
 
 private _type = typeOf _vehicle;
+if (getNumber (configFile >> "CfgVehicles" >> _type >> "isUav") > 0 && {!(_vehicle isKindOf "StaticWeapon")}) exitWith {
+    ["UGAV", "UAV"] select (_vehicle isKindOf "Air")
+};
 
 // Check inheritance chain for vehicle type
 if (_vehicle isKindOf "Tank") exitWith {
@@ -39,23 +42,16 @@ if (_vehicle isKindOf "Plane") exitWith {
     ["FIGHTER_JET", "CAS_JET"] select (_hasAG)
 };
 
-if (_vehicle isKindOf "UAV") exitWith {
-    ["UAV", "UGAV"] select (_vehicle isKindOf "UAV_01_base_F")
-};
-
 if (_vehicle isKindOf "Ship") exitWith { "BOAT" };
 
 if (_vehicle isKindOf "StaticWeapon") exitWith {
+    if ((_self call ["_getAirDefenseRange", [_type]]) > 0) exitWith { "STATIC_AA" };
     private _weapons = weapons _vehicle;
     if ((_weapons findIf { _x find "AT" >= 0 || {_x find "Titan" >= 0} }) isNotEqualTo -1) exitWith { "STATIC_AT" };
-    if ((_weapons findIf { _x find "AA" >= 0 }) isNotEqualTo -1) exitWith { "STATIC_AA" };
     "STATIC_MG"
 };
 
-if (_vehicle isKindOf "Car") exitWith {
-    ["TRUCK", "CAR"] select ((weapons _vehicle) isNotEqualTo [])
-};
-
 if (_vehicle isKindOf "Truck_F") exitWith { "TRUCK" };
+if (_vehicle isKindOf "Car") exitWith { "CAR" };
 
 "UNKNOWN"

@@ -95,7 +95,7 @@ private _maxPen = 0;
 private _maxDmg = 0;
 private _maxRange = 500;
 private _hasAT = false;
-private _hasAA = false;
+private _hasAA = (_self call ["_getAirDefenseRange", [_typeClass]]) > 0;
 
 {
     private _weaponClass = _x;
@@ -106,7 +106,6 @@ private _hasAA = false;
     if (_caliber > _maxPen) then { _maxPen = _caliber };
     if (_hit > _maxDmg) then { _maxDmg = _hit };
     if (_range > _maxRange) then { _maxRange = _range };
-    if (_isAA) then { _hasAA = true };
 
     // Classify weapon penetration
     private _penClass = _self call ["_classifyWeaponPenetration", [_caliber]];
@@ -141,8 +140,8 @@ private _hasAA = false;
     };
 } forEach _allWeapons;
 
-// Set AA capability from config threat value or weapon analysis
-if (_hasAA || (_threatProfile select 2) > 0.3) then {
+// A generic threat coefficient is not an anti-air weapon capability.
+if (_hasAA) then {
     (_analysis get "capabilities") pushBackUnique "AA";
 };
 
@@ -150,7 +149,7 @@ _analysis set ["maxPenetration", _maxPen];
 _analysis set ["maxDamage", _maxDmg];
 _analysis set ["effectiveRange", _maxRange];
 _analysis set ["canEngageArmor", _hasAT || _maxPen >= 15];
-_analysis set ["canEngageAir", _hasAA || (_threatProfile select 2) > 0.3];
+_analysis set ["canEngageAir", _hasAA];
 
 // Armor analysis from config
 (_analysis get "armor") set ["value", _configArmor];
@@ -161,7 +160,9 @@ _analysis set ["canEngageAir", _hasAA || (_threatProfile select 2) > 0.3];
 ];
 
 // Sensor analysis from config
-private _hasRadar = getNumber (_cfgVeh >> "receiveRemoteTargets") > 0;
+private _hasRadar = (configProperties [_cfgVeh >> "Components" >> "SensorsManagerComponent" >> "Components", "isClass _x", true]) findIf {
+    getText (_x >> "componentType") == "ActiveRadarSensorComponent"
+} >= 0;
 private _hasThermal = false;
 private _hasNV = false;
 
@@ -169,7 +170,6 @@ private _hasNV = false;
 private _turrets = configProperties [_cfgVeh >> "Turrets", "isClass _x"];
 {
     // Check for thermal imaging
-    private _thermalMode = getNumber (_x >> "turretInfoType") > 0;
     private _opticsConfig = _x >> "OpticsIn";
     if (isClass _opticsConfig) then {
         private _opticsModes = configProperties [_opticsConfig, "isClass _x"];

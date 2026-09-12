@@ -114,6 +114,7 @@ class VirtualizationLifecycle {
     class virtualizationSpawnAirGroup      {};
     class virtualizationSpawnArtilleryGroup {};
     class virtualizationSpawnStaticAAGroup {};
+    class virtualizationResolveStaticAAComposition {};
     class virtualizationGetSpawnPools      {};
     class virtualizationGetRemainingWaypoints {};
     class virtualizationSpawnRealGroup     {};

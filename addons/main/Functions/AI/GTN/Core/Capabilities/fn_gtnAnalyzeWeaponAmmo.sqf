@@ -60,15 +60,8 @@ private _muzzles = getArray (_cfgWeapon >> "muzzles");
     if (_hit > _maxHit) then { _maxHit = _hit };
     if (_indirectHit > _maxIndirectHit) then { _maxIndirectHit = _indirectHit };
 
-    // Check if this is AA ammo (proximity fuse, flak, etc)
-    private _triggerDistance = getNumber (_cfgAmmo >> "fuseDistance");
-    private _simulation = getText (_cfgAmmo >> "simulation");
-    if (_triggerDistance > 0 || _simulation == "shotMissile") then {
-        // Check if it's a missile that tracks air
-        private _missileLock = getText (_cfgAmmo >> "missileLockCone");
-        private _irLock = getNumber (_cfgAmmo >> "irLock");
-        if (_irLock > 0) then { _isAA = true };
-    };
+    // IR guidance alone also describes anti-tank missiles.
+    if ([_cfgAmmo] call FLO_fnc_factionAmmoIsAntiAir) then { _isAA = true };
 
     // Estimate range from ammo physics if not set by zeroing
     if (_maxZeroing == 0) then {

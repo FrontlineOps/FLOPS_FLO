@@ -167,6 +167,7 @@ FLO_GTN_CapabilityAnalyzer = createHashMapObject [[
     // Analyze a weapon's ammo to determine penetration and damage
     // Returns: [maxCaliber, maxHit, maxIndirectHit, effectiveRange, isAA]
     ["_analyzeWeaponAmmo", FLO_fnc_gtnAnalyzeWeaponAmmo],
+    ["_getAirDefenseRange", FLO_fnc_gtnGetAirDefenseRange],
 
     // Classify weapon capability based on ammo caliber
     // Returns: "AT_HEAVY", "AT_LIGHT", "AUTOCANNON", "HMG", "SMALL_ARMS"

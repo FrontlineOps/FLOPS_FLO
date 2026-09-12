@@ -188,6 +188,7 @@ class GTNAssets {
     class gtnAirDefenseActivateAgainstLiveAircraft {};
     class gtnAirDefenseBuildContactIndex {};
     class gtnAirDefenseGetState {};
+    class gtnAirDefenseGetGroupRange {};
     class gtnAirDefenseHandoffActivatedAircraft {};
     class gtnAirDefenseIsObservedEngagement {};
     class gtnAirDefenseProcessContacts {};
@@ -256,6 +257,7 @@ class GTNSensing {
 class GTNCapabilities {
     file = "\z\flo\addons\main\Functions\AI\GTN\Core\Capabilities";
     class gtnAnalyzeWeaponAmmo {};
+    class gtnGetAirDefenseRange {};
     class gtnGetVehicleWeapons {};
     class gtnClassifyVehicle {};
     class gtnAnalyzeVehicle {};

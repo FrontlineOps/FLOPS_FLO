@@ -46,4 +46,7 @@ if (!_armed && {_magazines isEqualTo []}) then {
         } forEach ([_weaponCfg] call FLO_fnc_factionGetWeaponMagazines);
     } forEach _weapons;
 };
-createHashMapFromArray [["armed", _armed], ["antiAir", _aa], ["tankCannon", _tankCannon]]
+createHashMapFromArray [
+    ["armed", _armed], ["antiAir", _aa], ["tankCannon", _tankCannon],
+    ["weapons", _weapons arrayIntersect _weapons], ["magazines", _magazines arrayIntersect _magazines]
+]

@@ -94,5 +94,8 @@ if (_groupType == "infantry" && {_initialAssetComposition isEqualTo []}) then {
 if (_initialAssetComposition isNotEqualTo []) then {
     [_groupData, _initialAssetComposition] call FLO_fnc_virtualizationSetAssetComposition;
 };
+if (_groupType == "static_aa") then {
+    [_groupData] call FLO_fnc_virtualizationResolveStaticAAComposition;
+};
 
 _groupData
