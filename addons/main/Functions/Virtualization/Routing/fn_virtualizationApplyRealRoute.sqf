@@ -70,6 +70,25 @@ private _physicalWaypoints = _waypoints apply {
     _waypoint
 };
 
+if ((_groupData get "transportInsertMode") == "AIR_DROP") then {
+    // Fly through the drop zone. A terminal MOVE at the insertion point makes
+    // Arma brake below the required parachute release speed and hover forever.
+    // Transport retains the canonical endpoint for release, save and deactivation.
+    private _insertIndex = _groupData get "dismountAtWaypoint";
+    if (_insertIndex == (count _physicalWaypoints) - 1) then {
+        private _insertWaypoint = +(_physicalWaypoints select _insertIndex);
+        private _insertPos = _insertWaypoint select 0;
+        private _approachPos = if (_insertIndex > 0) then {
+            (_physicalWaypoints select (_insertIndex - 1)) select 0
+        } else { getPosATL leader _realGroup };
+        private _heading = if (_approachPos distance2D _insertPos > 1) then {
+            _approachPos getDir _insertPos
+        } else { getDir vehicle leader _realGroup };
+        _insertWaypoint set [0, _insertPos getPos [600 max ((_insertWaypoint select 6) * 4), _heading]];
+        _physicalWaypoints set [_insertIndex, _insertWaypoint];
+    };
+};
+
 private _routeApplied = [
     _realGroup,
     _physicalWaypoints,

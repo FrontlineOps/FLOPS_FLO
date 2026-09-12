@@ -25,6 +25,16 @@ params [
     ["_distance", 0, [0]]
 ];
 
+if (canSuspend) exitWith {
+    private _result = false;
+    private _failure = [];
+    isNil {
+        try { _result = _this call FLO_fnc_transportCommitMissionPlan; } catch { _failure = [_exception] };
+    };
+    if (_failure isNotEqualTo []) then { throw (_failure select 0) };
+    _result
+};
+
 [_infantryGroupId] call FLO_fnc_virtualizationGetGroup;
 private _transportData = [_transportId] call FLO_fnc_virtualizationGetGroup;
 
@@ -72,13 +82,14 @@ if !([_infantryGroupId, _transportId] call FLO_fnc_transportAttach) exitWith {
     false
 };
 
-if !([_transportId, _waypoints, true, _orderTag] call FLO_fnc_updateVirtualGroupWaypoints) then {
+private _transportOwner = [_transportId] call FLO_fnc_virtualizationRequireGroup;
+private _candidate = [_transportOwner] call FLO_fnc_virtualizationCloneValue;
+if !([_transportId, _candidate, _waypoints, true, _orderTag, false, []] call FLO_fnc_virtualizationBuildRouteCandidate) then {
     ["TRANSPORT", 1, format ["Preflighted carrier route failed during commit carrier=%1 passenger=%2", _transportId, _infantryGroupId]] call FLO_fnc_log;
     throw format ["FLO_fnc_transportCommitMissionPlan: preflighted route failed for %1", _transportId];
 };
 
-private _committedTransportData = [_transportId] call FLO_fnc_virtualizationGetGroup;
-private _committedWaypoints = _committedTransportData get "waypoints";
+private _committedWaypoints = _candidate get "waypoints";
 private _dismountWaypointIndex = _committedWaypoints findIf {
     ((_x select 0) distance2D _insertPos) < 1
 };
@@ -105,7 +116,15 @@ private _carrierChanges = createHashMapFromArray [
     ["missionType", _insertMode],
     ["executionState", "TRANSPORT"]
 ];
-[_transportId, _carrierChanges] call FLO_fnc_virtualizationPatchGroup;
+// Physical routing selects cruise altitude from the insertion mode. Publish
+// the mode and endpoint with the route so active carriers see this mission.
+{ _candidate set [_x, _y] } forEach _carrierChanges;
+[_candidate, _transportId] call FLO_fnc_virtualizationValidateGroup;
+if !([_transportId, _transportOwner, _candidate, keys _carrierChanges] call FLO_fnc_virtualizationPublishRoute) then {
+    private _message = format ["Transport route publication failed carrier=%1 passenger=%2", _transportId, _infantryGroupId];
+    ["TRANSPORT", 1, _message] call FLO_fnc_log;
+    throw _message;
+};
 
 private _passengerChanges = createHashMapFromArray [
     ["missionLock", "TRANSPORT"],

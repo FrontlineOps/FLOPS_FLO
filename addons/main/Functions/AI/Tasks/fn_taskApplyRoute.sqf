@@ -99,7 +99,9 @@ try {
             "_combatMode",
             "_completionRadius"
         ];
-        private _waypoint = if (_movementDomain == "LAND") then {
+        // Transport completion and route capture use the canonical endpoint.
+        // Radius zero still lets Arma relocate an AIR waypoint around obstacles.
+        private _waypoint = if (_movementDomain in ["LAND", "AIR"]) then {
             _group addWaypoint [ATLToASL _position, -1]
         } else {
             _group addWaypoint [_position, 0]

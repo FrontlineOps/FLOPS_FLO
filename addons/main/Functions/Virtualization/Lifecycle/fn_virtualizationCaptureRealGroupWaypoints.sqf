@@ -11,6 +11,22 @@ private _existingWaypoints = _groupData get "waypoints";
 private _existingCycle = _existingWaypoints findIf { toUpper (_x select 1) == "CYCLE" };
 private _isLoopRoute = (_groupData get "autoPatrol") || {(_groupData get "patrolConfig") isNotEqualTo []} || {_existingCycle >= 0};
 private _archetype = [_groupData get "groupType"] call FLO_fnc_virtualizationGetArchetype;
+// Arma may finish MOVE before landing or unloading finishes. Transport still
+// owns the insertion endpoint until its passenger manifest has detached.
+if ((_archetype get "movementDomain") == "AIR"
+    && {(_groupData get "attachedGroups") isNotEqualTo []}
+    && {(_groupData get "transportInsertMode") in ["AIR_LAND", "AIR_DROP"]}) exitWith {
+    private _insertIndex = _groupData get "dismountAtWaypoint";
+    private _insertPos = _groupData get "transportInsertPos";
+    if (_insertIndex < 0 || {_insertIndex >= count _existingWaypoints}
+        || {count _insertPos < 2}
+        || {((_existingWaypoints select _insertIndex select 0) distance2D _insertPos) >= 1}) then {
+        private _message = format ["Pending AIR transport %1 has an invalid canonical insert endpoint", _groupId];
+        ["VIRTUALIZATION", 1, _message] call FLO_fnc_log;
+        throw _message;
+    };
+    true
+};
 if (_isLoopRoute) exitWith {
     if ((_archetype get "movementDomain") != "LAND") exitWith { true };
 

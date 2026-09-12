@@ -120,8 +120,11 @@ private _dismountPos = _dismountWp select 0;
 private _completionRadius = (_dismountWp param [6, 50]) max 35;
 private _unloadTriggeredByThreat = [_groupData, _carrierPos] call FLO_fnc_transportShouldThreatDismount;
 private _atDismountWaypoint = (_carrierPos distance2D _dismountPos) <= _completionRadius;
+private _landingInProgress = _insertMode == "AIR_LAND" && {_groupData get "transportLandCommandIssued"};
 
-if (!_unloadTriggeredByThreat && {!_atDismountWaypoint}) exitWith { true };
+// Arma may choose a nearby clear landing site outside the approach radius.
+// Once landing starts, continue its unload lifecycle at that chosen site.
+if (!_landingInProgress && {!_unloadTriggeredByThreat} && {!_atDismountWaypoint}) exitWith { true };
 
 if (_insertMode == "AIR_DROP") exitWith {
     private _carrierVehicle = vehicle _leader;
