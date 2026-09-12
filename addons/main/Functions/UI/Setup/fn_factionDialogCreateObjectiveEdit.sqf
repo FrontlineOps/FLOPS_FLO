@@ -5,7 +5,7 @@
  *   Creates a hidden objective composition edit control.
  *
  * Arguments:
- * 0: Display <DISPLAY>
+ * 0: Parent controls group <CONTROL>
  * 1: Control registry <ARRAY>
  * 2: IDC <NUMBER>
  * 3: X <NUMBER>
@@ -18,9 +18,9 @@
  * Control <CONTROL>
  */
 disableSerialization;
-params ["_display", "_controls", "_idc", "_ctrlX", "_ctrlY", "_ctrlW", "_ctrlH", "_tooltip"];
+params ["_parent", "_controls", "_idc", "_ctrlX", "_ctrlY", "_ctrlW", "_ctrlH", "_tooltip"];
 
-private _ctrl = _display ctrlCreate ["FLO_FactionTuneEdit", _idc];
+private _ctrl = (ctrlParent _parent) ctrlCreate ["FLO_FactionTuneEdit", _idc, _parent];
 _ctrl ctrlSetTooltip _tooltip;
 _ctrl ctrlSetPosition [_ctrlX, _ctrlY, _ctrlW, _ctrlH];
 _ctrl ctrlCommit 0;

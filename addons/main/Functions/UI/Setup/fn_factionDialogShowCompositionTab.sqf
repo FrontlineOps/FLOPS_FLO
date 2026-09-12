@@ -31,6 +31,7 @@ if (isNull _anchor || {isNull _bottomCtrl}) exitWith {
     ["UI", 1, "Cannot switch composition tab - anchor controls are missing"] call FLO_fnc_log;
 };
 
+private _parent = ctrlParentControlsGroup _anchor;
 private _anchorPos = ctrlPosition _anchor;
 private _bottomPos = ctrlPosition _bottomCtrl;
 private _top = (_anchorPos select 1) - ((_anchorPos select 3) * 1.8);
@@ -41,7 +42,7 @@ private _bottom = (_bottomPos select 1) + (_bottomPos select 3) + 0.01;
     private _pos = ctrlPosition _x;
     private _y = _pos select 1;
 
-    if (_y >= _top && {_y <= _bottom} && {!(_x in _objectiveControls)} && {!(_idc in [2094, 2095, 2096])}) then {
+    if ((ctrlParentControlsGroup _x) isEqualTo _parent && {_y >= _top} && {_y <= _bottom} && {!(_x in _objectiveControls)} && {!(_idc in [2094, 2095, 2096])}) then {
         _x ctrlShow _compositionVisible;
     };
 } forEach (allControls _display);

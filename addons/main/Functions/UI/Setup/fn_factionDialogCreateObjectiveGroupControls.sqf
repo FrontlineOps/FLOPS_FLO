@@ -60,6 +60,7 @@ private _headerY = _anchorY;
 private _rowStartY = _anchorY + _rowH;
 
 private _layout = createHashMapFromArray [
+    ["parent", ctrlParentControlsGroup _anchor],
     ["groupTypes", _groupTypes],
     ["subtypes", _subtypes],
     ["titleY", _titleY],
